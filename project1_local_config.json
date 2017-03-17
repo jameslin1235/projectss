@@ -1,0 +1,9 @@
+{
+  "SECRET_KEY": "59=qfn3umqlo4&en399v0c56=2p666d!q-mwck^7&kvxje2vxr",
+  "ENGINE": "django.db.backends.postgresql_psycopg2",
+  "NAME": "project1",
+  "USER": "mac",
+  "PASSWORD": "Bd030896$",
+  "HOST": "localhost",
+  "PORT": ""
+}
