@@ -37,3 +37,7 @@ DATABASES = {
         'PORT': PORT,
     }
 }
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, '/project1/static/'),
+]
