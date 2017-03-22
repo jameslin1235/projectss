@@ -126,3 +126,5 @@ STATICFILES_DIRS = [
 ]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'project1/static_root')
+
+LOGIN_REDIRECT_URL = '/posts/'

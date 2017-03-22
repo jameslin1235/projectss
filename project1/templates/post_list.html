@@ -5,14 +5,41 @@
 
 {% block body %}
 
-{% for post in posts %}
+{% for post in current_page %}
   <ul>
     <!-- <a href='/posts/{{ post.id }}/'><li>{{ post.title }}</li></a>  -->
-    <!-- <a href='{% url "posts:post_detail" id=post.id %}'><li>{{ post.title }}</li></a> -->
+    <!-- <a href='{% url "posts:post_detail" id=post.id slug=post.slug %}'><li>{{ post.title }}</li></a> -->
     <a href='{{ post.get_absolute_url }}'><li>{{ post.title }}</li></a>
+
+
     <li>{{ post.content }}</li>
+    <li>{{ post.date_created }}</li>
+
   </ul>
 {% endfor %}
 
-<img src="{% static "img_fjords.jpg" %}" alt="Smiley face" height="500" width="500">
+   
+
+  <ul class="pagination">
+    {% if current_page.has_previous %}
+      <li><a href="?page={{ current_page.previous_page_number }}">&laquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&laquo;</span></li>
+    {% endif %}
+    {% for i in current_page.paginator.page_range %}
+      {% if current_page.number == i %}
+        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+        <li><a href="?page={{ i }}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if current_page.has_next %}
+      <li><a href="?page={{ current_page.next_page_number }}">&raquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&raquo;</span></li>
+    {% endif %}
+  </ul>
+
+
+
 {% endblock body %}

@@ -14,5 +14,8 @@
 
 <a href='{{ post.get_absolute_url }}'><li>{{ post.title }}</li></a>
 <li>{{ post.content}}</li>
+<li>{{ post.date_created }}</li>
+<li>{{ post.date_edited }}</li>
+<li>{{ post.date_published }}</li>
 
 {% endblock body %}

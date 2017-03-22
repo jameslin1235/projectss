@@ -1,15 +1,33 @@
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Post
 from .forms import PostForm
 # Create your views here.
 
 def post_list(request):
     posts = Post.objects.all()
+    paginator = Paginator(posts, 5) # Show 25 contacts per page
+    page = request.GET.get('page')
+    try:
+        current_page = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        current_page = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        current_page = paginator.page(paginator.num_pages)
+
+    print(request.session)
+    print(request.user)
+    
+    print(request.user.first_name)
+
     context = {
-        "posts":posts,
+        "current_page":current_page,
     }
+
     return render(request,"post_list.html",context)
 
 def post_create(request):
@@ -53,7 +71,7 @@ def post_delete(request,id):
     post.delete()
     return redirect("posts:post_list")
 
-def post_detail(request,id):
+def post_detail(request,id,slug):
     post = get_object_or_404(Post, id=id)
     context = {
         "post":post,
