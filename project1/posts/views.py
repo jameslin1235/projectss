@@ -2,9 +2,11 @@ from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib.auth.decorators import login_required
 from .models import Post
 from .forms import PostForm
 # Create your views here.
+
 
 def post_list(request):
     posts = Post.objects.all()
@@ -19,10 +21,8 @@ def post_list(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         current_page = paginator.page(paginator.num_pages)
 
-    print(request.session)
     print(request.user)
-    
-    print(request.user.first_name)
+    print(request.user.is_authenticated)
 
     context = {
         "current_page":current_page,
@@ -30,6 +30,7 @@ def post_list(request):
 
     return render(request,"post_list.html",context)
 
+@login_required
 def post_create(request):
     if request.method == "POST":
         form = PostForm(request.POST)
@@ -48,6 +49,7 @@ def post_create(request):
     }
     return render(request,"post_create.html",context)
 
+@login_required
 def post_update(request,id):
     post = get_object_or_404(Post, id=id)
 
@@ -65,11 +67,12 @@ def post_update(request,id):
     }
     return render(request,"post_update.html",context)
 
-
+@login_required
 def post_delete(request,id):
     post = get_object_or_404(Post, id=id)
     post.delete()
     return redirect("posts:post_list")
+
 
 def post_detail(request,id,slug):
     post = get_object_or_404(Post, id=id)

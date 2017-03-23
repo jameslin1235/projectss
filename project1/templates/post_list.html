@@ -1,24 +1,27 @@
 {% extends "base.html" %}
-{% load static %}
 
 {% block title %}post list{% endblock title %}
 
 {% block body %}
+
+{% if request.user.is_authenticated %}
+<p>Welcome, {{ request.user.username }}. Thanks for logging in.</p>
+{% else %}
+<p>Welcome, new user. Please log in.</p>
+{% endif %}
+
 
 {% for post in current_page %}
   <ul>
     <!-- <a href='/posts/{{ post.id }}/'><li>{{ post.title }}</li></a>  -->
     <!-- <a href='{% url "posts:post_detail" id=post.id slug=post.slug %}'><li>{{ post.title }}</li></a> -->
     <a href='{{ post.get_absolute_url }}'><li>{{ post.title }}</li></a>
-
-
     <li>{{ post.content }}</li>
     <li>{{ post.date_created }}</li>
 
   </ul>
 {% endfor %}
 
-   
 
   <ul class="pagination">
     {% if current_page.has_previous %}
@@ -39,7 +42,5 @@
       <li class="disabled"><span>&raquo;</span></li>
     {% endif %}
   </ul>
-
-
 
 {% endblock body %}

@@ -17,8 +17,10 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth import views
 
+
 urlpatterns = [
     url(r'^', include('django.contrib.auth.urls')),
+    url(r'^register/', include("project1.project1.accounts.urls", namespace="accounts") ),
     url(r'^admin/', admin.site.urls),
     url(r'^posts/', include("project1.project1.posts.urls", namespace="posts")),
 

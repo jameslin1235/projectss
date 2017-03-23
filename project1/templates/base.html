@@ -41,18 +41,20 @@
 
 
           <ul class="nav navbar-nav navbar-right">
+            {% if request.user.is_authenticated %}
             <li><a href="{% url 'posts:post_list' %}">post list</a></li>
+            <li><a href="{% url 'logout' %}">log out</a></li>
+            {% else %}
             <li><a href="{% url 'login' %}">log in</a></li>
-
+            <li><a href="{% url 'accounts:register' %}">register</a></li>
+            {% endif %}
           </ul>
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->
     </nav>
   </header>
+
   {% block body %}
-
-
-
   {% endblock body %}
 
 
