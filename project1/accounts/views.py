@@ -6,8 +6,12 @@ from .forms import RegisterForm
 def register(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
+
         if form.is_valid():
-            form.save()
+            user = form.save(commit=False)
+            password = form.cleaned_data.get('password')
+            user.set_password(password)
+            user.save()
             messages.success(request, 'User created.')
             return redirect('login')
         # else:
