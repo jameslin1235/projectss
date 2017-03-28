@@ -5,16 +5,28 @@
 {% block body %}
 
 {% if messages %}
-<ul class="messages">
-  {% for message in messages %}
-  <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-  {% endfor %}
-</ul>
+<section >
+  <div class='container'>
+    <div class='row'>
+
+      <div class="alert alert-success" role="alert">
+        <ul class="messages">
+          {% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+          {% endfor %}
+        </ul>
+
+      </div>
+    </div>
+  </div>
+</section>
 {% endif %}
 
 <section >
   <div class='container'>
     <div class='row'>
+      <div class='col-lg-4'>
+      </div>
       <div class='col-lg-4'>
         <h2>Login</h2>
         <form method="post">
@@ -26,26 +38,38 @@
           </div>
           {% endif %}
 
-          {% for field in form %}
           <div class="form-group">
-            {{ field.label_tag }}
-
-            {{ field|add_class:"form-control" }}
-
-            {% if field.errors %}
+            {{ form.username|add_class:"form-control"|attr:"placeholder:Username" }}
+            {% if form.username.errors %}
             <div class="alert alert-danger" role="alert">
-              {{ field.errors }}
+              {{ form.username.errors }}
             </div>
             {% endif %}
-
-            {% if field.help_text %}
-            <p class="help-block">{{ field.help_text|safe }}</p>
+            {% if form.username.help_text %}
+            <p class="help-block">{{ form.username.help_text|safe }}</p>
             {% endif %}
           </div>
-          {% endfor %}
+
+          <div class="form-group">
+            {{ form.password|add_class:"form-control"|attr:"placeholder:Password" }}
+            {% if form.password.errors %}
+            <div class="alert alert-danger" role="alert">
+              {{ form.password.errors }}
+            </div>
+            {% endif %}
+            {% if form.password.help_text %}
+            <p class="help-block">{{ form.password.help_text|safe }}</p>
+            {% endif %}
+          </div>
+
+
+
 
           <button type="submit" class="btn btn-default">Login</button>
+          <p>Don't have an account? <a href="{% url 'accounts:register' %}">Register</a></p>
         </form>
+      </div>
+      <div class='col-lg-4'>
       </div>
     </div>
   </div>

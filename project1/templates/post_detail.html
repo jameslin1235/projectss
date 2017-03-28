@@ -5,17 +5,31 @@
 {% block body %}
 
 {% if messages %}
-<ul class="messages">
-  {% for message in messages %}
-  <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-  {% endfor %}
-</ul>
+<section >
+  <div class='container'>
+    <div class='row'>
+      <div class="alert alert-success" role="alert">
+        <ul class="messages">
+          {% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
 {% endif %}
 
-<a href='{{ post.get_absolute_url }}'><li>{{ post.title }}</li></a>
-<li>{{ post.content}}</li>
-<li>{{ post.date_created }}</li>
-<li>{{ post.date_edited }}</li>
-<li>{{ post.date_published }}</li>
+<section >
+  <div class='container'>
+    <div class='row'>
+      <a href='{{ post.get_absolute_url }}'><li>{{ post.title }}</li></a>
+      <li>{{ post.content}}</li>
+      <li>{{ post.date_created }}</li>
+      <li>{{ post.date_edited }}</li>
+      <li>{{ post.date_published }}</li>
+    </div>
+  </div>
+</section>
 
 {% endblock body %}

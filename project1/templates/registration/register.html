@@ -8,6 +8,8 @@
   <div class='container'>
     <div class='row'>
       <div class='col-lg-4'>
+      </div>
+      <div class='col-lg-4'>
         <h2>Register</h2>
         <form method="post">
           {% csrf_token %}
@@ -18,26 +20,64 @@
           </div>
           {% endif %}
 
-          {% for field in form %}
           <div class="form-group">
-            {{ field.label_tag }}
-
-            {{ field|add_class:"form-control" }}
-
-            {% if field.errors %}
+            {{ form.email|add_class:"form-control"|attr:"autofocus"|attr:"placeholder:Email" }}
+            {% if form.email.errors %}
             <div class="alert alert-danger" role="alert">
-              {{ field.errors }}
+              {{ form.email.errors }}
             </div>
             {% endif %}
-
-            {% if field.help_text %}
-            <p class="help-block">{{ field.help_text|safe }}</p>
+            {% if form.email.help_text %}
+            <p class="help-block">{{ form.email.help_text|safe }}</p>
             {% endif %}
           </div>
-          {% endfor %}
 
-          <button type="submit" class="btn btn-default">Register</button>
+          <div class="form-group">
+            {{ form.email2|add_class:"form-control"|attr:"placeholder:Re-enter Email" }}
+            {% if form.email2.errors %}
+            <div class="alert alert-danger" role="alert">
+              {{ form.email2.errors }}
+            </div>
+            {% endif %}
+            {% if form.email2.help_text %}
+            <p class="help-block">{{ form.email2.help_text|safe }}</p>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            {{ form.username|add_class:"form-control"|attr:"placeholder:Username" }}
+            {% if form.username.errors %}
+            <div class="alert alert-danger" role="alert">
+              {{ form.username.errors }}
+            </div>
+            {% endif %}
+            {% if form.username.help_text %}
+            <p class="help-block">{{ form.username.help_text|safe }}</p>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            {{ form.password|add_class:"form-control"|attr:"placeholder:Password" }}
+            {% if form.password.errors %}
+            <div class="alert alert-danger" role="alert">
+              {{ form.password.errors }}
+            </div>
+            {% endif %}
+            {% if form.password.help_text %}
+            <p class="help-block">{{ form.password.help_text|safe }}</p>
+            {% endif %}
+          </div>
+
+
+
+
+
+          <button type="submit" class="btn btn-default btn-block">Register</button>
+          <p>By signing up, you agree to our Terms & Privacy Policy.</p>
+          <p>Have an account? <a href="{% url 'login' %}">Log in</a></p>
         </form>
+      </div>
+      <div class='col-lg-4'>
       </div>
     </div>
   </div>

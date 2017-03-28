@@ -7,7 +7,9 @@
 <section >
   <div class='container'>
     <div class='row'>
-      <div class='col-lg-4'>
+      <div class='col-lg-3'>
+      </div>
+      <div class='col-lg-6'>
         <h2>Create Post</h2>
         <form method="post">
           {% csrf_token %}
@@ -18,26 +20,36 @@
           </div>
           {% endif %}
 
-          {% for field in form %}
           <div class="form-group">
-            {{ field.label_tag }}
-
-            {{ field|add_class:"form-control" }}
-
-            {% if field.errors %}
+            {{ form.title|add_class:"form-control"|attr:"autofocus"|attr:"placeholder:Title" }}
+            {% if form.title.errors %}
             <div class="alert alert-danger" role="alert">
-              {{ field.errors }}
+              {{ form.title.errors }}
             </div>
             {% endif %}
-
-            {% if field.help_text %}
-            <p class="help-block">{{ field.help_text|safe }}</p>
+            {% if form.title.help_text %}
+            <p class="help-block">{{ form.title.help_text|safe }}</p>
             {% endif %}
           </div>
-          {% endfor %}
+
+          <div class="form-group">
+            {{ form.content|add_class:"form-control"|attr:"placeholder:Content" }}
+            {% if form.content.errors %}
+            <div class="alert alert-danger" role="alert">
+              {{ form.content.errors }}
+            </div>
+            {% endif %}
+            {% if form.content.help_text %}
+            <p class="help-block">{{ form.content.help_text|safe }}</p>
+            {% endif %}
+          </div>
+
+
 
           <button type="submit" class="btn btn-default">Create Post</button>
         </form>
+      </div>
+      <div class='col-lg-3'>
       </div>
     </div>
   </div>
