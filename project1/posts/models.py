@@ -4,13 +4,14 @@ from django.conf import settings
 from django.utils.text import slugify
 from django.core.urlresolvers import reverse
 
+from project1.project1.categories.models import Category
+
 # Create your models here.
 class Post(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    # category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
     title = models.CharField(
         max_length=100,
-
     )
     content = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)

@@ -21,7 +21,7 @@
 <body>
 
   <header>
-
+    
     <nav class="navbar navbar-default ">
       <div class="container">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -41,6 +41,7 @@
 
 
           <ul class="nav navbar-nav navbar-right">
+            <li><a href="{% url 'categories:category_list' %}">Categories</a></li>
             {% if request.user.is_authenticated %}
             <!-- <li><a href="{% url 'posts:post_list' %}">Dashboard</a></li> -->
 
@@ -52,6 +53,7 @@
             <li><a href="{% url 'login' %}">Log in</a></li>
             <li><a href="{% url 'accounts:register' %}">Register</a></li>
             {% endif %}
+
           </ul>
 
 

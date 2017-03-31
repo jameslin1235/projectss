@@ -25,11 +25,12 @@
 <section >
   <div class='container'>
 <div class="row">
-
   <div class="thumbnail">
     <div class="caption">
+      <p><a href="#">{{ post.category }}</a></p>
       <h3><a href='{{ post.get_absolute_url }}'>{{ post.title }}</a></h3>
       <p><a href="#">{{ post.user }}</a></p>
+
       <p>{{ post.date_created|timesince }}</p>
       <p>{{ post.date_created}}</p>
       <p>{{ post.content }}</p>
@@ -37,7 +38,7 @@
       <p>
         <button class="btn btn-link" type="submit"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> Upvote</button>
         <button class="btn btn-link" type="submit"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> Downvote </button>
-      
+
         <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
         sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-share" aria-hidden="true"></span> Share</button>
         <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus

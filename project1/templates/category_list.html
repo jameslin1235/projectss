@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Categories{% endblock title %}
+
+{% block body %}
+<section>
+  <div class='container'>
+    <div class="row">
+      <div class='col-md-8'>
+        <div class="page-header">
+          <h5><span class="glyphicon glyphicon-th-large" aria-hidden="true"></span> {{ title }}</h5>
+        </div>
+        <div class="row">
+          {% for category in categories %}
+          <div class='col-md-3'>
+            <div class="thumbnail">
+              <div class="caption">
+                <p><a href='{{ category.get_absolute_url }}'>{{ category.category }}</a></p>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      <div class='col-md-3 col-md-offset-1' >
+        <div class="page-header">
+          <h5><span class="glyphicon glyphicon-th-large" aria-hidden="true"></span> {{ title }}</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock body %}

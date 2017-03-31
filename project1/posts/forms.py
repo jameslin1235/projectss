@@ -7,6 +7,7 @@ class PostForm(forms.ModelForm):
         fields = [
         "title",
         "content",
+        "category"
         ]
 
     def clean(self, *args, **kwargs):

@@ -14,7 +14,7 @@ from django.utils.text import slugify
 #      def save(self, *args, **kwargs):
 #         self.slug = slugify(self.category)
 #         super(Category, self).save(*args, **kwargs)
-
+#
 
 
 # class Comment(models.Model):

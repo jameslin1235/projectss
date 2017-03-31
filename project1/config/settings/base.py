@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'project1.project1.app1.apps.App1Config',
     'widget_tweaks',
     'project1.project1.accounts.apps.AccountsConfig',
+    'project1.project1.categories.apps.CategoriesConfig',
     'project1.project1.posts.apps.PostsConfig',
     'django.contrib.admin',
     'django.contrib.auth',

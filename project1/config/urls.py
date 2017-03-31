@@ -23,6 +23,6 @@ urlpatterns = [
     url(r'^register/', include("project1.project1.accounts.urls", namespace="accounts") ),
     url(r'^admin/', admin.site.urls),
     url(r'^posts/', include("project1.project1.posts.urls", namespace="posts")),
-
+    url(r'^categories/', include("project1.project1.categories.urls", namespace="categories")),
 
 ]
