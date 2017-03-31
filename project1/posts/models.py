@@ -6,11 +6,11 @@ from django.core.urlresolvers import reverse
 
 # Create your models here.
 class Post(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=1)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     # category = models.ForeignKey(Category, on_delete=models.CASCADE)
     title = models.CharField(
         max_length=100,
-        
+
     )
     content = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)

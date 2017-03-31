@@ -4,43 +4,95 @@
 
 {% block body %}
 
-{% if request.user.is_authenticated %}
-<p>Welcome, {{ request.user.username }}. Thanks for logging in.</p>
-{% else %}
-<p>Welcome, new user. Please log in.</p>
-{% endif %}
+<section >
+  <div class='container'>
+    <!-- <div class='row'>
 
-
-{% for post in current_page %}
-  <ul>
-    <!-- <a href='/posts/{{ post.id }}/'><li>{{ post.title }}</li></a>  -->
-    <!-- <a href='{% url "posts:post_detail" id=post.id slug=post.slug %}'><li>{{ post.title }}</li></a> -->
-    <a href='{{ post.get_absolute_url }}'><li>{{ post.title }}</li></a>
-    <li>{{ post.content }}</li>
-    <li>{{ post.date_created }}</li>
-
-  </ul>
-{% endfor %}
-
-
-  <ul class="pagination">
-    {% if current_page.has_previous %}
-      <li><a href="?page={{ current_page.previous_page_number }}">&laquo;</a></li>
+    {% if request.user.is_authenticated %}
+    <p>Welcome, {{ request.user.username }}.</p>
     {% else %}
-      <li class="disabled"><span>&laquo;</span></li>
+    <p>Welcome, new user. Please log in.</p>
     {% endif %}
-    {% for i in current_page.paginator.page_range %}
-      {% if current_page.number == i %}
+
+  </div> -->
+  <div class="row">
+    <div class='col-lg-1'>
+    </div>
+    <div class='col-lg-3'>
+      <div class="list-group">
+        <a href="#" class="list-group-item active">
+          Cras justo odio
+        </a>
+        <a href="#" class="list-group-item">Dapibus ac facilisis in</a>
+        <a href="#" class="list-group-item">Morbi leo risus</a>
+        <a href="#" class="list-group-item">Porta ac consectetur ac</a>
+        <a href="#" class="list-group-item">Vestibulum at eros</a>
+      </div>
+    </div>
+
+    <div class='col-lg-7'>
+      {% for post in current_page %}
+      <div class="row">
+        <div class="thumbnail">
+          <div class="caption">
+            <h3><a href='{{ post.get_absolute_url }}'>{{ post.title }}</a></h3>
+            <p><a href="#">{{ post.user }}</a></p>
+            <p>{{ post.date_created|timesince }}</p>
+            <p>{{ post.date_created}}</p>
+            <p>{{ post.content }}</p>
+
+
+            <p>
+              <button class="btn btn-link" type="submit"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> Upvote</button>
+              <button class="btn btn-link" type="submit"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> Downvote </button>
+              <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
+              sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> Comments</button>
+              <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
+              sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-share" aria-hidden="true"></span> Share</button>
+              <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
+              sagittis lacus vel augue laoreet rutrum faucibus."><span class="  glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
+            </p>
+          </div>
+        </div>
+      </div>
+
+
+      {% endfor %}
+
+
+
+
+      <ul class="pagination">
+        {% if current_page.has_previous %}
+        <li><a href="?page={{ current_page.previous_page_number }}">&laquo;</a></li>
+        {% else %}
+        <li class="disabled"><span>&laquo;</span></li>
+        {% endif %}
+        {% for i in current_page.paginator.page_range %}
+        {% if current_page.number == i %}
         <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
-      {% else %}
+        {% else %}
         <li><a href="?page={{ i }}">{{ i }}</a></li>
-      {% endif %}
-    {% endfor %}
-    {% if current_page.has_next %}
-      <li><a href="?page={{ current_page.next_page_number }}">&raquo;</a></li>
-    {% else %}
-      <li class="disabled"><span>&raquo;</span></li>
-    {% endif %}
-  </ul>
+        {% endif %}
+        {% endfor %}
+        {% if current_page.has_next %}
+        <li><a href="?page={{ current_page.next_page_number }}">&raquo;</a></li>
+        {% else %}
+        <li class="disabled"><span>&raquo;</span></li>
+        {% endif %}
+      </ul>
+    </div>
+    <div class='col-lg-1'>
+    </div>
+
+  </div>
+
+
+
+
+</div>
+</section>
+
+
 
 {% endblock body %}

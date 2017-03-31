@@ -45,36 +45,31 @@
           </div>
 
           <div class="form-group">
-            {{ form.username|add_class:"form-control"|attr:"placeholder:Username" }}
+            {% render_field form.username class="form-control" placeholder="Username" data-container=" body" data-toggle="popover" data-content=form.username.help_text data-trigger="focus" %}
             {% if form.username.errors %}
             <div class="alert alert-danger" role="alert">
               {{ form.username.errors }}
             </div>
             {% endif %}
-            {% if form.username.help_text %}
-            <p class="help-block">{{ form.username.help_text|safe }}</p>
-            {% endif %}
           </div>
 
           <div class="form-group">
-            {{ form.password|add_class:"form-control"|attr:"placeholder:Password" }}
+            {% render_field form.password class="form-control" placeholder="Password" data-container=" body" data-toggle="popover" data-content=form.password.help_text data-trigger="focus" %}
             {% if form.password.errors %}
             <div class="alert alert-danger" role="alert">
               {{ form.password.errors }}
             </div>
             {% endif %}
-            {% if form.password.help_text %}
-            <p class="help-block">{{ form.password.help_text|safe }}</p>
-            {% endif %}
           </div>
 
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-block">Register</button>
+          </div>
 
-
-
-
-          <button type="submit" class="btn btn-default btn-block">Register</button>
-          <p>By signing up, you agree to our Terms & Privacy Policy.</p>
-          <p>Have an account? <a href="{% url 'login' %}">Log in</a></p>
+          <div class="form-group">
+            <p>By signing up, you agree to our <a href="#">Terms</a> & <a href="#">Privacy Policy.</a></p>
+            <p>Have an account? <a href="{% url 'login' %}">Log in</a></p>
+          </div>
         </form>
       </div>
       <div class='col-lg-4'>
