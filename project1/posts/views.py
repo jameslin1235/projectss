@@ -10,6 +10,7 @@ from .forms import PostForm
 
 def post_list(request):
     posts = Post.objects.all()
+    title = "Latest Posts"
     paginator = Paginator(posts, 5) # Show 25 contacts per page
     page = request.GET.get('page')
     try:
@@ -26,6 +27,7 @@ def post_list(request):
 
     context = {
         "current_page":current_page,
+        "title":title,
     }
 
     return render(request,"post_list.html",context)

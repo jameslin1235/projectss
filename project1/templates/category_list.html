@@ -12,10 +12,10 @@
         </div>
         <div class="row">
           {% for category in categories %}
-          <div class='col-md-3'>
+          <div class='col-md-6'>
             <div class="thumbnail">
               <div class="caption">
-                <p><a href='{{ category.get_absolute_url }}'>{{ category.category }}</a></p>
+                <p><a href="{{ category.get_absolute_url }}">{{ category.category }}</a></p>
               </div>
             </div>
           </div>
@@ -25,6 +25,15 @@
       <div class='col-md-3 col-md-offset-1' >
         <div class="page-header">
           <h5><span class="glyphicon glyphicon-th-large" aria-hidden="true"></span> {{ title }}</h5>
+        </div>
+        <div class="list-group">
+          <a href="#" class="list-group-item active">
+            Cras justo odio
+          </a>
+          <a href="#" class="list-group-item">Dapibus ac facilisis in</a>
+          <a href="#" class="list-group-item">Morbi leo risus</a>
+          <a href="#" class="list-group-item">Porta ac consectetur ac</a>
+          <a href="#" class="list-group-item">Vestibulum at eros</a>
         </div>
       </div>
     </div>

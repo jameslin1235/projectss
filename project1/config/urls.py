@@ -24,5 +24,6 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^posts/', include("project1.project1.posts.urls", namespace="posts")),
     url(r'^categories/', include("project1.project1.categories.urls", namespace="categories")),
+    url(r'^profile/', include("project1.project1.profiles.urls", namespace="profiles")),
 
 ]
