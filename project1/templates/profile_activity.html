@@ -1,0 +1,22 @@
+{% extends "profile_base.html" %}
+
+{% block title %}{{ request.user.username}}'s Activity{% endblock title %}
+
+{% block nav-tabs %}
+<!-- Nav tabs -->
+<ul class="nav nav-tabs" role="tablist">
+  <li role="presentation" class="active" ><a href="{% url 'profiles:profile_activity' id=request.user.id slug=request.user.profile.slug  %}" role="tab" >Activity</a></li>
+  <li role="presentation"><a href="{% url 'profiles:profile_posts' id=request.user.id slug=request.user.profile.slug  %}" role="tab">Posts <span>{{posts_count}}</span></a></li>
+  <li role="presentation"><a href="{% url 'profiles:profile_comments' id=request.user.id slug=request.user.profile.slug  %}" role="tab">Comments</a></li>
+  <li role="presentation"><a href="{% url 'profiles:profile_bookmarks' id=request.user.id slug=request.user.profile.slug  %}" role="tab">Bookmark</a></li>
+  <li role="presentation"><a href="{% url 'profiles:profile_following' id=request.user.id slug=request.user.profile.slug  %}" role="tab">Following</a></li>
+  <li role="presentation"><a href="{% url 'profiles:profile_followers' id=request.user.id slug=request.user.profile.slug  %}" role="tab">Followers</a></li>
+</ul>
+
+{% endblock nav-tabs %}
+
+{% block activity %}
+<div class="page-header">
+  <h5>{{ title }}</h5>
+</div>
+{% endblock activity %}
