@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'project1.project1.categories.apps.CategoriesConfig',
     'project1.project1.posts.apps.PostsConfig',
     'project1.project1.profiles.apps.ProfilesConfig',
+    'project1.project1.comments.apps.CommentsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

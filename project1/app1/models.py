@@ -32,7 +32,7 @@ from django.utils.text import slugify
 #     def save(self, *args, **kwargs):
 #        self.slug = slugify(self.content)
 #        super(Comment, self).save(*args, **kwargs)
-#
+
 # class Profile(models.Model):
 #
 #     GENDER = (

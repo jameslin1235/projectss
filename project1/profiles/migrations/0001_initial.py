@@ -13,25 +13,22 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('categories', '0001_initial'),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Post',
+            name='Profile',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=100)),
-                ('content', models.TextField()),
+                ('position', models.CharField(blank=True, max_length=100, null=True)),
+                ('company', models.CharField(blank=True, max_length=100, null=True)),
+                ('school', models.CharField(blank=True, max_length=100, null=True)),
+                ('concentration', models.CharField(blank=True, max_length=100, null=True)),
+                ('degree_type', models.CharField(blank=True, max_length=100, null=True)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_edited', models.DateTimeField(auto_now=True)),
-                ('date_published', models.DateTimeField(null=True)),
-                ('likes', models.IntegerField(default=0)),
-                ('dislikes', models.IntegerField(default=0)),
-                ('is_draft', models.BooleanField(default=True)),
                 ('slug', models.SlugField()),
-                ('category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='categories.Category')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'ordering': ['-date_created'],

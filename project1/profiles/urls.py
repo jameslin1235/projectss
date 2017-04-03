@@ -3,9 +3,11 @@ from . import views
 
 urlpatterns = [
 
-    # url(r'^$', views.profile_list, name='profile_list'),
-    # url(r'^create/$', views.post_create, name='post_create'),
-    # url(r'^(?P<id>\d+)/update/$', views.post_update,name='post_update'),
-    # url(r'^(?P<id>\d+)/delete/$', views.post_delete, name='post_delete'),
-    url(r'^(?P<slug>[-\w]+)/$', views.profile_list, name='profile_list'),
+    url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/$', views.profile_list, name='profile_list'),
+    url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/activity/$', views.profile_activity, name='profile_activity'),
+    url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/posts/$', views.profile_posts, name='profile_posts'),
+    url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/comments/$', views.profile_comments, name='profile_comments'),
+    url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/bookmarks/$', views.profile_bookmarks, name='profile_bookmarks'),
+    url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/following/$', views.profile_following, name='profile_following'),
+    url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/followers/$', views.profile_followers, name='profile_followers'),
 ]
