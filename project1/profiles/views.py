@@ -44,7 +44,18 @@ def profile_posts(request,id,slug):
         "no_posts":no_posts,
     }
 
-    return render(request,"profile_posts.html",context)
+    return render(request,"profile_published.html",context)
+
+
+def profile_drafts(request,id,slug):
+
+    title = "Drafts"
+    context = {
+        "title":title,
+    }
+
+    return render(request,"profile_drafts.html",context)
+
 
 @login_required
 def profile_comments(request,id,slug):

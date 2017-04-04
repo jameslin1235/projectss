@@ -2,21 +2,27 @@
 
 {% block title %}{{ request.user.username}}'s Drafts{% endblock title %}
 
-{% block nav-tabs %}
-<!-- Nav tabs -->
-<ul class="nav nav-tabs" role="tablist">
-  <li role="presentation" class="active" ><a href="{% url 'profiles:profile_activity' id=request.user.id slug=request.user.profile.slug  %}" role="tab" >Activity</a></li>
-  <li role="presentation"><a href="{% url 'profiles:profile_posts' id=request.user.id slug=request.user.profile.slug  %}" role="tab">Posts <span>{{posts_count}}</span></a></li>
-  <li role="presentation"><a href="{% url 'profiles:profile_comments' id=request.user.id slug=request.user.profile.slug  %}" role="tab">Comments</a></li>
-  <li role="presentation"><a href="{% url 'profiles:profile_bookmarks' id=request.user.id slug=request.user.profile.slug  %}" role="tab">Bookmark</a></li>
-  <li role="presentation"><a href="{% url 'profiles:profile_following' id=request.user.id slug=request.user.profile.slug  %}" role="tab">Following</a></li>
-  <li role="presentation"><a href="{% url 'profiles:profile_followers' id=request.user.id slug=request.user.profile.slug  %}" role="tab">Followers</a></li>
-</ul>
 
-{% endblock nav-tabs %}
+{% block posts_drafts %}
+<div>
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="{% url 'profiles:profile_drafts' id=request.user.id slug=request.user.profile.slug  %}" aria-controls="home" role="tab" >Drafts</a></li>
+    <li role="presentation"><a href="{% url 'profiles:profile_posts' id=request.user.id slug=request.user.profile.slug  %}" aria-controls="profile" role="tab" >Posts</a></li>
+  </ul>
 
-{% block activity %}
-<div class="page-header">
-  <h5>{{ title }}</h5>
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" >
+      <div class="page-header">
+        <h5>{{ title }}</h5>
+      </div>
+
+    </div>
+    <div role="tabpanel" class="tab-pane">...</div>
+
+  </div>
+
 </div>
-{% endblock activity %}
+
+{% endblock posts_drafts %}

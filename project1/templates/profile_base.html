@@ -1,7 +1,5 @@
 {% extends "base.html" %}
 
-{% block title %}{% endblock title %}
-
 {% block body %}
 <section >
   <div class='container'>
@@ -30,33 +28,9 @@
 
           {% block nav-tabs %}
           {% endblock nav-tabs %}
-          <!-- Tab panes -->
-          <div class="tab-content">
-            <div role="tabpanel" class="tab-pane fade in active" id="activity">
-              {% block activity %}
-              {% endblock activity %}
-            </div>
-            <div role="tabpanel" class="tab-pane fade" id="posts">
-              {% block posts %}
-              {% endblock posts %}
-            </div>
-            <div role="tabpanel" class="tab-pane fade" id="comments">
-              {% block comments %}
-              {% endblock comments %}
-            </div>
-            <div role="tabpanel" class="tab-pane fade" id="bookmark">
-              {% block bookmark %}
-              {% endblock bookmark %}
-            </div>
-            <div role="tabpanel" class="tab-pane fade" id="following">
-              {% block following %}
-              {% endblock following %}
-            </div>
-            <div role="tabpanel" class="tab-pane fade" id="followers">
-              {% block followers %}
-              {% endblock followers %}
-            </div>
-          </div>
+
+          {% block tab-content %}
+          {% endblock tab-content %}
         </div>
       </div>
 

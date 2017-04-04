@@ -15,8 +15,30 @@
 
 {% endblock nav-tabs %}
 
-{% block comments %}
-<div class="page-header">
-  <h5>{{ title }}</h5>
+{% block tab-content %}
+
+<!-- Tab panes -->
+<div class="tab-content">
+  <div role="tabpanel" class="tab-pane">
+
+  </div>
+  <div role="tabpanel" class="tab-pane">
+
+  </div>
+  <div role="tabpanel" class="tab-pane active">
+    <div class="page-header">
+      <h5>{{ title }}</h5>
+    </div>
+  </div>
+  <div role="tabpanel" class="tab-pane">
+
+  </div>
+  <div role="tabpanel" class="tab-pane">
+
+  </div>
+  <div role="tabpanel" class="tab-pane">
+
+  </div>
 </div>
-{% endblock comments %}
+
+{% endblock tab-content %}
