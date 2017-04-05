@@ -49,16 +49,18 @@
           <p><a href="#">{{ draft.user }}</a></p>
           <p>{{ draft.date_created|timesince }}</p>
           <p>{{ draft.date_created}}</p>
+          <p>{{ draft.date_edited}}</p>
+          <p>{{ draft.date_published}}</p>
           <p>{{ draft.content }}</p>
           <p>
             <a class="btn btn-link" href="{% url 'posts:post_update' id=draft.id slug=draft.slug %}">Edit</a>
             <!-- Button trigger modal -->
-            <button type="button" class="btn btn-link" data-toggle="modal" data-target="#myModal">Delete</button>
-
-            <button type="button" class="btn btn-link">Publish</button>
+            <button type="button" class="btn btn-link" data-toggle="modal" data-target="#myModal{{draft.id}}">Delete</button>
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-link" data-toggle="modal" data-target="#myModal2{{draft.id}}">Publish</button>
 
             <!-- Modal -->
-            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal fade" id="myModal{{draft.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
@@ -71,6 +73,24 @@
                   <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <a class="btn btn-default" href="{% url 'posts:post_delete' id=draft.id slug=draft.slug %}">Confirm</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Modal -->
+            <div class="modal fade" id="myModal2{{draft.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Publish Draft</h4>
+                  </div>
+                  <div class="modal-body">
+                    <p>Are you sure you wish to publish this draft?</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-default" href="{% url 'posts:post_publish' id=draft.id slug=draft.slug %}">Confirm</a>
                   </div>
                 </div>
               </div>

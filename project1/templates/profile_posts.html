@@ -1,6 +1,6 @@
 {% extends "profile_posts_base.html" %}
 
-{% block title %}{{ request.user.username}}'s Drafts{% endblock title %}
+{% block title %}{{ request.user.username}}'s {{title}}{% endblock title %}
 
 {% block posts %}
 <div>
@@ -29,17 +29,27 @@
         <p>There are no posts.</p>
       </div>
       {% else %}
+      {% if messages %}
+      <div class="alert alert-success" role="alert">
+        <ul class="messages">
+          {% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
       {% for post in current_page %}
       <div class="thumbnail">
         <div class="caption">
           <p><a href="{{ post.category.get_absolute_url }}">{{ post.category }}</a></p>
           <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
-          <p><a href="#">{{ post.user }}</a></p>
-          <p>{{ post.date_created|timesince }}</p>
-          <p>{{ post.date_created}}</p>
+          <p><a href="{% url 'profiles:profile_activity' id=request.user.id slug=request.user.profile.slug %}">{{ post.user }}</a></p>
+          <!-- <p>{{ post.date_created|timesince }}</p> -->
           <p>{{ post.content }}</p>
+          <p><a href="{{ post.get_absolute_url }}" data-toggle="tooltip" data-placement="top" title="Published {{post.date_published}}">Edited {{ post.date_edited}}</a></p>
+
           <p>
-            <button type="button" class="btn btn-link"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> Upvote</button>
+            <button type="button" class="btn btn-info"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> Upvote</button>
             <button type="button" class="btn btn-link"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> Downvote </button>
             <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
             sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> Comments</button>
@@ -50,7 +60,26 @@
           </p>
           <p>
             <a href="{% url 'posts:post_update' id=post.id slug=post.slug %}">Edit</a>
-            <button type="button" class="btn btn-link">Delete</button>
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-link"  data-toggle="modal" data-target="#myModal{{post.id}}">Delete</button>
+            <!-- Modal -->
+            <div class="modal fade" id="myModal{{post.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Delete Draft</h4>
+                  </div>
+                  <div class="modal-body">
+                    <p>Are you sure you wish to delete this draft?</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-default" href="{% url 'posts:post_delete' id=post.id slug=post.slug %}">Confirm</a>
+                  </div>
+                </div>
+              </div>
+            </div>
           </p>
         </div>
       </div>

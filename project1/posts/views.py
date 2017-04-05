@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 from .models import Post
 from .forms import PostForm
 # Create your views here.
@@ -95,9 +96,9 @@ def post_update(request,id,slug):
 @login_required
 def post_delete(request,id,slug):
     post = get_object_or_404(Post, id=id)
-    title = "Delete Draft"
-    if post.is_draft == False:
-        title = "Delete Post"
+    # title = "Delete Draft"
+    # if post.is_draft == False:
+    #     title = "Delete Post"
     if post.is_draft == True:
         post.delete()
         messages.success(request, 'Draft deleted')
@@ -115,3 +116,13 @@ def post_detail(request,id,slug):
     }
 
     return render(request,"post_detail.html",context)
+
+@login_required
+def post_publish(request,id,slug):
+    post = get_object_or_404(Post, id=id)
+    if post:
+        post.is_draft = False
+        post.date_published = timezone.now()
+        post.save()
+        messages.success(request, 'Draft published')
+        return redirect('profiles:profile_drafts', id=request.user.id, slug=request.user.profile.slug )
