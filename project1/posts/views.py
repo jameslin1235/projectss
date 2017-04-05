@@ -51,7 +51,7 @@ def post_create(request):
                 post.user = request.user
                 post.save()
                 messages.success(request, 'Draft created.')
-                return redirect(post)
+                return redirect('profiles:profile_drafts', id=request.user.id, slug=request.user.profile.slug )
 
     else:
         form = PostForm()
@@ -63,40 +63,49 @@ def post_create(request):
 @login_required
 def post_update(request,id,slug):
     post = get_object_or_404(Post, id=id)
-    # if post.is_draft == False:
-    #     title = "Update Post"
-    #     button = "Update Post"
-    # else:
-    #     title = "Update Draft"
-    #     button = "Update Draft"
-    title = "title"
-    button = "button"
+    title = "Update Draft"
+    button_text = "Update Draft"
+    if post.is_draft == False:
+        title = "Update Post"
+        button_text = "Update Post"
+
     if request.method == "POST":
         form = PostForm(request.POST,instance=post)
         if form.is_valid():
             post = form.save(commit=False)
-            if post.is_draft == False:
+            if post.is_draft == True:
+                post.save()
+                messages.success(request, 'Draft updated.')
+                # return redirect('profiles:profile_drafts', id=request.user.id, slug=request.user.profile.slug )
+                return redirect('posts:post_update', id=post.id, slug=post.slug )
+            else:
+                post.save()
                 messages.success(request, 'Post updated.')
                 return redirect(post)
-            else:
-                messages.success(request, 'Draft updated.')
-                return render(request,"post_detail.html",context)
-
     else:
         form = PostForm(instance=post)
 
     context = {
-    "form":form,
-    "title":title,
-    "button":button,
+        "title":title,
+        "button_text":button_text,
+        "form":form,
     }
     return render(request,"post_update.html",context)
 
 @login_required
 def post_delete(request,id,slug):
     post = get_object_or_404(Post, id=id)
-    post.delete()
-    return redirect("posts:post_list")
+    title = "Delete Draft"
+    if post.is_draft == False:
+        title = "Delete Post"
+    if post.is_draft == True:
+        post.delete()
+        messages.success(request, 'Draft deleted')
+        return redirect('profiles:profile_drafts', id=request.user.id, slug=request.user.profile.slug )
+    else:
+        post.delete()
+        messages.success(request, 'Post deleted')
+        return redirect('profiles:profile_posts', id=request.user.id, slug=request.user.profile.slug )
 
 
 def post_detail(request,id,slug):

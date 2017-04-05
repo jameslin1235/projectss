@@ -48,6 +48,10 @@
             <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
             sagittis lacus vel augue laoreet rutrum faucibus."><span class="  glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
           </p>
+          <p>
+            <a href="{% url 'posts:post_update' id=post.id slug=post.slug %}">Edit</a>
+            <button type="button" class="btn btn-link">Delete</button>
+          </p>
         </div>
       </div>
       {% endfor %}
