@@ -20,7 +20,7 @@ def profile_activity(request,id,slug):
 @login_required
 def profile_posts(request,id,slug):
     title = "Posts"
-    posts = Post.objects.filter(user__id = id)
+    posts = Post.objects.filter(user__id = id, is_draft = False)
     posts_count = posts.count()
     no_posts = True
     if posts_count != 0:
@@ -44,17 +44,39 @@ def profile_posts(request,id,slug):
         "no_posts":no_posts,
     }
 
-    return render(request,"profile_published.html",context)
+    return render(request,"profile_posts.html",context)
 
 
+@login_required
 def profile_drafts(request,id,slug):
-
     title = "Drafts"
+    drafts = Post.objects.filter(user__id = id, is_draft = True)
+    drafts_count = drafts.count()
+    no_drafts = True
+    if drafts_count != 0:
+        no_drafts = False
+
+    paginator = Paginator(drafts, 5) # Show 25 contacts per page
+    page = request.GET.get('page')
+    try:
+        current_page = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        current_page = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        current_page = paginator.page(paginator.num_pages)
+
     context = {
         "title":title,
+        "current_page":current_page,
+        "drafts_count":drafts_count,
+        "no_drafts":no_drafts,
     }
 
     return render(request,"profile_drafts.html",context)
+
+
 
 
 @login_required
