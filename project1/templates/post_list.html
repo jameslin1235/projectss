@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}post list{% endblock title %}
+{% block title %}{{ title }}{% endblock title %}
 
 {% block body %}
 <section >
@@ -11,26 +11,26 @@
           <h5><span class="glyphicon glyphicon-th-large" aria-hidden="true"></span> {{ title }}</h5>
         </div>
         {% for post in current_page %}
-          <div class="thumbnail">
-            <div class="caption">
-              <p><a href="{{ post.category.get_absolute_url }}">{{ post.category }}</a></p>
-              <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
-              <p><a href="#">{{ post.user }}</a></p>
-              <p>{{ post.date_created|timesince }}</p>
-              <p>{{ post.date_created}}</p>
-              <p>{{ post.content }}</p>
-              <p>
-                <button type="button" class="btn btn-link"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> Upvote</button>
-                <button type="button" class="btn btn-link"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> Downvote </button>
-                <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
-                sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> Comments</button>
-                <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
-                sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-share" aria-hidden="true"></span> Share</button>
-                <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
-                sagittis lacus vel augue laoreet rutrum faucibus."><span class="  glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
-              </p>
-            </div>
+        <div class="thumbnail">
+          <div class="caption">
+            <p><a href="{{ post.category.get_absolute_url }}">{{ post.category }}</a></p>
+            <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+            <p><a href="{% url 'profiles:profile_activity' id=post.user.id slug=post.user.profile.slug %}">{{ post.user.username }}</a></p>
+            <p>{{ post.content }}</p>
+            <p><a href="{{ post.get_absolute_url }}" data-toggle="tooltip" data-placement="top" title="Published {{ post.date_published }}">Edited {{ post.date_edited }}</a></p>
+            <p>
+              <button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> 0</button>
+              <button type="button" class="btn btn-link"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> 2</button>
+              <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
+              sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> Comments</button>
+              <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
+              sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-share" aria-hidden="true"></span> Share</button>
+              <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
+              sagittis lacus vel augue laoreet rutrum faucibus."><span class="  glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
+            </p>
+
           </div>
+        </div>
         {% endfor %}
 
         <ul class="pagination">

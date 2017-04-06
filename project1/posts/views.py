@@ -10,8 +10,8 @@ from .forms import PostForm
 
 
 def post_list(request):
-    posts = Post.objects.all()
     title = "Latest Posts"
+    posts = Post.objects.filter(is_draft = False)
     paginator = Paginator(posts, 5) # Show 25 contacts per page
     page = request.GET.get('page')
     try:
@@ -22,19 +22,16 @@ def post_list(request):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         current_page = paginator.page(paginator.num_pages)
-
-    print(request.user)
-    print(request.user.is_authenticated)
-
     context = {
-        "current_page":current_page,
         "title":title,
+        "current_page":current_page,
     }
 
     return render(request,"post_list.html",context)
 
 @login_required
 def post_create(request):
+    title = "Create Post"
     if request.method == "POST":
         if "publish" in request.POST:
             form = PostForm(request.POST)
@@ -42,8 +39,9 @@ def post_create(request):
                 post = form.save(commit=False)
                 post.user = request.user
                 post.is_draft = False
+                post.date_published = timezone.now()
                 post.save()
-                messages.success(request, 'Post created.')
+                messages.success(request, "Post created.")
                 return redirect(post)
         elif "save_draft" in request.POST:
             form = PostForm(request.POST)
@@ -51,24 +49,25 @@ def post_create(request):
                 post = form.save(commit=False)
                 post.user = request.user
                 post.save()
-                messages.success(request, 'Draft created.')
-                return redirect('profiles:profile_drafts', id=request.user.id, slug=request.user.profile.slug )
+                messages.success(request, "Draft created.")
+                return redirect("profiles:profile_drafts", id=request.user.id, slug=request.user.profile.slug )
 
     else:
         form = PostForm()
     context = {
+        "title":title,
         "form":form,
     }
     return render(request,"post_create.html",context)
 
 @login_required
-def post_update(request,id,slug):
+def post_edit(request,id,slug):
     post = get_object_or_404(Post, id=id)
-    title = "Update Draft"
-    button_text = "Update Draft"
+    title = "Edit Draft"
+    button_text = "Edit Draft"
     if post.is_draft == False:
-        title = "Update Post"
-        button_text = "Update Post"
+        title = "Edit Post"
+        button_text = "Edit Post"
 
     if request.method == "POST":
         form = PostForm(request.POST,instance=post)
@@ -76,12 +75,11 @@ def post_update(request,id,slug):
             post = form.save(commit=False)
             if post.is_draft == True:
                 post.save()
-                messages.success(request, 'Draft updated.')
-                # return redirect('profiles:profile_drafts', id=request.user.id, slug=request.user.profile.slug )
-                return redirect('posts:post_update', id=post.id, slug=post.slug )
+                messages.success(request, "Draft edited.")
+                return redirect("posts:post_edit", id=post.id, slug=post.slug )
             else:
                 post.save()
-                messages.success(request, 'Post updated.')
+                messages.success(request, "Post edited.")
                 return redirect(post)
     else:
         form = PostForm(instance=post)
@@ -91,22 +89,19 @@ def post_update(request,id,slug):
         "button_text":button_text,
         "form":form,
     }
-    return render(request,"post_update.html",context)
+    return render(request,"post_edit.html",context)
 
 @login_required
 def post_delete(request,id,slug):
     post = get_object_or_404(Post, id=id)
-    # title = "Delete Draft"
-    # if post.is_draft == False:
-    #     title = "Delete Post"
     if post.is_draft == True:
         post.delete()
-        messages.success(request, 'Draft deleted')
-        return redirect('profiles:profile_drafts', id=request.user.id, slug=request.user.profile.slug )
+        messages.success(request, "Draft deleted")
+        return redirect("profiles:profile_drafts", id=request.user.id, slug=request.user.profile.slug )
     else:
         post.delete()
         messages.success(request, 'Post deleted')
-        return redirect('profiles:profile_posts', id=request.user.id, slug=request.user.profile.slug )
+        return redirect("profiles:profile_posts", id=request.user.id, slug=request.user.profile.slug )
 
 
 def post_detail(request,id,slug):
@@ -124,5 +119,5 @@ def post_publish(request,id,slug):
         post.is_draft = False
         post.date_published = timezone.now()
         post.save()
-        messages.success(request, 'Draft published')
-        return redirect('profiles:profile_drafts', id=request.user.id, slug=request.user.profile.slug )
+        messages.success(request, "Draft published.")
+        return redirect("profiles:profile_drafts", id=request.user.id, slug=request.user.profile.slug )

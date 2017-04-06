@@ -1,67 +1,69 @@
 {% extends "base.html" %}
 {% load widget_tweaks %}
 
-{% block title %}create post{% endblock title %}
+{% block title %}{{ title }}{% endblock title %}
 
 {% block body %}
 <section >
   <div class='container'>
     <div class='row'>
-
       <div class='col-md-6 col-md-offset-3'>
-        <h2>Create Post</h2>
-        <form method="post">
-          {% csrf_token %}
 
-          {% if form.non_field_errors %}
-          <div class="alert alert-danger" role="alert">
-            {{ form.non_field_errors }}
-          </div>
-          {% endif %}
+        <div class="page-header">
+          <h2>{{title}}</h2>
+        </div>
 
-          <div class="form-group">
-            {{ form.title|add_class:"form-control"|attr:"autofocus"|attr:"placeholder:Title" }}
-            {% if form.title.errors %}
+        <div>
+          <form method="post">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
             <div class="alert alert-danger" role="alert">
-              {{ form.title.errors }}
+              {{ form.non_field_errors }}
             </div>
             {% endif %}
-            {% if form.title.help_text %}
-            <p class="help-block">{{ form.title.help_text|safe }}</p>
-            {% endif %}
-          </div>
 
-          <div class="form-group">
-            {{ form.content|add_class:"form-control"|attr:"placeholder:Content" }}
-            {% if form.content.errors %}
-            <div class="alert alert-danger" role="alert">
-              {{ form.content.errors }}
+            <div class="form-group">
+              {{ form.title|add_class:"form-control"|attr:"autofocus"|attr:"placeholder:Title" }}
+              {% if form.title.errors %}
+              <div class="alert alert-danger" role="alert">
+                {{ form.title.errors }}
+              </div>
+              {% endif %}
+              {% if form.title.help_text %}
+              <p class="help-block">{{ form.title.help_text|safe }}</p>
+              {% endif %}
             </div>
-            {% endif %}
-            {% if form.content.help_text %}
-            <p class="help-block">{{ form.content.help_text|safe }}</p>
-            {% endif %}
-          </div>
 
-          <div class="form-group">
-            {{ form.category|add_class:"form-control"|attr:"placeholder:Content" }}
-            {% if form.category.errors %}
-            <div class="alert alert-danger" role="alert">
-              {{ form.category.errors }}
+            <div class="form-group">
+              {{ form.content|add_class:"form-control"|attr:"placeholder:Content" }}
+              {% if form.content.errors %}
+              <div class="alert alert-danger" role="alert">
+                {{ form.content.errors }}
+              </div>
+              {% endif %}
+              {% if form.content.help_text %}
+              <p class="help-block">{{ form.content.help_text|safe }}</p>
+              {% endif %}
             </div>
-            {% endif %}
-            {% if form.category.help_text %}
-            <p class="help-block">{{ form.category.help_text|safe }}</p>
-            {% endif %}
-          </div>
 
+            <div class="form-group">
+              {{ form.category|add_class:"form-control"|attr:"placeholder:Content" }}
+              {% if form.category.errors %}
+              <div class="alert alert-danger" role="alert">
+                {{ form.category.errors }}
+              </div>
+              {% endif %}
+              {% if form.category.help_text %}
+              <p class="help-block">{{ form.category.help_text|safe }}</p>
+              {% endif %}
+            </div>
 
-
-          <button type="submit" name="publish" class="btn btn-primary">Publish</button>
-          <button type="submit" name="save_draft" class="btn btn-primary">Save Draft</button>
-        </form>
+            <button type="submit" name="publish" class="btn btn-primary">Publish</button>
+            <button type="submit" name="save_draft" class="btn btn-primary">Save Draft</button>
+          </form>
+        </div>
       </div>
-
     </div>
   </div>
 </section>

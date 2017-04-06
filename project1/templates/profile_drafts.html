@@ -1,13 +1,13 @@
 {% extends "profile_posts_base.html" %}
 
-{% block title %}{{ request.user.username}}'s Drafts{% endblock title %}
+{% block title %}{{ user }}'s {{ title }}{% endblock title %}
 
 {% block drafts %}
 <div>
   <!-- Nav tabs -->
   <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation"><a href="{% url 'profiles:profile_posts' id=request.user.id slug=request.user.profile.slug  %}" aria-controls="profile" role="tab" >Posts</a></li>
-    <li role="presentation" class="active"><a href="{% url 'profiles:profile_drafts' id=request.user.id slug=request.user.profile.slug  %}" aria-controls="home" role="tab" >Drafts</a></li>
+    <li role="presentation"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" aria-controls="profile" role="tab" >Posts</a></li>
+    <li role="presentation" class="active"><a href="{% url 'profiles:profile_drafts' id=user.id slug=user.profile.slug  %}" aria-controls="home" role="tab" >Drafts</a></li>
   </ul>
 
   <!-- Tab panes -->
@@ -26,12 +26,6 @@
         </div>
       </div>
 
-
-      {% if no_drafts %}
-      <div>
-        <p>There are no drafts.</p>
-      </div>
-      {% else %}
       {% if messages %}
       <div class="alert alert-success" role="alert">
         <ul class="messages">
@@ -41,26 +35,30 @@
         </ul>
       </div>
       {% endif %}
+
+      {% if no_drafts %}
+      <div>
+        <p>There are no drafts.</p>
+      </div>
+      {% else %}
+
       {% for draft in current_page %}
       <div class="thumbnail">
         <div class="caption">
           <p><a href="{{ draft.category.get_absolute_url }}">{{ draft.category }}</a></p>
-          <h3><a href="{% url 'posts:post_update' id=draft.id slug=draft.slug %}">{{ draft.title }}</a></h3>
-          <p><a href="#">{{ draft.user }}</a></p>
-          <p>{{ draft.date_created|timesince }}</p>
-          <p>{{ draft.date_created}}</p>
-          <p>{{ draft.date_edited}}</p>
-          <p>{{ draft.date_published}}</p>
+          <h3><a href="{% url 'posts:post_edit' id=draft.id slug=draft.slug %}">{{ draft.title }}</a></h3>
+          <p><a href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug %}">{{ draft.user.username }}</a></p>
           <p>{{ draft.content }}</p>
+          <p><a href="{% url 'posts:post_edit' id=draft.id slug=draft.slug %}">Edited {{ draft.date_edited}}</a></p>
           <p>
-            <a class="btn btn-link" href="{% url 'posts:post_update' id=draft.id slug=draft.slug %}">Edit</a>
+            <a href="{% url 'posts:post_edit' id=draft.id slug=draft.slug %}">Edit</a>
             <!-- Button trigger modal -->
-            <button type="button" class="btn btn-link" data-toggle="modal" data-target="#myModal{{draft.id}}">Delete</button>
+            <a href="#" role="button" data-toggle="modal" data-target="#myModal{{ draft.id }}">Delete</a>
             <!-- Button trigger modal -->
-            <button type="button" class="btn btn-link" data-toggle="modal" data-target="#myModal2{{draft.id}}">Publish</button>
+            <a href="#" role="button" data-toggle="modal" data-target="#myModal2{{ draft.id }}">Publish</a>
 
             <!-- Modal -->
-            <div class="modal fade" id="myModal{{draft.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal fade" id="myModal{{ draft.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
@@ -78,7 +76,7 @@
               </div>
             </div>
             <!-- Modal -->
-            <div class="modal fade" id="myModal2{{draft.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal fade" id="myModal2{{ draft.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header">

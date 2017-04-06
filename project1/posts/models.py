@@ -35,4 +35,4 @@ class Post(models.Model):
         return reverse("posts:post_detail", kwargs={"id": self.id, "slug": self.slug})
 
     class Meta:
-        ordering = ["-date_created"]
+        ordering = ["-date_published"]

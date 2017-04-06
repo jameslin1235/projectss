@@ -1,16 +1,16 @@
 {% extends "profile_base.html" %}
 
-{% block title %}{{ request.user.username}}'s Activity{% endblock title %}
+{% block title %}{{ user }}'s {{ title }}{% endblock title %}
 
 {% block nav-tabs %}
 <!-- Nav tabs -->
 <ul class="nav nav-tabs" role="tablist">
-  <li role="presentation" class="active" ><a href="{% url 'profiles:profile_activity' id=request.user.id slug=request.user.profile.slug  %}" role="tab" >Activity</a></li>
-  <li role="presentation"><a href="{% url 'profiles:profile_posts' id=request.user.id slug=request.user.profile.slug  %}" role="tab">Posts <span>{{posts_count}}</span></a></li>
-  <li role="presentation"><a href="{% url 'profiles:profile_comments' id=request.user.id slug=request.user.profile.slug  %}" role="tab">Comments</a></li>
-  <li role="presentation"><a href="{% url 'profiles:profile_bookmarks' id=request.user.id slug=request.user.profile.slug  %}" role="tab">Bookmark</a></li>
-  <li role="presentation"><a href="{% url 'profiles:profile_following' id=request.user.id slug=request.user.profile.slug  %}" role="tab">Following</a></li>
-  <li role="presentation"><a href="{% url 'profiles:profile_followers' id=request.user.id slug=request.user.profile.slug  %}" role="tab">Followers</a></li>
+  <li role="presentation" class="active" ><a href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug  %}" role="tab" >Activity</a></li>
+  <li role="presentation"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" role="tab">Posts</a></li>
+  <li role="presentation"><a href="{% url 'profiles:profile_comments' id=user.id slug=user.profile.slug  %}" role="tab">Comments</a></li>
+  <li role="presentation"><a href="{% url 'profiles:profile_bookmarks' id=user.id slug=user.profile.slug  %}" role="tab">Bookmark</a></li>
+  <li role="presentation"><a href="{% url 'profiles:profile_following' id=user.id slug=user.profile.slug  %}" role="tab">Following</a></li>
+  <li role="presentation"><a href="{% url 'profiles:profile_followers' id=user.id slug=user.profile.slug  %}" role="tab">Followers</a></li>
 </ul>
 
 {% endblock nav-tabs %}

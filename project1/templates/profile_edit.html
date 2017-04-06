@@ -1,48 +1,15 @@
-{% extends "base.html" %}
+{% extends "profile_base.html" %}
 {% load widget_tweaks %}
 
-{% block title %}update post{% endblock title %}
+{% block title %}edit profile{% endblock title %}
 
 {% block body %}
-
-<!-- <form method="post">{% csrf_token %}
-{{ form.as_p }}
-<input type='submit' value='Update Post'>
-</form> -->
-
-<!-- {% if messages %}
 <section >
   <div class='container'>
     <div class='row'>
 
-      <div class="alert alert-success" role="alert">
-        <ul class="messages">
-          {% for message in messages %}
-          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-          {% endfor %}
-        </ul>
-
-      </div>
-    </div>
-  </div>
-</section>
-{% endif %} -->
-
-<section >
-  <div class='container'>
-    <div class='row'>
-
-      <div class='col-lg-6 col-md-offset-3'>
-        {% if messages %}
-        <div class="alert alert-success" role="alert">
-          <ul class="messages">
-            {% for message in messages %}
-            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-          </ul>
-        </div>
-        {% endif %}
-        <h2>{{ title }}</h2>
+      <div class='col-md-6 col-md-offset-3'>
+        <h2>Create Post</h2>
         <form method="post">
           {% csrf_token %}
 
@@ -90,13 +57,13 @@
 
 
 
-
-
-          <button type="submit" class="btn btn-primary">{{ button_text }}</button>
+          <button type="submit" name="publish" class="btn btn-primary">Publish</button>
+          <button type="submit" name="save_draft" class="btn btn-primary">Save Draft</button>
         </form>
       </div>
 
     </div>
   </div>
 </section>
+<!-- <a href="{% url 'login' %}?next=/posts/create/"><li>Test link</li></a> -->
 {% endblock body %}

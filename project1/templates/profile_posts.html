@@ -1,13 +1,13 @@
 {% extends "profile_posts_base.html" %}
 
-{% block title %}{{ request.user.username}}'s {{title}}{% endblock title %}
+{% block title %}{{ user }}'s {{ title }}{% endblock title %}
 
 {% block posts %}
 <div>
   <!-- Nav tabs -->
   <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active"><a href="{% url 'profiles:profile_posts' id=request.user.id slug=request.user.profile.slug  %}" aria-controls="profile" role="tab" >Posts</a></li>
-    <li role="presentation" ><a href="{% url 'profiles:profile_drafts' id=request.user.id slug=request.user.profile.slug  %}" aria-controls="home" role="tab" >Drafts</a></li>
+    <li role="presentation" class="active"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" aria-controls="profile" role="tab" >Posts</a></li>
+    <li role="presentation" ><a href="{% url 'profiles:profile_drafts' id=user.id slug=user.profile.slug  %}" aria-controls="home" role="tab" >Drafts</a></li>
   </ul>
 
   <!-- Tab panes -->
@@ -24,11 +24,6 @@
         </div>
       </div>
 
-      {% if no_posts %}
-      <div>
-        <p>There are no posts.</p>
-      </div>
-      {% else %}
       {% if messages %}
       <div class="alert alert-success" role="alert">
         <ul class="messages">
@@ -38,19 +33,24 @@
         </ul>
       </div>
       {% endif %}
+
+      {% if no_posts %}
+      <div>
+        <p>There are no posts.</p>
+      </div>
+      {% else %}
+
       {% for post in current_page %}
       <div class="thumbnail">
         <div class="caption">
           <p><a href="{{ post.category.get_absolute_url }}">{{ post.category }}</a></p>
           <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
-          <p><a href="{% url 'profiles:profile_activity' id=request.user.id slug=request.user.profile.slug %}">{{ post.user }}</a></p>
-          <!-- <p>{{ post.date_created|timesince }}</p> -->
+          <p><a href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug %}">{{ post.user.username }}</a></p>
           <p>{{ post.content }}</p>
-          <p><a href="{{ post.get_absolute_url }}" data-toggle="tooltip" data-placement="top" title="Published {{post.date_published}}">Edited {{ post.date_edited}}</a></p>
-
+          <p><a href="{{ post.get_absolute_url }}" data-toggle="tooltip" data-placement="top" title="Published {{ post.date_published }}">Edited {{ post.date_edited }}</a></p>
           <p>
-            <button type="button" class="btn btn-info"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> Upvote</button>
-            <button type="button" class="btn btn-link"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> Downvote </button>
+            <button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> 0</button>
+            <button type="button" class="btn btn-link"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> 2</button>
             <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
             sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> Comments</button>
             <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
@@ -59,19 +59,20 @@
             sagittis lacus vel augue laoreet rutrum faucibus."><span class="  glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
           </p>
           <p>
-            <a href="{% url 'posts:post_update' id=post.id slug=post.slug %}">Edit</a>
+            
+            <a href="{% url 'posts:post_edit' id=post.id slug=post.slug %}">Edit</a>
             <!-- Button trigger modal -->
-            <button type="button" class="btn btn-link"  data-toggle="modal" data-target="#myModal{{post.id}}">Delete</button>
+            <a href="#" role="button" data-toggle="modal" data-target="#myModal{{ post.id }}">Delete</a>
             <!-- Modal -->
-            <div class="modal fade" id="myModal{{post.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal fade" id="myModal{{ post.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">Delete Draft</h4>
+                    <h4 class="modal-title" id="myModalLabel">Delete Post</h4>
                   </div>
                   <div class="modal-body">
-                    <p>Are you sure you wish to delete this draft?</p>
+                    <p>Are you sure you wish to delete this post?</p>
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -105,7 +106,6 @@
         {% endif %}
       </ul>
       {% endif %}
-
     </div>
     <div role="tabpanel" class="tab-pane " >
     </div>
