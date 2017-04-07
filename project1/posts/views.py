@@ -68,21 +68,26 @@ def post_edit(request,id,slug):
     if post.is_draft == False:
         title = "Edit Post"
         button_text = "Edit Post"
-
-    if request.method == "POST":
-        form = PostForm(request.POST,instance=post)
-        if form.is_valid():
-            post = form.save(commit=False)
-            if post.is_draft == True:
-                post.save()
-                messages.success(request, "Draft edited.")
-                return redirect("posts:post_edit", id=post.id, slug=post.slug )
-            else:
-                post.save()
-                messages.success(request, "Post edited.")
-                return redirect(post)
+    user = post.user
+    current_user = request.user
+    if user != current_user:
+        messages.warning(request, "You cannot edit %s by %s." % (post.title, user), extra_tags='danger')
+        return redirect("posts:post_detail", id=id, slug=slug)
     else:
-        form = PostForm(instance=post)
+        if request.method == "POST":
+            form = PostForm(request.POST,instance=post)
+            if form.is_valid():
+                post = form.save(commit=False)
+                if post.is_draft == True:
+                    post.save()
+                    messages.success(request, "Draft edited.")
+                    return redirect("posts:post_edit", id=id, slug=slug )
+                else:
+                    post.save()
+                    messages.success(request, "Post edited.")
+                    return redirect(post)
+        else:
+              form = PostForm(instance=post)
 
     context = {
         "title":title,
@@ -94,14 +99,20 @@ def post_edit(request,id,slug):
 @login_required
 def post_delete(request,id,slug):
     post = get_object_or_404(Post, id=id)
-    if post.is_draft == True:
-        post.delete()
-        messages.success(request, "Draft deleted")
-        return redirect("profiles:profile_drafts", id=request.user.id, slug=request.user.profile.slug )
+    user = post.user
+    current_user = request.user
+    if user != current_user:
+        messages.warning(request, "You cannot delete %s by %s." % (post.title, user), extra_tags='danger')
+        return redirect("posts:post_detail", id=id, slug=slug)
     else:
-        post.delete()
-        messages.success(request, 'Post deleted')
-        return redirect("profiles:profile_posts", id=request.user.id, slug=request.user.profile.slug )
+        if post.is_draft == True:
+            post.delete()
+            messages.success(request, "Draft deleted")
+            return redirect("profiles:profile_drafts", id=user.id, slug=user.profile.slug )
+        else:
+            post.delete()
+            messages.success(request, 'Post deleted')
+            return redirect("profiles:profile_posts", id=user.id, slug=user.profile.slug )
 
 
 def post_detail(request,id,slug):
@@ -115,9 +126,10 @@ def post_detail(request,id,slug):
 @login_required
 def post_publish(request,id,slug):
     post = get_object_or_404(Post, id=id)
-    if post:
-        post.is_draft = False
-        post.date_published = timezone.now()
-        post.save()
-        messages.success(request, "Draft published.")
-        return redirect("profiles:profile_drafts", id=request.user.id, slug=request.user.profile.slug )
+    user = post.user
+
+    post.is_draft = False
+    post.date_published = timezone.now()
+    post.save()
+    messages.success(request, "Draft published.")
+    return redirect("profiles:profile_drafts", id=user.id, slug=user.profile.slug )

@@ -132,6 +132,9 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'project1/static_root')
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'project1/media')
+
 LOGIN_REDIRECT_URL = '/posts/'
 
 LOGIN_URL = '/login/'

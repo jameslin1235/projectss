@@ -10,4 +10,5 @@ class ProfileForm(forms.ModelForm):
         "school",
         "concentration",
         "degree_type",
+        "avatar",
         ]

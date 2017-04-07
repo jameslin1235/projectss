@@ -16,7 +16,10 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth import views
+from django.conf import settings
+from django.conf.urls.static import static
 from project1.project1.posts import views as home
+
 
 urlpatterns = [
     url(r'^', include('django.contrib.auth.urls')),
@@ -29,3 +32,6 @@ urlpatterns = [
     url(r'^profile/', include("project1.project1.profiles.urls", namespace="profiles")),
 
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

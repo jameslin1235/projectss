@@ -6,6 +6,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from project1.project1.posts.models import Post
+from project1.project1.profiles.models import Profile
 from project1.project1.posts.forms import PostForm
 from .forms import ProfileForm
 
@@ -26,6 +27,10 @@ def profile_posts(request,id,slug):
     title = "Posts"
     User = get_user_model()
     user = User.objects.get(id = id)
+    current_user = request.user
+    can_edit = True
+    if current_user != user:
+        can_edit = False
     posts = Post.objects.filter(user__id = id, is_draft = False)
     posts_count = posts.count()
     no_posts = True
@@ -46,6 +51,7 @@ def profile_posts(request,id,slug):
     context = {
         "title":title,
         "user":user,
+        "can_edit":can_edit,
         "posts_count":posts_count,
         "no_posts":no_posts,
         "current_page":current_page,
@@ -59,6 +65,10 @@ def profile_drafts(request,id,slug):
     title = "Drafts"
     User = get_user_model()
     user = User.objects.get(id = id)
+    current_user = request.user
+    can_edit = True
+    if current_user != user:
+        can_edit = False
     drafts = Post.objects.filter(user__id = id, is_draft = True)
     drafts_count = drafts.count()
     no_drafts = True
@@ -79,6 +89,7 @@ def profile_drafts(request,id,slug):
     context = {
         "title":title,
         "user":user,
+        "can_edit":can_edit,
         "drafts_count":drafts_count,
         "no_drafts":no_drafts,
         "current_page":current_page,
@@ -134,36 +145,24 @@ def profile_followers(request,id,slug):
 
     return render(request,"profile_followers.html",context)
 
-def profile_edit(request):
-
-    title = "edit profile"
+def profile_edit(request,id,slug):
+    title = "Edit Profile"
+    button_text = "Edit Profile"
+    User = get_user_model()
+    user = User.objects.get(id = id)
+    profile = user.profile
     if request.method == "POST":
-        if "publish" in request.POST:
-            form = PostForm(request.POST)
-            if form.is_valid():
-                post = form.save(commit=False)
-                post.user = request.user
-                post.is_draft = False
-                post.save()
-                messages.success(request, 'Post created.')
-                return redirect(post)
-        elif "save_draft" in request.POST:
-            form = PostForm(request.POST)
-            if form.is_valid():
-                post = form.save(commit=False)
-                post.user = request.user
-                post.save()
-                messages.success(request, 'Draft created.')
-                return redirect('profiles:profile_drafts', id=request.user.id, slug=request.user.profile.slug )
-
-        else:
-            form = ProfileForm()
-
-
-
-
+        form = ProfileForm(request.POST, request.FILES, instance = profile)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.save()
+            messages.success(request, 'Profile edited.')
+            return redirect('profiles:profile_edit', id=user.id, slug=user.profile.slug )
+    else:
+        form = ProfileForm(instance = profile)
     context = {
         "title":title,
+        "button_text":button_text,
         "form":form,
     }
 

@@ -13,25 +13,24 @@ class Profile(models.Model):
     position = models.CharField(
         max_length=100,
         blank=True,
-        null=True,
     )
     company = models.CharField(
         max_length=100,
         blank=True,
-        null=True,
     )
     school = models.CharField(
         max_length=100,
         blank=True,
-        null=True,
     )
     concentration = models.CharField(
         max_length=100,
         blank=True,
-        null=True,
     )
     degree_type = models.CharField(
         max_length=100,
+        blank=True,
+    )
+    avatar = models.FileField(
         blank=True,
         null=True,
     )

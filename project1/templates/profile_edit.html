@@ -1,7 +1,7 @@
 {% extends "profile_base.html" %}
 {% load widget_tweaks %}
 
-{% block title %}edit profile{% endblock title %}
+{% block title %}{{ title }}{% endblock title %}
 
 {% block body %}
 <section >
@@ -9,8 +9,22 @@
     <div class='row'>
 
       <div class='col-md-6 col-md-offset-3'>
-        <h2>Create Post</h2>
-        <form method="post">
+        <div class="section">
+        {% if messages %}
+        <div class="alert alert-success" role="alert">
+          <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+
+        <div class="page-header">
+          <h2>{{title}}</h2>
+        </div>
+
+        <form method="post" enctype="multipart/form-data">
           {% csrf_token %}
 
           {% if form.non_field_errors %}
@@ -20,48 +34,84 @@
           {% endif %}
 
           <div class="form-group">
-            {{ form.title|add_class:"form-control"|attr:"autofocus"|attr:"placeholder:Title" }}
-            {% if form.title.errors %}
+            {{ form.position|add_class:"form-control"|attr:"autofocus"|attr:"placeholder:Position" }}
+            {% if form.position.errors %}
             <div class="alert alert-danger" role="alert">
-              {{ form.title.errors }}
+              {{ form.position.errors }}
             </div>
             {% endif %}
-            {% if form.title.help_text %}
-            <p class="help-block">{{ form.title.help_text|safe }}</p>
+            {% if form.position.help_text %}
+            <p class="help-block">{{ form.position.help_text|safe }}</p>
             {% endif %}
           </div>
 
           <div class="form-group">
-            {{ form.content|add_class:"form-control"|attr:"placeholder:Content" }}
-            {% if form.content.errors %}
+            {{ form.company|add_class:"form-control"|attr:"placeholder:Company" }}
+            {% if form.company.errors %}
             <div class="alert alert-danger" role="alert">
-              {{ form.content.errors }}
+              {{ form.company.errors }}
             </div>
             {% endif %}
-            {% if form.content.help_text %}
-            <p class="help-block">{{ form.content.help_text|safe }}</p>
+            {% if form.company.help_text %}
+            <p class="help-block">{{ form.company.help_text|safe }}</p>
             {% endif %}
           </div>
 
           <div class="form-group">
-            {{ form.category|add_class:"form-control"|attr:"placeholder:Content" }}
-            {% if form.category.errors %}
+            {{ form.school|add_class:"form-control"|attr:"placeholder:School" }}
+            {% if form.school.errors %}
             <div class="alert alert-danger" role="alert">
-              {{ form.category.errors }}
+              {{ form.school.errors }}
             </div>
             {% endif %}
-            {% if form.category.help_text %}
-            <p class="help-block">{{ form.category.help_text|safe }}</p>
+            {% if form.school.help_text %}
+            <p class="help-block">{{ form.school.help_text|safe }}</p>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            {{ form.concentration|add_class:"form-control"|attr:"placeholder:Concentration" }}
+            {% if form.concentration.errors %}
+            <div class="alert alert-danger" role="alert">
+              {{ form.concentration.errors }}
+            </div>
+            {% endif %}
+            {% if form.concentration.help_text %}
+            <p class="help-block">{{ form.concentration.help_text|safe }}</p>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            {{ form.degree_type|add_class:"form-control"|attr:"placeholder:Degree_type" }}
+            {% if form.degree_type.errors %}
+            <div class="alert alert-danger" role="alert">
+              {{ form.degree_type.errors }}
+            </div>
+            {% endif %}
+            {% if form.degree_type.help_text %}
+            <p class="help-block">{{ form.degree_type.help_text|safe }}</p>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            {{ form.avatar|add_class:"form-control"|attr:"placeholder:Avatar" }}
+            {% if form.avatar.errors %}
+            <div class="alert alert-danger" role="alert">
+              {{ form.avatar.errors }}
+            </div>
+            {% endif %}
+            {% if form.avatar.help_text %}
+            <p class="help-block">{{ form.avatar.help_text|safe }}</p>
             {% endif %}
           </div>
 
 
 
-          <button type="submit" name="publish" class="btn btn-primary">Publish</button>
-          <button type="submit" name="save_draft" class="btn btn-primary">Save Draft</button>
+          <button type="submit" class="btn btn-primary">{{ button_text }}</button>
+
         </form>
       </div>
-
+    </div>
     </div>
   </div>
 </section>

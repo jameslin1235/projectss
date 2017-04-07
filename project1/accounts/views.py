@@ -4,6 +4,8 @@ from .forms import RegisterForm
 # Create your views here.
 
 def register(request):
+    title = "Register"
+    button_text = "Register"
     if request.method == "POST":
         form = RegisterForm(request.POST)
 
@@ -20,6 +22,8 @@ def register(request):
         form = RegisterForm()
 
     context = {
+        "title":title,
+        "button_text":button_text,
         "form":form,
     }
 
