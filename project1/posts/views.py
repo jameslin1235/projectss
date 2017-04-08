@@ -8,7 +8,6 @@ from .models import Post
 from .forms import PostForm
 # Create your views here.
 
-
 def post_list(request):
     title = "Latest Posts"
     posts = Post.objects.filter(is_draft = False)
@@ -33,7 +32,15 @@ def post_list(request):
 def post_create(request):
     title = "Create Post"
     if request.method == "POST":
-        if "publish" in request.POST:
+        if "save_draft" in request.POST:
+            form = PostForm(request.POST)
+            if form.is_valid():
+                post = form.save(commit=False)
+                post.user = request.user
+                post.save()
+                messages.success(request, "Draft created.")
+                return redirect("profiles:profile_drafts", id=request.user.id, slug=request.user.profile.slug )
+        elif "publish" in request.POST:
             form = PostForm(request.POST)
             if form.is_valid():
                 post = form.save(commit=False)
@@ -43,15 +50,6 @@ def post_create(request):
                 post.save()
                 messages.success(request, "Post created.")
                 return redirect(post)
-        elif "save_draft" in request.POST:
-            form = PostForm(request.POST)
-            if form.is_valid():
-                post = form.save(commit=False)
-                post.user = request.user
-                post.save()
-                messages.success(request, "Draft created.")
-                return redirect("profiles:profile_drafts", id=request.user.id, slug=request.user.profile.slug )
-
     else:
         form = PostForm()
     context = {
@@ -63,16 +61,16 @@ def post_create(request):
 @login_required
 def post_edit(request,id,slug):
     post = get_object_or_404(Post, id=id)
-    title = "Edit Draft"
-    button_text = "Edit Draft"
-    if post.is_draft == False:
+    if post.is_draft == True:
+        title = "Edit Draft"
+        button_text = "Edit Draft"
+    else:
         title = "Edit Post"
         button_text = "Edit Post"
     user = post.user
     current_user = request.user
-    if user != current_user:
-        messages.warning(request, "You cannot edit %s by %s." % (post.title, user), extra_tags='danger')
-        return redirect("posts:post_detail", id=id, slug=slug)
+    if current_user != user:
+        return redirect("posts:post_404")
     else:
         if request.method == "POST":
             form = PostForm(request.POST,instance=post)
@@ -87,8 +85,7 @@ def post_edit(request,id,slug):
                     messages.success(request, "Post edited.")
                     return redirect(post)
         else:
-              form = PostForm(instance=post)
-
+            form = PostForm(instance=post)
     context = {
         "title":title,
         "button_text":button_text,
@@ -101,22 +98,22 @@ def post_delete(request,id,slug):
     post = get_object_or_404(Post, id=id)
     user = post.user
     current_user = request.user
-    if user != current_user:
-        messages.warning(request, "You cannot delete %s by %s." % (post.title, user), extra_tags='danger')
-        return redirect("posts:post_detail", id=id, slug=slug)
+    if current_user != user:
+        return redirect("posts:post_404")
     else:
         if post.is_draft == True:
             post.delete()
-            messages.success(request, "Draft deleted")
+            messages.success(request, "Draft deleted.")
             return redirect("profiles:profile_drafts", id=user.id, slug=user.profile.slug )
         else:
             post.delete()
-            messages.success(request, 'Post deleted')
+            messages.success(request, 'Post deleted.')
             return redirect("profiles:profile_posts", id=user.id, slug=user.profile.slug )
-
 
 def post_detail(request,id,slug):
     post = get_object_or_404(Post, id=id)
+    if post.is_draft == True:
+        return redirect("posts:post_404")
     context = {
         "post":post,
     }
@@ -127,9 +124,20 @@ def post_detail(request,id,slug):
 def post_publish(request,id,slug):
     post = get_object_or_404(Post, id=id)
     user = post.user
+    current_user = request.user
+    if current_user != user:
+        return redirect("posts:post_404")
+    else:
+        post.is_draft = False
+        post.date_published = timezone.now()
+        post.save()
+        messages.success(request, "Draft published.")
+        return redirect("profiles:profile_drafts", id=user.id, slug=user.profile.slug )
 
-    post.is_draft = False
-    post.date_published = timezone.now()
-    post.save()
-    messages.success(request, "Draft published.")
-    return redirect("profiles:profile_drafts", id=user.id, slug=user.profile.slug )
+@login_required
+def post_404(request):
+    title = "404 page"
+    context = {
+        "title":title,
+    }
+    return render(request,"404.html",context)

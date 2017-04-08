@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
 
     url(r'^$', views.post_list, name='post_list'),
+    url(r'^404/$', views.post_404, name='post_404'),
     url(r'^create/$', views.post_create, name='post_create'),
     url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/edit/$', views.post_edit,name='post_edit'),
     url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/delete/$', views.post_delete, name='post_delete'),

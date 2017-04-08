@@ -7,7 +7,9 @@
   <!-- Nav tabs -->
   <ul class="nav nav-tabs" role="tablist">
     <li role="presentation" class="active"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" aria-controls="profile" role="tab" >Posts</a></li>
+    {% if not_user == False %}
     <li role="presentation" ><a href="{% url 'profiles:profile_drafts' id=user.id slug=user.profile.slug  %}" aria-controls="home" role="tab" >Drafts</a></li>
+    {% endif %}
   </ul>
 
   <!-- Tab panes -->
@@ -26,14 +28,14 @@
         </div>
       </div>
 
+
       {% if messages %}
-      <div class="alert alert-success" role="alert">
-        <ul class="messages">
-          {% for message in messages %}
-          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-          {% endfor %}
-        </ul>
+      {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <strong>{{ message }}</strong>
       </div>
+      {% endfor %}
       {% endif %}
 
       {% if no_posts %}
@@ -110,8 +112,10 @@
       </ul>
       {% endif %}
     </div>
+    {% if not_user == False %}
     <div role="tabpanel" class="tab-pane " >
     </div>
+    {% endif %}
   </div>
 </div>
 {% endblock posts %}

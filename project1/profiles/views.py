@@ -22,14 +22,16 @@ def profile_activity(request,id,slug):
 
     return render(request,"profile_activity.html",context)
 
-
+@login_required
 def profile_posts(request,id,slug):
     title = "Posts"
     User = get_user_model()
     user = User.objects.get(id = id)
     current_user = request.user
+    not_user = False
     can_edit = True
     if current_user != user:
+        not_user = True
         can_edit = False
     posts = Post.objects.filter(user__id = id, is_draft = False)
     posts_count = posts.count()
@@ -51,6 +53,7 @@ def profile_posts(request,id,slug):
     context = {
         "title":title,
         "user":user,
+        "not_user":not_user,
         "can_edit":can_edit,
         "posts_count":posts_count,
         "no_posts":no_posts,
@@ -59,16 +62,15 @@ def profile_posts(request,id,slug):
 
     return render(request,"profile_posts.html",context)
 
-
-
+@login_required
 def profile_drafts(request,id,slug):
     title = "Drafts"
     User = get_user_model()
     user = User.objects.get(id = id)
     current_user = request.user
-    can_edit = True
+    not_user = False
     if current_user != user:
-        can_edit = False
+        not_user = True
     drafts = Post.objects.filter(user__id = id, is_draft = True)
     drafts_count = drafts.count()
     no_drafts = True
@@ -89,7 +91,7 @@ def profile_drafts(request,id,slug):
     context = {
         "title":title,
         "user":user,
-        "can_edit":can_edit,
+        "not_user":not_user,
         "drafts_count":drafts_count,
         "no_drafts":no_drafts,
         "current_page":current_page,
@@ -145,25 +147,29 @@ def profile_followers(request,id,slug):
 
     return render(request,"profile_followers.html",context)
 
+@login_required
 def profile_edit(request,id,slug):
     title = "Edit Profile"
     button_text = "Edit Profile"
     User = get_user_model()
     user = User.objects.get(id = id)
     profile = user.profile
-    if request.method == "POST":
-        form = ProfileForm(request.POST, request.FILES, instance = profile)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.save()
-            messages.success(request, 'Profile edited.')
-            return redirect('profiles:profile_edit', id=user.id, slug=user.profile.slug )
+    current_user = request.user
+    if current_user != user:
+        return redirect("posts:post_404")
     else:
-        form = ProfileForm(instance = profile)
+        if request.method == "POST":
+            form = ProfileForm(request.POST, request.FILES, instance = profile)
+            if form.is_valid():
+                post = form.save(commit=False)
+                post.save()
+                messages.success(request, 'Profile edited.')
+                return redirect('profiles:profile_edit', id=user.id, slug=user.profile.slug )
+        else:
+            form = ProfileForm(instance = profile)
     context = {
         "title":title,
         "button_text":button_text,
         "form":form,
     }
-
     return render(request,"profile_edit.html",context)
