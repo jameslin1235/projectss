@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load widget_tweaks %}
 
 {% block title %}{{ post.title }}{% endblock title %}
 
@@ -6,38 +7,97 @@
 <section >
   <div class='container'>
     <div class="row">
+
       <div class="col-md-12">
-        {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible" role="alert">
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <strong>{{ message }}</strong>
-        </div>
-        {% endfor %}
-        {% endif %}
+        <div class="section">
+          {% if messages %}
+          {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <strong>{{ message }}</strong>
+          </div>
+          {% endfor %}
+          {% endif %}
 
-        <div class="thumbnail">
-          <div class="caption">
-            <p><a href="{{ post.category.get_absolute_url }}">{{ post.category }}</a></p>
-            <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
-            <p><a href="{% url 'profiles:profile_activity' id=post.user.id slug=post.user.profile.slug %}">{{ post.user.username }}</a></p>
-            <p>{{ post.content }}</p>
-            <p><a href="{{ post.get_absolute_url }}" data-toggle="tooltip" data-placement="top" title="Published {{ post.date_published }}">Edited {{ post.date_edited }}</a></p>
-            <p>
-              <button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> 0</button>
-              <button type="button" class="btn btn-link"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> 2</button>
-              <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
-              sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> Comments</button>
-              <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
-              sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-share" aria-hidden="true"></span> Share</button>
-              <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
-              sagittis lacus vel augue laoreet rutrum faucibus."><span class="  glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
-            </p>
+          <div class="thumbnail thumbnail_detail">
+            <div class="caption">
+              <p><a href="{{ post.category.get_absolute_url }}">{{ post.category }}</a></p>
+              <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+              <p><a href="{% url 'profiles:profile_activity' id=post.user.id slug=post.user.profile.slug %}">{{ post.user.username }}</a></p>
+              <p>{{ post.content }}</p>
+              <p><a href="{{ post.get_absolute_url }}" data-toggle="tooltip" data-placement="top" title="Published {{ post.date_published }}">Edited {{ post.date_edited }}</a></p>
+              <p>
+                <button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> 0</button>
+                <button type="button" class="btn btn-link"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> 2</button>
+                <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
+                sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> Comments</button>
+                <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
+                sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-share" aria-hidden="true"></span> Share</button>
+                <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
+                sagittis lacus vel augue laoreet rutrum faucibus."><span class="  glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
+              </p>
 
+            </div>
           </div>
         </div>
       </div>
     </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="section">
+          <div class="page-header">
+            <h4>{{ comment_title }}</h4>
+          </div>
+          <form method="post">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger" role="alert">
+              {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
+            <div class="form-group">
+              {{ form.content|add_class:"form-control"|attr:"autofocus"|attr:"placeholder:Content"|attr:"rows:5" }}
+              {% if form.content.errors %}
+              <div class="alert alert-danger" role="alert">
+                {{ form.content.errors }}
+              </div>
+              {% endif %}
+              {% if form.content.help_text %}
+              <p class="help-block">{{ form.content.help_text|safe }}</p>
+              {% endif %}
+            </div>
+
+
+            <button {% if not_logged_in == False %}type="submit"{% endif %} name="publish" class="btn btn-primary" {% if not_logged_in %}data-toggle="modal" data-target="#myModal"{% endif %}>{{ comment_button_text }}</button>
+            <!-- Button trigger modal -->
+
+
+            <!-- Modal -->
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Login</h4>
+                  </div>
+                  <div class="modal-body">
+
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <a class="btn btn-default" href="{% url 'login' %}">Confirm</a>
+                    <!-- <button type="button" class="btn btn-primary">Login</button> -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   </div>
+</div>
 </section>
 {% endblock body %}

@@ -16,3 +16,8 @@ body {
 #profile_base_username{
   margin-top: 0;
 }
+
+.thumbnail_detail{
+
+  border: 0;
+}

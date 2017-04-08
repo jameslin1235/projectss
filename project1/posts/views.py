@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from .models import Post
 from .forms import PostForm
+from project1.project1.comments.forms import CommentForm
 # Create your views here.
 
 def post_list(request):
@@ -111,11 +112,32 @@ def post_delete(request,id,slug):
             return redirect("profiles:profile_posts", id=user.id, slug=user.profile.slug )
 
 def post_detail(request,id,slug):
+    comment_title = "Comment"
+    comment_button_text = "Comment"
     post = get_object_or_404(Post, id=id)
     if post.is_draft == True:
         return redirect("posts:post_404")
+    not_logged_in = False
+    if not request.user.is_authenticated:
+        not_logged_in = True
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user
+            comment.post = post
+            comment.save()
+            messages.success(request, "Comment created.")
+            return redirect(post)
+    else:
+        form = CommentForm()
+
     context = {
+        "comment_title":comment_title,
+        "comment_button_text":comment_button_text,
         "post":post,
+        "not_logged_in":not_logged_in,
+        "form":form,
     }
 
     return render(request,"post_detail.html",context)
