@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^register/', include("project1.project1.accounts.urls", namespace="accounts") ),
     url(r'^admin/', admin.site.urls),
     url(r'^posts/', include("project1.project1.posts.urls", namespace="posts")),
+    url(r'^comments/', include("project1.project1.comments.urls", namespace="comments")),
     url(r'^categories/', include("project1.project1.categories.urls", namespace="categories")),
     url(r'^profile/', include("project1.project1.profiles.urls", namespace="profiles")),
 

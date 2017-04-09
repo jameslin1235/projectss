@@ -6,17 +6,16 @@
 <div>
   <!-- Nav tabs -->
   <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" aria-controls="profile" role="tab" >Posts</a></li>
-    {% if not_user == False %}
+    <li role="presentation" ><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" aria-controls="profile" role="tab" >Posts</a></li>
     <li role="presentation" class="active"><a href="{% url 'profiles:profile_drafts' id=user.id slug=user.profile.slug  %}" aria-controls="home" role="tab" >Drafts</a></li>
-    {% endif %}
   </ul>
 
   <!-- Tab panes -->
   <div class="tab-content">
+
     <div role="tabpanel" class="tab-pane">
     </div>
-    {% if not_user == False %}
+
     <div role="tabpanel" class="tab-pane active" >
       <div class="page-header">
         <div class="clearfix">
@@ -52,7 +51,7 @@
           <p><a href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug %}">{{ draft.user.username }}</a></p>
           <p>{{ draft.content }}</p>
           <p><a href="{% url 'posts:post_edit' id=draft.id slug=draft.slug %}">Edited {{ draft.date_edited}}</a></p>
-          {% if can_edit %}
+
           <p>
             <a href="{% url 'posts:post_edit' id=draft.id slug=draft.slug %}">Edit</a>
             <!-- Button trigger modal -->
@@ -97,7 +96,7 @@
               </div>
             </div>
           </p>
-          {% endif %}
+
         </div>
       </div>
       {% endfor %}
@@ -123,7 +122,7 @@
       </ul>
       {% endif %}
     </div>
-    {% endif %}
+
   </div>
 </div>
 {% endblock drafts %}

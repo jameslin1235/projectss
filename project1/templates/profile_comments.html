@@ -25,10 +25,90 @@
   <div role="tabpanel" class="tab-pane">
 
   </div>
+
+
   <div role="tabpanel" class="tab-pane active">
     <div class="page-header">
-      <h5>{{ title }}</h5>
+      <h5>{{comments_count}} {{ title }}</h5>
     </div>
+
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <strong>{{ message }}</strong>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    {% if no_comments %}
+    <div>
+      <p>There are no comments.</p>
+    </div>
+    {% else %}
+
+    {% for comment in current_page %}
+    <div class="media">
+      <div class="media-left">
+        <a href="{% url 'profiles:profile_activity' id=comment.user.id slug=comment.user.profile.slug %}">
+          <img class="media-object" src="{{ comment.user.profile.avatar.url }}" alt="..." width="64px" height="64px">
+        </a>
+      </div>
+      <div class="media-body">
+        <h4 class="media-heading">{{ comment.user }}</h4>
+        <p>{{ comment.content}} </p>
+        <p>{{ comment.date_created}} </p>
+        {% if is_user %}
+        <p>
+          <a href="{% url 'comments:comment_edit' id=comment.id slug=comment.slug %}">Edit</a>
+          <!-- Button trigger modal -->
+          <a href="#" role="button" data-toggle="modal" data-target="#myModal{{ comment.id }}">Delete</a>
+          <!-- Modal -->
+          <div class="modal fade" id="myModal{{ comment.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <h4 class="modal-title" id="myModalLabel">Delete Post</h4>
+                </div>
+                <div class="modal-body">
+                  <p>Are you sure you wish to delete this comment?</p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                  <a class="btn btn-default" href="{% url 'comments:comment_delete' id=comment.id slug=comment.slug %}">Confirm</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </p>
+        {% endif %}
+      </div>
+    </div>
+
+    {% endfor %}
+
+    <ul class="pagination">
+      {% if current_page.has_previous %}
+      <li><a href="?page={{ current_page.previous_page_number }}">&laquo;</a></li>
+      {% else %}
+      <li class="disabled"><span>&laquo;</span></li>
+      {% endif %}
+      {% for i in current_page.paginator.page_range %}
+      {% if current_page.number == i %}
+      <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+      <li><a href="?page={{ i }}">{{ i }}</a></li>
+      {% endif %}
+      {% endfor %}
+      {% if current_page.has_next %}
+      <li><a href="?page={{ current_page.next_page_number }}">&raquo;</a></li>
+      {% else %}
+      <li class="disabled"><span>&raquo;</span></li>
+      {% endif %}
+    </ul>
+    {% endif %}
   </div>
   <div role="tabpanel" class="tab-pane">
 

@@ -49,10 +49,16 @@
           <div class="page-header">
             <h4>{{ comments_count }} {{ comment_title }}</h4>
           </div>
+
+          {% if no_comments %}
+          <div>
+            <p>There are no comments.</p>
+          </div>
+          {% endif %}
           <div class="media">
             <div class="media-left">
               <a href="#">
-                <img class="media-object" src="" alt="..." width="64px" height="64px">
+                <img class="media-object" src="/media/profile_avatar/1.jpg" alt="..." width="64px" height="64px">
               </a>
             </div>
             <div class="media-body">
@@ -110,43 +116,41 @@
             </div>
           </div>
 
-{% for comment in current_page %}
+          {% if no_comments == False %}
+          {% for comment in current_page %}
           <div class="media">
-
-  <div class="media-left">
-    <a href="#">
-      <img class="media-object" src="{{ user.profile.avatar.url }}" alt="..." width="64px" height="64px">
-    </a>
-  </div>
-  <div class="media-body">
-    <h4 class="media-heading">{{ comment.user }}</h4>
-    <p>{{ comment.content}} </p>
-    <p>{{ comment.date_created}} </p>
-  </div>
-
-
-
-</div>
-  {% endfor %}
-  <ul class="pagination">
-    {% if current_page.has_previous %}
-    <li><a href="?page={{ current_page.previous_page_number }}">&laquo;</a></li>
-    {% else %}
-    <li class="disabled"><span>&laquo;</span></li>
-    {% endif %}
-    {% for i in current_page.paginator.page_range %}
-    {% if current_page.number == i %}
-    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
-    {% else %}
-    <li><a href="?page={{ i }}">{{ i }}</a></li>
-    {% endif %}
-    {% endfor %}
-    {% if current_page.has_next %}
-    <li><a href="?page={{ current_page.next_page_number }}">&raquo;</a></li>
-    {% else %}
-    <li class="disabled"><span>&raquo;</span></li>
-    {% endif %}
-  </ul>
+            <div class="media-left">
+              <a href="{% url 'profiles:profile_activity' id=comment.user.id slug=comment.user.profile.slug %}">
+                <img class="media-object" src="{{ comment.user.profile.avatar.url }}" alt="..." width="64px" height="64px">
+              </a>
+            </div>
+            <div class="media-body">
+              <h4 class="media-heading">{{ comment.user }}</h4>
+              <p>{{ comment.content}} </p>
+              <p>{{ comment.date_created}} </p>
+            </div>
+          </div>
+          {% endfor %}
+          <ul class="pagination">
+            {% if current_page.has_previous %}
+            <li><a href="?page={{ current_page.previous_page_number }}">&laquo;</a></li>
+            {% else %}
+            <li class="disabled"><span>&laquo;</span></li>
+            {% endif %}
+            {% for i in current_page.paginator.page_range %}
+            {% if current_page.number == i %}
+            <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+            {% else %}
+            <li><a href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+            {% endfor %}
+            {% if current_page.has_next %}
+            <li><a href="?page={{ current_page.next_page_number }}">&raquo;</a></li>
+            {% else %}
+            <li class="disabled"><span>&raquo;</span></li>
+            {% endif %}
+          </ul>
+          {% endif %}
         </div>
       </div>
     </div>

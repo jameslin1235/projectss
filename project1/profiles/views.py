@@ -6,6 +6,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from project1.project1.posts.models import Post
+from project1.project1.comments.models import Comment
 from project1.project1.profiles.models import Profile
 from project1.project1.posts.forms import PostForm
 from .forms import ProfileForm
@@ -28,11 +29,9 @@ def profile_posts(request,id,slug):
     User = get_user_model()
     user = User.objects.get(id = id)
     current_user = request.user
-    not_user = False
-    can_edit = True
+    is_user = True
     if current_user != user:
-        not_user = True
-        can_edit = False
+        is_user = False
     posts = Post.objects.filter(user__id = id, is_draft = False)
     posts_count = posts.count()
     no_posts = True
@@ -53,8 +52,7 @@ def profile_posts(request,id,slug):
     context = {
         "title":title,
         "user":user,
-        "not_user":not_user,
-        "can_edit":can_edit,
+        "is_user":is_user,
         "posts_count":posts_count,
         "no_posts":no_posts,
         "current_page":current_page,
@@ -68,9 +66,8 @@ def profile_drafts(request,id,slug):
     User = get_user_model()
     user = User.objects.get(id = id)
     current_user = request.user
-    not_user = False
     if current_user != user:
-        not_user = True
+        return redirect("posts:post_404")
     drafts = Post.objects.filter(user__id = id, is_draft = True)
     drafts_count = drafts.count()
     no_drafts = True
@@ -91,7 +88,6 @@ def profile_drafts(request,id,slug):
     context = {
         "title":title,
         "user":user,
-        "not_user":not_user,
         "drafts_count":drafts_count,
         "no_drafts":no_drafts,
         "current_page":current_page,
@@ -103,9 +99,34 @@ def profile_comments(request,id,slug):
     title = "Comments"
     User = get_user_model()
     user = User.objects.get(id = id)
+    current_user = request.user
+    is_user = True
+    if current_user != user:
+        is_user = False
+    comments = Comment.objects.filter(user__id = id)
+    comments_count = comments.count()
+    no_comments = True
+    if comments_count != 0:
+        no_comments = False
+
+    paginator = Paginator(comments, 5) # Show 25 contacts per page
+    page = request.GET.get("page")
+    try:
+        current_page = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        current_page = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        current_page = paginator.page(paginator.num_pages)
+
     context = {
         "title":title,
         "user":user,
+        "is_user":is_user,
+        "comments_count":comments_count,
+        "no_comments":no_comments,
+        "current_page":current_page,
     }
 
     return render(request,"profile_comments.html",context)

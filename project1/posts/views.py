@@ -116,8 +116,12 @@ def post_detail(request,id,slug):
     post = get_object_or_404(Post, id=id)
     if post.is_draft == True:
         return redirect("posts:post_404")
+    user = post.user
     comments = Comment.objects.filter(post__id = id)
     comments_count = comments.count()
+    no_comments = True
+    if comments_count != 0:
+        no_comments = False
     comment_title = "Comments"
     comment_button_text = "Comment"
     logged_in = True
@@ -148,6 +152,8 @@ def post_detail(request,id,slug):
 
     context = {
         "current_page":current_page,
+        "user":user,
+        "no_comments":no_comments,
         "comments_count":comments_count,
         "comment_title":comment_title,
         "comment_button_text":comment_button_text,
