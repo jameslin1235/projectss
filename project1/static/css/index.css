@@ -18,6 +18,14 @@ body {
 }
 
 .thumbnail_detail{
-
   border: 0;
+}
+
+
+#modal_comment_body{
+  text-align: center;
+}
+
+#modal_comment_footer{
+  text-align: center;
 }

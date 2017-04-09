@@ -1,0 +1,31 @@
+/*.navbar {
+  margin-bottom: 0;
+}*/
+body {
+  padding-top: 70px;
+  background-color: #f7f8fa;
+}
+
+.section{
+  background-color: #fff;
+  padding: 20px;
+  margin-bottom: 20px;
+  border:1px solid #ddd;
+}
+
+#profile_base_username{
+  margin-top: 0;
+}
+
+.thumbnail_detail{
+  border: 0;
+}
+
+
+#modal_comment_body{
+  text-align: center;
+}
+
+#modal_comment_footer{
+  text-align: center;
+}

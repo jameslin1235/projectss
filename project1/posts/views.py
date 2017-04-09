@@ -7,6 +7,7 @@ from django.utils import timezone
 from .models import Post
 from .forms import PostForm
 from project1.project1.comments.forms import CommentForm
+from project1.project1.comments.models import Comment
 # Create your views here.
 
 def post_list(request):
@@ -112,14 +113,27 @@ def post_delete(request,id,slug):
             return redirect("profiles:profile_posts", id=user.id, slug=user.profile.slug )
 
 def post_detail(request,id,slug):
-    comment_title = "Comment"
-    comment_button_text = "Comment"
     post = get_object_or_404(Post, id=id)
     if post.is_draft == True:
         return redirect("posts:post_404")
-    not_logged_in = False
+    comments = Comment.objects.filter(post__id = id)
+    comments_count = comments.count()
+    comment_title = "Comments"
+    comment_button_text = "Comment"
+    logged_in = True
     if not request.user.is_authenticated:
-        not_logged_in = True
+        logged_in = False
+
+    paginator = Paginator(comments, 5) # Show 25 contacts per page
+    page = request.GET.get('page')
+    try:
+        current_page = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        current_page = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        current_page = paginator.page(paginator.num_pages)
     if request.method == "POST":
         form = CommentForm(request.POST)
         if form.is_valid():
@@ -133,10 +147,12 @@ def post_detail(request,id,slug):
         form = CommentForm()
 
     context = {
+        "current_page":current_page,
+        "comments_count":comments_count,
         "comment_title":comment_title,
         "comment_button_text":comment_button_text,
         "post":post,
-        "not_logged_in":not_logged_in,
+        "logged_in":logged_in,
         "form":form,
     }
 
@@ -150,13 +166,16 @@ def post_publish(request,id,slug):
     if current_user != user:
         return redirect("posts:post_404")
     else:
-        post.is_draft = False
-        post.date_published = timezone.now()
-        post.save()
-        messages.success(request, "Draft published.")
-        return redirect("profiles:profile_drafts", id=user.id, slug=user.profile.slug )
+        if post.is_draft == False:
+            return redirect("posts:post_404")
+        else:
+            post.is_draft = False
+            post.date_published = timezone.now()
+            post.save()
+            messages.success(request, "Draft published.")
+            return redirect("profiles:profile_drafts", id=user.id, slug=user.profile.slug )
 
-@login_required
+
 def post_404(request):
     title = "404 page"
     context = {

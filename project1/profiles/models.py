@@ -31,8 +31,9 @@ class Profile(models.Model):
         blank=True,
     )
     avatar = models.FileField(
+        upload_to = "profile_avatar/",
         blank=True,
-        null=True,
+        default="profile_avatar/1.jpg",
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_edited = models.DateTimeField(auto_now=True)

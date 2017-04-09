@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% load widget_tweaks %}
 
 {% block title %}{{ post.title }}{% endblock title %}
@@ -46,54 +47,106 @@
       <div class="col-md-12">
         <div class="section">
           <div class="page-header">
-            <h4>{{ comment_title }}</h4>
+            <h4>{{ comments_count }} {{ comment_title }}</h4>
           </div>
-          <form method="post">
-            {% csrf_token %}
-
-            {% if form.non_field_errors %}
-            <div class="alert alert-danger" role="alert">
-              {{ form.non_field_errors }}
+          <div class="media">
+            <div class="media-left">
+              <a href="#">
+                <img class="media-object" src="" alt="..." width="64px" height="64px">
+              </a>
             </div>
-            {% endif %}
+            <div class="media-body">
+              <form method="post">
+                {% csrf_token %}
 
-            <div class="form-group">
-              {{ form.content|add_class:"form-control"|attr:"autofocus"|attr:"placeholder:Content"|attr:"rows:5" }}
-              {% if form.content.errors %}
-              <div class="alert alert-danger" role="alert">
-                {{ form.content.errors }}
-              </div>
-              {% endif %}
-              {% if form.content.help_text %}
-              <p class="help-block">{{ form.content.help_text|safe }}</p>
-              {% endif %}
-            </div>
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                  {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+
+                <div class="form-group" {% if logged_in == False %}data-toggle="modal" data-target="#myModal"{% else %}data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample"{% endif %}>
 
 
-            <button {% if not_logged_in == False %}type="submit"{% endif %} name="publish" class="btn btn-primary" {% if not_logged_in %}data-toggle="modal" data-target="#myModal"{% endif %}>{{ comment_button_text }}</button>
-            <!-- Button trigger modal -->
-
-
-            <!-- Modal -->
-            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">Login</h4>
+                  {{ form.content|add_class:"form-control"|attr:"placeholder:Leave a comment."|attr:"rows:3" }}
+                  {% if form.content.errors %}
+                  <div class="alert alert-danger" role="alert">
+                    {{ form.content.errors }}
                   </div>
-                  <div class="modal-body">
+                  {% endif %}
+                  {% if form.content.help_text %}
+                  <p class="help-block">{{ form.content.help_text|safe }}</p>
+                  {% endif %}
+                </div>
 
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <a class="btn btn-default" href="{% url 'login' %}">Confirm</a>
-                    <!-- <button type="button" class="btn btn-primary">Login</button> -->
+                {% if logged_in %}
+                <div class="collapse" id="collapseExample">
+                  <button type="submit"class="btn btn-primary" >{{ comment_button_text }}</button>
+                </div>
+                {% endif %}
+                <!-- Button trigger modal -->
+
+
+                <!-- Modal -->
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Login</h4>
+                      </div>
+                      <div class="modal-body" id="modal_comment_body">
+                        <a class="btn btn-default" href="{% url 'login' %}?next={{request.path}}">Login</a>
+                      </div>
+                      <div class="modal-footer" id="modal_comment_footer">
+
+                        <p>Don't have an account? <a href="{% url 'accounts:register' %}">Register</a></p>
+
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </form>
             </div>
-          </form>
+          </div>
+
+{% for comment in current_page %}
+          <div class="media">
+
+  <div class="media-left">
+    <a href="#">
+      <img class="media-object" src="{{ user.profile.avatar.url }}" alt="..." width="64px" height="64px">
+    </a>
+  </div>
+  <div class="media-body">
+    <h4 class="media-heading">{{ comment.user }}</h4>
+    <p>{{ comment.content}} </p>
+    <p>{{ comment.date_created}} </p>
+  </div>
+
+
+
+</div>
+  {% endfor %}
+  <ul class="pagination">
+    {% if current_page.has_previous %}
+    <li><a href="?page={{ current_page.previous_page_number }}">&laquo;</a></li>
+    {% else %}
+    <li class="disabled"><span>&laquo;</span></li>
+    {% endif %}
+    {% for i in current_page.paginator.page_range %}
+    {% if current_page.number == i %}
+    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+    {% else %}
+    <li><a href="?page={{ i }}">{{ i }}</a></li>
+    {% endif %}
+    {% endfor %}
+    {% if current_page.has_next %}
+    <li><a href="?page={{ current_page.next_page_number }}">&raquo;</a></li>
+    {% else %}
+    <li class="disabled"><span>&raquo;</span></li>
+    {% endif %}
+  </ul>
         </div>
       </div>
     </div>

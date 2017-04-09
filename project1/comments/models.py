@@ -19,3 +19,6 @@ class Comment(models.Model):
     def save(self, *args, **kwargs):
        self.slug = slugify(self.content)
        super(Comment, self).save(*args, **kwargs)
+
+    class Meta:
+        ordering = ["-date_created"]
