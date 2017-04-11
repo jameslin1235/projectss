@@ -13,6 +13,10 @@ body {
   border:1px solid #ddd;
 }
 
+.post_list_thumbnail_a_image{
+  max-width: none;
+}
+
 #profile_base_username{
   margin-top: 0;
 }

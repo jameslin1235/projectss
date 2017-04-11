@@ -12,7 +12,9 @@ from project1.project1.comments.models import Comment
 
 def post_list(request):
     title = "Latest Posts"
+    comment_title = "Comments"
     posts = Post.objects.filter(is_draft = False)
+
     paginator = Paginator(posts, 5) # Show 25 contacts per page
     page = request.GET.get('page')
     try:
@@ -23,8 +25,21 @@ def post_list(request):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         current_page = paginator.page(paginator.num_pages)
+
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user
+            comment.post = post
+            comment.save()
+            messages.success(request, "Comment created.")
+            return redirect(post)
+        else:
+            form = CommentForm()
     context = {
         "title":title,
+        "comment_title":comment_title,
         "current_page":current_page,
     }
 
@@ -117,6 +132,7 @@ def post_detail(request,id,slug):
     if post.is_draft == True:
         return redirect("posts:post_404")
     user = post.user
+    print(post.comment_set.all)
     comments = Comment.objects.filter(post__id = id)
     comments_count = comments.count()
     no_comments = True
