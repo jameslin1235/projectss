@@ -15,9 +15,13 @@ body {
 
 
 
-.thumbnail_detail{
+.thumbnail_post_list{
   border:0;
   border-bottom: 1px solid #eee;
+}
+
+.thumbnail_post_detail{
+  border:0;
 }
 
 .thumbnail a>img {

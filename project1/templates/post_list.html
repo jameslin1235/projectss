@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load widget_tweaks %}
 
 {% block title %}{{ title }}{% endblock title %}
 
@@ -12,7 +13,7 @@
             <h5><span class="glyphicon glyphicon-th-large" aria-hidden="true"></span> {{ title }}</h5>
           </div>
           {% for post in current_page %}
-          <div class="thumbnail thumbnail_detail">
+          <div class="thumbnail thumbnail_post_list">
             <div class="caption">
               <p><a href="{{ post.category.get_absolute_url }}">{{ post.category }}</a></p>
               <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
@@ -22,13 +23,15 @@
               <p>
                 <button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> {{ post.likes }}</button>
                 <button type="button" class="btn btn-link"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> {{ post.dislikes }}</button>
-                <button type="button" class="btn btn-link" data-toggle="collapse" data-target="#collapseExample{{post.id}}" aria-expanded="false" aria-controls="collapseExample" ><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> {{ post.comment_set.all.count }}</button>
+                <button type="button" class="btn btn-link" data-toggle="collapse" data-target="#comment_collapse{{post.id}}" aria-expanded="false" aria-controls="collapseExample" ><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> {{ post.comment_set.all.count }}</button>
                 <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
                 sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-share" aria-hidden="true"></span> Share</button>
                 <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
                 sagittis lacus vel augue laoreet rutrum faucibus."><span class="  glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
               </p>
-              <div class="collapse" id="collapseExample{{post.id}}">
+
+              <div class="collapse" id="comment_collapse{{post.id}}">
+
                 <div class="page-header">
                   <h4>{{ post.comment_set.all.count }} {{ comment_title }}</h4>
                 </div>
@@ -48,7 +51,7 @@
                     </a>
                   </div>
                   <div class="media-body">
-                    <h4 class="media-heading">{{ comment.user }}</h4>
+                    <a class="media-heading" href="{% url 'profiles:profile_activity' id=post.user.id slug=post.user.profile.slug %}">{{ post.user.username }}</a>
                     <p>{{ comment.content}} </p>
                     <p>{{ comment.date_created}} </p>
                   </div>
@@ -63,7 +66,7 @@
                     </a>
                   </div>
                   <div class="media-body">
-                    <form method="post">
+                    <form method="post" >
                       {% csrf_token %}
 
                       {% if form.non_field_errors %}
@@ -72,9 +75,8 @@
                       </div>
                       {% endif %}
 
-                      <div class="form-group" {% if logged_in == False %}data-toggle="modal" data-target="#myModal"{% else %}data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample"{% endif %}>
-
-
+                      <!-- Button trigger modal -->
+                      <div class="form-group" {% if logged_in %}data-toggle="collapse" data-target="#comment_form_collapse{{post.id}}" aria-expanded="false" aria-controls="collapseExample"{% else %}data-toggle="modal" data-target="#myModal{{post.id}}"{% endif %}>
                         {{ form.content|add_class:"form-control"|attr:"placeholder:Leave a comment."|attr:"rows:3" }}
                         {% if form.content.errors %}
                         <div class="alert alert-danger" role="alert">
@@ -86,16 +88,17 @@
                         {% endif %}
                       </div>
 
+                      <input type="hidden" name="post_id" value="{{post.id}}">
+
                       {% if logged_in %}
-                      <div class="collapse" id="collapseExample">
+                      <div class="collapse" id="comment_form_collapse{{post.id}}">
                         <button type="submit"class="btn btn-primary" >{{ comment_button_text }}</button>
                       </div>
                       {% endif %}
-                      <!-- Button trigger modal -->
 
 
                       <!-- Modal -->
-                      <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                      <div class="modal fade" id="myModal{{post.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                         <div class="modal-dialog" role="document">
                           <div class="modal-content">
                             <div class="modal-header">
@@ -116,7 +119,6 @@
                     </form>
                   </div>
                 </div>
-
               </div>
 
             </div>
@@ -162,7 +164,24 @@
       </div>
     </div>
   </div>
-
-
 </section>
 {% endblock body %}
+
+{% block javascript %}
+  <!-- <script>
+    $("#id_username").change(function () {
+      console.log( $(this).val() );
+
+      $.ajax({
+        url: '/ajax/validate_username/',
+        data: {
+          'username': username
+        },
+        dataType: 'json',
+
+        }
+      });
+    });
+
+  </script> -->
+{% endblock %}

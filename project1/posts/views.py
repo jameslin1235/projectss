@@ -8,13 +8,18 @@ from .models import Post
 from .forms import PostForm
 from project1.project1.comments.forms import CommentForm
 from project1.project1.comments.models import Comment
+from django.http import JsonResponse
+from django.core import serializers
 # Create your views here.
 
 def post_list(request):
     title = "Latest Posts"
     comment_title = "Comments"
+    comment_button_text = "Comment"
     posts = Post.objects.filter(is_draft = False)
-
+    logged_in = True
+    if not request.user.is_authenticated:
+        logged_in = False
     paginator = Paginator(posts, 5) # Show 25 contacts per page
     page = request.GET.get('page')
     try:
@@ -28,19 +33,24 @@ def post_list(request):
 
     if request.method == "POST":
         form = CommentForm(request.POST)
+        post_id = request.POST.get("post_id")
+        post = Post.objects.get(id = post_id)
         if form.is_valid():
             comment = form.save(commit=False)
             comment.user = request.user
             comment.post = post
             comment.save()
             messages.success(request, "Comment created.")
-            return redirect(post)
-        else:
-            form = CommentForm()
+            return redirect("posts:post_list")
+    else:
+        form = CommentForm()
     context = {
         "title":title,
         "comment_title":comment_title,
+        "comment_button_text":comment_button_text,
+        "logged_in":logged_in,
         "current_page":current_page,
+        "form":form,
     }
 
     return render(request,"post_list.html",context)
@@ -155,14 +165,26 @@ def post_detail(request,id,slug):
         # If page is out of range (e.g. 9999), deliver last page of results.
         current_page = paginator.page(paginator.num_pages)
     if request.method == "POST":
+        response_data = {}
         form = CommentForm(request.POST)
         if form.is_valid():
             comment = form.save(commit=False)
             comment.user = request.user
             comment.post = post
             comment.save()
-            messages.success(request, "Comment created.")
-            return redirect(post)
+
+            # response_data = serializers.serialize("json", Comment.objects.filter(id=comment.id))
+            response_data['id'] = comment.user.id
+            response_data['slug'] = comment.user.profile.slug
+            response_data['avatar'] = comment.user.profile.avatar.url
+            response_data['username'] = comment.user.username
+            response_data['content'] = comment.content
+            response_data['date_created'] = comment.date_created
+            response_data['count'] = comments_count + 1
+
+            # messages.success(request, "Comment created.")
+            return JsonResponse(response_data)
+            # return HttpResponse(response_data)
     else:
         form = CommentForm()
 
@@ -172,6 +194,7 @@ def post_detail(request,id,slug):
         "no_comments":no_comments,
         "comments_count":comments_count,
         "comment_title":comment_title,
+
         "comment_button_text":comment_button_text,
         "post":post,
         "logged_in":logged_in,

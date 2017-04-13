@@ -20,7 +20,7 @@
           {% endfor %}
           {% endif %}
 
-          <div class="thumbnail thumbnail_detail">
+          <div class="thumbnail thumbnail_post_detail">
             <div class="caption">
               <p><a href="{{ post.category.get_absolute_url }}">{{ post.category }}</a></p>
               <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
@@ -46,7 +46,7 @@
       <div class="col-md-12">
         <div class="section">
           <div class="page-header">
-            <h4>{{ comments_count }} {{ comment_title }}</h4>
+            <h4 id="comments_count_title">{{ comments_count }} {{comment_title}}</h4>
           </div>
 
           {% if no_comments %}
@@ -61,7 +61,7 @@
               </a>
             </div>
             <div class="media-body">
-              <form method="post">
+              <form method="post" id="comment_form">
                 {% csrf_token %}
 
                 {% if form.non_field_errors %}
@@ -73,7 +73,7 @@
                 <div class="form-group" {% if logged_in == False %}data-toggle="modal" data-target="#myModal"{% else %}data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample"{% endif %}>
 
 
-                  {{ form.content|add_class:"form-control"|attr:"placeholder:Leave a comment."|attr:"rows:3" }}
+                  {{ form.content|add_class:"form-control"|attr:"id:comment_form_field"|attr:"placeholder:Leave a comment."|attr:"rows:3" }}
                   {% if form.content.errors %}
                   <div class="alert alert-danger" role="alert">
                     {{ form.content.errors }}
@@ -116,6 +116,7 @@
           </div>
 
           {% if no_comments == False %}
+          <div id="post_detail_comment_list">
           {% for comment in current_page %}
           <div class="media">
             <div class="media-left">
@@ -124,12 +125,13 @@
               </a>
             </div>
             <div class="media-body">
-              <h4 class="media-heading">{{ comment.user }}</h4>
+              <a class="media-heading" href="{% url 'profiles:profile_activity' id=comment.user.id slug=comment.user.profile.slug %}">{{ comment.user.username }}</a>
               <p>{{ comment.content}} </p>
               <p>{{ comment.date_created}} </p>
             </div>
           </div>
           {% endfor %}
+
           <ul class="pagination">
             {% if current_page.has_previous %}
             <li><a href="?page={{ current_page.previous_page_number }}">&laquo;</a></li>
@@ -149,6 +151,7 @@
             <li class="disabled"><span>&raquo;</span></li>
             {% endif %}
           </ul>
+        </div>
           {% endif %}
         </div>
       </div>
@@ -157,3 +160,45 @@
 </div>
 </section>
 {% endblock body %}
+
+{% block javascript %}
+  <script>
+    var form = $("#comment_form");
+    var comments_count_title = $("#comments_count_title");
+    var post_detail_comment_list = $("#post_detail_comment_list");
+
+    // var comment_count = $('#comment_count');
+    form.submit(function(event){
+      event.preventDefault();
+      console.log( $( form ).serialize() );
+
+      $.ajax({
+        type: form.attr('method'),
+        url: form.attr('action'),
+        data: form.serialize(),
+        success:function(data) {
+          $('#comment_form_field').val('');
+          var html = '<div class="media"><div class="media-left"><a href="{% url 'profiles:profile_activity' id=data.id slug=data.slug %}"><img class="media-object" src="{{ data.avatar }}" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="{% url 'profiles:profile_activity' id=data.id slug=data.slug %}">{{ data.username }}</a><p>{{ data.content}} </p><p>{{ data.date_created}} </p></div></div>'
+          comments_count_title.html(data.count + " Comments");
+          post_detail_comment_list.children().first().prepend(html);
+},
+
+      });
+    })
+
+
+    // $("#comment_form").submit(function (event) {
+    //
+    //   event.preventDefault();
+    //   $.ajax({
+    //     type: "POST",
+    //     url: "{{request.path}}",
+    //     data:{
+    //       comment:$("#comment_form_field").val(),
+    //       csrfmiddlewaretoken:$("input[name=csrfmiddlewaretoken]").val()
+    //     }
+    //
+    //   });
+    // });
+  </script>
+{% endblock %}
