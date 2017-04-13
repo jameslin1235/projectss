@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
 from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
@@ -142,7 +143,6 @@ def post_detail(request,id,slug):
     if post.is_draft == True:
         return redirect("posts:post_404")
     user = post.user
-    print(post.comment_set.all)
     comments = Comment.objects.filter(post__id = id)
     comments_count = comments.count()
     no_comments = True
@@ -154,7 +154,7 @@ def post_detail(request,id,slug):
     if not request.user.is_authenticated:
         logged_in = False
 
-    paginator = Paginator(comments, 5) # Show 25 contacts per page
+    paginator = Paginator(comments, 10) # Show 25 contacts per page
     page = request.GET.get('page')
     try:
         current_page = paginator.page(page)
@@ -173,18 +173,28 @@ def post_detail(request,id,slug):
             comment.post = post
             comment.save()
 
-            # response_data = serializers.serialize("json", Comment.objects.filter(id=comment.id))
-            response_data['id'] = comment.user.id
-            response_data['slug'] = comment.user.profile.slug
+            comments = Comment.objects.filter(post__id = id)
+            paginator = Paginator(comments, 10) # Show 25 contacts per page
+            page = request.GET.get('page')
+            try:
+                current_page = paginator.page(page)
+            except PageNotAnInteger:
+                # If page is not an integer, deliver first page.
+                current_page = paginator.page(1)
+            except EmptyPage:
+                # If page is out of range (e.g. 9999), deliver last page of results.
+                current_page = paginator.page(paginator.num_pages)
             response_data['avatar'] = comment.user.profile.avatar.url
             response_data['username'] = comment.user.username
             response_data['content'] = comment.content
             response_data['date_created'] = comment.date_created
+            response_data['profile_url'] = reverse("profiles:profile_activity", kwargs={"id": comment.user.id, "slug":comment.user.profile.slug })
             response_data['count'] = comments_count + 1
+            response_data['current_page'] = current_page
 
             # messages.success(request, "Comment created.")
             return JsonResponse(response_data)
-            # return HttpResponse(response_data)
+
     else:
         form = CommentForm()
 
@@ -194,7 +204,6 @@ def post_detail(request,id,slug):
         "no_comments":no_comments,
         "comments_count":comments_count,
         "comment_title":comment_title,
-
         "comment_button_text":comment_button_text,
         "post":post,
         "logged_in":logged_in,

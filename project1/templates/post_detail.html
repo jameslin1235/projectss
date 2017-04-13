@@ -50,11 +50,11 @@
           </div>
 
           {% if no_comments %}
-          <div>
+          <div id="no_comments">
             <p>There are no comments.</p>
           </div>
           {% endif %}
-          <div class="media">
+          <div class="media" id='comment_form_container'>
             <div class="media-left">
               <a href="#">
                 <img class="media-object" src="/media/profile_avatar/1.jpg" alt="..." width="64px" height="64px">
@@ -115,90 +115,98 @@
             </div>
           </div>
 
-          {% if no_comments == False %}
-          <div id="post_detail_comment_list">
-          {% for comment in current_page %}
-          <div class="media">
-            <div class="media-left">
-              <a href="{% url 'profiles:profile_activity' id=comment.user.id slug=comment.user.profile.slug %}">
-                <img class="media-object" src="{{ comment.user.profile.avatar.url }}" alt="..." width="64px" height="64px">
-              </a>
-            </div>
-            <div class="media-body">
-              <a class="media-heading" href="{% url 'profiles:profile_activity' id=comment.user.id slug=comment.user.profile.slug %}">{{ comment.user.username }}</a>
-              <p>{{ comment.content}} </p>
-              <p>{{ comment.date_created}} </p>
-            </div>
-          </div>
-          {% endfor %}
 
-          <ul class="pagination">
-            {% if current_page.has_previous %}
-            <li><a href="?page={{ current_page.previous_page_number }}">&laquo;</a></li>
-            {% else %}
-            <li class="disabled"><span>&laquo;</span></li>
-            {% endif %}
-            {% for i in current_page.paginator.page_range %}
-            {% if current_page.number == i %}
-            <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
-            {% else %}
-            <li><a href="?page={{ i }}">{{ i }}</a></li>
-            {% endif %}
+
+            {% if no_comments == False %}
+            <div id='post_detail_comment_list'>
+            {% for comment in current_page %}
+
+            <div class="media">
+              <div class="media-left">
+                <a href="{% url 'profiles:profile_activity' id=comment.user.id slug=comment.user.profile.slug %}">
+                  <img class="media-object" src="{{ comment.user.profile.avatar.url }}" alt="..." width="64px" height="64px">
+                </a>
+              </div>
+              <div class="media-body">
+                <a class="media-heading" href="{% url 'profiles:profile_activity' id=comment.user.id slug=comment.user.profile.slug %}">{{ comment.user.username }}</a>
+                <p>{{ comment.content}} </p>
+                <p>{{ comment.date_created}} </p>
+              </div>
+            </div>
             {% endfor %}
-            {% if current_page.has_next %}
-            <li><a href="?page={{ current_page.next_page_number }}">&raquo;</a></li>
-            {% else %}
-            <li class="disabled"><span>&raquo;</span></li>
+            {% if current_page.has_other_pages %}
+            <ul class="pagination">
+              {% if current_page.has_previous %}
+              <li><a href="?page={{ current_page.previous_page_number }}">&laquo;</a></li>
+              {% else %}
+              <li class="disabled"><span>&laquo;</span></li>
+              {% endif %}
+              {% for i in current_page.paginator.page_range %}
+              {% if current_page.number == i %}
+              <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+              {% else %}
+              <li><a href="?page={{ i }}">{{ i }}</a></li>
+              {% endif %}
+              {% endfor %}
+              {% if current_page.has_next %}
+              <li><a href="?page={{ current_page.next_page_number }}">&raquo;</a></li>
+              {% else %}
+              <li class="disabled"><span>&raquo;</span></li>
+              {% endif %}
+            </ul>
             {% endif %}
-          </ul>
-        </div>
-          {% endif %}
+            </div>
+            {% endif %}
+
+
         </div>
       </div>
     </div>
   </div>
-</div>
+
 </section>
 {% endblock body %}
 
 {% block javascript %}
-  <script>
-    var form = $("#comment_form");
-    var comments_count_title = $("#comments_count_title");
-    var post_detail_comment_list = $("#post_detail_comment_list");
+<script>
 
-    // var comment_count = $('#comment_count');
-    form.submit(function(event){
-      event.preventDefault();
-      console.log( $( form ).serialize() );
+var comments_count_title = $("#comments_count_title");
+var no_comments = $("#no_comments");
+var comment_form_container = $("#comment_form_container");
+var comment_form = $("#comment_form");
+var comment_form_field = $("#comment_form_field");
+var post_detail_comment_list = $("#post_detail_comment_list");
 
-      $.ajax({
-        type: form.attr('method'),
-        url: form.attr('action'),
-        data: form.serialize(),
-        success:function(data) {
-          $('#comment_form_field').val('');
-          var html = '<div class="media"><div class="media-left"><a href="{% url 'profiles:profile_activity' id=data.id slug=data.slug %}"><img class="media-object" src="{{ data.avatar }}" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="{% url 'profiles:profile_activity' id=data.id slug=data.slug %}">{{ data.username }}</a><p>{{ data.content}} </p><p>{{ data.date_created}} </p></div></div>'
-          comments_count_title.html(data.count + " Comments");
-          post_detail_comment_list.children().first().prepend(html);
-},
+comment_form.submit(function(event){
+  event.preventDefault();
+  $.ajax({
+    type: comment_form.attr('method'),
+    url: comment_form.attr('action'),
+    data: comment_form.serialize(),
+    success:function(data) {
+      var media_container = '<div id="media_container"><div class="media"><div class="media-left"><a href="'+data.profile_url+'"><img class="media-object" src="'+data.avatar+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.profile_url+'">'+data.username+'</a><p>'+ data.content+'</p><p>'+data.date_created+'</p></div></div></div>';
+      var media_object = '<div class="media"><div class="media-left"><a href="'+data.profile_url+'"><img class="media-object" src="'+data.avatar+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.profile_url+'">'+data.username+'</a><p>'+ data.content+'</p><p>'+data.date_created+'</p></div></div>';
+      var pagination =
+      comments_count_title.html(data.count + " Comments");
+      if (data.count == 1){
+        no_comments.remove();
+      }
+      comment_form_field.val('');
+      if(post_detail_comment_list.length){
+        post_detail_comment_list.prepend(media_object);
+      }
+      else{
+        if(data.count == 1){
+          comment_form_container.after(media_container);
+        }
+        else{
+          $("#media_container").prepend(media_object);
+        }
+      }
 
-      });
-    })
+    },
 
-
-    // $("#comment_form").submit(function (event) {
-    //
-    //   event.preventDefault();
-    //   $.ajax({
-    //     type: "POST",
-    //     url: "{{request.path}}",
-    //     data:{
-    //       comment:$("#comment_form_field").val(),
-    //       csrfmiddlewaretoken:$("input[name=csrfmiddlewaretoken]").val()
-    //     }
-    //
-    //   });
-    // });
-  </script>
+  });
+})
+</script>
 {% endblock %}
