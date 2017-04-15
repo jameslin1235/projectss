@@ -154,16 +154,8 @@ def post_detail(request,id,slug):
     if not request.user.is_authenticated:
         logged_in = False
 
-    paginator = Paginator(comments, 10) # Show 25 contacts per page
-    page = request.GET.get('page')
-    try:
-        current_page = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        current_page = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        current_page = paginator.page(paginator.num_pages)
+
+
     if request.method == "POST":
         response_data = {}
         form = CommentForm(request.POST)
@@ -176,6 +168,7 @@ def post_detail(request,id,slug):
             comments = Comment.objects.filter(post__id = id)
             paginator = Paginator(comments, 10) # Show 25 contacts per page
             page = request.GET.get('page')
+
             try:
                 current_page = paginator.page(page)
             except PageNotAnInteger:
@@ -184,19 +177,34 @@ def post_detail(request,id,slug):
             except EmptyPage:
                 # If page is out of range (e.g. 9999), deliver last page of results.
                 current_page = paginator.page(paginator.num_pages)
+
             response_data['avatar'] = comment.user.profile.avatar.url
             response_data['username'] = comment.user.username
             response_data['content'] = comment.content
             response_data['date_created'] = comment.date_created
             response_data['profile_url'] = reverse("profiles:profile_activity", kwargs={"id": comment.user.id, "slug":comment.user.profile.slug })
             response_data['count'] = comments_count + 1
-            response_data['current_page'] = current_page
 
+            response_data['has_other_pages'] = current_page.has_other_pages()
+            response_data['has_previous'] = current_page.has_previous()
+            response_data['has_next'] = current_page.has_next()
+            response_data['number'] = current_page.number
+            response_data['page_range'] = current_page.paginator.page_range[-1]
             # messages.success(request, "Comment created.")
-            return JsonResponse(response_data)
+            return JsonResponse(response_data,safe=False)
 
     else:
         form = CommentForm()
+        paginator = Paginator(comments, 10) # Show 25 contacts per page
+        page = request.GET.get('page')
+        try:
+            current_page = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            current_page = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            current_page = paginator.page(paginator.num_pages)
 
     context = {
         "current_page":current_page,

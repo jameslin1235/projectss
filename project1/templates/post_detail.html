@@ -134,7 +134,12 @@
               </div>
             </div>
             {% endfor %}
-            {% if current_page.has_other_pages %}
+
+          </div>
+          {% endif %}
+
+          {% if no_comments == False %}
+            <div id="post_detail_pag">
             <ul class="pagination">
               {% if current_page.has_previous %}
               <li><a href="?page={{ current_page.previous_page_number }}">&laquo;</a></li>
@@ -154,9 +159,8 @@
               <li class="disabled"><span>&raquo;</span></li>
               {% endif %}
             </ul>
-            {% endif %}
-            </div>
-            {% endif %}
+          </div>
+          {% endif %}
 
 
         </div>
@@ -176,6 +180,7 @@ var comment_form_container = $("#comment_form_container");
 var comment_form = $("#comment_form");
 var comment_form_field = $("#comment_form_field");
 var post_detail_comment_list = $("#post_detail_comment_list");
+var post_detail_pag = $("#post_detail_pag");
 
 comment_form.submit(function(event){
   event.preventDefault();
@@ -184,23 +189,68 @@ comment_form.submit(function(event){
     url: comment_form.attr('action'),
     data: comment_form.serialize(),
     success:function(data) {
-      var media_container = '<div id="media_container"><div class="media"><div class="media-left"><a href="'+data.profile_url+'"><img class="media-object" src="'+data.avatar+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.profile_url+'">'+data.username+'</a><p>'+ data.content+'</p><p>'+data.date_created+'</p></div></div></div>';
-      var media_object = '<div class="media"><div class="media-left"><a href="'+data.profile_url+'"><img class="media-object" src="'+data.avatar+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.profile_url+'">'+data.username+'</a><p>'+ data.content+'</p><p>'+data.date_created+'</p></div></div>';
-      var pagination =
+      var comment_list = '<div id="comment_list"><div class="media"><div class="media-left"><a href="'+data.profile_url+'"><img class="media-object" src="'+data.avatar+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.profile_url+'">'+data.username+'</a><p>'+ data.content+'</p><p>'+data.date_created+'</p></div></div></div>';
+      var comment = '<div class="media"><div class="media-left"><a href="'+data.profile_url+'"><img class="media-object" src="'+data.avatar+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.profile_url+'">'+data.username+'</a><p>'+ data.content+'</p><p>'+data.date_created+'</p></div></div>';
+      var previous_page_number = data.number-1
+      var next_page_number = data.number + 1
+      var pag = '<div id="pag"><ul id="pag_ul" class="pagination"></ul></div>';
+      var pag2 = '<li><a href="?page='+previous_page_number+'">&laquo;</a></li>';
+      var pag3 = '<li class="disabled"><span>&laquo;</span></li>';
+      var pag6 = '<li><a href="?page='+next_page_number+'">&raquo;</a></li>';
+      var pag7 = '<li class="disabled"><span>&raquo;</span></li>';
+
       comments_count_title.html(data.count + " Comments");
-      if (data.count == 1){
-        no_comments.remove();
-      }
       comment_form_field.val('');
-      if(post_detail_comment_list.length){
-        post_detail_comment_list.prepend(media_object);
-      }
-      else{
-        if(data.count == 1){
-          comment_form_container.after(media_container);
+
+      function paginate() {
+        if (data.has_previous) {
+          $("#pag_ul").append(pag2);
+        }
+        else {
+          $("#pag_ul").append(pag3);
+        }
+        for (var x = 1; x < data.page_range+1; x++) {
+          if (data.number == x) {
+            $("#pag_ul").append('<li class="active"><span>'+x+'<span class="sr-only">(current)</span></span></li>');
+          }
+          else {
+            $("#pag_ul").append('<li><a href="?page='+x+'">'+x+'</a></li>');
+          }
+        }
+        if (data.has_next) {
+          $("#pag_ul").append(pag6);
+        }
+        else {
+          $("#pag_ul").append(pag7);
+        }
+}
+
+      if($('#post_detail_comment_list').length){
+        $('#post_detail_comment_list').prepend(comment);
+        if($('#post_detail_pag').length){
+          $('#post_detail_pag').remove();
+          $('#post_detail_comment_list').after(pag);
+          paginate();
         }
         else{
-          $("#media_container").prepend(media_object);
+          $("#pag").remove();
+          $('#post_detail_comment_list').after(pag);
+          paginate();
+          }
+        }
+
+      else{
+        if(data.count == 1){
+          comment_form_container.after(comment_list);
+          $("#comment_list").after(pag);
+          paginate();
+          no_comments.remove();
+        }
+        else{
+          $("#comment_list").prepend(comment);
+          $("#pag").remove();
+          $("#comment_list").after(pag);
+          paginate();
         }
       }
 
