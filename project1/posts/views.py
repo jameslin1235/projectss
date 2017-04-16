@@ -191,6 +191,7 @@ def post_detail(request,id,slug):
             response_data['has_next'] = current_page.has_next()
             response_data['number'] = current_page.number
             response_data['page_range'] = current_page.paginator.page_range[-1]
+            response_data['url'] = request.path
             # messages.success(request, "Comment created.")
             return JsonResponse(response_data,safe=False)
 
@@ -229,7 +230,7 @@ def post_detail(request,id,slug):
             response_data['list3']= list3
             response_data['list4']= list4
             response_data['list5']= list5
-            response_data['count'] = comments_count
+
             response_data['comment_count']= comment_count
             response_data['has_previous'] = current_page.has_previous()
             response_data['has_next'] = current_page.has_next()

@@ -61,7 +61,7 @@
               </a>
             </div>
             <div class="media-body">
-              <form method="post" id="comment_form">
+              <form method="post" id="comment_form" data-pagenum = "1">
                 {% csrf_token %}
 
                 {% if form.non_field_errors %}
@@ -141,7 +141,7 @@
           <div id="post_detail_pag">
             <ul class="pagination">
               {% if current_page.has_previous %}
-              <li><a id="prev_button" href="?page={{ current_page.previous_page_number }}">&laquo;</a></li>
+              <li><a class="page_button" href="?page={{ current_page.previous_page_number }}">&laquo;</a></li>
               {% else %}
               <li class="disabled"><span>&laquo;</span></li>
               {% endif %}
@@ -149,11 +149,11 @@
               {% if current_page.number == i %}
               <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
               {% else %}
-              <li><a href="?page={{ i }}">{{ i }}</a></li>
+              <li><a class="page_button" href="?page={{ i }}" >{{ i }}</a></li>
               {% endif %}
               {% endfor %}
               {% if current_page.has_next %}
-              <li><a id="next_button" href="?page={{ current_page.next_page_number }}">&raquo;</a></li>
+              <li><a class="page_button" href="?page={{ current_page.next_page_number }}">&raquo;</a></li>
               {% else %}
               <li class="disabled"><span>&raquo;</span></li>
               {% endif %}
@@ -174,14 +174,13 @@
 <script>
 var post_detail_pag = '<div id="post_detail_pag"><ul id="pag_ul" class="pagination"></ul></div>';
 var pag = '<div id="pag"><ul id="pag_ul" class="pagination"></ul></div>';
-
 var pag3 = '<li class="disabled"><span>&laquo;</span></li>';
 var pag7 = '<li class="disabled"><span>&raquo;</span></li>';
 
 function paginate(data) {
   if (data.has_previous) {
     ppn = data.number-1;
-    $("#pag_ul").append('<li><a id="prev_button" href="?page='+ppn+'">&laquo;</a></li>');
+    $("#pag_ul").append('<li><a class="page_button" href="?page='+ppn+'">&laquo;</a></li>');
   }
   else {
     $("#pag_ul").append(pag3);
@@ -192,12 +191,12 @@ function paginate(data) {
 
     }
     else {
-      $("#pag_ul").append('<li><a href="?page='+x+'">'+x+'</a></li>');
+      $("#pag_ul").append('<li><a class="page_button" href="?page='+x+'">'+x+'</a></li>');
     }
   }
   if (data.has_next) {
     npn = data.number+1;
-    $("#pag_ul").append('<li><a id="next_button" href="?page='+npn+'">&raquo;</a></li>');
+    $("#pag_ul").append('<li><a class="page_button" href="?page='+npn+'">&raquo;</a></li>');
   }
   else {
     $("#pag_ul").append(pag7);
@@ -205,7 +204,7 @@ function paginate(data) {
 }
 
 // Feature 1
-$("#comment_form").submit(function(event){
+$(document).on('submit', '#comment_form', function(event) {
   event.preventDefault();
   $.ajax({
     type:  $("#comment_form").attr('method'),
@@ -218,106 +217,118 @@ $("#comment_form").submit(function(event){
       $("#comment_form_field").val("");
 
       if($('#post_detail_comment_list').length){
-        $('#post_detail_comment_list').prepend(comment);
-        if($('#post_detail_pag').length){
-          $('#post_detail_pag').remove();
-          $('#post_detail_comment_list').after(pag);
-          paginate(data);
+        if ($("#comment_form").attr("data-pagenum") == 1) {
+          $('#post_detail_comment_list').prepend(comment);
+          if($('#post_detail_pag').length){
+            $('#post_detail_pag').remove();
+            $('#post_detail_comment_list').after(post_detail_pag);
+            paginate(data);
+          }
+          else{
+            $("#post_detail_pag").remove();
+            $('#post_detail_comment_list').after(post_detail_pag);
+            paginate(data);
+          }
+          if (data.comments_count>5) {
+            $("#post_detail_comment_list").children().last().remove();
+          }
         }
         else{
-          $("#pag").remove();
-          $('#post_detail_comment_list').after(pag);
+          $.ajax({
+            url:data.url + "?page=1",
+            success:function(data) {
+              var post_detail_comment_list = '<div id="post_detail_comment_list"></div>';
+              $("#post_detail_comment_list").remove();
+              $("#post_detail_pag").remove();
+              $("#comment_form_container").after(post_detail_comment_list);
+              for (var i = 0; i < data.comment_count; i++) {
+                $("#post_detail_comment_list").append('<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>');
+              }
+              $("#post_detail_comment_list").after(post_detail_pag);
+              paginate(data);
+              $("#comment_form").attr("data-pagenum",data.number);
+            }})
+          }
+
+        }
+        else{
+          if($("#comment_form").attr("data-pagenum") == 1){
+            if(data.comments_count == 1){
+              $("#comment_form_container").after(comment_list);
+              $("#comment_list").after(pag);
+              paginate(data);
+              $("#no_comments").remove();
+
+            }
+            else{
+              $("#comment_list").prepend(comment);
+              $("#pag").remove();
+              $("#comment_list").after(pag);
+              paginate(data);
+
+            }
+            if(data.comments_count>5){
+              $("#comment_list").children().last().remove();
+            }
+          }
+          else{
+            $.ajax({
+              url:data.url + "?page=1",
+              success:function(data) {
+                var comment_list = '<div id="comment_list"></div>';
+                $("#comment_list").remove();
+                $("#pag").remove();
+                $("#comment_form_container").after(comment_list);
+                for (var i = 0; i < data.comment_count; i++) {
+                  $("#comment_list").append('<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>');
+                }
+                $("#comment_list").after(pag);
+                paginate(data);
+                $("#comment_form").attr("data-pagenum","1");
+                // alert($("#comment_form").attr("data-pagenum"));
+              }
+            })
+
+          }
+        }
+      },
+    });
+  })
+
+  // Feature 2
+  $(document).on('click', '.page_button', function() {
+    event.preventDefault();
+    $.ajax({
+      url:$(this).attr("href"),
+      success:function(data) {
+        if ($("#post_detail_comment_list").length) {
+          var post_detail_comment_list = '<div id="post_detail_comment_list"></div>';
+          $("#post_detail_comment_list").remove();
+          $("#post_detail_pag").remove();
+          $("#comment_form_container").after(post_detail_comment_list);
+          for (var i = 0; i < data.comment_count; i++) {
+            $("#post_detail_comment_list").append('<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>');
+          }
+          $("#post_detail_comment_list").after(post_detail_pag);
           paginate(data);
+          $("#comment_form").attr("data-pagenum",data.number);
         }
-        if (data.comments_count>5) {
-          $("#post_detail_comment_list").children().last().remove();
-        }
-      }
-      else{
-        if(data.comments_count == 1){
+        else {
+          var comment_list = '<div id="comment_list"></div>';
+          $("#comment_list").remove();
+          $("#pag").remove();
           $("#comment_form_container").after(comment_list);
+          for (var i = 0; i < data.comment_count; i++) {
+            $("#comment_list").append('<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>');
+          }
           $("#comment_list").after(pag);
           paginate(data);
-          $("#no_comments").remove();
-        }
-        else{
-          $("#comment_list").prepend(comment);
-          $("#pag").remove();
-          $("#comment_list").after(pag);
-          paginate(data);
-        }
-        if(data.comments_count>5){
-          $("#comment_list").children().last().remove();
-        }
-      }
-    },
-  });
-})
+          $("#comment_form").attr("data-pagenum",data.number);
 
-// Feature 2
-$(document).on('click', '#next_button', function() {
-  event.preventDefault();
-  $.ajax({
-    url:$("#next_button").attr("href"),
-    success:function(data) {
-      if ($("#post_detail_comment_list").length) {
-        var post_detail_comment_list = '<div id="post_detail_comment_list"></div>';
-        $("#post_detail_comment_list").remove();
-        $("#post_detail_pag").remove();
-        $("#comment_form_container").after(post_detail_comment_list);
-        for (var i = 0; i < data.comment_count; i++) {
-          $("#post_detail_comment_list").append('<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>');
         }
-        $("#post_detail_comment_list").after(post_detail_pag);
-        paginate(data);
-      }
-      else {
-        var comment_list = '<div id="comment_list"></div>';
-        $("#comment_list").remove();
-        $("#pag").remove();
-        $("#comment_form_container").after(comment_list);
-        for (var i = 0; i < data.comment_count; i++) {
-          $("#comment_list").append('<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>');
-        }
-        $("#comment_list").after(pag);
-        paginate(data);
-      }
-    }});
-  });
+      }});
+    });
 
-// Feature 3
-  // $(document).on('click', '#prev_button', function() {
-  //   event.preventDefault();
-  //   $.ajax({
-  //     url:$("#prev_button").attr("href"),
-  //     success:function(data) {
-  //       if ($("#post_detail_comment_list").length) {
-  //         var post_detail_comment_list = '<div id="post_detail_comment_list"></div>';
-  //         $("#post_detail_comment_list").remove();
-  //         $("#post_detail_pag").remove();
-  //         $("#comment_form_container").after(post_detail_comment_list);
-  //         for (var i = 0; i < data.comment_count; i++) {
-  //           $("#post_detail_comment_list").append('<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>');
-  //         }
-  //         $("#post_detail_comment_list").after(pag);
-  //         paginate(data);
-  //       }
-  //       else {
-  //         var comment_list = '<div id="comment_list"></div>';
-  //         $("#comment_list").remove();
-  //         $("#pag").remove();
-  //         $("#comment_form_container").after(comment_list);
-  //         for (var i = 0; i < data.comment_count; i++) {
-  //           $("#comment_list").append('<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>');
-  //         }
-  //         $("#comment_list").after(pag);
-  //         paginate(data);
-  //       }
-  //
-  //
-  //     }});
-  //   });
 
-  // Feature 4
-  </script>
-  {% endblock %}
+    </script>
+    {% endblock %}
