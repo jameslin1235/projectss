@@ -140,6 +140,33 @@ def post_delete(request,id,slug):
 
 
 
+def post_like(request,id,slug):
+    post = get_object_or_404(Post, id=id)
+    if post.is_draft == True:
+        return redirect("posts:post_404")
+    user = post.user
+    current_user = request.user
+    if current_user != user:
+        return redirect("posts:post_404")
+    post.likes += 1
+    post.save()
+    response_data = {}
+    response_data['like_count'] = post.likes
+    return JsonResponse(response_data,safe=False)
+
+def post_dislike(request,id,slug):
+    post = get_object_or_404(Post, id=id)
+    if post.is_draft == True:
+        return redirect("posts:post_404")
+    user = post.user
+    current_user = request.user
+    if current_user != user:
+        return redirect("posts:post_404")
+    post.dislikes += 1
+    post.save()
+    response_data = {}
+    response_data['dislike_count'] = post.dislikes
+    return JsonResponse(response_data,safe=False)
 
 
 def post_detail(request,id,slug):

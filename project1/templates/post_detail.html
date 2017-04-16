@@ -28,8 +28,8 @@
               <p>{{ post.content }}</p>
               <p><a href="{{ post.get_absolute_url }}" data-toggle="tooltip" data-placement="top" title="Published {{ post.date_published }}">Edited {{ post.date_edited }}</a></p>
               <p>
-                <button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> 0</button>
-                <button type="button" class="btn btn-link"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> 2</button>
+                <button type="button" id='like_button' class="btn btn-primary" {% if logged_in == False %}data-toggle="modal" data-target="#myModal"{% endif %}><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> {{ post.likes }}</button>
+                <button type="button" id='dislike_button' class="btn btn-link" {% if logged_in == False %}data-toggle="modal" data-target="#myModal"{% endif %}><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> {{ post.dislikes }}</button>
 
                 <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
                 sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-share" aria-hidden="true"></span> Share</button>
@@ -70,7 +70,7 @@
                 </div>
                 {% endif %}
 
-                <div class="form-group" {% if logged_in == False %}data-toggle="modal" data-target="#myModal"{% else %}data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample"{% endif %}>
+                <div class="form-group" {% if logged_in %}data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample"{% else %}data-toggle="modal" data-target="#myModal"{% endif %}>
 
 
                   {{ form.content|add_class:"form-control"|attr:"id:comment_form_field"|attr:"placeholder:Leave a comment."|attr:"rows:3" }}
@@ -172,6 +172,8 @@
 
 {% block javascript %}
 <script>
+var message = '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Comment created.</div>';
+
 var post_detail_pag = '<div id="post_detail_pag"><ul id="pag_ul" class="pagination"></ul></div>';
 var pag = '<div id="pag"><ul id="pag_ul" class="pagination"></ul></div>';
 var pag3 = '<li class="disabled"><span>&laquo;</span></li>';
@@ -204,6 +206,28 @@ function paginate(data) {
 }
 
 // Feature 1
+$(document).on('click', '#like_button', function(event) {
+  event.preventDefault();
+  $.ajax({
+    url:window.location.href + "like",
+    success:function(data) {
+      $("#like_button").html('<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> ' + data.like_count);
+    }
+  })
+});
+
+// Feature 2
+$(document).on('click', '#dislike_button', function(event) {
+  event.preventDefault();
+  $.ajax({
+    url:window.location.href + "dislike",
+    success:function(data) {
+      $("#dislike_button").html('<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> ' + data.dislike_count);
+    }
+  })
+});
+
+// Feature 2
 $(document).on('submit', '#comment_form', function(event) {
   event.preventDefault();
   $.ajax({
@@ -215,6 +239,7 @@ $(document).on('submit', '#comment_form', function(event) {
       var comment = '<div class="media"><div class="media-left"><a href="'+data.profile_url+'"><img class="media-object" src="'+data.avatar+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.profile_url+'">'+data.username+'</a><p>'+ data.content+'</p><p>'+data.date_created+'</p></div></div>';
       $("#comments_count").html(data.comments_count + " Comments");
       $("#comment_form_field").val("");
+      $('#comment_form_container').before(message);
 
       if($('#post_detail_comment_list').length){
         if ($("#comment_form").attr("data-pagenum") == 1) {
@@ -295,7 +320,7 @@ $(document).on('submit', '#comment_form', function(event) {
     });
   })
 
-  // Feature 2
+  // Feature 3
   $(document).on('click', '.page_button', function() {
     event.preventDefault();
     $.ajax({

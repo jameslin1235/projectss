@@ -10,7 +10,8 @@ urlpatterns = [
     url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/delete/$', views.post_delete, name='post_delete'),
     url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/$', views.post_detail, name='post_detail'),
     url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/publish/$', views.post_publish, name='post_publish'),
-
+    url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/like/$', views.post_like, name='post_like'),
+    url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/dislike/$', views.post_dislike, name='post_dislike'),
 
 
 
