@@ -134,7 +134,6 @@
               </div>
             </div>
             {% endfor %}
-
           </div>
           {% endif %}
 
@@ -173,8 +172,7 @@
 
 {% block javascript %}
 <script>
-
-
+var post_detail_pag = '<div id="post_detail_pag"><ul id="pag_ul" class="pagination"></ul></div>';
 var pag = '<div id="pag"><ul id="pag_ul" class="pagination"></ul></div>';
 
 var pag3 = '<li class="disabled"><span>&laquo;</span></li>';
@@ -205,31 +203,22 @@ function paginate(data) {
     $("#pag_ul").append(pag7);
   }
 }
+
+// Feature 1
 $("#comment_form").submit(function(event){
   event.preventDefault();
-
-  var comment_list = '<div id="comment_list"><div class="media"><div class="media-left"><a href="'+data.profile_url+'"><img class="media-object" src="'+data.avatar+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.profile_url+'">'+data.username+'</a><p>'+ data.content+'</p><p>'+data.date_created+'</p></div></div></div>';
-  var comment = '<div class="media"><div class="media-left"><a href="'+data.profile_url+'"><img class="media-object" src="'+data.avatar+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.profile_url+'">'+data.username+'</a><p>'+ data.content+'</p><p>'+data.date_created+'</p></div></div>';
   $.ajax({
     type:  $("#comment_form").attr('method'),
     url:  $("#comment_form").attr('action'),
     data:  $("#comment_form").serialize(),
     success:function(data) {
-
-
-      $("#comments_count").html(data.count + " Comments");
+      var comment_list = '<div id="comment_list"><div class="media"><div class="media-left"><a href="'+data.profile_url+'"><img class="media-object" src="'+data.avatar+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.profile_url+'">'+data.username+'</a><p>'+ data.content+'</p><p>'+data.date_created+'</p></div></div></div>';
+      var comment = '<div class="media"><div class="media-left"><a href="'+data.profile_url+'"><img class="media-object" src="'+data.avatar+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.profile_url+'">'+data.username+'</a><p>'+ data.content+'</p><p>'+data.date_created+'</p></div></div>';
+      $("#comments_count").html(data.comments_count + " Comments");
       $("#comment_form_field").val("");
-
-
-
 
       if($('#post_detail_comment_list').length){
         $('#post_detail_comment_list').prepend(comment);
-        if (data.count>5) {
-          $("#post_detail_comment_list").children().last().remove();
-
-
-        }
         if($('#post_detail_pag').length){
           $('#post_detail_pag').remove();
           $('#post_detail_comment_list').after(pag);
@@ -240,83 +229,95 @@ $("#comment_form").submit(function(event){
           $('#post_detail_comment_list').after(pag);
           paginate(data);
         }
+        if (data.comments_count>5) {
+          $("#post_detail_comment_list").children().last().remove();
+        }
       }
       else{
-        if(data.count == 1){
+        if(data.comments_count == 1){
           $("#comment_form_container").after(comment_list);
           $("#comment_list").after(pag);
           paginate(data);
           $("#no_comments").remove();
         }
         else{
-          if(data.count>5) {
-            $("#comment_list").prepend(comment);
-            $("#comment_list").children().last().remove();
-            $("#pag").remove();
-            $("#comment_list").after(pag);
-            paginate(data);
-            }
-            else{
-              $("#comment_list").prepend(comment);
-              $("#pag").remove();
-              $("#comment_list").after(pag);
-              paginate(data);
-            }
-          }
-        }
-
-
-
-      },
-
-    });
-  })
-
-  $("#next_button").click(function(event){
-    event.preventDefault();
-    $.ajax({
-      url:$("#next_button").attr("href"),
-      success:function(data) {
-        var page_comment_list = '<div id="page_comment_list"></div>';
-        if ($("#comment_list").length) {
-          $("#comment_list").remove();
+          $("#comment_list").prepend(comment);
           $("#pag").remove();
-          $("#comment_form_container").after(page_comment_list);
-          for (var i = 0; i < data.comment_count; i++) {
-            $("#page_comment_list").append('<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>');
-          }
-          $("#page_comment_list").after(pag);
+          $("#comment_list").after(pag);
           paginate(data);
         }
-        else if ($("#post_detail_comment_list").length) {
-          $("#post_detail_comment_list").remove();
-          $("#post_detail_pag").remove();
-          $("#comment_form_container").after(page_comment_list);
-          for (var i = 0; i < data.comment_count; i++) {
-            $("#page_comment_list").append('<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>');
-          }
-          $("#page_comment_list").after(pag);
-          paginate(data);
+        if(data.comments_count>5){
+          $("#comment_list").children().last().remove();
         }
-      }});
-    });
+      }
+    },
+  });
+})
 
-  $("#prev_button").click(function(event){
-    event.preventDefault();
-    $.ajax({
-      url:$("#prev_button").attr("href"),
-      success:function(data) {
-        var page_comment_list = '<div id="page_comment_list"></div>';
+// Feature 2
+$(document).on('click', '#next_button', function() {
+  event.preventDefault();
+  $.ajax({
+    url:$("#next_button").attr("href"),
+    success:function(data) {
+      if ($("#post_detail_comment_list").length) {
+        var post_detail_comment_list = '<div id="post_detail_comment_list"></div>';
+        $("#post_detail_comment_list").remove();
+        $("#post_detail_pag").remove();
+        $("#comment_form_container").after(post_detail_comment_list);
+        for (var i = 0; i < data.comment_count; i++) {
+          $("#post_detail_comment_list").append('<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>');
+        }
+        $("#post_detail_comment_list").after(post_detail_pag);
+        paginate(data);
+      }
+      else {
+        var comment_list = '<div id="comment_list"></div>';
         $("#comment_list").remove();
         $("#pag").remove();
-        $("#comment_form_container").after(page_comment_list);
+        $("#comment_form_container").after(comment_list);
         for (var i = 0; i < data.comment_count; i++) {
-          $("#page_comment_list").append('<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>');
+          $("#comment_list").append('<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>');
         }
-        $("#page_comment_list").after(pag);
+        $("#comment_list").after(pag);
         paginate(data);
+      }
+    }});
+  });
 
-      }});
-    });
+// Feature 3
+  // $(document).on('click', '#prev_button', function() {
+  //   event.preventDefault();
+  //   $.ajax({
+  //     url:$("#prev_button").attr("href"),
+  //     success:function(data) {
+  //       if ($("#post_detail_comment_list").length) {
+  //         var post_detail_comment_list = '<div id="post_detail_comment_list"></div>';
+  //         $("#post_detail_comment_list").remove();
+  //         $("#post_detail_pag").remove();
+  //         $("#comment_form_container").after(post_detail_comment_list);
+  //         for (var i = 0; i < data.comment_count; i++) {
+  //           $("#post_detail_comment_list").append('<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>');
+  //         }
+  //         $("#post_detail_comment_list").after(pag);
+  //         paginate(data);
+  //       }
+  //       else {
+  //         var comment_list = '<div id="comment_list"></div>';
+  //         $("#comment_list").remove();
+  //         $("#pag").remove();
+  //         $("#comment_form_container").after(comment_list);
+  //         for (var i = 0; i < data.comment_count; i++) {
+  //           $("#comment_list").append('<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>');
+  //         }
+  //         $("#comment_list").after(pag);
+  //         paginate(data);
+  //       }
+  //
+  //
+  //     }});
+  //   });
+
+  // Feature 4
   </script>
   {% endblock %}

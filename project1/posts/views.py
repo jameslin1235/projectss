@@ -185,7 +185,7 @@ def post_detail(request,id,slug):
             response_data['content'] = comment.content
             response_data['date_created'] = comment.date_created
             response_data['profile_url'] = reverse("profiles:profile_activity", kwargs={"id": comment.user.id, "slug":comment.user.profile.slug })
-            response_data['count'] = comments_count + 1
+            response_data['comments_count'] = comments_count + 1
 
             response_data['has_previous'] = current_page.has_previous()
             response_data['has_next'] = current_page.has_next()
@@ -194,9 +194,7 @@ def post_detail(request,id,slug):
             # messages.success(request, "Comment created.")
             return JsonResponse(response_data,safe=False)
 
-
     else:
-
         form = CommentForm()
         paginator = Paginator(comments, 5) # Show 25 contacts per page
         page = request.GET.get('page')
