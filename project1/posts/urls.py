@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/publish/$', views.post_publish, name='post_publish'),
     url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/like/$', views.post_like, name='post_like'),
     url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/dislike/$', views.post_dislike, name='post_dislike'),
+    url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/bookmark/$', views.post_bookmark, name='post_bookmark'),
 
 
 

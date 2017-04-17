@@ -5,22 +5,25 @@ from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
+from django.http import JsonResponse
+from django.core import serializers
 from .models import Post
 from .forms import PostForm
 from project1.project1.comments.forms import CommentForm
 from project1.project1.comments.models import Comment
-from django.http import JsonResponse
-from django.core import serializers
+
 # Create your views here.
 
 def post_list(request):
+    posts = Post.objects.filter(is_draft = False)
     title = "Latest Posts"
     comment_title = "Comments"
     comment_button_text = "Comment"
-    posts = Post.objects.filter(is_draft = False)
-    logged_in = True
-    if not request.user.is_authenticated:
-        logged_in = False
+
+    logged_in = False
+    if request.user.is_authenticated:
+        logged_in = True
+
     paginator = Paginator(posts, 5) # Show 25 contacts per page
     page = request.GET.get('page')
     try:
@@ -31,6 +34,15 @@ def post_list(request):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         current_page = paginator.page(paginator.num_pages)
+
+    current_user = request.user
+    list1 = []
+    for post in current_page.object_list:
+        if post.user == current_user:
+            list1.append("True")
+        else:
+            list1.append("False")
+
 
     if request.method == "POST":
         form = CommentForm(request.POST)
@@ -51,6 +63,7 @@ def post_list(request):
         "comment_button_text":comment_button_text,
         "logged_in":logged_in,
         "current_page":current_page,
+        "list1":list1,
         "form":form,
     }
 
@@ -139,30 +152,33 @@ def post_delete(request,id,slug):
             return redirect("profiles:profile_posts", id=user.id, slug=user.profile.slug )
 
 
-
+@login_required
 def post_like(request,id,slug):
     post = get_object_or_404(Post, id=id)
     if post.is_draft == True:
         return redirect("posts:post_404")
-    user = post.user
-    current_user = request.user
-    if current_user != user:
-        return redirect("posts:post_404")
-    post.likes += 1
+    if request.GET.get('unlike'):
+        post.likes -= 1
+    else:
+        post.likes += 1
     post.save()
     response_data = {}
     response_data['like_count'] = post.likes
     return JsonResponse(response_data,safe=False)
 
+@login_required
+def post_bookmark(request,id,slug):
+    return render(request,"post_list.html",context)
+
+@login_required
 def post_dislike(request,id,slug):
     post = get_object_or_404(Post, id=id)
     if post.is_draft == True:
         return redirect("posts:post_404")
-    user = post.user
-    current_user = request.user
-    if current_user != user:
-        return redirect("posts:post_404")
-    post.dislikes += 1
+    if request.GET.get('undislike'):
+        post.dislikes -= 1
+    else:
+        post.dislikes += 1
     post.save()
     response_data = {}
     response_data['dislike_count'] = post.dislikes
@@ -173,7 +189,14 @@ def post_detail(request,id,slug):
     post = get_object_or_404(Post, id=id)
     if post.is_draft == True:
         return redirect("posts:post_404")
+    logged_in = False
+    if request.user.is_authenticated:
+        logged_in = True
     user = post.user
+    current_user = request.user
+    same_user = False
+    if current_user == user:
+        same_user = True
     comments = Comment.objects.filter(post__id = id)
     comments_count = comments.count()
     no_comments = True
@@ -181,9 +204,6 @@ def post_detail(request,id,slug):
         no_comments = False
     comment_title = "Comments"
     comment_button_text = "Comment"
-    logged_in = True
-    if not request.user.is_authenticated:
-        logged_in = False
 
     if request.method == "POST":
         response_data = {}
@@ -267,15 +287,16 @@ def post_detail(request,id,slug):
             return JsonResponse(response_data,safe=False)
 
     context = {
-        "current_page":current_page,
+        "post":post,
         "user":user,
-        "no_comments":no_comments,
+        "same_user":same_user,
         "comments_count":comments_count,
+        "no_comments":no_comments,
         "comment_title":comment_title,
         "comment_button_text":comment_button_text,
-        "post":post,
         "logged_in":logged_in,
         "form":form,
+        "current_page":current_page,
     }
 
     return render(request,"post_detail.html",context)

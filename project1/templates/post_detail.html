@@ -8,7 +8,6 @@
 <section >
   <div class='container'>
     <div class="row">
-
       <div class="col-md-12">
         <div class="section">
           {% if messages %}
@@ -28,20 +27,18 @@
               <p>{{ post.content }}</p>
               <p><a href="{{ post.get_absolute_url }}" data-toggle="tooltip" data-placement="top" title="Published {{ post.date_published }}">Edited {{ post.date_edited }}</a></p>
               <p>
-                <button type="button" id='like_button' class="btn btn-primary" {% if logged_in == False %}data-toggle="modal" data-target="#myModal"{% endif %}><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> {{ post.likes }}</button>
-                <button type="button" id='dislike_button' class="btn btn-link" {% if logged_in == False %}data-toggle="modal" data-target="#myModal"{% endif %}><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> {{ post.dislikes }}</button>
-
+                <button type="button" class="btn btn-primary" id="like_button" {% if same_user %}disabled="disabled"{% endif %} {% if logged_in %}data-logged-in="True" data-liked="False"{% else %}data-logged-in="False"{% endif %}><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> {{ post.likes }}</button>
+                <button type="button" class="btn btn-link" id="dislike_button" {% if same_user %}disabled="disabled"{% endif %} {% if logged_in %}data-logged-in="True" data-disliked="False"{% else %}data-logged-in="False"{% endif %}><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> {{ post.dislikes }}</button>
                 <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
                 sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-share" aria-hidden="true"></span> Share</button>
-                <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
-                sagittis lacus vel augue laoreet rutrum faucibus."><span class="  glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
+                <button type="button" class="btn btn-link" id='bookmark_button' {% if logged_in %}data-logged-in="True"{% else %}data-logged-in="False"{% endif %}><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
               </p>
-
             </div>
           </div>
         </div>
       </div>
     </div>
+
     <div class="row">
       <div class="col-md-12">
         <div class="section">
@@ -54,6 +51,7 @@
             <p>There are no comments.</p>
           </div>
           {% endif %}
+
           <div class="media" id='comment_form_container'>
             <div class="media-left">
               <a href="#">
@@ -61,7 +59,7 @@
               </a>
             </div>
             <div class="media-body">
-              <form method="post" id="comment_form" data-pagenum = "1">
+              <form method="post" id="comment_form" data-pagenum= "1">
                 {% csrf_token %}
 
                 {% if form.non_field_errors %}
@@ -70,10 +68,9 @@
                 </div>
                 {% endif %}
 
-                <div class="form-group" {% if logged_in %}data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample"{% else %}data-toggle="modal" data-target="#myModal"{% endif %}>
-
-
-                  {{ form.content|add_class:"form-control"|attr:"id:comment_form_field"|attr:"placeholder:Leave a comment."|attr:"rows:3" }}
+                <!-- Button trigger modal -->
+                <div class="form-group" id="comment_form_field" {% if logged_in %}data-logged-in="True"{% else %}data-logged-in="False"{% endif %}>
+                  {{ form.content|add_class:"form-control"|attr:"id:comment_form_textfield"|attr:"placeholder:Leave a comment."|attr:"rows:3" }}
                   {% if form.content.errors %}
                   <div class="alert alert-danger" role="alert">
                     {{ form.content.errors }}
@@ -89,8 +86,6 @@
                   <button type="submit"class="btn btn-primary" >{{ comment_button_text }}</button>
                 </div>
                 {% endif %}
-                <!-- Button trigger modal -->
-
 
                 <!-- Modal -->
                 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -104,9 +99,7 @@
                         <a class="btn btn-default" href="{% url 'login' %}?next={{request.path}}">Login</a>
                       </div>
                       <div class="modal-footer" id="modal_comment_footer">
-
                         <p>Don't have an account? <a href="{% url 'accounts:register' %}">Register</a></p>
-
                       </div>
                     </div>
                   </div>
@@ -115,12 +108,9 @@
             </div>
           </div>
 
-
-
           {% if no_comments == False %}
           <div id='post_detail_comment_list'>
             {% for comment in current_page %}
-
             <div class="media">
               <div class="media-left">
                 <a href="{% url 'profiles:profile_activity' id=comment.user.id slug=comment.user.profile.slug %}">
@@ -173,7 +163,6 @@
 {% block javascript %}
 <script>
 var message = '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Comment created.</div>';
-
 var post_detail_pag = '<div id="post_detail_pag"><ul id="pag_ul" class="pagination"></ul></div>';
 var pag = '<div id="pag"><ul id="pag_ul" class="pagination"></ul></div>';
 var pag3 = '<li class="disabled"><span>&laquo;</span></li>';
@@ -208,26 +197,88 @@ function paginate(data) {
 // Feature 1
 $(document).on('click', '#like_button', function(event) {
   event.preventDefault();
-  $.ajax({
-    url:window.location.href + "like",
-    success:function(data) {
-      $("#like_button").html('<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> ' + data.like_count);
+  if ($(this).attr("data-logged-in")=="True") {
+    if($(this).attr("data-liked")=="False"){
+      $.ajax({
+        url:window.location.href + "like",
+        success:function(data) {
+          $("#like_button").html('<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> ' + data.like_count);
+          $('#like_button').attr("data-liked","True");
+        }
+      })
     }
-  })
+    else{
+      $.ajax({
+        url:window.location.href + "like",
+        data:{ unlike: "unlike" },
+        success:function(data) {
+          $("#like_button").html('<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> ' + data.like_count);
+          $('#like_button').attr("data-liked","False");
+        }
+      })
+    }
+
+  }
+  else{
+    $('#myModal').modal()
+  }
 });
 
 // Feature 2
 $(document).on('click', '#dislike_button', function(event) {
   event.preventDefault();
-  $.ajax({
-    url:window.location.href + "dislike",
-    success:function(data) {
-      $("#dislike_button").html('<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> ' + data.dislike_count);
+  if ($(this).attr("data-logged-in")=="True") {
+    if($(this).attr("data-disliked")=="False"){
+      $.ajax({
+        url:window.location.href + "dislike",
+        success:function(data) {
+          $("#dislike_button").html('<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> ' + data.dislike_count);
+          $('#dislike_button').attr("data-disliked","True");
+        }
+      })
     }
-  })
+    else{
+      $.ajax({
+        url:window.location.href + "dislike",
+        data:{ undislike: "undislike" },
+        success:function(data) {
+          $("#dislike_button").html('<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> ' + data.dislike_count);
+          $('#dislike_button').attr("data-disliked","False");
+        }
+      })
+    }
+
+  }
+  else{
+    $('#myModal').modal()
+  }
 });
 
-// Feature 2
+// Feature 3
+$(document).on('click', '#bookmark_button', function(event) {
+  event.preventDefault();
+  if ($(this).attr("data-logged-in")=="True") {
+
+    alert("hello");
+  }
+  else{
+    $('#myModal').modal()
+  }
+});
+
+// Feature 4
+$(document).on('click', '#comment_form_field', function(event) {
+  event.preventDefault();
+  if ($(this).attr("data-logged-in")=="True") {
+    $('#collapseExample').collapse('toggle')
+  }
+  else{
+    $('#myModal').modal()
+  }
+});
+
+
+// Feature 5
 $(document).on('submit', '#comment_form', function(event) {
   event.preventDefault();
   $.ajax({
@@ -238,7 +289,7 @@ $(document).on('submit', '#comment_form', function(event) {
       var comment_list = '<div id="comment_list"><div class="media"><div class="media-left"><a href="'+data.profile_url+'"><img class="media-object" src="'+data.avatar+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.profile_url+'">'+data.username+'</a><p>'+ data.content+'</p><p>'+data.date_created+'</p></div></div></div>';
       var comment = '<div class="media"><div class="media-left"><a href="'+data.profile_url+'"><img class="media-object" src="'+data.avatar+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.profile_url+'">'+data.username+'</a><p>'+ data.content+'</p><p>'+data.date_created+'</p></div></div>';
       $("#comments_count").html(data.comments_count + " Comments");
-      $("#comment_form_field").val("");
+      $("#comment_form_textfield").val("");
       $('#comment_form_container').before(message);
 
       if($('#post_detail_comment_list').length){
@@ -320,7 +371,7 @@ $(document).on('submit', '#comment_form', function(event) {
     });
   })
 
-  // Feature 3
+  // Feature 6
   $(document).on('click', '.page_button', function() {
     event.preventDefault();
     $.ajax({
