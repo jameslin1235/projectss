@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'project1.project1.app1.apps.App1Config',
+
     'widget_tweaks',
     'project1.project1.accounts.apps.AccountsConfig',
     'project1.project1.categories.apps.CategoriesConfig',

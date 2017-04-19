@@ -36,34 +36,121 @@ def post_list(request):
         current_page = paginator.page(paginator.num_pages)
 
     current_user = request.user
-    list1 = []
+    same_user = []
+    no_comments = []
     for post in current_page.object_list:
+        paginator = Paginator(post.comment_set.all(), 5) # Show 25 contacts per page
+        page = request.GET.get('page')
+        try:
+            comments_current_page = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            comments_current_page = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            comments_current_page = paginator.page(paginator.num_pages)
+        # check 1
         if post.user == current_user:
-            list1.append("True")
+            same_user.append("True")
         else:
-            list1.append("False")
+            same_user.append("False")
+        # check2
+        if post.comment_set.all().count() == 0:
+            no_comments.append("True")
+        else:
+            no_comments.append("False")
 
 
+    # if request.method == "POST":
+    #     form = CommentForm(request.POST)
+    #     post_id = request.POST.get("post_id")
+    #     post = Post.objects.get(id = post_id)
+    #     if form.is_valid():
+    #         comment = form.save(commit=False)
+    #         comment.user = request.user
+    #         comment.post = post
+    #         comment.save()
+    #         messages.success(request, "Comment created.")
+    #         return redirect("posts:post_list")
     if request.method == "POST":
-        form = CommentForm(request.POST)
+        response_data = {}
         post_id = request.POST.get("post_id")
-        post = Post.objects.get(id = post_id)
+        post = Post.objects.filter(id = post_id)
+        form = CommentForm(request.POST)
         if form.is_valid():
             comment = form.save(commit=False)
             comment.user = request.user
             comment.post = post
             comment.save()
-            messages.success(request, "Comment created.")
-            return redirect("posts:post_list")
+
+            comments = Comment.objects.filter(post__id = post_id)
+            paginator = Paginator(comments, 5) # Show 25 contacts per page
+            page = request.GET.get('page')
+
+            try:
+                comments_current_page = paginator.page(page)
+            except PageNotAnInteger:
+                # If page is not an integer, deliver first page.
+                comments_current_page = paginator.page(1)
+            except EmptyPage:
+                # If page is out of range (e.g. 9999), deliver last page of results.
+                comments_current_page = paginator.page(paginator.num_pages)
+
+            response_data['avatar'] = comment.user.profile.avatar.url
+            response_data['username'] = comment.user.username
+            response_data['content'] = comment.content
+            response_data['date_created'] = comment.date_created
+            response_data['profile_url'] = reverse("profiles:profile_activity", kwargs={"id": comment.user.id, "slug":comment.user.profile.slug })
+            response_data['comments_count'] = post.comment_set.all().count()
+
+            response_data['has_previous'] = comments_current_page.has_previous()
+            response_data['has_next'] = comments_current_page.has_next()
+            response_data['number'] = comments_current_page.number
+            response_data['page_range'] = comments_current_page.paginator.page_range[-1]
+            response_data['url'] = request.path
+            # messages.success(request, "Comment created.")
+            return JsonResponse(response_data,safe=False)
     else:
         form = CommentForm()
+        if request.is_ajax():
+            print(request.is_ajax())
+            comment_count = comments_current_page.object_list.count()
+            list1 = []
+            list2 = []
+            list3 = []
+            list4 = []
+            list5 = []
+
+            for comment in comments_current_page.object_list:
+                list1.append(comment.user.profile.avatar.url)
+                list2.append(comment.user.username)
+                list3.append( comment.content)
+                list4.append(comment.date_created)
+                list5.append(reverse("profiles:profile_activity", kwargs={"id": comment.user.id, "slug":comment.user.profile.slug }))
+
+            response_data={}
+            response_data['list1']= list1
+            response_data['list2']= list2
+            response_data['list3']= list3
+            response_data['list4']= list4
+            response_data['list5']= list5
+
+            response_data['comment_count']= comment_count
+            response_data['has_previous'] = comments_current_page.has_previous()
+            response_data['has_next'] = comments_current_page.has_next()
+            response_data['number'] = comments_current_page.number
+            response_data['page_range'] = comments_current_page.paginator.page_range[-1]
+
+            return JsonResponse(response_data,safe=False)
     context = {
         "title":title,
         "comment_title":comment_title,
         "comment_button_text":comment_button_text,
         "logged_in":logged_in,
         "current_page":current_page,
-        "list1":list1,
+        "comments_current_page":comments_current_page,
+        "same_user":same_user,
+        "no_comments":no_comments,
         "form":form,
     }
 

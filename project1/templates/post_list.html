@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load widget_tweaks %}
-
+{% load custom_tags %}
 {% block title %}{{ title }}{% endblock title %}
 
 {% block body %}
@@ -22,6 +22,7 @@
   </div>
 </div>
 
+
 <section >
   <div class='container'>
     <div class="row">
@@ -31,6 +32,7 @@
             <h5><span class="glyphicon glyphicon-th-large" aria-hidden="true"></span> {{ title }}</h5>
           </div>
           {% for post in current_page %}
+
           <div class="thumbnail thumbnail_post_list">
             <div class="caption">
               <p><a href="{{ post.category.get_absolute_url }}">{{ post.category }}</a></p>
@@ -39,139 +41,144 @@
               <p>{{ post.content }}</p>
               <p><a href="{{ post.get_absolute_url }}" data-toggle="tooltip" data-placement="top" title="Published {{ post.date_published }}">Edited {{ post.date_edited }}</a></p>
               <p>
-                <button type="button" class="btn btn-primary like_button" data-post="{{ post.get_absolute_url}}" {% if list1[i] == True %}disabled="disabled"{% endif %} {% if logged_in %}data-logged-in="True" data-liked="False"{% else %}data-logged-in="False"{% endif %}><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> {{ post.likes }}</button>
-                <button type="button" class="btn btn-link dislike_button" data-post="{{ post.get_absolute_url}}" {% if same_user %}disabled="disabled"{% endif %} {% if logged_in %}data-logged-in="True" data-disliked="False"{% else %}data-logged-in="False"{% endif %}><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> {{ post.dislikes }}</button>
+                <button type="button" class="btn btn-primary like_button" data-post="{{ post.get_absolute_url}}" {% if same_user|index:forloop.counter0 == "True" %}disabled="disabled"{% endif %} {% if logged_in %}data-logged-in="True" data-liked="False"{% else %}data-logged-in="False"{% endif %}><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> {{ post.likes }}</button>
+                <button type="button" class="btn btn-link dislike_button" data-post="{{ post.get_absolute_url}}" {% if same_user|index:forloop.counter0 == "True" %}disabled="disabled"{% endif %} {% if logged_in %}data-logged-in="True" data-disliked="False"{% else %}data-logged-in="False"{% endif %}><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> {{ post.dislikes }}</button>
 
-                <button type="button" class="btn btn-link" data-toggle="collapse" data-target="#comment_collapse{{post.id}}" aria-expanded="false" aria-controls="collapseExample" ><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> {{ post.comment_set.all.count }}</button>
+                <button type="button" class="btn btn-link comment_button" data-collapse="{{post.id}}" data-post="{{ post.get_absolute_url}}"   ><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> {{ post.comment_set.all.count }}</button>
+
+                <div class="collapse" id="comment_collapse_{{post.id}}">
+                  <div class="page-header">
+                    <h4 id="comments_count_{{post.id}}">{{ post.comment_set.all.count }} {{ comment_title }}</h4>
+                  </div>
+
+                  {% if no_comments|index:forloop.counter0 == "True" %}
+                  <div id="no_comments_{{post.id}}">
+                    <p>There are no comments.</p>
+                  </div>
+                  {% endif %}
+
+                  {% if no_comments|index:forloop.counter0 == "False" %}
+                  <div id='post_list_comment_list_{{post.id}}'>
+                    {% for comment in post.comment_set.all %}
+                    <div class="media">
+                      <div class="media-left">
+                        <a href="{% url 'profiles:profile_activity' id=comment.user.id slug=comment.user.profile.slug %}">
+                          <img class="media-object" src="{{ comment.user.profile.avatar.url }}" alt="..." width="64px" height="64px">
+                        </a>
+                      </div>
+                      <div class="media-body">
+                        <a class="media-heading" href="{% url 'profiles:profile_activity' id=post.user.id slug=post.user.profile.slug %}">{{ post.user.username }}</a>
+                        <p>{{ comment.content}} </p>
+                        <p>{{ comment.date_created}} </p>
+                      </div>
+                    </div>
+                    {% endfor %}
+                  </div>
+                  {% endif %}
+
+                  <div class="media" id='comment_form_container_{{post.id}}'>
+                    <div class="media-left">
+                      <a href="#">
+                        <img class="media-object" src="/media/profile_avatar/1.jpg" alt="..." width="64px" height="64px">
+                      </a>
+                    </div>
+                    <div class="media-body">
+                      <form method="post" class="comment_form" data-post-id="{{post.id}}" data-pagenum="1">
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger" role="alert">
+                          {{ form.non_field_errors }}
+                        </div>
+                        {% endif %}
+
+                        <!-- Button trigger modal -->
+                        <div class="form-group comment_form_field" data-collapse="{{post.id}}" {% if logged_in %}data-logged-in="True"{% else %}data-logged-in="False"{% endif %}>
+                          {{ form.content|add_class:"form-control"|attr:"id:comment_form_textfield"|attr:"placeholder:Leave a comment."|attr:"rows:3" }}
+                          {% if form.content.errors %}
+                          <div class="alert alert-danger" role="alert">
+                            {{ form.content.errors }}
+                          </div>
+                          {% endif %}
+                          {% if form.content.help_text %}
+                          <p class="help-block">{{ form.content.help_text|safe }}</p>
+                          {% endif %}
+                        </div>
+
+
+                        <div class="collapse" id="commentform_collapse_{{post.id}}">
+                          <button type="submit"class="btn btn-primary" >{{ comment_button_text }}</button>
+                        </div>
+
+                      </form>
+                    </div>
+                  </div>
+
+                  {% if no_comments|index:forloop.counter0 == "False" %}
+                  <div id="post_list_pag_{{post.id}}">
+                    <ul class="pagination">
+                      {% if comments_current_page.has_previous %}
+                      <li><a class="page_button" href="?page={{ comments_current_page.previous_page_number }}">&laquo;</a></li>
+                      {% else %}
+                      <li class="disabled"><span>&laquo;</span></li>
+                      {% endif %}
+                      {% for i in comments_current_page.paginator.page_range %}
+                      {% if comments_current_page.number == i %}
+                      <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                      {% else %}
+                      <li><a class="page_button" href="?page={{ i }}" >{{ i }}</a></li>
+                      {% endif %}
+                      {% endfor %}
+                      {% if comments_current_page.has_next %}
+                      <li><a class="page_button" href="?page={{ comments_current_page.next_page_number }}">&raquo;</a></li>
+                      {% else %}
+                      <li class="disabled"><span>&raquo;</span></li>
+                      {% endif %}
+                    </ul>
+                  </div>
+                  {% endif %}
+                </div>
+
                 <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
                 sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-share" aria-hidden="true"></span> Share</button>
                 <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
                 sagittis lacus vel augue laoreet rutrum faucibus."><span class="  glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
-                </p>
+              </p>
+              <p>
+
+                <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
+                sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-share" aria-hidden="true"></span> Share</button>
+                <button type="button" class="btn btn-link" id='bookmark_button' {% if logged_in %}data-logged-in="True"{% else %}data-logged-in="False"{% endif %}><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
+              </p>
 
 
-                <p>
 
-                  <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
-                  sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-share" aria-hidden="true"></span> Share</button>
-                  <button type="button" class="btn btn-link" id='bookmark_button' {% if logged_in %}data-logged-in="True"{% else %}data-logged-in="False"{% endif %}><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
-                </p>
-
-
-              <div class="collapse" id="comment_collapse{{post.id}}">
-
-                <div class="page-header">
-                  <h4>{{ post.comment_set.all.count }} {{ comment_title }}</h4>
-                </div>
-
-                {% if post.comment_set.all.count == 0 %}
-                <div>
-                  <p>There are no comments.</p>
-                </div>
-                {% endif %}
-
-                {% if post.comment_set.all.count != 0 %}
-                {% for comment in post.comment_set.all %}
-                <div class="media">
-                  <div class="media-left">
-                    <a href="{% url 'profiles:profile_activity' id=comment.user.id slug=comment.user.profile.slug %}">
-                      <img class="media-object" src="{{ comment.user.profile.avatar.url }}" alt="..." width="64px" height="64px">
-                    </a>
-                  </div>
-                  <div class="media-body">
-                    <a class="media-heading" href="{% url 'profiles:profile_activity' id=post.user.id slug=post.user.profile.slug %}">{{ post.user.username }}</a>
-                    <p>{{ comment.content}} </p>
-                    <p>{{ comment.date_created}} </p>
-                  </div>
-                </div>
-                {% endfor %}
-                {% endif %}
-
-                <div class="media">
-                  <div class="media-left">
-                    <a href="#">
-                      <img class="media-object" src="/media/profile_avatar/1.jpg" alt="..." width="64px" height="64px">
-                    </a>
-                  </div>
-                  <div class="media-body">
-                    <form method="post" >
-                      {% csrf_token %}
-
-                      {% if form.non_field_errors %}
-                      <div class="alert alert-danger" role="alert">
-                        {{ form.non_field_errors }}
-                      </div>
-                      {% endif %}
-
-                      <!-- Button trigger modal -->
-                      <div class="form-group" {% if logged_in %}data-toggle="collapse" data-target="#comment_form_collapse{{post.id}}" aria-expanded="false" aria-controls="collapseExample"{% else %}data-toggle="modal" data-target="#myModal{{post.id}}"{% endif %}>
-                        {{ form.content|add_class:"form-control"|attr:"placeholder:Leave a comment."|attr:"rows:3" }}
-                        {% if form.content.errors %}
-                        <div class="alert alert-danger" role="alert">
-                          {{ form.content.errors }}
-                        </div>
-                        {% endif %}
-                        {% if form.content.help_text %}
-                        <p class="help-block">{{ form.content.help_text|safe }}</p>
-                        {% endif %}
-                      </div>
-
-                      <input type="hidden" name="post_id" value="{{post.id}}">
-
-                      {% if logged_in %}
-                      <div class="collapse" id="comment_form_collapse{{post.id}}">
-                        <button type="submit"class="btn btn-primary" >{{ comment_button_text }}</button>
-                      </div>
-                      {% endif %}
-
-
-                      <!-- Modal -->
-                      <div class="modal fade" id="myModal{{post.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                        <div class="modal-dialog" role="document">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                              <h4 class="modal-title" id="myModalLabel">Login</h4>
-                            </div>
-                            <div class="modal-body" id="modal_comment_body">
-                              <a class="btn btn-default" href="{% url 'login' %}?next={{request.path}}">Login</a>
-                            </div>
-                            <div class="modal-footer" id="modal_comment_footer">
-
-                              <p>Don't have an account? <a href="{% url 'accounts:register' %}">Register</a></p>
-
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              </div>
 
             </div>
           </div>
           {% endfor %}
 
-          <ul class="pagination">
-            {% if current_page.has_previous %}
-            <li><a href="?page={{ current_page.previous_page_number }}">&laquo;</a></li>
-            {% else %}
-            <li class="disabled"><span>&laquo;</span></li>
-            {% endif %}
-            {% for i in current_page.paginator.page_range %}
-            {% if current_page.number == i %}
-            <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
-            {% else %}
-            <li><a href="?page={{ i }}">{{ i }}</a></li>
-            {% endif %}
-            {% endfor %}
-            {% if current_page.has_next %}
-            <li><a href="?page={{ current_page.next_page_number }}">&raquo;</a></li>
-            {% else %}
-            <li class="disabled"><span>&raquo;</span></li>
-            {% endif %}
-          </ul>
+          <div>
+            <ul class="pagination">
+              {% if current_page.has_previous %}
+              <li><a href="?page={{ current_page.previous_page_number }}">&laquo;</a></li>
+              {% else %}
+              <li class="disabled"><span>&laquo;</span></li>
+              {% endif %}
+              {% for i in current_page.paginator.page_range %}
+              {% if current_page.number == i %}
+              <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+              {% else %}
+              <li><a href="?page={{ i }}">{{ i }}</a></li>
+              {% endif %}
+              {% endfor %}
+              {% if current_page.has_next %}
+              <li><a href="?page={{ current_page.next_page_number }}">&raquo;</a></li>
+              {% else %}
+              <li class="disabled"><span>&raquo;</span></li>
+              {% endif %}
+            </ul>
+          </div>
         </div>
       </div>
       <div class='col-md-3 col-md-offset-1'>
@@ -197,6 +204,37 @@
 
 {% block javascript %}
 <script>
+var message = '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Comment created.</div>';
+var post_list_pag = '<div id="post_list_pag"><ul id="pag_ul" class="pagination"></ul></div>';
+var pag = '<div id="pag"><ul id="pag_ul" class="pagination"></ul></div>';
+var pag3 = '<li class="disabled"><span>&laquo;</span></li>';
+var pag7 = '<li class="disabled"><span>&raquo;</span></li>';
+
+function paginate(data,id) {
+  if (data.has_previous) {
+    ppn = data.number-1;
+    $("#pag_ul"+id).append('<li><a class="page_button" href="?page='+ppn+'">&laquo;</a></li>');
+  }
+  else {
+    $("#pag_ul"+id).append(pag3);
+  }
+  for (var x = 1; x < data.page_range+1; x++) {
+    if (data.number == x) {
+      $("#pag_ul"+id).append('<li class="active"><span>'+x+'<span class="sr-only">(current)</span></span></li>');
+
+    }
+    else {
+      $("#pag_ul"+id).append('<li><a class="page_button" href="?page='+x+'">'+x+'</a></li>');
+    }
+  }
+  if (data.has_next) {
+    npn = data.number+1;
+    $("#pag_ul"+id).append('<li><a class="page_button" href="?page='+npn+'">&raquo;</a></li>');
+  }
+  else {
+    $("#pag_ul"+id).append(pag7);
+  }
+}
 
 // Feature 1
 $(document).on('click', '.like_button', function(event) {
@@ -231,7 +269,6 @@ $(document).on('click', '.like_button', function(event) {
 });
 
 // Feature 2
-// Feature 1
 $(document).on('click', '.dislike_button', function(event) {
   event.preventDefault();
   if ($(this).attr("data-logged-in")=="True") {
@@ -262,5 +299,159 @@ $(document).on('click', '.dislike_button', function(event) {
     $('#myModal').modal()
   }
 });
-</script>
-{% endblock javascript %}
+
+// Feature 3
+$(document).on('click', '.comment_button', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  var id = $(this).attr("data-collapse");
+  $("#comment_collapse_"+id).collapse("toggle");
+});
+
+
+// Feature 4
+$(document).on('click', '.comment_form_field', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  if ($(this).attr("data-logged-in")=="True") {
+    var id = $(this).attr("data-collapse");
+    $("#commentform_collapse_"+id).collapse("toggle");
+  }
+  else{
+    $('#myModal').modal()
+  }
+});
+
+
+// Feature 5
+$(document).on('submit', '.comment_form', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  var id = $(this).attr("data-id");
+  var post_id = $(this).attr("data-post-id");
+  $.ajax({
+    type:  $(element).attr('method'),
+    url:  $(element).attr('action'),
+    data:  { form_data: $(element).serialize(), post_id: post_id },
+    success:function(data) {
+      var comment_list = '<div id="comment_list"><div class="media"><div class="media-left"><a href="'+data.profile_url+'"><img class="media-object" src="'+data.avatar+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.profile_url+'">'+data.username+'</a><p>'+ data.content+'</p><p>'+data.date_created+'</p></div></div></div>';
+      var comment = '<div class="media"><div class="media-left"><a href="'+data.profile_url+'"><img class="media-object" src="'+data.avatar+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.profile_url+'">'+data.username+'</a><p>'+ data.content+'</p><p>'+data.date_created+'</p></div></div>';
+      $("#comments_count"+id).html(data.comments_count + " Comments");
+      $("#comment_form_textfield"+id).val("");
+      $('#comment_form_container'+id).before(message);
+      // var id = $(this).attr("data-collapse");
+
+      if($('#post_list_comment_list_'+id).length){
+        if ($(element).attr("data-pagenum") == 1) {
+          $('#post_list_comment_list_'+id).prepend(comment);
+          if($('#post_list_pag_'+id).length){
+            $('#post_list_pag_'+id).remove();
+            $('#post_list_comment_list_'+id).after('<div id="post_list_pag_'+id+'"><ul id="pag_ul_'+id+'" class="pagination"></ul></div>');
+            paginate(data,id);
+          }
+          else{
+            $("#post_list_pag_"+id).remove();
+            $('#post_list_comment_list_'+id).after('<div id="post_list_pag_'+id+'"><ul id="pag_ul_'+id+'" class="pagination"></ul></div>');
+            paginate(data,id);
+          }
+          if (data.comments_count>5) {
+            $("#post_list_comment_list_"+id).children().last().remove();
+          }
+        }
+        else{
+          $.ajax({
+            url:data.url + "?page=1",
+            success:function(data) {
+              var post_list_comment_list = '<div id="post_list_comment_list"></div>';
+              $("#post_list_comment_list"+id).remove();
+              $("#post_list_pag"+id).remove();
+              $("#comment_form_container"+id).after(post_list_comment_list);
+              for (var i = 0; i < data.comment_count; i++) {
+                $("#post_list_comment_list"+id).append('<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>');
+              }
+              $("#post_list_comment_list"+id).after(post_list_pag);
+              paginate(data);
+              $(this).attr("data-pagenum",data.number);
+            }})
+          }
+
+        }
+        else{
+          if($(element).attr("data-pagenum") == 1){
+            if(data.comments_count == 1){
+              $("#comment_form_container"+id).after('<div id="comment_list_'+id+'"+id><div class="media"><div class="media-left"><a href="'+data.profile_url+'"><img class="media-object" src="'+data.avatar+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.profile_url+'">'+data.username+'</a><p>'+ data.content+'</p><p>'+data.date_created+'</p></div></div></div>');
+              $("#comment_list"+id).after('<div id="pag_'+id+'"><ul id="pag_ul_'+id+'class="pagination"></ul></div>');
+              paginate(data,id);
+              $("#no_comments"+id).remove();
+              alert('hello');
+            }
+            else{
+              $("#comment_list"+id).prepend(comment);
+              $("#pag"+id).remove();
+              $("#comment_list"+id).after('<div id="pag_'+id+'"><ul id="pag_ul_'+id+'class="pagination"></ul></div>');
+              paginate(data,id);
+            }
+            if(data.comments_count>5){
+              $("#comment_list"+id).children().last().remove();
+            }
+          }
+          else{   // first page
+            $.ajax({
+              url:data.url + "?page=1",
+              success:function(data) {
+                var comment_list = '<div id="comment_list"></div>';
+                $("#comment_list").remove();
+                $("#pag").remove();
+                $("#comment_form_container").after(comment_list);
+                for (var i = 0; i < data.comment_count; i++) {
+                  $("#comment_list").append('<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>');
+                }
+                $("#comment_list").after(pag);
+                paginate(data);
+                $(this).attr("data-pagenum","1");
+                // alert($("#comment_form").attr("data-pagenum"));
+              }
+            })
+
+          }
+        }
+      },
+    });
+  })
+
+  // Feature 6
+  $(document).on('click', '.page_button', function() {
+    event.preventDefault();
+    $.ajax({
+      url:$(this).attr("href"),
+      success:function(data) {
+        if ($("#post_detail_comment_list").length) {
+          var post_detail_comment_list = '<div id="post_detail_comment_list"></div>';
+          $("#post_detail_comment_list").remove();
+          $("#post_detail_pag").remove();
+          $("#comment_form_container").after(post_detail_comment_list);
+          for (var i = 0; i < data.comment_count; i++) {
+            $("#post_detail_comment_list").append('<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>');
+          }
+          $("#post_detail_comment_list").after(post_detail_pag);
+          paginate(data);
+          $("#comment_form").attr("data-pagenum",data.number);
+        }
+        else {
+          var comment_list = '<div id="comment_list"></div>';
+          $("#comment_list").remove();
+          $("#pag").remove();
+          $("#comment_form_container").after(comment_list);
+          for (var i = 0; i < data.comment_count; i++) {
+            $("#comment_list").append('<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>');
+          }
+          $("#comment_list").after(pag);
+          paginate(data);
+          $("#comment_form").attr("data-pagenum",data.number);
+
+        }
+      }});
+    });
+
+    </script>
+    {% endblock javascript %}
