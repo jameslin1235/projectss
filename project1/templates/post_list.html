@@ -22,7 +22,6 @@
   </div>
 </div>
 
-
 <section >
   <div class='container'>
     <div class="row">
@@ -32,7 +31,6 @@
             <h5><span class="glyphicon glyphicon-th-large" aria-hidden="true"></span> {{ title }}</h5>
           </div>
           {% for post in current_page %}
-
           <div class="thumbnail thumbnail_post_list">
             <div class="caption">
               <p><a href="{{ post.category.get_absolute_url }}">{{ post.category }}</a></p>
@@ -43,12 +41,11 @@
               <p>
                 <button type="button" class="btn btn-primary like_button" data-post="{{ post.get_absolute_url}}" {% if same_user|index:forloop.counter0 == "True" %}disabled="disabled"{% endif %} {% if logged_in %}data-logged-in="True" data-liked="False"{% else %}data-logged-in="False"{% endif %}><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> {{ post.likes }}</button>
                 <button type="button" class="btn btn-link dislike_button" data-post="{{ post.get_absolute_url}}" {% if same_user|index:forloop.counter0 == "True" %}disabled="disabled"{% endif %} {% if logged_in %}data-logged-in="True" data-disliked="False"{% else %}data-logged-in="False"{% endif %}><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> {{ post.dislikes }}</button>
-
-                <button type="button" class="btn btn-link comment_button" data-collapse="{{post.id}}" data-post="{{ post.get_absolute_url}}"   ><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> {{ post.comment_set.all.count }}</button>
+                <button type="button" class="btn btn-link comment_button" id="comment_button_{{post.id}}" data-collapse="{{post.id}}" data-post="{{ post.get_absolute_url}}"   ><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> {{ comments_count|index:forloop.counter0 }}</button>
 
                 <div class="collapse" id="comment_collapse_{{post.id}}">
-                  <div class="page-header">
-                    <h4 id="comments_count_{{post.id}}">{{ post.comment_set.all.count }} {{ comment_title }}</h4>
+                  <div class="page-header" id="comment_page_header_{{post.id}}">
+                    <h4 id="comments_count_{{post.id}}">{{ comments_count|index:forloop.counter0 }} {{ comment_title }}</h4>
                   </div>
 
                   {% if no_comments|index:forloop.counter0 == "True" %}
@@ -59,7 +56,7 @@
 
                   {% if no_comments|index:forloop.counter0 == "False" %}
                   <div id='post_list_comment_list_{{post.id}}'>
-                    {% for comment in post.comment_set.all %}
+                    {% for comment in comments_current_page %}
                     <div class="media">
                       <div class="media-left">
                         <a href="{% url 'profiles:profile_activity' id=comment.user.id slug=comment.user.profile.slug %}">
@@ -76,6 +73,30 @@
                   </div>
                   {% endif %}
 
+                  {% if no_comments|index:forloop.counter0 == "False" %}
+                  <div id="post_list_pag_{{post.id}}">
+                    <ul class="pagination">
+                      {% if comments_current_page.has_previous %}
+                      <li><a href="?page={{ comments_current_page.previous_page_number }}">&laquo;</a></li>
+                      {% else %}
+                      <li class="disabled"><span>&laquo;</span></li>
+                      {% endif %}
+                      {% for i in comments_current_page.paginator.page_range %}
+                      {% if comments_current_page.number == i %}
+                      <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                      {% else %}
+                      <li><a href="?page={{ i }}">{{ i }}</a></li>
+                      {% endif %}
+                      {% endfor %}
+                      {% if comments_current_page.has_next %}
+                      <li><a href="?page={{ comments_current_page.next_page_number }}">&raquo;</a></li>
+                      {% else %}
+                      <li class="disabled"><span>&raquo;</span></li>
+                      {% endif %}
+                    </ul>
+                  </div>
+                  {% endif %}
+
                   <div class="media" id='comment_form_container_{{post.id}}'>
                     <div class="media-left">
                       <a href="#">
@@ -83,7 +104,7 @@
                       </a>
                     </div>
                     <div class="media-body">
-                      <form method="post" class="comment_form" data-post-id="{{post.id}}" data-pagenum="1">
+                      <form method="post" class="comment_form" data-id="{{post.id}}" data-pagenum="1">
                         {% csrf_token %}
 
                         {% if form.non_field_errors %}
@@ -94,7 +115,8 @@
 
                         <!-- Button trigger modal -->
                         <div class="form-group comment_form_field" data-collapse="{{post.id}}" {% if logged_in %}data-logged-in="True"{% else %}data-logged-in="False"{% endif %}>
-                          {{ form.content|add_class:"form-control"|attr:"id:comment_form_textfield"|attr:"placeholder:Leave a comment."|attr:"rows:3" }}
+                          <textarea class="form-control" id="comment_form_textfield_{{post.id}}" rows="3" placeholder="Leave a commment." required></textarea>
+
                           {% if form.content.errors %}
                           <div class="alert alert-danger" role="alert">
                             {{ form.content.errors }}
@@ -113,30 +135,6 @@
                       </form>
                     </div>
                   </div>
-
-                  {% if no_comments|index:forloop.counter0 == "False" %}
-                  <div id="post_list_pag_{{post.id}}">
-                    <ul class="pagination">
-                      {% if comments_current_page.has_previous %}
-                      <li><a class="page_button" href="?page={{ comments_current_page.previous_page_number }}">&laquo;</a></li>
-                      {% else %}
-                      <li class="disabled"><span>&laquo;</span></li>
-                      {% endif %}
-                      {% for i in comments_current_page.paginator.page_range %}
-                      {% if comments_current_page.number == i %}
-                      <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
-                      {% else %}
-                      <li><a class="page_button" href="?page={{ i }}" >{{ i }}</a></li>
-                      {% endif %}
-                      {% endfor %}
-                      {% if comments_current_page.has_next %}
-                      <li><a class="page_button" href="?page={{ comments_current_page.next_page_number }}">&raquo;</a></li>
-                      {% else %}
-                      <li class="disabled"><span>&raquo;</span></li>
-                      {% endif %}
-                    </ul>
-                  </div>
-                  {% endif %}
                 </div>
 
                 <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
@@ -144,16 +142,6 @@
                 <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
                 sagittis lacus vel augue laoreet rutrum faucibus."><span class="  glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
               </p>
-              <p>
-
-                <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
-                sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-share" aria-hidden="true"></span> Share</button>
-                <button type="button" class="btn btn-link" id='bookmark_button' {% if logged_in %}data-logged-in="True"{% else %}data-logged-in="False"{% endif %}><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
-              </p>
-
-
-
-
             </div>
           </div>
           {% endfor %}
@@ -213,26 +201,26 @@ var pag7 = '<li class="disabled"><span>&raquo;</span></li>';
 function paginate(data,id) {
   if (data.has_previous) {
     ppn = data.number-1;
-    $("#pag_ul"+id).append('<li><a class="page_button" href="?page='+ppn+'">&laquo;</a></li>');
+    $("#pag_ul_"+id).append('<li><a class="page_button" href="?page='+ppn+'">&laquo;</a></li>');
   }
   else {
-    $("#pag_ul"+id).append(pag3);
+    $("#pag_ul_"+id).append(pag3);
   }
   for (var x = 1; x < data.page_range+1; x++) {
     if (data.number == x) {
-      $("#pag_ul"+id).append('<li class="active"><span>'+x+'<span class="sr-only">(current)</span></span></li>');
+      $("#pag_ul_"+id).append('<li class="active"><span>'+x+'<span class="sr-only">(current)</span></span></li>');
 
     }
     else {
-      $("#pag_ul"+id).append('<li><a class="page_button" href="?page='+x+'">'+x+'</a></li>');
+      $("#pag_ul_"+id).append('<li><a class="page_button" href="?page='+x+'">'+x+'</a></li>');
     }
   }
   if (data.has_next) {
     npn = data.number+1;
-    $("#pag_ul"+id).append('<li><a class="page_button" href="?page='+npn+'">&raquo;</a></li>');
+    $("#pag_ul_"+id).append('<li><a class="page_button" href="?page='+npn+'">&raquo;</a></li>');
   }
   else {
-    $("#pag_ul"+id).append(pag7);
+    $("#pag_ul_"+id).append(pag7);
   }
 }
 
@@ -328,93 +316,105 @@ $(document).on('submit', '.comment_form', function(event) {
   event.preventDefault();
   var element = $(this);
   var id = $(this).attr("data-id");
-  var post_id = $(this).attr("data-post-id");
+  alert($("#comment_form_textfield_"+id).val());
   $.ajax({
     type:  $(element).attr('method'),
     url:  $(element).attr('action'),
-    data:  { form_data: $(element).serialize(), post_id: post_id },
+    data:  {
+      content: $("#comment_form_textfield_"+id).val(),
+      csrfmiddlewaretoken:'{{ csrf_token }}',
+      id:id,
+      },
     success:function(data) {
-      var comment_list = '<div id="comment_list"><div class="media"><div class="media-left"><a href="'+data.profile_url+'"><img class="media-object" src="'+data.avatar+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.profile_url+'">'+data.username+'</a><p>'+ data.content+'</p><p>'+data.date_created+'</p></div></div></div>';
-      var comment = '<div class="media"><div class="media-left"><a href="'+data.profile_url+'"><img class="media-object" src="'+data.avatar+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.profile_url+'">'+data.username+'</a><p>'+ data.content+'</p><p>'+data.date_created+'</p></div></div>';
-      $("#comments_count"+id).html(data.comments_count + " Comments");
-      $("#comment_form_textfield"+id).val("");
-      $('#comment_form_container'+id).before(message);
-      // var id = $(this).attr("data-collapse");
+      if (data.success) {
+        var comment_list = '<div id="comment_list"><div class="media"><div class="media-left"><a href="'+data.profile_url+'"><img class="media-object" src="'+data.avatar+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.profile_url+'">'+data.username+'</a><p>'+ data.content+'</p><p>'+data.date_created+'</p></div></div></div>';
+        var comment = '<div class="media"><div class="media-left"><a href="'+data.profile_url+'"><img class="media-object" src="'+data.avatar+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.profile_url+'">'+data.username+'</a><p>'+ data.content+'</p><p>'+data.date_created+'</p></div></div>';
+        $("#comment_button_"+id).html('<span class="glyphicon glyphicon-comment" aria-hidden="true"></span> '+data.comments_count);
+        $("#comments_count_"+id).html(data.comments_count + " Comments");
+        $("#comment_form_textfield_"+id).val("");
+        $('#comment_page_header_'+id).after(message);
+        // var id = $(this).attr("data-collapse");
 
-      if($('#post_list_comment_list_'+id).length){
-        if ($(element).attr("data-pagenum") == 1) {
-          $('#post_list_comment_list_'+id).prepend(comment);
-          if($('#post_list_pag_'+id).length){
-            $('#post_list_pag_'+id).remove();
-            $('#post_list_comment_list_'+id).after('<div id="post_list_pag_'+id+'"><ul id="pag_ul_'+id+'" class="pagination"></ul></div>');
-            paginate(data,id);
-          }
-          else{
-            $("#post_list_pag_"+id).remove();
-            $('#post_list_comment_list_'+id).after('<div id="post_list_pag_'+id+'"><ul id="pag_ul_'+id+'" class="pagination"></ul></div>');
-            paginate(data,id);
-          }
-          if (data.comments_count>5) {
-            $("#post_list_comment_list_"+id).children().last().remove();
-          }
-        }
-        else{
-          $.ajax({
-            url:data.url + "?page=1",
-            success:function(data) {
-              var post_list_comment_list = '<div id="post_list_comment_list"></div>';
-              $("#post_list_comment_list"+id).remove();
-              $("#post_list_pag"+id).remove();
-              $("#comment_form_container"+id).after(post_list_comment_list);
-              for (var i = 0; i < data.comment_count; i++) {
-                $("#post_list_comment_list"+id).append('<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>');
-              }
-              $("#post_list_comment_list"+id).after(post_list_pag);
-              paginate(data);
-              $(this).attr("data-pagenum",data.number);
-            }})
-          }
-
-        }
-        else{
-          if($(element).attr("data-pagenum") == 1){
-            if(data.comments_count == 1){
-              $("#comment_form_container"+id).after('<div id="comment_list_'+id+'"+id><div class="media"><div class="media-left"><a href="'+data.profile_url+'"><img class="media-object" src="'+data.avatar+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.profile_url+'">'+data.username+'</a><p>'+ data.content+'</p><p>'+data.date_created+'</p></div></div></div>');
-              $("#comment_list"+id).after('<div id="pag_'+id+'"><ul id="pag_ul_'+id+'class="pagination"></ul></div>');
+        if($('#post_list_comment_list_'+id).length){
+          if ($(element).attr("data-pagenum") == 1) {
+            $('#post_list_comment_list_'+id).prepend(comment);
+            if($('#post_list_pag_'+id).length){
+              $('#post_list_pag_'+id).remove();
+              $('#post_list_comment_list_'+id).after('<div id="post_list_pag_'+id+'"><ul id="pag_ul_'+id+'" class="pagination"></ul></div>');
               paginate(data,id);
-              $("#no_comments"+id).remove();
-              alert('hello');
             }
             else{
-              $("#comment_list"+id).prepend(comment);
-              $("#pag"+id).remove();
-              $("#comment_list"+id).after('<div id="pag_'+id+'"><ul id="pag_ul_'+id+'class="pagination"></ul></div>');
+              $("#post_list_pag_"+id).remove();
+              $('#post_list_comment_list_'+id).after('<div id="post_list_pag_'+id+'"><ul id="pag_ul_'+id+'" class="pagination"></ul></div>');
               paginate(data,id);
             }
-            if(data.comments_count>5){
-              $("#comment_list"+id).children().last().remove();
+            if (data.comments_count>5) {
+              $("#post_list_comment_list_"+id).children().last().remove();
             }
           }
-          else{   // first page
+          else{
             $.ajax({
               url:data.url + "?page=1",
               success:function(data) {
-                var comment_list = '<div id="comment_list"></div>';
-                $("#comment_list").remove();
-                $("#pag").remove();
-                $("#comment_form_container").after(comment_list);
+                var post_list_comment_list = '<div id="post_list_comment_list"></div>';
+                $("#post_list_comment_list"+id).remove();
+                $("#post_list_pag"+id).remove();
+                $("#comment_form_container"+id).after(post_list_comment_list);
                 for (var i = 0; i < data.comment_count; i++) {
-                  $("#comment_list").append('<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>');
+                  $("#post_list_comment_list"+id).append('<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>');
                 }
-                $("#comment_list").after(pag);
+                $("#post_list_comment_list"+id).after(post_list_pag);
                 paginate(data);
-                $(this).attr("data-pagenum","1");
-                // alert($("#comment_form").attr("data-pagenum"));
-              }
-            })
+                $(this).attr("data-pagenum",data.number);
+              }})
+            }
 
           }
-        }
+          else{
+            if($(element).attr("data-pagenum") == 1){
+              if(data.comments_count == 1){
+                $("#comment_form_container_"+id).before('<div id="comment_list_'+id+'"><div class="media"><div class="media-left"><a href="'+data.profile_url+'"><img class="media-object" src="'+data.avatar+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.profile_url+'">'+data.username+'</a><p>'+ data.content+'</p><p>'+data.date_created+'</p></div></div></div>');
+                $("#comment_list_"+id).after('<div id="pag_'+id+'"><ul id="pag_ul_'+id+'"class="pagination"></ul></div>');
+                paginate(data,id);
+                $("#no_comments_"+id).remove();
+
+              }
+              else{
+                $("#comment_list_"+id).prepend(comment);
+                $("#pag_"+id).remove();
+                $("#comment_list_"+id).after('<div id="pag_'+id+'"><ul id="pag_ul_'+id+'"class="pagination"></ul></div>');
+                paginate(data,id);
+                
+              }
+              if(data.comments_count>5){
+                $("#comment_list_"+id).children().last().remove();
+              }
+            }
+            else{   // first page
+              $.ajax({
+                url:data.url + "?page=1",
+                success:function(data) {
+                  var comment_list = '<div id="comment_list"></div>';
+                  $("#comment_list").remove();
+                  $("#pag").remove();
+                  $("#comment_form_container").after(comment_list);
+                  for (var i = 0; i < data.comment_count; i++) {
+                    $("#comment_list").append('<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>');
+                  }
+                  $("#comment_list").after(pag);
+                  paginate(data);
+                  $(this).attr("data-pagenum","1");
+                  // alert($("#comment_form").attr("data-pagenum"));
+                }
+              })
+
+            }
+          }
+      }
+      else{
+        alert("wrong");
+      }
+
       },
     });
   })

@@ -281,6 +281,7 @@ $(document).on('click', '#comment_form_field', function(event) {
 // Feature 5
 $(document).on('submit', '#comment_form', function(event) {
   event.preventDefault();
+  alert($("#comment_form").attr('action'));
   $.ajax({
     type:  $("#comment_form").attr('method'),
     url:  $("#comment_form").attr('action'),
