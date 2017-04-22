@@ -42,6 +42,10 @@
                 <button type="button" class="btn btn-primary like_button" data-post="{{ post.get_absolute_url}}" {% if same_user|index:forloop.counter0 == "True" %}disabled="disabled"{% endif %} {% if logged_in %}data-logged-in="True" data-liked="False"{% else %}data-logged-in="False"{% endif %}><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> {{ post.likes }}</button>
                 <button type="button" class="btn btn-link dislike_button" data-post="{{ post.get_absolute_url}}" {% if same_user|index:forloop.counter0 == "True" %}disabled="disabled"{% endif %} {% if logged_in %}data-logged-in="True" data-disliked="False"{% else %}data-logged-in="False"{% endif %}><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> {{ post.dislikes }}</button>
                 <button type="button" class="btn btn-link comment_button" id="comment_button_{{post.id}}" data-collapse="{{post.id}}" data-post="{{ post.get_absolute_url}}"   ><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> {{ comments_count|index:forloop.counter0 }}</button>
+                <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
+                sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-share" aria-hidden="true"></span> Share</button>
+                <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
+                sagittis lacus vel augue laoreet rutrum faucibus."><span class="  glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
 
                 <div class="collapse" id="comment_collapse_{{post.id}}">
                   <div class="page-header" id="comment_page_header_{{post.id}}">
@@ -75,7 +79,7 @@
 
                   {% if no_comments|index:forloop.counter0 == "False" %}
                   <div id="post_list_pag_{{post.id}}">
-                    <ul class="pagination">
+                    <ul class="pagination" id="post_list_pag_ul_{{post.id}}">
                       {% with comments_first_pages|index:forloop.counter0 as comments_first_page %}
                       {% if comments_first_page.has_previous %}
                       <li><a class="page_button" href="{{ post.get_absolute_url }}?page={{ comments_first_page.previous_page_number }}" data-id="{{post.id}}" data-url="{{post.get_absolute_url}}">&laquo;</a></li>
@@ -139,10 +143,7 @@
                   </div>
                 </div>
 
-                <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
-                sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-share" aria-hidden="true"></span> Share</button>
-                <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
-                sagittis lacus vel augue laoreet rutrum faucibus."><span class="  glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
+
               </p>
             </div>
           </div>
@@ -194,11 +195,33 @@
 
 {% block javascript %}
 <script>
-var message = '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Comment created.</div>';
-var post_list_pag = '<div id="post_list_pag"><ul id="pag_ul" class="pagination"></ul></div>';
-var pag = '<div id="pag"><ul id="pag_ul" class="pagination"></ul></div>';
-var pag3 = '<li class="disabled"><span>&laquo;</span></li>';
-var pag7 = '<li class="disabled"><span>&raquo;</span></li>';
+var pag1 = '<li class="disabled"><span>&laquo;</span></li>';
+var pag2 = '<li class="disabled"><span>&raquo;</span></li>';
+
+function make_message(){
+  var message = '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Comment created.</div>';
+  return message;
+}
+
+function make_post_list_pag(id){
+  var post_list_pag = '<div id="post_list_pag_'+id+'"><ul id="post_list_pag_ul_'+id+'" class="pagination"></ul></div>';
+  return post_list_pag;
+}
+
+function make_post_list_page(data, i){
+  var post_list_page = '<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>';
+  return post_list_page;
+}
+
+function make_post_list_comment_list(data,id){
+  var post_list_comment_list = '<div id="post_list_comment_list_'+id+'"><div class="media"><div class="media-left"><a href="'+data.profile_url+'"><img class="media-object" src="'+data.avatar+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.profile_url+'">'+data.username+'</a><p>'+ data.content+'</p><p>'+data.date_created+'</p></div></div></div>'
+  return post_list_comment_list;
+}
+
+function make_comment(data){
+  var comment = '<div class="media"><div class="media-left"><a href="'+data.profile_url+'"><img class="media-object" src="'+data.avatar+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.profile_url+'">'+data.username+'</a><p>'+ data.content+'</p><p>'+data.date_created+'</p></div></div>';
+  return comment;
+}
 
 function paginate(data,id,url) {
   if (data.has_previous) {
@@ -206,7 +229,7 @@ function paginate(data,id,url) {
     $("#post_list_pag_ul_"+id).append('<li><a class="page_button" href="'+url+'?page='+ppn+'" data-id="'+id+'"data-url="'+url+'">&laquo;</a></li>');
   }
   else {
-    $("#post_list_pag_ul_"+id).append(pag3);
+    $("#post_list_pag_ul_"+id).append(pag1);
   }
   for (var x = 1; x < data.page_range+1; x++) {
     if (data.number == x) {
@@ -222,7 +245,7 @@ function paginate(data,id,url) {
     $("#post_list_pag_ul_"+id).append('<li><a class="page_button" href="'+url+'?page='+npn+'" data-id="'+id+'" data-url="'+url+'">&raquo;</a></li>');
   }
   else {
-    $("#post_list_pag_ul_"+id).append(pag7);
+    $("#post_list_pag_ul_"+id).append(pag2);
   }
 }
 
@@ -327,20 +350,19 @@ $(document).on('submit', '.comment_form', function(event) {
       content: $("#comment_form_textfield_"+id).val(),
       csrfmiddlewaretoken:'{{ csrf_token }}',
       id:id,
-      },
+    },
     success:function(data) {
       if (data.success) {
-        var comment = '<div class="media"><div class="media-left"><a href="'+data.profile_url+'"><img class="media-object" src="'+data.avatar+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.profile_url+'">'+data.username+'</a><p>'+ data.content+'</p><p>'+data.date_created+'</p></div></div>';
         $("#comment_button_"+id).html('<span class="glyphicon glyphicon-comment" aria-hidden="true"></span> '+data.comments_count);
         $("#comments_count_"+id).html(data.comments_count + " Comments");
         $("#comment_form_textfield_"+id).val("");
-        $('#comment_page_header_'+id).after(message);
+        $('#comment_page_header_'+id).after(make_message());
 
         if($('#post_list_comment_list_'+id).length){
           if ($(element).attr("data-pagenum") == 1) {
-            $('#post_list_comment_list_'+id).prepend(comment);
+            $('#post_list_comment_list_'+id).prepend(make_comment(data));
             $('#post_list_pag_'+id).remove();
-            $('#post_list_comment_list_'+id).after('<div id="post_list_pag_'+id+'"><ul id="post_list_pag_ul_'+id+'" class="pagination"></ul></div>');
+            $('#post_list_comment_list_'+id).after(make_post_list_pag(id));
             paginate(data,id,url);
             if (data.comments_count>5) {
               $("#post_list_comment_list_"+id).children().last().remove();
@@ -354,82 +376,82 @@ $(document).on('submit', '.comment_form', function(event) {
                 $("#post_list_pag_"+id).remove();
                 $("#comment_form_container_"+id).before('<div id="post_list_comment_list_'+id+'"></div>');
                 for (var i = 0; i < data.comment_count; i++) {
-                  $("#post_list_comment_list_"+id).append('<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>');
+                  $("#post_list_comment_list_"+id).append(make_post_list_page(data, i));
                 }
-                $("#post_list_comment_list_"+id).after('<div id="post_list_pag_'+id+'"><ul id="post_list_pag_ul_'+id+'"class="pagination"></ul></div>');
+                $("#post_list_comment_list_"+id).after(make_post_list_pag(id));
                 paginate(data,id,url);
                 $(element).attr("data-pagenum",data.number);
               }
             })
-            }
-
           }
-          else{
-            if($(element).attr("data-pagenum") == 1){
-              if(data.comments_count == 1){
-                $("#comment_form_container_"+id).before('<div id="post_list_comment_list_'+id+'"><div class="media"><div class="media-left"><a href="'+data.profile_url+'"><img class="media-object" src="'+data.avatar+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.profile_url+'">'+data.username+'</a><p>'+ data.content+'</p><p>'+data.date_created+'</p></div></div></div>');
-                $("#post_list_comment_list_"+id).after('<div id="post_list_pag_'+id+'"><ul id="post_list_pag_ul_'+id+'"class="pagination"></ul></div>');
-                paginate(data,id,url);
-                $("#no_comments_"+id).remove();
 
-              }
-              else{
-                $("#post_list_comment_list_"+id).prepend(comment);
-                $("#post_list_pag_"+id).remove();
-                $("#post_list_comment_list_"+id).after('<div id="post_list_pag_'+id+'"><ul id="post_list_pag_ul_'+id+'"class="pagination"></ul></div>');
-                paginate(data,id,url);
+        }
+        else{
+          if($(element).attr("data-pagenum") == 1){
+            if(data.comments_count == 1){
+              $("#comment_form_container_"+id).before(make_post_list_comment_list(data,id));
+              $("#post_list_comment_list_"+id).after(make_post_list_pag(id));
+              paginate(data,id,url);
+              $("#no_comments_"+id).remove();
 
-              }
-              if(data.comments_count>5){
-                $("#post_list_comment_list_"+id).children().last().remove();
-              }
             }
             else{
-              $.ajax({
-                url:url,
-                success:function(data) {
-                  $("#post_list_comment_list_"+id).remove();
-                  $("#post_list_pag_"+id).remove();
-                  $("#comment_form_container_"+id).before('<div id="post_list_comment_list_'+id+'"></div>');
-                  for (var i = 0; i < data.comment_count; i++) {
-                    $("#post_list_comment_list_"+id).append('<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>');
-                  }
-                  $("#post_list_comment_list_"+id).after('<div id="post_list_pag_'+id+'"><ul id="post_list_pag_ul_'+id+'"class="pagination"></ul></div>');
-                  paginate(data,id,url);
-                  $(element).attr("data-pagenum",data.number);
-                }
-              })
+              $("#post_list_comment_list_"+id).prepend(make_comment(data));
+              $("#post_list_pag_"+id).remove();
+              $("#post_list_comment_list_"+id).after(make_post_list_pag(id));
+              paginate(data,id,url);
+
+            }
+            if(data.comments_count>5){
+              $("#post_list_comment_list_"+id).children().last().remove();
             }
           }
+          else{
+            $.ajax({
+              url:url,
+              success:function(data) {
+                $("#post_list_comment_list_"+id).remove();
+                $("#post_list_pag_"+id).remove();
+                $("#comment_form_container_"+id).before('<div id="post_list_comment_list_'+id+'"></div>');
+                for (var i = 0; i < data.comment_count; i++) {
+                  $("#post_list_comment_list_"+id).append(make_post_list_page(data, i));
+                }
+                $("#post_list_comment_list_"+id).after(make_post_list_pag(id));
+                paginate(data,id,url);
+                $(element).attr("data-pagenum",data.number);
+              }
+            })
+          }
+        }
       }
       else{
         alert("wrong");
       }
 
-      },
-    });
-  })
+    },
+  });
+})
 
-  // Feature 6
-  $(document).on('click', '.page_button', function() {
-    event.preventDefault();
-    var element = $(this);
-    var id = $(this).attr("data-id");
-    var url = $(this).attr("data-url");
-    $.ajax({
-      url:$(element).attr("href"),
-      success:function(data) {
-        $("#post_list_comment_list_"+id).remove();
-        $("#post_list_pag_"+id).remove();
-        $("#comment_form_container_"+id).before('<div id="post_list_comment_list_'+id+'"></div>');
-        for (var i = 0; i < data.comment_count; i++) {
-          $("#post_list_comment_list_"+id).append('<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>');
-        }
-        $("#post_list_comment_list_"+id).after('<div id="post_list_pag_'+id+'"><ul id="post_list_pag_ul_'+id+'"class="pagination"></ul></div>');
-        paginate(data,id,url);
-        $("#comment_form_"+id).attr("data-pagenum",data.number);
-      }});
-    });
+// Feature 6
+$(document).on('click', '.page_button', function() {
+  event.preventDefault();
+  var element = $(this);
+  var id = $(this).attr("data-id");
+  var url = $(this).attr("data-url");
+  $.ajax({
+    url:$(element).attr("href"),
+    success:function(data) {
+      $("#post_list_comment_list_"+id).remove();
+      $("#post_list_pag_"+id).remove();
+      $("#comment_form_container_"+id).before('<div id="post_list_comment_list_'+id+'"></div>');
+      for (var i = 0; i < data.comment_count; i++) {
+        $("#post_list_comment_list_"+id).append(make_post_list_page(data, i));
+      }
+      $("#post_list_comment_list_"+id).after(make_post_list_pag(id));
+      paginate(data,id,url);
+      $("#comment_form_"+id).attr("data-pagenum",data.number);
+    }});
+  });
 
-    </script>
-    {% endblock javascript %}
+  </script>
+  {% endblock javascript %}
