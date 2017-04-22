@@ -110,7 +110,7 @@
 
           {% if no_comments == False %}
           <div id='post_detail_comment_list'>
-            {% for comment in current_page %}
+            {% for comment in comments_current_page %}
             <div class="media">
               <div class="media-left">
                 <a href="{% url 'profiles:profile_activity' id=comment.user.id slug=comment.user.profile.slug %}">
@@ -130,20 +130,20 @@
           {% if no_comments == False %}
           <div id="post_detail_pag">
             <ul class="pagination">
-              {% if current_page.has_previous %}
-              <li><a class="page_button" href="?page={{ current_page.previous_page_number }}">&laquo;</a></li>
+              {% if comments_current_page.has_previous %}
+              <li><a class="page_button" href="?page={{ comments_current_page.previous_page_number }}">&laquo;</a></li>
               {% else %}
               <li class="disabled"><span>&laquo;</span></li>
               {% endif %}
-              {% for i in current_page.paginator.page_range %}
-              {% if current_page.number == i %}
+              {% for i in comments_current_page.paginator.page_range %}
+              {% if comments_current_page.number == i %}
               <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
               {% else %}
               <li><a class="page_button" href="?page={{ i }}" >{{ i }}</a></li>
               {% endif %}
               {% endfor %}
-              {% if current_page.has_next %}
-              <li><a class="page_button" href="?page={{ current_page.next_page_number }}">&raquo;</a></li>
+              {% if comments_current_page.has_next %}
+              <li><a class="page_button" href="?page={{ comments_current_page.next_page_number }}">&raquo;</a></li>
               {% else %}
               <li class="disabled"><span>&raquo;</span></li>
               {% endif %}
