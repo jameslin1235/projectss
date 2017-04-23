@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.http import JsonResponse
 from django.core import serializers
+from django.core.exceptions import PermissionDenied
 from .models import Post
 from .forms import PostForm
 from project1.project1.comments.forms import CommentForm
@@ -83,8 +84,15 @@ def post_list(request):
 
 @login_required
 def post_create(request):
-    title = "Create Post"
-    if request.method == "POST":
+    if request.method == "GET":
+        title = "Create Post"
+        form = PostForm()
+        context = {
+            "title":title,
+            "form":form,
+        }
+        return render(request,"post_create.html",context)
+    elif request.method == "POST":
         if "save_draft" in request.POST:
             form = PostForm(request.POST)
             if form.is_valid():
@@ -103,66 +111,79 @@ def post_create(request):
                 post.save()
                 messages.success(request, "Post created.")
                 return redirect(post)
-    else:
-        form = PostForm()
-    context = {
-        "title":title,
-        "form":form,
-    }
-    return render(request,"post_create.html",context)
+
+
 
 @login_required
 def post_edit(request,id,slug):
-    post = get_object_or_404(Post, id=id)
-    if post.is_draft == True:
-        title = "Edit Draft"
-        button_text = "Edit Draft"
-    else:
-        title = "Edit Post"
-        button_text = "Edit Post"
-    user = post.user
-    current_user = request.user
-    if current_user != user:
-        return redirect("posts:post_404")
-    else:
-        if request.method == "POST":
-            form = PostForm(request.POST,instance=post)
-            if form.is_valid():
-                post = form.save(commit=False)
-                if post.is_draft == True:
-                    post.save()
-                    messages.success(request, "Draft edited.")
-                    return redirect("posts:post_edit", id=id, slug=slug )
-                else:
-                    post.save()
-                    messages.success(request, "Post edited.")
-                    return redirect(post)
+    if request.method == "GET":
+        post = get_object_or_404(Post, id=id)
+        user = post.user
+        current_user = request.user
+        if current_user != user:
+            raise PermissionDenied
         else:
+            if post.is_draft == True:
+                title = "Edit Draft"
+                button_text = "Edit Draft"
+            else:
+                title = "Edit Post"
+                button_text = "Edit Post"
             form = PostForm(instance=post)
-    context = {
-        "title":title,
-        "button_text":button_text,
-        "form":form,
-    }
-    return render(request,"post_edit.html",context)
+            context = {
+                "title":title,
+                "button_text":button_text,
+                "form":form,
+            }
+            return render(request,"post_edit.html",context)
+    elif request.method == "POST":
+        post = get_object_or_404(Post, id=id)
+        form = PostForm(request.POST,instance=post)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.save()
+            response_data = {}
+            if post.is_draft == True:
+                response_data['is_draft'] = True
+                return JsonResponse(response_data,safe=False)
+                # messages.success(request, "Draft edited.")
+                # return redirect("posts:post_edit", id=id, slug=slug )
+            else:
+                response_data['is_draft'] = False
+                return JsonResponse(response_data,safe=False)
+                # messages.success(request, "Post edited.")
+                # return redirect(post)
 
 @login_required
 def post_delete(request,id,slug):
-    post = get_object_or_404(Post, id=id)
-    user = post.user
-    current_user = request.user
-    if current_user != user:
-        return redirect("posts:post_404")
-    else:
+    if request.method == "GET":
+        post = get_object_or_404(Post, id=id)
+        user = post.user
+        current_user = request.user
+        if current_user != user:
+            return redirect("posts:post_404")
         if post.is_draft == True:
             post.delete()
-            messages.success(request, "Draft deleted.")
-            return redirect("profiles:profile_drafts", id=user.id, slug=user.profile.slug )
-        else:
-            post.delete()
-            messages.success(request, 'Post deleted.')
-            return redirect("profiles:profile_posts", id=user.id, slug=user.profile.slug )
+            response_data = {}
+            if post.is_draft == True:
+                response_data['is_draft'] = True
+                return JsonResponse(response_data,safe=False)
+            else:
+                response_data['is_draft'] = False
+                return JsonResponse(response_data,safe=False)
+        #     messages.success(request, "Draft deleted.")
+        #     return redirect("profiles:profile_drafts", id=user.id, slug=user.profile.slug )
+        # else:
+        #     post.delete()
+        #     messages.success(request, 'Post deleted.')
+        #     return redirect("profiles:profile_posts", id=user.id, slug=user.profile.slug )
 
+
+
+
+@login_required
+def post_bookmark(request,id,slug):
+    return render(request,"post_list.html",context)
 
 @login_required
 def post_like(request,id,slug):
@@ -177,10 +198,6 @@ def post_like(request,id,slug):
     response_data = {}
     response_data['like_count'] = post.likes
     return JsonResponse(response_data,safe=False)
-
-@login_required
-def post_bookmark(request,id,slug):
-    return render(request,"post_list.html",context)
 
 @login_required
 def post_dislike(request,id,slug):
@@ -273,10 +290,6 @@ def post_detail(request,id,slug):
         return render(request,"post_detail.html",context)
 
     elif request.method == "POST" and request.is_ajax():
-
-        # post_id = request.POST.get("id")
-        # post = Post.objects.get(id = post_id)
-
         post = Post.objects.get(id = id)
         form = CommentForm(request.POST)
         if form.is_valid():
@@ -297,28 +310,7 @@ def post_detail(request,id,slug):
                 # If page is out of range (e.g. 9999), deliver last page of results.
                 comments_current_page = paginator.page(paginator.num_pages)
 
-            # comment_count = comments_current_page.object_list.count()
-            # list1 = []
-            # list2 = []
-            # list3 = []
-            # list4 = []
-            # list5 = []
-            #
-            # for comment in comments_current_page.object_list:
-            #     list1.append(comment.user.profile.avatar.url)
-            #     list2.append(comment.user.username)
-            #     list3.append( comment.content)
-            #     list4.append(comment.date_created)
-            #     list5.append(reverse("profiles:profile_activity", kwargs={"id": comment.user.id, "slug":comment.user.profile.slug }))
-
             response_data = {}
-            #
-            # response_data['list1']= list1
-            # response_data['list2']= list2
-            # response_data['list3']= list3
-            # response_data['list4']= list4
-            # response_data['list5']= list5
-            # response_data['comment_count']= comment_count
             response_data['avatar'] = comment.user.profile.avatar.url
             response_data['username'] = comment.user.username
             response_data['content'] = comment.content
@@ -338,47 +330,6 @@ def post_detail(request,id,slug):
             response_data['success'] = False
             response_data['errors'] = form.errors
             return JsonResponse(response_data,safe=False)
-    elif request.method == "POST" and request.is_ajax():
-        print(type(request.POST))
-        post = get_object_or_404(Post, id=id)
-        form = CommentForm(request.POST)
-        print(request.POST)
-        if form.is_valid():
-            comment = form.save(commit=False)
-            comment.user = request.user
-            comment.post = post
-            comment.save()
-
-            comments = post.comment_set.all()
-            comments_count = comments.count()
-            paginator = Paginator(comments, 5) # Show 25 contacts per page
-            page = request.GET.get('page')
-
-            try:
-                comments_first_page = paginator.page(page)
-            except PageNotAnInteger:
-                # If page is not an integer, deliver first page.
-                comments_first_page = paginator.page(1)
-            except EmptyPage:
-                # If page is out of range (e.g. 9999), deliver last page of results.
-                comments_first_page = paginator.page(paginator.num_pages)
-
-            response_data = {}
-            response_data['avatar'] = comment.user.profile.avatar.url
-            response_data['username'] = comment.user.username
-            response_data['content'] = comment.content
-            response_data['date_created'] = comment.date_created
-            response_data['profile_url'] = reverse("profiles:profile_activity", kwargs={"id": comment.user.id, "slug":comment.user.profile.slug })
-            response_data['comments_count'] = comments_count
-            response_data['has_previous'] = comments_first_page.has_previous()
-            response_data['has_next'] = comments_first_page.has_next()
-            response_data['number'] = comments_first_page.number
-            response_data['page_range'] = comments_first_page.paginator.page_range[-1]
-            response_data['url'] = request.path
-            return JsonResponse(response_data,safe=False)
-        else:
-            print('error')
-
 
 @login_required
 def post_publish(request,id,slug):

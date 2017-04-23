@@ -39,13 +39,12 @@
               <p>{{ post.content }}</p>
               <p><a href="{{ post.get_absolute_url }}" data-toggle="tooltip" data-placement="top" title="Published {{ post.date_published }}">Edited {{ post.date_edited }}</a></p>
               <p>
-                <button type="button" class="btn btn-primary like_button" data-post="{{ post.get_absolute_url}}" {% if same_user|index:forloop.counter0 == "True" %}disabled="disabled"{% endif %} {% if logged_in %}data-logged-in="True" data-liked="False"{% else %}data-logged-in="False"{% endif %}><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> {{ post.likes }}</button>
-                <button type="button" class="btn btn-link dislike_button" data-post="{{ post.get_absolute_url}}" {% if same_user|index:forloop.counter0 == "True" %}disabled="disabled"{% endif %} {% if logged_in %}data-logged-in="True" data-disliked="False"{% else %}data-logged-in="False"{% endif %}><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> {{ post.dislikes }}</button>
-                <button type="button" class="btn btn-link comment_button" id="comment_button_{{post.id}}" data-collapse="{{post.id}}" data-post="{{ post.get_absolute_url}}"   ><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> {{ comments_count|index:forloop.counter0 }}</button>
+                <button type="button" class="btn btn-primary like_button" data-post="{{ post.get_absolute_url}}" {% if same_user|index:forloop.counter0 == "True" %}disabled="disabled"{% endif %} data-liked="False"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> {{ post.likes }}</button>
+                <button type="button" class="btn btn-link dislike_button" data-post="{{ post.get_absolute_url}}" {% if same_user|index:forloop.counter0 == "True" %}disabled="disabled"{% endif %} data-disliked="False"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> {{ post.dislikes }}</button>
+                <button type="button" class="btn btn-link comment_button" id="comment_button_{{post.id}}" data-id="{{post.id}}" data-post="{{ post.get_absolute_url}}"   ><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> {{ comments_count|index:forloop.counter0 }}</button>
                 <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
                 sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-share" aria-hidden="true"></span> Share</button>
-                <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
-                sagittis lacus vel augue laoreet rutrum faucibus."><span class="  glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
+                <button type="button" class="btn btn-link bookmark_button"><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
 
                 <div class="collapse" id="comment_collapse_{{post.id}}">
                   <div class="page-header" id="comment_page_header_{{post.id}}">
@@ -120,7 +119,7 @@
                         {% endif %}
 
                         <!-- Button trigger modal -->
-                        <div class="form-group comment_form_field" data-collapse="{{post.id}}" {% if logged_in %}data-logged-in="True"{% else %}data-logged-in="False"{% endif %}>
+                        <div class="form-group comment_form_field" data-id="{{post.id}}">
                           <textarea class="form-control" id="comment_form_textfield_{{post.id}}" rows="3" placeholder="Leave a commment." required></textarea>
 
                           {% if form.content.errors %}
@@ -252,8 +251,8 @@ function paginate(data,id,url) {
 // Feature 1
 $(document).on('click', '.like_button', function(event) {
   event.preventDefault();
-  if ($(this).attr("data-logged-in")=="True") {
-    var element = $(this);
+  var element = $(this);
+  if ($("#logged_in").attr("data-logged-in")=="True") {
     if($(element).attr("data-liked")=="False"){
 
       $.ajax({
@@ -284,8 +283,9 @@ $(document).on('click', '.like_button', function(event) {
 // Feature 2
 $(document).on('click', '.dislike_button', function(event) {
   event.preventDefault();
-  if ($(this).attr("data-logged-in")=="True") {
-    var element = $(this);
+  var element = $(this);
+  if ($("#logged_in").attr("data-logged-in")=="True") {
+
     if($(element).attr("data-disliked")=="False"){
 
       $.ajax({
@@ -317,17 +317,29 @@ $(document).on('click', '.dislike_button', function(event) {
 $(document).on('click', '.comment_button', function(event) {
   event.preventDefault();
   var element = $(this);
-  var id = $(this).attr("data-collapse");
+  var id = $(element).attr("data-id");
   $("#comment_collapse_"+id).collapse("toggle");
 });
 
+// Feature 4
+$(document).on('click', '.bookmark_button', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  if ($("#logged_in").attr("data-logged-in")=="True") {
+
+    alert("hello");
+  }
+  else{
+    $('#myModal').modal()
+  }
+});
 
 // Feature 4
 $(document).on('click', '.comment_form_field', function(event) {
   event.preventDefault();
   var element = $(this);
-  if ($(this).attr("data-logged-in")=="True") {
-    var id = $(this).attr("data-collapse");
+  if ($("#logged_in").attr("data-logged-in")=="True") {
+    var id = $(element).attr("data-id");
     $("#commentform_collapse_"+id).collapse("toggle");
   }
   else{

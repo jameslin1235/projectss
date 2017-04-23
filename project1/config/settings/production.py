@@ -29,7 +29,7 @@ SECRET_KEY = SECRET_KEY
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['45.56.101.153']
+ALLOWED_HOSTS = ['45.56.101.153','127.0.0.1', 'localhost']
 
 DATABASES = {
     'default': {

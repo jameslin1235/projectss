@@ -79,7 +79,10 @@
     </nav>
   </header>
 
+  <div id="logged_in" {% if logged_in %}data-logged-in="True"{% else %}data-logged-in="False"{% endif %} style="display: none;">
+  </div>
   {% block body %}
+
   {% endblock body %}
 
 
@@ -88,13 +91,8 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <!-- Include all compiled plugins (below), or include individual files as needed -->
   <script src="{% static "bootstrap-3.3.7-dist/bootstrap-3.3.7-dist/js/bootstrap.min.js" %}"></script>
+  <script src="{% static "js/project1_js.js" %}"></script>
   {% block javascript %}{% endblock %}
-  <script>
-  $(document).ready(function(){
-    $('[data-toggle="popover"]').popover();
-    $('[data-toggle="tooltip"]').tooltip();
 
-  });
-  </script>
 </body>
 </html>

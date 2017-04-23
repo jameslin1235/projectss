@@ -1,121 +1,474 @@
-{% extends "profile_posts_base.html" %}
-
+{% extends "profile_base.html" %}
+{% load widget_tweaks %}
+{% load custom_tags %}
 {% block title %}{{ user }}'s {{ title }}{% endblock title %}
 
-{% block posts %}
+{% block vertical_nav %}
+<ul class="nav nav-pills nav-stacked">
+  <li role="presentation"><a href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug  %}" role="tab" >Activity</a></li>
+  <li role="presentation" class="active"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" role="tab" >Posts {{posts_count}}</a></li>
+  <li role="presentation"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" role="tab" >Drafts</a></li>
+  <li role="presentation"><a href="{% url 'profiles:profile_comments' id=user.id slug=user.profile.slug  %}" role="tab">Comments</a></li>
+  <li role="presentation"><a href="{% url 'profiles:profile_bookmarks' id=user.id slug=user.profile.slug  %}" role="tab">Bookmark</a></li>
+  <li role="presentation"><a href="{% url 'profiles:profile_following' id=user.id slug=user.profile.slug  %}" role="tab">Following</a></li>
+  <li role="presentation"><a href="{% url 'profiles:profile_followers' id=user.id slug=user.profile.slug  %}" role="tab">Followers</a></li>
+</ul>
+{% endblock vertical_nav %}
+
+{% block content %}
+{% include "login_modal.html" %}
+
+<div class="page-header">
+  <h4>{{posts_count}} {{ title }}</h4>
+</div>
+
 <div>
-  <!-- Nav tabs -->
-  <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" aria-controls="profile" role="tab" >Posts</a></li>
-    {% if is_user %}
-    <li role="presentation" ><a href="{% url 'profiles:profile_drafts' id=user.id slug=user.profile.slug  %}" aria-controls="home" role="tab" >Drafts</a></li>
-    {% endif %}
-  </ul>
+  <a class="btn btn-primary" href="{% url 'posts:post_create' %}"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Write</a>
+</div>
 
-  <!-- Tab panes -->
-  <div class="tab-content">
-    <div role="tabpanel" class="tab-pane active">
-      <div class="page-header">
-        <div class="clearfix">
-          <div class="pull-left">
-            <span>{{posts_count}} {{ title }}</span>
+{% if no_posts %}
+<div>
+  <p>There are no posts.</p>
+</div>
+{% endif %}
+
+{% if no_posts == False %}
+<div>
+  {% for post in current_page %}
+  <div class="thumbnail">
+    <div class="caption">
+      <p><a href="{{ post.category.get_absolute_url }}">{{ post.category }}</a></p>
+      <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+      <p><a href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug %}">{{ post.user.username }}</a></p>
+      <p>{{ post.content }}</p>
+      <p><a href="{{ post.get_absolute_url }}" data-toggle="tooltip" data-placement="top" title="Published {{ post.date_published }}">Edited {{ post.date_edited }}</a></p>
+      <p>
+        <button type="button" class="btn btn-primary like_button" data-post="{{ post.get_absolute_url}}" {% if is_user == True %}disabled="disabled"{% endif %} data-liked="False"}><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> {{ post.likes }}</button>
+        <button type="button" class="btn btn-link dislike_button" data-post="{{ post.get_absolute_url}}" {% if is_user == True %}disabled="disabled"{% endif %} data-disliked="False"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> {{ post.dislikes }}</button>
+        <button type="button" class="btn btn-link comment_button" id="comment_button_{{post.id}}" data-id="{{post.id}}" data-post="{{ post.get_absolute_url}}"   ><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> {{ comments_count|index:forloop.counter0 }}</button>
+        <button type="button" class="btn btn-link" ><span class="glyphicon glyphicon-share" aria-hidden="true"></span> Share</button>
+        <button type="button" class="btn btn-link bookmark_button"><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
+
+        <div class="collapse" id="comment_collapse_{{post.id}}">
+          <div class="page-header" id="comment_page_header_{{post.id}}">
+            <h4 id="comments_count_{{post.id}}">{{ comments_count|index:forloop.counter0 }} {{ comment_title }}</h4>
           </div>
-          <div class="pull-right">
-            {% if is_user %}
-            <a class="btn btn-primary" href="{% url 'posts:post_create' %}"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Write</a>
-            {% endif %}
+
+          {% if no_comments|index:forloop.counter0 %}
+          <div id="no_comments_{{post.id}}">
+            <p>There are no comments.</p>
           </div>
-        </div>
-      </div>
+          {% endif %}
 
-
-      {% if messages %}
-      {% for message in messages %}
-      <div class="alert alert-{{ message.tags }} alert-dismissible" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <strong>{{ message }}</strong>
-      </div>
-      {% endfor %}
-      {% endif %}
-
-      {% if no_posts %}
-      <div>
-        <p>There are no posts.</p>
-      </div>
-      {% else %}
-
-      {% for post in current_page %}
-      <div class="thumbnail">
-        <div class="caption">
-          <p><a href="{{ post.category.get_absolute_url }}">{{ post.category }}</a></p>
-          <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
-          <p><a href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug %}">{{ post.user.username }}</a></p>
-          <p>{{ post.content }}</p>
-          <p><a href="{{ post.get_absolute_url }}" data-toggle="tooltip" data-placement="top" title="Published {{ post.date_published }}">Edited {{ post.date_edited }}</a></p>
-          <p>
-            <button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> 0</button>
-            <button type="button" class="btn btn-link"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> 2</button>
-            <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
-            sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> Comments</button>
-            <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
-            sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-share" aria-hidden="true"></span> Share</button>
-            <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
-            sagittis lacus vel augue laoreet rutrum faucibus."><span class="  glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
-          </p>
-          {% if is_user %}
-          <p>
-            <a href="{% url 'posts:post_edit' id=post.id slug=post.slug %}">Edit</a>
-            <!-- Button trigger modal -->
-            <a href="#" role="button" data-toggle="modal" data-target="#myModal{{ post.id }}">Delete</a>
-            <!-- Modal -->
-            <div class="modal fade" id="myModal{{ post.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">Delete Post</h4>
-                  </div>
-                  <div class="modal-body">
-                    <p>Are you sure you wish to delete this post?</p>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-default" href="{% url 'posts:post_delete' id=post.id slug=post.slug %}">Confirm</a>
-                  </div>
-                </div>
+          {% if no_comments|index:forloop.counter0 == False %}
+          <div id='post_list_comment_list_{{post.id}}'>
+            {% for comment in comments_first_pages|index:forloop.counter0 %}
+            <div class="media">
+              <div class="media-left">
+                <a href="{% url 'profiles:profile_activity' id=comment.user.id slug=comment.user.profile.slug %}">
+                  <img class="media-object" src="{{ comment.user.profile.avatar.url }}" alt="..." width="64px" height="64px">
+                </a>
+              </div>
+              <div class="media-body">
+                <a class="media-heading" href="{% url 'profiles:profile_activity' id=post.user.id slug=post.user.profile.slug %}">{{ post.user.username }}</a>
+                <p>{{ comment.content}} </p>
+                <p>{{ comment.date_created}} </p>
               </div>
             </div>
-          </p>
-          {% endif %}
-        </div>
-      </div>
-      {% endfor %}
+            {% endfor %}
+          </div>
 
-      <ul class="pagination">
-        {% if current_page.has_previous %}
-        <li><a href="?page={{ current_page.previous_page_number }}">&laquo;</a></li>
-        {% else %}
-        <li class="disabled"><span>&laquo;</span></li>
-        {% endif %}
-        {% for i in current_page.paginator.page_range %}
-        {% if current_page.number == i %}
-        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
-        {% else %}
-        <li><a href="?page={{ i }}">{{ i }}</a></li>
-        {% endif %}
-        {% endfor %}
-        {% if current_page.has_next %}
-        <li><a href="?page={{ current_page.next_page_number }}">&raquo;</a></li>
-        {% else %}
-        <li class="disabled"><span>&raquo;</span></li>
-        {% endif %}
-      </ul>
+          <div id="post_list_pag_{{post.id}}">
+            <ul class="pagination" id="post_list_pag_ul_{{post.id}}">
+              {% with comments_first_pages|index:forloop.counter0 as comments_first_page %}
+              {% if comments_first_page.has_previous %}
+              <li><a class="page_button" href="{{ post.get_absolute_url }}?page={{ comments_first_page.previous_page_number }}" data-id="{{post.id}}" data-url="{{post.get_absolute_url}}">&laquo;</a></li>
+              {% else %}
+              <li class="disabled"><span>&laquo;</span></li>
+              {% endif %}
+              {% for i in comments_first_page.paginator.page_range %}
+              {% if comments_first_page.number == i %}
+              <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+              {% else %}
+              <li><a class="page_button" href="{{ post.get_absolute_url }}?page={{ i }}" data-id="{{post.id}}" data-url="{{post.get_absolute_url}}">{{ i }}</a></li>
+              {% endif %}
+              {% endfor %}
+              {% if comments_first_page.has_next %}
+              <li><a class="page_button" href="{{ post.get_absolute_url }}?page={{ comments_first_page.next_page_number }}" data-id="{{post.id}}" data-url="{{post.get_absolute_url}}">&raquo;</a></li>
+              {% else %}
+              <li class="disabled"><span>&raquo;</span></li>
+              {% endif %}
+              {% endwith %}
+            </ul>
+          </div>
+          {% endif %}
+
+          <div class="media" id='comment_form_container_{{post.id}}'>
+            <div class="media-left">
+              <a href="#">
+                <img class="media-object" src="/media/profile_avatar/1.jpg" alt="..." width="64px" height="64px">
+              </a>
+            </div>
+            <div class="media-body">
+              <form method="post" class="comment_form" id="comment_form_{{post.id}}" data-url="{{post.get_absolute_url}}" data-id="{{post.id}}" data-pagenum="1">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                  {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+
+                <!-- Button trigger modal -->
+                <div class="form-group comment_form_field" data-id="{{post.id}}">
+                  <textarea class="form-control" id="comment_form_textfield_{{post.id}}" rows="3" placeholder="Leave a commment." required></textarea>
+
+                  {% if form.content.errors %}
+                  <div class="alert alert-danger" role="alert">
+                    {{ form.content.errors }}
+                  </div>
+                  {% endif %}
+                  {% if form.content.help_text %}
+                  <p class="help-block">{{ form.content.help_text|safe }}</p>
+                  {% endif %}
+                </div>
+                <div class="collapse" id="commentform_collapse_{{post.id}}">
+                  <button type="submit"class="btn btn-primary" >{{ comment_button_text }}</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </p>
+      {% if is_user %}
+      <p>
+        <a href="{% url 'posts:post_edit' id=post.id slug=post.slug %}">Edit</a>
+        <!-- Button trigger modal -->
+        <a href="#" role="button" data-toggle="modal" data-target="#myModal{{ post.id }}">Delete</a>
+        <!-- Modal -->
+        <div class="modal fade" id="myModal{{ post.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Delete Post</h4>
+              </div>
+              <div class="modal-body">
+                <p>Are you sure you wish to delete this post?</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-default" href="{% url 'posts:post_delete' id=post.id slug=post.slug %}">Confirm</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </p>
       {% endif %}
     </div>
-    {% if is_user %}
-    <div role="tabpanel" class="tab-pane" >
-    </div>
-    {% endif %}
   </div>
+  {% endfor %}
 </div>
-{% endblock posts %}
+{% endif %}
+
+{% if no_posts == False %}
+<div>
+  <ul class="pagination">
+    {% if current_page.has_previous %}
+    <li><a href="?page={{ current_page.previous_page_number }}">&laquo;</a></li>
+    {% else %}
+    <li class="disabled"><span>&laquo;</span></li>
+    {% endif %}
+    {% for i in current_page.paginator.page_range %}
+    {% if current_page.number == i %}
+    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+    {% else %}
+    <li><a href="?page={{ i }}">{{ i }}</a></li>
+    {% endif %}
+    {% endfor %}
+    {% if current_page.has_next %}
+    <li><a href="?page={{ current_page.next_page_number }}">&raquo;</a></li>
+    {% else %}
+    <li class="disabled"><span>&raquo;</span></li>
+    {% endif %}
+  </ul>
+</div>
+{% endif %}
+
+{% endblock content %}
+
+{% block javascript %}
+<script>
+var pag1 = '<li class="disabled"><span>&laquo;</span></li>';
+var pag2 = '<li class="disabled"><span>&raquo;</span></li>';
+
+function make_message(){
+  var message = '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Comment created.</div>';
+  return message;
+}
+
+function make_post_list_pag(id){
+  var post_list_pag = '<div id="post_list_pag_'+id+'"><ul id="post_list_pag_ul_'+id+'" class="pagination"></ul></div>';
+  return post_list_pag;
+}
+
+function make_post_list_page(data, i){
+  var post_list_page = '<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>';
+  return post_list_page;
+}
+
+function make_post_list_comment_list(data,id){
+  var post_list_comment_list = '<div id="post_list_comment_list_'+id+'"><div class="media"><div class="media-left"><a href="'+data.profile_url+'"><img class="media-object" src="'+data.avatar+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.profile_url+'">'+data.username+'</a><p>'+ data.content+'</p><p>'+data.date_created+'</p></div></div></div>'
+  return post_list_comment_list;
+}
+
+function make_comment(data){
+  var comment = '<div class="media"><div class="media-left"><a href="'+data.profile_url+'"><img class="media-object" src="'+data.avatar+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.profile_url+'">'+data.username+'</a><p>'+ data.content+'</p><p>'+data.date_created+'</p></div></div>';
+  return comment;
+}
+
+function paginate(data,id,url) {
+  if (data.has_previous) {
+    ppn = data.number-1;
+    $("#post_list_pag_ul_"+id).append('<li><a class="page_button" href="'+url+'?page='+ppn+'" data-id="'+id+'"data-url="'+url+'">&laquo;</a></li>');
+  }
+  else {
+    $("#post_list_pag_ul_"+id).append(pag1);
+  }
+  for (var x = 1; x < data.page_range+1; x++) {
+    if (data.number == x) {
+      $("#post_list_pag_ul_"+id).append('<li class="active"><span>'+x+'<span class="sr-only">(current)</span></span></li>');
+
+    }
+    else {
+      $("#post_list_pag_ul_"+id).append('<li><a class="page_button" href="'+url+'?page='+x+'" data-id="'+id+'" data-url="'+url+'">'+x+'</a></li>');
+    }
+  }
+  if (data.has_next) {
+    npn = data.number+1;
+    $("#post_list_pag_ul_"+id).append('<li><a class="page_button" href="'+url+'?page='+npn+'" data-id="'+id+'" data-url="'+url+'">&raquo;</a></li>');
+  }
+  else {
+    $("#post_list_pag_ul_"+id).append(pag2);
+  }
+}
+
+// Feature 1
+$(document).on('click', '.like_button', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  if ($("#logged_in").attr("data-logged-in")=="True") {
+    if($(element).attr("data-liked")=="False"){
+
+      $.ajax({
+        url:$(element).attr("data-post") + "like",
+        success:function(data) {
+          $(element).html('<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> ' + data.like_count);
+          $(element).attr("data-liked","True");
+        }
+      })
+    }
+    else{
+      $.ajax({
+        url:$(element).attr("data-post") + "like",
+        data:{ unlike: "unlike" },
+        success:function(data) {
+          $(element).html('<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> ' + data.like_count);
+          $(element).attr("data-liked","False");
+        }
+      })
+    }
+
+  }
+  else{
+    $('#myModal').modal()
+  }
+});
+
+// Feature 2
+$(document).on('click', '.dislike_button', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  if ($("#logged_in").attr("data-logged-in")=="True") {
+
+    if($(element).attr("data-disliked")=="False"){
+
+      $.ajax({
+        url:$(element).attr("data-post") + "dislike",
+        success:function(data) {
+          $(element).html('<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> ' + data.dislike_count);
+          $(element).attr("data-disliked","True");
+        }
+      })
+    }
+    else{
+      $.ajax({
+        url:$(element).attr("data-post") + "dislike",
+        data:{ undislike: "undislike" },
+        success:function(data) {
+          $(element).html('<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> ' + data.dislike_count);
+          $(element).attr("data-disliked","False");
+        }
+      })
+    }
+
+  }
+  else{
+    $('#myModal').modal()
+  }
+});
+
+// Feature 3
+$(document).on('click', '.comment_button', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  var id = $(element).attr("data-id");
+  $("#comment_collapse_"+id).collapse("toggle");
+});
+
+// Feature 4
+$(document).on('click', '.bookmark_button', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  if ($("#logged_in").attr("data-logged-in")=="True") {
+
+    alert("hello");
+  }
+  else{
+    $('#myModal').modal()
+  }
+});
+
+// Feature 4
+$(document).on('click', '.comment_form_field', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  if ($("#logged_in").attr("data-logged-in")=="True") {
+    var id = $(element).attr("data-id");
+    $("#commentform_collapse_"+id).collapse("toggle");
+  }
+  else{
+    $('#myModal').modal()
+  }
+});
+
+
+// Feature 5
+$(document).on('submit', '.comment_form', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  var id = $(this).attr("data-id");
+  var url = $(this).attr("data-url");
+
+  $.ajax({
+    type:  $(element).attr('method'),
+    url:  url,
+    data:  {
+      content: $("#comment_form_textfield_"+id).val(),
+      csrfmiddlewaretoken:'{{ csrf_token }}',
+      id:id,
+    },
+    success:function(data) {
+      if (data.success) {
+        $("#comment_button_"+id).html('<span class="glyphicon glyphicon-comment" aria-hidden="true"></span> '+data.comments_count);
+        $("#comments_count_"+id).html(data.comments_count + " Comments");
+        $("#comment_form_textfield_"+id).val("");
+        $('#comment_page_header_'+id).after(make_message());
+
+        if($('#post_list_comment_list_'+id).length){
+          if ($(element).attr("data-pagenum") == 1) {
+            $('#post_list_comment_list_'+id).prepend(make_comment(data));
+            $('#post_list_pag_'+id).remove();
+            $('#post_list_comment_list_'+id).after(make_post_list_pag(id));
+            paginate(data,id,url);
+            if (data.comments_count>5) {
+              $("#post_list_comment_list_"+id).children().last().remove();
+            }
+          }
+          else{
+            $.ajax({
+              url:url,
+              success:function(data) {
+                $("#post_list_comment_list_"+id).remove();
+                $("#post_list_pag_"+id).remove();
+                $("#comment_form_container_"+id).before('<div id="post_list_comment_list_'+id+'"></div>');
+                for (var i = 0; i < data.comment_count; i++) {
+                  $("#post_list_comment_list_"+id).append(make_post_list_page(data, i));
+                }
+                $("#post_list_comment_list_"+id).after(make_post_list_pag(id));
+                paginate(data,id,url);
+                $(element).attr("data-pagenum",data.number);
+              }
+            })
+          }
+
+        }
+        else{
+          if($(element).attr("data-pagenum") == 1){
+            if(data.comments_count == 1){
+              $("#comment_form_container_"+id).before(make_post_list_comment_list(data,id));
+              $("#post_list_comment_list_"+id).after(make_post_list_pag(id));
+              paginate(data,id,url);
+              $("#no_comments_"+id).remove();
+
+            }
+            else{
+              $("#post_list_comment_list_"+id).prepend(make_comment(data));
+              $("#post_list_pag_"+id).remove();
+              $("#post_list_comment_list_"+id).after(make_post_list_pag(id));
+              paginate(data,id,url);
+
+            }
+            if(data.comments_count>5){
+              $("#post_list_comment_list_"+id).children().last().remove();
+            }
+          }
+          else{
+            $.ajax({
+              url:url,
+              success:function(data) {
+                $("#post_list_comment_list_"+id).remove();
+                $("#post_list_pag_"+id).remove();
+                $("#comment_form_container_"+id).before('<div id="post_list_comment_list_'+id+'"></div>');
+                for (var i = 0; i < data.comment_count; i++) {
+                  $("#post_list_comment_list_"+id).append(make_post_list_page(data, i));
+                }
+                $("#post_list_comment_list_"+id).after(make_post_list_pag(id));
+                paginate(data,id,url);
+                $(element).attr("data-pagenum",data.number);
+              }
+            })
+          }
+        }
+      }
+      else{
+        alert("wrong");
+      }
+
+    },
+  });
+})
+
+// Feature 6
+$(document).on('click', '.page_button', function() {
+  event.preventDefault();
+  var element = $(this);
+  var id = $(this).attr("data-id");
+  var url = $(this).attr("data-url");
+  $.ajax({
+    url:$(element).attr("href"),
+    success:function(data) {
+      $("#post_list_comment_list_"+id).remove();
+      $("#post_list_pag_"+id).remove();
+      $("#comment_form_container_"+id).before('<div id="post_list_comment_list_'+id+'"></div>');
+      for (var i = 0; i < data.comment_count; i++) {
+        $("#post_list_comment_list_"+id).append(make_post_list_page(data, i));
+      }
+      $("#post_list_comment_list_"+id).after(make_post_list_pag(id));
+      paginate(data,id,url);
+      $("#comment_form_"+id).attr("data-pagenum",data.number);
+    }});
+  });
+
+  </script>
+  {% endblock javascript %}

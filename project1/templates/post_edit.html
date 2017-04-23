@@ -19,12 +19,12 @@
           {% endif %}
 
 
-          <div class="page-header">
+          <div class="page-header" id="post_edit_page_header">
             <h2>{{title}}</h2>
           </div>
 
           <div>
-            <form method="post">
+            <form method="post" id="comment_form">
               {% csrf_token %}
 
               {% if form.non_field_errors %}
@@ -34,7 +34,8 @@
               {% endif %}
 
               <div class="form-group">
-                {{ form.title|add_class:"form-control"|attr:"autofocus"|attr:"placeholder:Title" }}
+
+                {{ form.title|add_class:"form-control comment_form_field"|attr:"autofocus"|attr:"placeholder:Title" }}
                 {% if form.title.errors %}
                 <div class="alert alert-danger" role="alert">
                   {{ form.title.errors }}
@@ -46,7 +47,7 @@
               </div>
 
               <div class="form-group">
-                {{ form.content|add_class:"form-control"|attr:"placeholder:Content" }}
+                {{ form.content|add_class:"form-control comment_form_field"|attr:"placeholder:Content" }}
                 {% if form.content.errors %}
                 <div class="alert alert-danger" role="alert">
                   {{ form.content.errors }}
@@ -58,7 +59,7 @@
               </div>
 
               <div class="form-group">
-                {{ form.category|add_class:"form-control"|attr:"placeholder:Content" }}
+                {{ form.category|add_class:"form-control comment_form_field"|attr:"placeholder:Content" }}
                 {% if form.category.errors %}
                 <div class="alert alert-danger" role="alert">
                   {{ form.category.errors }}
@@ -78,3 +79,30 @@
   </div>
 </section>
 {% endblock body %}
+
+{% block javascript %}
+<script>
+function make_message(message){
+  var message = '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+message+'</div>';
+  return message;
+}
+
+$(document).on('submit', '#comment_form', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  $.ajax({
+    type:  $(element).attr('method'),
+    url:  $(element).attr('action'),
+    data:  $(element).serialize(),
+    success:function(data) {
+
+      
+      if (data.is_draft == true) {
+        $('#post_edit_page_header').after(make_message("Draft edited."));
+      }
+      else{
+        $('#post_edit_page_header').after(make_message("Post edited."));
+      }
+    }})})
+</script>
+{% endblock javascript %}

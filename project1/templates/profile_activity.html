@@ -2,43 +2,18 @@
 
 {% block title %}{{ user }}'s {{ title }}{% endblock title %}
 
-{% block nav-tabs %}
-<!-- Nav tabs -->
-<ul class="nav nav-tabs" role="tablist">
-  <li role="presentation" class="active" ><a href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug  %}" role="tab" >Activity</a></li>
-  <li role="presentation"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" role="tab">Posts</a></li>
+{% block vertical_nav %}
+<ul class="nav nav-pills nav-stacked">
+  <li role="presentation" class="active"><a href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug  %}" role="tab" >Activity</a></li>
+  <li role="presentation"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" role="tab" >Posts</a></li>
   <li role="presentation"><a href="{% url 'profiles:profile_comments' id=user.id slug=user.profile.slug  %}" role="tab">Comments</a></li>
   <li role="presentation"><a href="{% url 'profiles:profile_bookmarks' id=user.id slug=user.profile.slug  %}" role="tab">Bookmark</a></li>
   <li role="presentation"><a href="{% url 'profiles:profile_following' id=user.id slug=user.profile.slug  %}" role="tab">Following</a></li>
   <li role="presentation"><a href="{% url 'profiles:profile_followers' id=user.id slug=user.profile.slug  %}" role="tab">Followers</a></li>
 </ul>
-
-{% endblock nav-tabs %}
-
-{% block tab-content %}
-
-<!-- Tab panes -->
-<div class="tab-content">
-  <div role="tabpanel" class="tab-pane active">
-    <div class="page-header">
-      <h5>{{ title }}</h5>
-    </div>
-  </div>
-  <div role="tabpanel" class="tab-pane">
-
-  </div>
-  <div role="tabpanel" class="tab-pane">
-
-  </div>
-  <div role="tabpanel" class="tab-pane">
-
-  </div>
-  <div role="tabpanel" class="tab-pane">
-
-  </div>
-  <div role="tabpanel" class="tab-pane">
-
-  </div>
+{% endblock vertical_nav %}
+{% block content %}
+<div class="page-header">
+  <h4>{{title}}</h4>
 </div>
-
-{% endblock tab-content %}
+{% endblock content %}

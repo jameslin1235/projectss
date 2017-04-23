@@ -1,5 +1,6 @@
 {% extends "profile_posts_base.html" %}
-
+{% load widget_tweaks %}
+{% load custom_tags %}
 {% block title %}{{ user }}'s {{ title }}{% endblock title %}
 
 {% block drafts %}
@@ -126,3 +127,30 @@
   </div>
 </div>
 {% endblock drafts %}
+
+{% block javascript %}
+<script>
+function make_message(message){
+  var message = '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+message+'</div>';
+  return message;
+}
+
+$(document).on('submit', '#comment_form', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  $.ajax({
+    type:  $(element).attr('method'),
+    url:  $(element).attr('action'),
+    data:  $(element).serialize(),
+    success:function(data) {
+
+
+      if (data.is_draft == true) {
+        $('#post_edit_page_header').after(make_message("Draft edited."));
+      }
+      else{
+        $('#post_edit_page_header').after(make_message("Post edited."));
+      }
+    }})})
+</script>
+{% endblock javascript %}

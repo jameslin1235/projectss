@@ -13,18 +13,26 @@ body {
   border:1px solid #ddd;
 }
 
-.post_list_thumbnail_a_image{
+
+
+.thumbnail_post_list{
+  border:0;
+  border-bottom: 1px solid #eee;
+}
+
+.thumbnail_post_detail{
+  border:0;
+}
+
+.thumbnail a>img {
   max-width: none;
 }
+
+
 
 #profile_base_username{
   margin-top: 0;
 }
-
-.thumbnail_detail{
-  border: 0;
-}
-
 
 #modal_comment_body{
   text-align: center;

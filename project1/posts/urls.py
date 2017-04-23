@@ -2,7 +2,6 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-
     url(r'^$', views.post_list, name='post_list'),
     url(r'^404/$', views.post_404, name='post_404'),
     url(r'^create/$', views.post_create, name='post_create'),
@@ -13,7 +12,4 @@ urlpatterns = [
     url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/like/$', views.post_like, name='post_like'),
     url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/dislike/$', views.post_dislike, name='post_dislike'),
     url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/bookmark/$', views.post_bookmark, name='post_bookmark'),
-
-
-
 ]

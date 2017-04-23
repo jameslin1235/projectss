@@ -27,11 +27,11 @@
               <p>{{ post.content }}</p>
               <p><a href="{{ post.get_absolute_url }}" data-toggle="tooltip" data-placement="top" title="Published {{ post.date_published }}">Edited {{ post.date_edited }}</a></p>
               <p>
-                <button type="button" class="btn btn-primary" id="like_button" {% if same_user %}disabled="disabled"{% endif %} {% if logged_in %}data-logged-in="True" data-liked="False"{% else %}data-logged-in="False"{% endif %}><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> {{ post.likes }}</button>
-                <button type="button" class="btn btn-link" id="dislike_button" {% if same_user %}disabled="disabled"{% endif %} {% if logged_in %}data-logged-in="True" data-disliked="False"{% else %}data-logged-in="False"{% endif %}><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> {{ post.dislikes }}</button>
+                <button type="button" class="btn btn-primary" id="like_button" {% if same_user %}disabled="disabled"{% endif %} data-liked="False"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> {{ post.likes }}</button>
+                <button type="button" class="btn btn-link" id="dislike_button" {% if same_user %}disabled="disabled"{% endif %} data-disliked="False"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> {{ post.dislikes }}</button>
                 <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
                 sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-share" aria-hidden="true"></span> Share</button>
-                <button type="button" class="btn btn-link" id='bookmark_button' {% if logged_in %}data-logged-in="True"{% else %}data-logged-in="False"{% endif %}><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
+                <button type="button" class="btn btn-link" id='bookmark_button' ><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
               </p>
             </div>
           </div>
@@ -69,7 +69,7 @@
                 {% endif %}
 
                 <!-- Button trigger modal -->
-                <div class="form-group" id="comment_form_field" {% if logged_in %}data-logged-in="True"{% else %}data-logged-in="False"{% endif %}>
+                <div class="form-group" id="comment_form_field">
                   {{ form.content|add_class:"form-control"|attr:"id:comment_form_textfield"|attr:"placeholder:Leave a comment."|attr:"rows:3" }}
                   {% if form.content.errors %}
                   <div class="alert alert-danger" role="alert">
@@ -220,13 +220,14 @@ function paginate(data) {
 // Feature 1
 $(document).on('click', '#like_button', function(event) {
   event.preventDefault();
-  if ($(this).attr("data-logged-in")=="True") {
-    if($(this).attr("data-liked")=="False"){
+  var element = $(this);
+  if ($("#logged_in").attr("data-logged-in")=="True") {
+    if($(element).attr("data-liked")=="False"){
       $.ajax({
         url:window.location.href + "like",
         success:function(data) {
-          $("#like_button").html('<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> ' + data.like_count);
-          $('#like_button').attr("data-liked","True");
+          $(element).html('<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> ' + data.like_count);
+          $(element).attr("data-liked","True");
         }
       })
     }
@@ -235,8 +236,8 @@ $(document).on('click', '#like_button', function(event) {
         url:window.location.href + "like",
         data:{ unlike: "unlike" },
         success:function(data) {
-          $("#like_button").html('<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> ' + data.like_count);
-          $('#like_button').attr("data-liked","False");
+          $(element).html('<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> ' + data.like_count);
+          $(element).attr("data-liked","False");
         }
       })
     }
@@ -250,13 +251,14 @@ $(document).on('click', '#like_button', function(event) {
 // Feature 2
 $(document).on('click', '#dislike_button', function(event) {
   event.preventDefault();
-  if ($(this).attr("data-logged-in")=="True") {
-    if($(this).attr("data-disliked")=="False"){
+  var element = $(this);
+  if ($("#logged_in").attr("data-logged-in")=="True") {
+    if($(element).attr("data-disliked")=="False"){
       $.ajax({
         url:window.location.href + "dislike",
         success:function(data) {
-          $("#dislike_button").html('<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> ' + data.dislike_count);
-          $('#dislike_button').attr("data-disliked","True");
+          $(element).html('<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> ' + data.dislike_count);
+          $(element).attr("data-disliked","True");
         }
       })
     }
@@ -265,8 +267,8 @@ $(document).on('click', '#dislike_button', function(event) {
         url:window.location.href + "dislike",
         data:{ undislike: "undislike" },
         success:function(data) {
-          $("#dislike_button").html('<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> ' + data.dislike_count);
-          $('#dislike_button').attr("data-disliked","False");
+          $(element).html('<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> ' + data.dislike_count);
+          $(element).attr("data-disliked","False");
         }
       })
     }
@@ -279,7 +281,8 @@ $(document).on('click', '#dislike_button', function(event) {
 // Feature 3
 $(document).on('click', '#bookmark_button', function(event) {
   event.preventDefault();
-  if ($(this).attr("data-logged-in")=="True") {
+  var element = $(this);
+  if ($("#logged_in").attr("data-logged-in")=="True") {
 
     alert("hello");
   }
@@ -291,7 +294,8 @@ $(document).on('click', '#bookmark_button', function(event) {
 // Feature 4
 $(document).on('click', '#comment_form_field', function(event) {
   event.preventDefault();
-  if ($(this).attr("data-logged-in")=="True") {
+  var element = $(this);
+  if ($("#logged_in").attr("data-logged-in")=="True") {
     $('#collapseExample').collapse('toggle')
   }
   else{
