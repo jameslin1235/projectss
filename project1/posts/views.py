@@ -1,18 +1,17 @@
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse, QueryDict
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-from django.http import JsonResponse
+
 from django.core import serializers
 from django.core.exceptions import PermissionDenied
 from .models import Post
 from .forms import PostForm
 from project1.project1.comments.forms import CommentForm
 from project1.project1.comments.models import Comment
-from django.http import QueryDict
 
 # Create your views here.
 def post_list(request):
@@ -46,9 +45,9 @@ def post_list(request):
 
         for post in current_page.object_list:
             paginator = Paginator(post.comment_set.all(), 5) # Show 25 contacts per page
-            page = request.GET.get('page')
+
             try:
-                comments_first_page = paginator.page(page)
+                comments_first_page = paginator.page(1)
             except PageNotAnInteger:
                 # If page is not an integer, deliver first page.
                 comments_first_page = paginator.page(1)
@@ -278,6 +277,10 @@ def post_detail(request,id,slug):
             response_data['has_next'] = comments_current_page.has_next()
             response_data['number'] = comments_current_page.number
             response_data['page_range'] = comments_current_page.paginator.page_range[-1]
+            response_data['success'] = True
+            response_data['message'] = "Comment created."
+            response_data['comments_count'] = comments_count
+            
             return JsonResponse(response_data,safe=False)
 
         context = {
@@ -296,39 +299,40 @@ def post_detail(request,id,slug):
         return render(request,"post_detail.html",context)
 
     elif request.method == "POST" and request.is_ajax():
-        post = get_object_or_404(Post, id=id)
+        post = Post.objects.get(id=id)
         form = CommentForm(request.POST)
         if form.is_valid():
             comment = form.save(commit=False)
             comment.user = request.user
             comment.post = post
             comment.save()
-            comments = post.comment_set.all()
-            comments_count = comments.count()
-            paginator = Paginator(comments, 5) # Show 25 contacts per page
-            page = request.GET.get('page')
-            try:
-                comments_current_page = paginator.page(page)
-            except PageNotAnInteger:
-                # If page is not an integer, deliver first page.
-                comments_current_page = paginator.page(1)
-            except EmptyPage:
-                # If page is out of range (e.g. 9999), deliver last page of results.
-                comments_current_page = paginator.page(paginator.num_pages)
+            # comments = post.comment_set.all()
+            # comments_count = comments.count()
+            # paginator = Paginator(comments, 5) # Show 25 contacts per page
+            # page = request.GET.get('page')
+            # try:
+            #     comments_current_page = paginator.page(page)
+            # except PageNotAnInteger:
+            #     # If page is not an integer, deliver first page.
+            #     comments_current_page = paginator.page(1)
+            # except EmptyPage:
+            #     # If page is out of range (e.g. 9999), deliver last page of results.
+            #     comments_current_page = paginator.page(paginator.num_pages)
 
             response_data = {}
-            response_data['avatar'] = comment.user.profile.avatar.url
-            response_data['username'] = comment.user.username
-            response_data['content'] = comment.content
-            response_data['date_created'] = comment.date_created
-            response_data['profile_url'] = reverse("profiles:profile_activity", kwargs={"id": comment.user.id, "slug":comment.user.profile.slug })
-            response_data['comments_count'] = comments_count
-            response_data['has_previous'] = comments_current_page.has_previous()
-            response_data['has_next'] = comments_current_page.has_next()
-            response_data['number'] = comments_current_page.number
-            response_data['page_range'] = comments_current_page.paginator.page_range[-1]
-            response_data['success'] = True
-            response_data['message'] = "Comment created."
+            # response_data['avatar'] = comment.user.profile.avatar.url
+            # response_data['username'] = comment.user.username
+            # response_data['content'] = comment.content
+            # response_data['date_created'] = comment.date_created
+            # response_data['profile_url'] = reverse("profiles:profile_activity", kwargs={"id": comment.user.id, "slug":comment.user.profile.slug })
+            # response_data['comments_count'] = comments_count
+            # response_data['has_previous'] = comments_current_page.has_previous()
+            # response_data['has_next'] = comments_current_page.has_next()
+            # response_data['number'] = comments_current_page.number
+            # response_data['page_range'] = comments_current_page.paginator.page_range[-1]
+            # response_data['success'] = True
+            # response_data['message'] = "Comment created."
+            #
             return JsonResponse(response_data,safe=False)
         else:
             print('error')

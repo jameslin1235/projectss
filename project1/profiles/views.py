@@ -25,14 +25,13 @@ def profile_activity(request,id,slug):
 
     return render(request,"profile_activity.html",context)
 
-
 def profile_posts(request,id,slug):
     if request.method == "GET":
+        User = get_user_model()
+        user = get_object_or_404(User, id = id)
         logged_in = False
         if request.user.is_authenticated:
             logged_in = True
-        User = get_user_model()
-        user = get_object_or_404(User, id = id)
         current_user = request.user
         is_user = True
         if current_user != user:
@@ -79,7 +78,7 @@ def profile_posts(request,id,slug):
                 no_comments.append(False)
             comments_count.append(post.comment_set.all().count())
         form = CommentForm()
-
+        
         context = {
             "user":user,
             "logged_in":logged_in,
