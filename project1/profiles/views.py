@@ -62,8 +62,9 @@ def profile_posts(request,id,slug):
         for post in current_page.object_list:
             paginator = Paginator(post.comment_set.all(), 5) # Show 25 contacts per page
             page = request.GET.get('page')
+
             try:
-                comments_first_page = paginator.page(page)
+                comments_first_page = paginator.page(1)
             except PageNotAnInteger:
                 # If page is not an integer, deliver first page.
                 comments_first_page = paginator.page(1)
@@ -78,7 +79,8 @@ def profile_posts(request,id,slug):
                 no_comments.append(False)
             comments_count.append(post.comment_set.all().count())
         form = CommentForm()
-        
+        current_url = request.path
+
         context = {
             "user":user,
             "logged_in":logged_in,
@@ -93,8 +95,16 @@ def profile_posts(request,id,slug):
             "comments_count":comments_count,
             "comments_first_pages":comments_first_pages,
             "form":form,
+            "current_url":current_url,
         }
-        return render(request,"profile_posts.html",context)
+
+
+        if request.is_ajax():
+            template = "profile_posts_partial.html"
+        else:
+            template = "profile_posts.html"
+
+        return render(request,template,context)
 
 @login_required
 def profile_drafts(request,id,slug):

@@ -42,99 +42,7 @@
 
   <div class="row">
     <div class="col-md-12">
-      <div class="section">
-        <div class="page-header" id="post_detail_page_header">
-          <h4 id="comments_count">{{ comments_count }} {{comment_title}}</h4>
-        </div>
-
-        {% if no_comments %}
-        <div id="no_comments">
-          <p>There are no comments.</p>
-        </div>
-        {% endif %}
-
-        <div class="media" id='comment_form_container'>
-          <div class="media-left">
-            <a href="#">
-              <img class="media-object" src="/media/profile_avatar/1.jpg" alt="..." width="64px" height="64px">
-            </a>
-          </div>
-          <div class="media-body">
-            <form method="post" id="comment_form" data-pagenum= "1">
-              {% csrf_token %}
-
-              {% if form.non_field_errors %}
-              <div class="alert alert-danger" role="alert">
-                {{ form.non_field_errors }}
-              </div>
-              {% endif %}
-
-              <!-- Button trigger modal -->
-              <div class="form-group" >
-                <textarea class="form-control" id="comment_form_textfield" rows="3" placeholder="Leave a commment." required></textarea>
-
-                {% if form.content.errors %}
-                <div class="alert alert-danger" role="alert">
-                  {{ form.content.errors }}
-                </div>
-                {% endif %}
-                {% if form.content.help_text %}
-                <p class="help-block">{{ form.content.help_text|safe }}</p>
-                {% endif %}
-              </div>
-
-
-              <div class="collapse" id="collapseExample">
-                <button type="submit" class="btn btn-primary" >{{ comment_button_text }}</button>
-              </div>
-
-
-
-            </form>
-          </div>
-        </div>
-
-        {% if no_comments == False %}
-        <div id='post_detail_comment_list'>
-          {% for comment in comments_current_page %}
-          <div class="media">
-            <div class="media-left">
-              <a href="{% url 'profiles:profile_activity' id=comment.user.id slug=comment.user.profile.slug %}">
-                <img class="media-object" src="{{ comment.user.profile.avatar.url }}" alt="..." width="64px" height="64px">
-              </a>
-            </div>
-            <div class="media-body">
-              <a class="media-heading" href="{% url 'profiles:profile_activity' id=comment.user.id slug=comment.user.profile.slug %}">{{ comment.user.username }}</a>
-              <p>{{ comment.content}} </p>
-              <p>{{ comment.date_created}} </p>
-            </div>
-          </div>
-          {% endfor %}
-        </div>
-
-        <div id="post_detail_pag">
-          <ul id="post_detail_pag_ul" class="pagination">
-            {% if comments_current_page.has_previous %}
-            <li><a class="page_button" href="?page={{ comments_current_page.previous_page_number }}">&laquo;</a></li>
-            {% else %}
-            <li class="disabled"><span>&laquo;</span></li>
-            {% endif %}
-            {% for i in comments_current_page.paginator.page_range %}
-            {% if comments_current_page.number == i %}
-            <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
-            {% else %}
-            <li><a class="page_button" href="?page={{ i }}" >{{ i }}</a></li>
-            {% endif %}
-            {% endfor %}
-            {% if comments_current_page.has_next %}
-            <li><a class="page_button" href="?page={{ comments_current_page.next_page_number }}">&raquo;</a></li>
-            {% else %}
-            <li class="disabled"><span>&raquo;</span></li>
-            {% endif %}
-          </ul>
-        </div>
-        {% endif %}
-      </div>
+      {% include "post_detail_partial.html" %}
     </div>
   </div>
 </div>
@@ -144,46 +52,6 @@
 
 {% block javascript %}
 <script>
-var pag1 = '<li class="disabled"><span>&laquo;</span></li>';
-var pag2 = '<li class="disabled"><span>&raquo;</span></li>';
-
-
-function post_detail_comment_list_pag(data){
-  $("#comment_form_container").after('<div id="post_detail_comment_list"></div>');
-  for (var i = 0; i < data.comment_count; i++) {
-    $("#post_detail_comment_list").append('<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>');
-  }
-  $("#post_detail_comment_list").after('<div id="post_detail_pag"><ul id="post_detail_pag_ul" class="pagination"></ul></div>');
-  make_pag(data);
-}
-
-function make_pag(data) {
-  if (data.has_previous) {
-    ppn = data.number-1;
-    $("#post_detail_pag_ul").append('<li><a class="page_button" href="?page='+ppn+'">&laquo;</a></li>');
-  }
-  else {
-    $("#post_detail_pag_ul").append(pag1);
-  }
-  for (var x = 1; x < data.page_range+1; x++) {
-    if (data.number == x) {
-      $("#post_detail_pag_ul").append('<li class="active"><span>'+x+'<span class="sr-only">(current)</span></span></li>');
-
-    }
-    else {
-      $("#post_detail_pag_ul").append('<li><a class="page_button" href="?page='+x+'">'+x+'</a></li>');
-    }
-  }
-  if (data.has_next) {
-    npn = data.number+1;
-    $("#post_detail_pag_ul").append('<li><a class="page_button" href="?page='+npn+'">&raquo;</a></li>');
-  }
-  else {
-    $("#post_detail_pag_ul").append(pag2);
-  }
-}
-
-
 
 // Feature 1
 $(document).on('click', '#like_button', function(event) {
@@ -279,6 +147,7 @@ $(document).on('click', '#dislike_button', function(event) {
       var element = $(this);
       var method = $(element).attr('method');
       var url = $(element).attr('action');
+      var pagenum = $(element).parents(".post_detail_page").attr("data-pagenum");
       $.ajax({  // send post request to save comment
         method: method,
         url: url,
@@ -287,37 +156,22 @@ $(document).on('click', '#dislike_button', function(event) {
           csrfmiddlewaretoken:'{{ csrf_token }}',
         },
         success:function(data) {
-          if ($(element).data("pagenum") == 1){
+          if ($(pagenum) == 1){
             $.ajax({     // send get request to get first page
               url: url,
               success:function(data) {
-                $("#comments_count").html(data.comments_count + " Comments");
-                $("#comment_form_textfield").val("");
-                $('#post_detail_page_header').after(make_message(data.message));
-                if (data.comments_count == 1){
-                  $("#no_comments").remove();
-                }
-                if($('#post_detail_comment_list').length){
-                  $('#post_detail_comment_list').remove();
-                  $('#post_detail_pag').remove();
-                  post_detail_comment_list_pag(data);
-                }
-                else{
-                  post_detail_comment_list_pag(data);
-                }
+
+                $("#post_detail_page_"+pagenum).replaceWith(data);
+                $('#post_detail_page_header').after(make_message("Post created."));
               }});
             }
             else{
                 $.ajax({     // send get request for the 1st page
                   url: url,
                   success:function(data) {
-                    $("#comments_count").html(data.comments_count + " Comments");
-                    $("#comment_form_textfield").val("");
-                    $('#post_detail_page_header').after(make_message(data.message));
-                    $('#post_detail_comment_list').remove();
-                    $('#post_detail_pag').remove();
-                    post_detail_comment_list_pag(data);
-                    $("#comment_form").attr("data-pagenum",data.number);
+                    $("#post_detail_page_"+pagenum).replaceWith(data);
+                    $('#post_detail_page_header').after(make_message("Post created."));
+
                   }});
                 }
               },
@@ -332,19 +186,41 @@ $(document).on('click', '#dislike_button', function(event) {
 
 
 
-        // Feature 6
-        $(document).on('click', '.page_button', function() {
-          event.preventDefault();
-          var element = $(this);
-          var url = $(element).attr("href");
-          $.ajax({     // send get request to get nth page
-            url: url,
-            success:function(data) {
-              $('#post_detail_comment_list').remove();
-              $('#post_detail_pag').remove();
-              post_detail_comment_list_pag(data);
-              $("#comment_form").attr("data-pagenum",data.number);
-            }});
-          });
+        // // Feature 6
+        // $(document).on('click', '.page_button', function() {
+        //   event.preventDefault();
+        //   var element = $(this);
+        //   var url = $(element).attr("href");
+        //   $.ajax({     // send get request to get nth page
+        //     url: url,
+        //     success:function(data) {
+        //       $('#post_detail_comment_list').remove();
+        //       $('#post_detail_pag').remove();
+        //       post_detail_comment_list_pag(data);
+        //       $("#comment_form").attr("data-pagenum",data.number);
+        //     }});
+        //   });
+
+
+
+          // Feature 6
+          $(document).on('click', '.page_button', function() {
+            event.preventDefault();
+            var element = $(this);
+            var url = $(element).attr("href");
+            var pagenum = $(element).parents(".post_detail_page").attr("data-pagenum");
+
+            $.ajax({     // send get request to get nth page
+              url: url,
+              success:function(data) {
+                // $("#profile_posts_page_"+pagenum).after('<div id="container"></div>');
+                // var content = $('#container').append(data).find(".profile_posts_page");
+                // $("#profile_posts_page_"+pagenum).replaceWith(content);
+                // $('#container').remove();
+
+                $("#post_detail_page_"+pagenum).replaceWith(data);
+
+              }});
+            });
           </script>
           {% endblock %}

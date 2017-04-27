@@ -221,10 +221,11 @@ function make_pag(data,id,data_url) {
 $(document).on('click', '.like_button', function(event) {
   event.preventDefault();
   var element = $(this);
+  var url = $(element).parents(".thumbnail_post_list").attr("data-url");
   if ($("#logged_in").data("logged-in")== true) {
     if($(element).data("liked")==false){
       $.ajax({
-        url:$(element).attr("data-url") + "like",
+        url:url + "like",
         success:function(data) {
           $(element).html('<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> ' + data.likes_count);
           $(element).data("liked",true);
@@ -233,7 +234,7 @@ $(document).on('click', '.like_button', function(event) {
     }
     else{
       $.ajax({
-        url:$(element).attr("data-url") + "like",
+        url:url + "like",
         data:{ unlike: "unlike" },
         success:function(data) {
           $(element).html('<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> ' + data.likes_count);
@@ -251,10 +252,11 @@ $(document).on('click', '.like_button', function(event) {
 $(document).on('click', '.dislike_button', function(event) {
   event.preventDefault();
   var element = $(this);
+  var url = $(element).parents(".thumbnail_post_list").attr("data-url");
   if ($("#logged_in").data("logged-in")== true) {
     if($(element).data("disliked")==false){
       $.ajax({
-        url:$(element).attr("data-url") + "dislike",
+        url:url + "dislike",
         success:function(data) {
           $(element).html('<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> ' + data.dislikes_count);
           $(element).data("disliked",true);
@@ -263,7 +265,7 @@ $(document).on('click', '.dislike_button', function(event) {
     }
     else{
       $.ajax({
-        url:$(element).attr("data-url") + "dislike",
+        url:url + "dislike",
         data:{ undislike: "undislike" },
         success:function(data) {
           $(element).html('<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> ' + data.dislikes_count);

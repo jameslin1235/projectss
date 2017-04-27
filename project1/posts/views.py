@@ -168,14 +168,11 @@ def post_delete(request,id,slug):
         else:
             post.delete()
             response_data = {}
-            posts_count = user.post_set.all.count()
-            response_data['posts_count']=posts_count
             if post.is_draft == True:
                 response_data['is_draft'] = True
-                return JsonResponse(response_data,safe=False)
             else:
                 response_data['is_draft'] = False
-                return JsonResponse(response_data,safe=False)
+            return JsonResponse(response_data,safe=False)
         #     messages.success(request, "Draft deleted.")
         #     return redirect("profiles:profile_drafts", id=user.id, slug=user.profile.slug )
         # else:
@@ -251,37 +248,37 @@ def post_detail(request,id,slug):
             # If page is out of range (e.g. 9999), deliver last page of results.
             comments_current_page = paginator.page(paginator.num_pages)
 
-        if request.is_ajax():
-            comment_count = comments_current_page.object_list.count()
-            list1 = []
-            list2 = []
-            list3 = []
-            list4 = []
-            list5 = []
 
-            for comment in comments_current_page.object_list:
-                list1.append(comment.user.profile.avatar.url)
-                list2.append(comment.user.username)
-                list3.append( comment.content)
-                list4.append(comment.date_created)
-                list5.append(reverse("profiles:profile_activity", kwargs={"id": comment.user.id, "slug":comment.user.profile.slug }))
-
-            response_data = {}
-            response_data['list1']= list1
-            response_data['list2']= list2
-            response_data['list3']= list3
-            response_data['list4']= list4
-            response_data['list5']= list5
-            response_data['comment_count']= comment_count
-            response_data['has_previous'] = comments_current_page.has_previous()
-            response_data['has_next'] = comments_current_page.has_next()
-            response_data['number'] = comments_current_page.number
-            response_data['page_range'] = comments_current_page.paginator.page_range[-1]
-            response_data['success'] = True
-            response_data['message'] = "Comment created."
-            response_data['comments_count'] = comments_count
-            
-            return JsonResponse(response_data,safe=False)
+            # comment_count = comments_current_page.object_list.count()
+            # list1 = []
+            # list2 = []
+            # list3 = []
+            # list4 = []
+            # list5 = []
+            #
+            # for comment in comments_current_page.object_list:
+            #     list1.append(comment.user.profile.avatar.url)
+            #     list2.append(comment.user.username)
+            #     list3.append( comment.content)
+            #     list4.append(comment.date_created)
+            #     list5.append(reverse("profiles:profile_activity", kwargs={"id": comment.user.id, "slug":comment.user.profile.slug }))
+            #
+            # response_data = {}
+            # response_data['list1']= list1
+            # response_data['list2']= list2
+            # response_data['list3']= list3
+            # response_data['list4']= list4
+            # response_data['list5']= list5
+            # response_data['comment_count']= comment_count
+            # response_data['has_previous'] = comments_current_page.has_previous()
+            # response_data['has_next'] = comments_current_page.has_next()
+            # response_data['number'] = comments_current_page.number
+            # response_data['page_range'] = comments_current_page.paginator.page_range[-1]
+            # response_data['success'] = True
+            # response_data['message'] = "Comment created."
+            # response_data['comments_count'] = comments_count
+            #
+            # return JsonResponse(response_data,safe=False)
 
         context = {
             "post":post,
@@ -296,7 +293,11 @@ def post_detail(request,id,slug):
             "comments_current_page":comments_current_page,
             }
 
-        return render(request,"post_detail.html",context)
+        if request.is_ajax():
+            template = "post_detail_partial.html"
+        else:
+            template = "post_detail.html"
+        return render(request,template,context)
 
     elif request.method == "POST" and request.is_ajax():
         post = Post.objects.get(id=id)

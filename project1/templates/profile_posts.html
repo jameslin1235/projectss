@@ -17,187 +17,7 @@
 
 {% block content %}
 {% include "login_modal.html" %}
-<div id="profile_posts_page">
-<div class="page-header" id="profile_posts_page_header">
-  <h4 id="profile_posts_count">{{posts_count}} {{ title }}</h4>
-</div>
-
-<div>
-  <a class="btn btn-primary" href="{% url 'posts:post_create' %}"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Write</a>
-</div>
-
-{% if no_posts == True %}
-<div>
-  <p>There are no posts.</p>
-</div>
-{% endif %}
-
-{% if no_posts == False %}
-<div>
-  {% for post in current_page %}
-  <div class="thumbnail thumbnail_post_list" data-id="{{post.id}}" data-url="{{post.get_absolute_url}}">
-    <div class="caption">
-      <p><a href="{{ post.category.get_absolute_url }}">{{ post.category }}</a></p>
-      <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
-      <p><a href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug %}">{{ post.user.username }}</a></p>
-      <p>{{ post.content }}</p>
-      <p><a href="{{ post.get_absolute_url }}" data-toggle="tooltip" data-placement="top" title="Published {{ post.date_published }}">Edited {{ post.date_edited }}</a></p>
-      <p>
-        <button type="button" class="btn btn-primary like_button" data-post="{{ post.get_absolute_url}}" {% if is_user == True %}disabled="disabled"{% endif %} data-liked="False"}><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> {{ post.likes }}</button>
-        <button type="button" class="btn btn-link dislike_button" data-post="{{ post.get_absolute_url}}" {% if is_user == True %}disabled="disabled"{% endif %} data-disliked="False"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> {{ post.dislikes }}</button>
-        <button type="button" class="btn btn-link comment_button" id="comment_button_{{post.id}}" ><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> {{ comments_count|index:forloop.counter0 }}</button>
-        <button type="button" class="btn btn-link" ><span class="glyphicon glyphicon-share" aria-hidden="true"></span> Share</button>
-        <button type="button" class="btn btn-link bookmark_button"><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
-
-        <div class="collapse" id="comment_collapse_{{post.id}}">
-          <div class="page-header" id="comment_page_header_{{post.id}}">
-            <h4 id="comments_count_{{post.id}}">{{ comments_count|index:forloop.counter0 }} {{ comment_title }}</h4>
-          </div>
-
-          {% if no_comments|index:forloop.counter0 %}
-          <div id="no_comments_{{post.id}}">
-            <p>There are no comments.</p>
-          </div>
-          {% endif %}
-
-          {% if no_comments|index:forloop.counter0 == False %}
-          <div id='post_list_comment_list_{{post.id}}'>
-            {% for comment in comments_first_pages|index:forloop.counter0 %}
-            <div class="media">
-              <div class="media-left">
-                <a href="{% url 'profiles:profile_activity' id=comment.user.id slug=comment.user.profile.slug %}">
-                  <img class="media-object" src="{{ comment.user.profile.avatar.url }}" alt="..." width="64px" height="64px">
-                </a>
-              </div>
-              <div class="media-body">
-                <a class="media-heading" href="{% url 'profiles:profile_activity' id=post.user.id slug=post.user.profile.slug %}">{{ post.user.username }}</a>
-                <p>{{ comment.content}} </p>
-                <p>{{ comment.date_created}} </p>
-              </div>
-            </div>
-            {% endfor %}
-          </div>
-
-          <div id="post_list_pag_{{post.id}}">
-            <ul class="pagination" id="post_list_pag_ul_{{post.id}}">
-              {% with comments_first_pages|index:forloop.counter0 as comments_first_page %}
-              {% if comments_first_page.has_previous %}
-              <li><a class="page_button" href="{{ post.get_absolute_url }}?page={{ comments_first_page.previous_page_number }}" >&laquo;</a></li>
-              {% else %}
-              <li class="disabled"><span>&laquo;</span></li>
-              {% endif %}
-              {% for i in comments_first_page.paginator.page_range %}
-              {% if comments_first_page.number == i %}
-              <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
-              {% else %}
-              <li><a class="page_button" href="{{ post.get_absolute_url }}?page={{ i }}" >{{ i }}</a></li>
-              {% endif %}
-              {% endfor %}
-              {% if comments_first_page.has_next %}
-              <li><a class="page_button" href="{{ post.get_absolute_url }}?page={{ comments_first_page.next_page_number }}" >&raquo;</a></li>
-              {% else %}
-              <li class="disabled"><span>&raquo;</span></li>
-              {% endif %}
-              {% endwith %}
-            </ul>
-          </div>
-          {% endif %}
-
-          <div class="media" id='comment_form_container_{{post.id}}'>
-            <div class="media-left">
-              <a href="#">
-                <img class="media-object" src="/media/profile_avatar/1.jpg" alt="..." width="64px" height="64px">
-              </a>
-            </div>
-            <div class="media-body">
-              <form method="post" class="comment_form" id="comment_form_{{post.id}}" data-pagenum="1">
-                {% csrf_token %}
-
-                {% if form.non_field_errors %}
-                <div class="alert alert-danger" role="alert">
-                  {{ form.non_field_errors }}
-                </div>
-                {% endif %}
-
-                <!-- Button trigger modal -->
-                <div class="form-group">
-                  <textarea class="form-control comment_form_textfield" id="comment_form_textfield_{{post.id}}" rows="3" placeholder="Leave a commment." required></textarea>
-
-                  {% if form.content.errors %}
-                  <div class="alert alert-danger" role="alert">
-                    {{ form.content.errors }}
-                  </div>
-                  {% endif %}
-                  {% if form.content.help_text %}
-                  <p class="help-block">{{ form.content.help_text|safe }}</p>
-                  {% endif %}
-                </div>
-                <div class="collapse" id="commentform_collapse_{{post.id}}">
-                  <button type="submit"class="btn btn-primary" >{{ comment_button_text }}</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </p>
-      {% if is_user %}
-      <p>
-        <a href="{% url 'posts:post_edit' id=post.id slug=post.slug %}">Edit</a>
-        <!-- Button trigger modal -->
-        <button type="button" class="btn btn-link delete_button">Delete</button>
-        <!-- <a href="#" role="button" data-toggle="modal" data-target="#myModal{{ post.id }}">Delete</a> -->
-        <!-- Modal -->
-        <div class="modal fade" id="profile_posts_modal_{{ post.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">Delete Post</h4>
-              </div>
-              <div class="modal-body">
-                <p>Are you sure you wish to delete this post?</p>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-default confirm_delete_button">Confirm</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </p>
-      {% endif %}
-    </div>
-  </div>
-  {% endfor %}
-</div>
-{% endif %}
-
-{% if no_posts == False %}
-<div>
-  <ul class="pagination">
-    {% if current_page.has_previous %}
-    <li><a class="profile_posts_page_button" href="?page={{ current_page.previous_page_number }}">&laquo;</a></li>
-    {% else %}
-    <li class="disabled"><span>&laquo;</span></li>
-    {% endif %}
-    {% for i in current_page.paginator.page_range %}
-    {% if current_page.number == i %}
-    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
-    {% else %}
-    <li><a class="profile_posts_page_button" href="?page={{ i }}">{{ i }}</a></li>
-    {% endif %}
-    {% endfor %}
-    {% if current_page.has_next %}
-    <li><a class="profile_posts_page_button" href="?page={{ current_page.next_page_number }}">&raquo;</a></li>
-    {% else %}
-    <li class="disabled"><span>&raquo;</span></li>
-    {% endif %}
-  </ul>
-</div>
-{% endif %}
-
-
-</div>
+{% include "profile_posts_partial.html" %}
 {% endblock content %}
 
 {% block javascript %}
@@ -243,33 +63,31 @@ function make_pag(data,id,data_url) {
 }
 
 
-
 // Feature 1
 $(document).on('click', '.like_button', function(event) {
   event.preventDefault();
   var element = $(this);
-  if ($("#logged_in").attr("data-logged-in")=="True") {
-    if($(element).attr("data-liked")=="False"){
-
+  var url = $(element).parents(".thumbnail_post_list").attr("data-url");
+  if ($("#logged_in").data("logged-in")== true) {
+    if($(element).data("liked")==false){
       $.ajax({
-        url:$(element).attr("data-post") + "like",
+        url:url + "like",
         success:function(data) {
-          $(element).html('<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> ' + data.like_count);
-          $(element).attr("data-liked","True");
+          $(element).html('<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> ' + data.likes_count);
+          $(element).data("liked",true);
         }
       })
     }
     else{
       $.ajax({
-        url:$(element).attr("data-post") + "like",
+        url:url + "like",
         data:{ unlike: "unlike" },
         success:function(data) {
-          $(element).html('<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> ' + data.like_count);
-          $(element).attr("data-liked","False");
+          $(element).html('<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> ' + data.likes_count);
+          $(element).data("liked",false);
         }
       })
     }
-
   }
   else{
     $('#myModal').modal()
@@ -280,25 +98,24 @@ $(document).on('click', '.like_button', function(event) {
 $(document).on('click', '.dislike_button', function(event) {
   event.preventDefault();
   var element = $(this);
-  if ($("#logged_in").attr("data-logged-in")=="True") {
-
-    if($(element).attr("data-disliked")=="False"){
-
+  var url = $(element).parents(".thumbnail_post_list").attr("data-url");
+  if ($("#logged_in").data("logged-in")== true) {
+    if($(element).data("disliked")==false){
       $.ajax({
-        url:$(element).attr("data-post") + "dislike",
+        url:url + "dislike",
         success:function(data) {
-          $(element).html('<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> ' + data.dislike_count);
-          $(element).attr("data-disliked","True");
+          $(element).html('<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> ' + data.dislikes_count);
+          $(element).data("disliked",true);
         }
       })
     }
     else{
       $.ajax({
-        url:$(element).attr("data-post") + "dislike",
+        url:url + "dislike",
         data:{ undislike: "undislike" },
         success:function(data) {
-          $(element).html('<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> ' + data.dislike_count);
-          $(element).attr("data-disliked","False");
+          $(element).html('<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> ' + data.dislikes_count);
+          $(element).data("disliked",false);
         }
       })
     }
@@ -308,6 +125,7 @@ $(document).on('click', '.dislike_button', function(event) {
     $('#myModal').modal()
   }
 });
+
 
 
 
@@ -357,28 +175,36 @@ $(document).on('click', '.delete_button', function(event) {
 
 
 
-// $(document).on('click', '.confirm_delete_button', function(event) {
-//   event.preventDefault();
-//   var element = $(this);
-//   var id = $(element).parents(".thumbnail_post_list").attr("data-id");
-//   var url = $(element).parents(".thumbnail_post_list").attr("data-url");
-//   $('#profile_posts_modal_'+id).modal('hide');
-//
-//   $.ajax({
-//     url:
-//     success:function(data) {
-//       $("#profile_posts_count").html(data.posts_count + " Posts");
-//       if (data.is_draft == true) {
-//         $('#profile_posts_page_header').after(make_message("Draft deleted."));
-//       }
-//       else{
-//         $('#profile_posts_page_header').after(make_message("Post deleted."));
-//       }
-//
-//     }
-//   })
-//
-// });
+$(document).on('click', '.confirm_delete_button', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  var id = $(element).parents(".thumbnail_post_list").attr("data-id");
+  var url = $(element).parents(".thumbnail_post_list").attr("data-url");
+  var pageurl= $(element).parents(".profile_posts_page").attr("data-pageurl");
+  var pagenum = $(element).parents(".profile_posts_page").attr("data-pagenum");
+  $('#profile_posts_modal_'+id).modal('hide');
+
+  $.ajax({  // send GET request to delete post
+    url:url + "delete",
+    success:function(data) {
+      var is_draft = data.is_draft;
+
+      $.ajax({
+        url: pageurl, // send GET request to current url
+        success:function(data) {
+          $("#profile_posts_page_"+pagenum).replaceWith(data);
+          if ($(is_draft) == true) {
+            $('#profile_posts_page_header').after(make_message("Draft deleted."));
+          }
+          else{
+            $('#profile_posts_page_header').after(make_message("Post deleted."));
+          }
+
+        }});
+    }
+  })
+
+});
 
 
 
@@ -462,12 +288,18 @@ $(document).on('submit', '.comment_form', function(event) {
         event.preventDefault();
         var element = $(this);
         var url = $(element).attr("href");
+        var pagenum = $(element).parents(".profile_posts_page").attr("data-pagenum");
+
         $.ajax({     // send get request to get nth page
           url: url,
           success:function(data) {
-            $('#profile_posts_page').remove();
+            // $("#profile_posts_page_"+pagenum).after('<div id="container"></div>');
+            // var content = $('#container').append(data).find(".profile_posts_page");
+            // $("#profile_posts_page_"+pagenum).replaceWith(content);
+            // $('#container').remove();
 
-            
+            $("#profile_posts_page_"+pagenum).replaceWith(data);
+
           }});
         });
   </script>
