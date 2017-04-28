@@ -55,28 +55,28 @@ def profile_posts(request,id,slug):
             # If page is out of range (e.g. 9999), deliver last page of results.
             current_page = paginator.page(paginator.num_pages)
 
-        no_comments = []
+        # no_comments = []
         comments_count = []
-        comments_first_pages = []
-
+        # comments_first_pages = []
+        #
         for post in current_page.object_list:
-            paginator = Paginator(post.comment_set.all(), 5) # Show 25 contacts per page
-            page = request.GET.get('page')
-
-            try:
-                comments_first_page = paginator.page(1)
-            except PageNotAnInteger:
-                # If page is not an integer, deliver first page.
-                comments_first_page = paginator.page(1)
-            except EmptyPage:
-                # If page is out of range (e.g. 9999), deliver last page of results.
-                comments_first_page = paginator.page(paginator.num_pages)
-            comments_first_pages.append(comments_first_page)
-            # check2
-            if post.comment_set.all().count() == 0:
-                no_comments.append(True)
-            else:
-                no_comments.append(False)
+        #     paginator = Paginator(post.comment_set.all(), 5) # Show 25 contacts per page
+        #     page = request.GET.get('page')
+        #
+        #     try:
+        #         comments_first_page = paginator.page(1)
+        #     except PageNotAnInteger:
+        #         # If page is not an integer, deliver first page.
+        #         comments_first_page = paginator.page(1)
+        #     except EmptyPage:
+        #         # If page is out of range (e.g. 9999), deliver last page of results.
+        #         comments_first_page = paginator.page(paginator.num_pages)
+        #     comments_first_pages.append(comments_first_page)
+        #     # check2
+        #     if post.comment_set.all().count() == 0:
+        #         no_comments.append(True)
+        #     else:
+        #         no_comments.append(False)
             comments_count.append(post.comment_set.all().count())
         form = CommentForm()
         current_url = request.path
@@ -91,16 +91,16 @@ def profile_posts(request,id,slug):
             "current_page":current_page,
             "comment_title":comment_title,
             "comment_button_text":comment_button_text,
-            "no_comments":no_comments,
+            # "no_comments":no_comments,
             "comments_count":comments_count,
-            "comments_first_pages":comments_first_pages,
+            # "comments_first_pages":comments_first_pages,
             "form":form,
             "current_url":current_url,
         }
 
 
         if request.is_ajax():
-            template = "profile_posts_partial.html"
+            template = "profile_posts_page.html"
         else:
             template = "profile_posts.html"
 

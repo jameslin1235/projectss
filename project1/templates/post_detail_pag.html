@@ -1,9 +1,9 @@
 {% load static %}
 {% load widget_tweaks %}
-<div class="section post_detail_page"" id="post_detail_page_{{comments_current_page.number}}" data-pagenum={{comments_current_page.number}}>
+<div class="section" id="post_detail_page_{{post.id}}" data-pagenum={{comments_current_page.number}}>
 
 
-<div class="page-header" id="post_detail_page_header">
+<div class="page-header" id="post_detail_page_header_{{post.id}}">
   <h4 id="comments_count">{{ comments_count }} {{comment_title}}</h4>
 </div>
 
@@ -13,14 +13,14 @@
 </div>
 {% endif %}
 
-<div class="media" id='comment_form_container'>
+<div class="media">
   <div class="media-left">
     <a href="#">
       <img class="media-object" src="/media/profile_avatar/1.jpg" alt="..." width="64px" height="64px">
     </a>
   </div>
   <div class="media-body">
-    <form method="post" id="comment_form">
+    <form method="post" class="comment_form">
       {% csrf_token %}
 
       {% if form.non_field_errors %}
@@ -31,7 +31,7 @@
 
       <!-- Button trigger modal -->
       <div class="form-group" >
-        <textarea class="form-control" id="comment_form_textfield" rows="3" placeholder="Leave a commment." required></textarea>
+        <textarea class="form-control comment_form_textfield" id="comment_form_textfield_{{post.id}}" rows="3" placeholder="Leave a commment." required></textarea>
 
         {% if form.content.errors %}
         <div class="alert alert-danger" role="alert">
@@ -44,11 +44,10 @@
       </div>
 
 
-      <div class="collapse" id="collapseExample">
+      <div class="collapse" id="comment_form_collapse_{{post.id}}">
+        <button class="btn btn-primary comment_form_close_button" >cancel</button>
         <button type="submit" class="btn btn-primary" >{{ comment_button_text }}</button>
       </div>
-
-
 
     </form>
   </div>
@@ -72,10 +71,10 @@
   {% endfor %}
 </div>
 
-<div id="post_detail_pag">
-  <ul id="post_detail_pag_ul" class="pagination">
+<div>
+  <ul class="pagination">
     {% if comments_current_page.has_previous %}
-    <li><a class="page_button" href="?page={{ comments_current_page.previous_page_number }}">&laquo;</a></li>
+    <li><a class="comments_page_button" href="{{post.get_absolute_url}}?page={{ comments_current_page.previous_page_number }}">&laquo;</a></li>
     {% else %}
     <li class="disabled"><span>&laquo;</span></li>
     {% endif %}
@@ -83,11 +82,11 @@
     {% if comments_current_page.number == i %}
     <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
     {% else %}
-    <li><a class="page_button" href="?page={{ i }}" >{{ i }}</a></li>
+    <li><a class="comments_page_button" href="{{post.get_absolute_url}}?page={{ i }}" >{{ i }}</a></li>
     {% endif %}
     {% endfor %}
     {% if comments_current_page.has_next %}
-    <li><a class="page_button" href="?page={{ comments_current_page.next_page_number }}">&raquo;</a></li>
+    <li><a class="comments_page_button" href="{{post.get_absolute_url}}?page={{ comments_current_page.next_page_number }}">&raquo;</a></li>
     {% else %}
     <li class="disabled"><span>&raquo;</span></li>
     {% endif %}

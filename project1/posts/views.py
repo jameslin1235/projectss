@@ -294,7 +294,8 @@ def post_detail(request,id,slug):
             }
 
         if request.is_ajax():
-            template = "post_detail_partial.html"
+            template = "post_detail_pag.html"
+
         else:
             template = "post_detail.html"
         return render(request,template,context)
@@ -307,33 +308,10 @@ def post_detail(request,id,slug):
             comment.user = request.user
             comment.post = post
             comment.save()
-            # comments = post.comment_set.all()
-            # comments_count = comments.count()
-            # paginator = Paginator(comments, 5) # Show 25 contacts per page
-            # page = request.GET.get('page')
-            # try:
-            #     comments_current_page = paginator.page(page)
-            # except PageNotAnInteger:
-            #     # If page is not an integer, deliver first page.
-            #     comments_current_page = paginator.page(1)
-            # except EmptyPage:
-            #     # If page is out of range (e.g. 9999), deliver last page of results.
-            #     comments_current_page = paginator.page(paginator.num_pages)
+
 
             response_data = {}
-            # response_data['avatar'] = comment.user.profile.avatar.url
-            # response_data['username'] = comment.user.username
-            # response_data['content'] = comment.content
-            # response_data['date_created'] = comment.date_created
-            # response_data['profile_url'] = reverse("profiles:profile_activity", kwargs={"id": comment.user.id, "slug":comment.user.profile.slug })
-            # response_data['comments_count'] = comments_count
-            # response_data['has_previous'] = comments_current_page.has_previous()
-            # response_data['has_next'] = comments_current_page.has_next()
-            # response_data['number'] = comments_current_page.number
-            # response_data['page_range'] = comments_current_page.paginator.page_range[-1]
-            # response_data['success'] = True
-            # response_data['message'] = "Comment created."
-            #
+
             return JsonResponse(response_data,safe=False)
         else:
             print('error')

@@ -42,7 +42,7 @@
 
   <div class="row">
     <div class="col-md-12">
-      {% include "post_detail_partial.html" %}
+      {% include "post_detail_pag.html" %}
     </div>
   </div>
 </div>
@@ -128,17 +128,6 @@ $(document).on('click', '#dislike_button', function(event) {
     //   }
     // });
 
-    // Feature 4
-    $(document).on('click', '#comment_form_textfield', function(event) {
-      event.preventDefault();
-      var element = $(this);
-      if ($("#logged_in").data("logged-in")== true) {
-        $('#collapseExample').collapse('toggle')
-      }
-      else{
-        $('#myModal').modal()
-      }
-    });
 
 
     // Feature 5
@@ -147,7 +136,7 @@ $(document).on('click', '#dislike_button', function(event) {
       var element = $(this);
       var method = $(element).attr('method');
       var url = $(element).attr('action');
-      var pagenum = $(element).parents(".post_detail_page").attr("data-pagenum");
+      var pagenum = $(element).parents("#post_detail_page").attr("data-pagenum");
       $.ajax({  // send post request to save comment
         method: method,
         url: url,
@@ -160,67 +149,33 @@ $(document).on('click', '#dislike_button', function(event) {
             $.ajax({     // send get request to get first page
               url: url,
               success:function(data) {
-
-                $("#post_detail_page_"+pagenum).replaceWith(data);
-                $('#post_detail_page_header').after(make_message("Post created."));
+                $("#post_detail_page").replaceWith(data);
+                $('#post_detail_page_header').after(make_message("Comment created."));
               }});
             }
             else{
                 $.ajax({     // send get request for the 1st page
                   url: url,
                   success:function(data) {
-                    $("#post_detail_page_"+pagenum).replaceWith(data);
-                    $('#post_detail_page_header').after(make_message("Post created."));
-
+                    $("#post_detail_page").replaceWith(data);
+                    $('#post_detail_page_header').after(make_message("Comment created."));
                   }});
                 }
               },
             });
           });
 
-
-// save comment, give you first page
-// if you save, delete current page, send get request for first page and display
-// if you click on button, delete current page, send get for other page and display them
-// if you post on different page, save result and request first page
-
-
-
-        // // Feature 6
-        // $(document).on('click', '.page_button', function() {
-        //   event.preventDefault();
-        //   var element = $(this);
-        //   var url = $(element).attr("href");
-        //   $.ajax({     // send get request to get nth page
-        //     url: url,
-        //     success:function(data) {
-        //       $('#post_detail_comment_list').remove();
-        //       $('#post_detail_pag').remove();
-        //       post_detail_comment_list_pag(data);
-        //       $("#comment_form").attr("data-pagenum",data.number);
-        //     }});
-        //   });
-
-
-
           // Feature 6
           $(document).on('click', '.page_button', function() {
             event.preventDefault();
             var element = $(this);
             var url = $(element).attr("href");
-            var pagenum = $(element).parents(".post_detail_page").attr("data-pagenum");
-
             $.ajax({     // send get request to get nth page
               url: url,
               success:function(data) {
-                // $("#profile_posts_page_"+pagenum).after('<div id="container"></div>');
-                // var content = $('#container').append(data).find(".profile_posts_page");
-                // $("#profile_posts_page_"+pagenum).replaceWith(content);
-                // $('#container').remove();
-
-                $("#post_detail_page_"+pagenum).replaceWith(data);
-
+                $("#post_detail_page").replaceWith(data);
               }});
             });
+
           </script>
           {% endblock %}

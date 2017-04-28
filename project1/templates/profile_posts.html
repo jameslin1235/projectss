@@ -1,6 +1,6 @@
 {% extends "profile_base.html" %}
 {% load widget_tweaks %}
-{% load custom_tags %}
+
 {% block title %}{{ user }}'s {{ title }}{% endblock title %}
 
 {% block vertical_nav %}
@@ -17,51 +17,11 @@
 
 {% block content %}
 {% include "login_modal.html" %}
-{% include "profile_posts_partial.html" %}
+{% include "profile_posts_page.html" %}
 {% endblock content %}
 
 {% block javascript %}
 <script>
-var pag1 = '<li class="disabled"><span>&laquo;</span></li>';
-var pag2 = '<li class="disabled"><span>&raquo;</span></li>';
-
-
-function post_list_comment_list_pag(data,id,data_url){
-
-  $("#comment_form_container_"+id).before('<div id="post_list_comment_list_'+id+'"></div>');
-  for (var i = 0; i < data.comment_count; i++) {
-    $("#post_list_comment_list_"+id).append('<div class="media"><div class="media-left"><a href="'+data.list5[i]+'"><img class="media-object" src="'+data.list1[i]+'" alt="..." width="64px" height="64px"></a></div><div class="media-body"><a class="media-heading" href="'+data.list5[i]+'">'+data.list2[i]+'</a><p>'+ data.list3[i]+'</p><p>'+data.list4[i]+'</p></div></div>');
-  }
-  $("#post_list_comment_list_"+id).after('<div id="post_list_pag_'+id+'"><ul id="post_list_pag_ul_'+id+'" class="pagination"></ul></div>');
-  make_pag(data,id,data_url);
-}
-
-function make_pag(data,id,data_url) {
-  if (data.has_previous) {
-    ppn = data.number-1;
-    $("#post_list_pag_ul_"+id).append('<li><a class="page_button" href="'+data_url+'?page='+ppn+'">&laquo;</a></li>');
-  }
-  else {
-    $("#post_list_pag_ul_"+id).append(pag1);
-  }
-  for (var x = 1; x < data.page_range+1; x++) {
-    if (data.number == x) {
-      $("#post_list_pag_ul_"+id).append('<li class="active"><span>'+x+'<span class="sr-only">(current)</span></span></li>');
-
-    }
-    else {
-      $("#post_list_pag_ul_"+id).append('<li><a class="page_button" href="'+data_url+'?page='+x+'">'+x+'</a></li>');
-    }
-  }
-  if (data.has_next) {
-    npn = data.number+1;
-    $("#post_list_pag_ul_"+id).append('<li><a class="page_button" href="'+data_url+'?page='+npn+'">&raquo;</a></li>');
-  }
-  else {
-    $("#post_list_pag_ul_"+id).append(pag2);
-  }
-}
-
 
 // Feature 1
 $(document).on('click', '.like_button', function(event) {
@@ -126,44 +86,97 @@ $(document).on('click', '.dislike_button', function(event) {
   }
 });
 
-
-
-
-// Feature 3
+// Feature 3 Collapse the selected comments page
 $(document).on('click', '.comment_button', function(event) {
   event.preventDefault();
   var element = $(this);
   var id = $(element).parents(".thumbnail_post_list").attr("data-id");
-  $("#comment_collapse_"+id).collapse("toggle");
+  var url = $(element).parents(".thumbnail_post_list").attr("data-url");
+  $("#profile_comments_page_"+id).collapse("toggle");
+  if ($("#profile_comments_page_"+id).attr("aria-expanded")=="true"){
+    $.ajax({     // send ajax get request to get 1st page of paginated comments
+      url: url,
+      success:function(data) {
+        $("#profile_comments_page_"+id).html(data);
+      }});
+  }
+
+
 });
 
-// Feature 4
+// Feature 4 Get 1st page of paginated comments
+// $(document).on('shown.bs.collapse',".profile_comments_page", function(){
+//   var element = $(this);
+//   var url = $(element).parents(".thumbnail_post_list").attr("data-url");
+//   $.ajax({     // send ajax get request to get 1st page of paginated comments
+//     url: url,
+//     success:function(data) {
+//       $(element).html(data);
+//     }});
+//   });
+
+// Feature 5 Get nth page of paginated comments
+$(document).on('click', '.comments_page_button', function() {
+  event.preventDefault();
+  var element = $(this);
+  var url = $(element).attr("href");
+  var id = $(element).parents(".thumbnail_post_list").attr("data-id");
+  $.ajax({     // send ajax get request to get nth page of paginated comments
+    url: url,
+    success:function(data) {
+      $("#profile_comments_page_"+id).html(data);
+    }});
+  });
+
+
+
+// Feature 6 Open comment form buttons
 $(document).on('click', '.comment_form_textfield', function(event) {
   event.preventDefault();
   var element = $(this);
+
+  var id = $(element).parents(".thumbnail_post_list").attr("data-id");
   if ($("#logged_in").data("logged-in")== true) {
-    var id = $(element).parents(".thumbnail_post_list").attr("data-id");
-    $("#commentform_collapse_"+id).collapse("toggle");
+    $("#comment_form_collapse_"+id).collapse("show");
   }
   else{
-    $('#myModal').modal()
+    $('#myModal').modal();
   }
 });
 
+// Feature 7 Close comment form buttons
+$(document).on('click', '.comment_form_close_button', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  var id = $(element).parents(".thumbnail_post_list").attr("data-id");
+    $("#comment_form_collapse_"+id).collapse("hide");
+});
 
-
-// // Feature 4
-// $(document).on('click', '.bookmark_button', function(event) {
-//   event.preventDefault();
-//   var element = $(this);
-//   if ($("#logged_in").attr("data-logged-in")=="True") {
-//
-//     alert("hello");
-//   }
-//   else{
-//     $('#myModal').modal()
-//   }
-// });
+// Feature 8
+$(document).on('submit', '.comment_form', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  var id = $(element).parents(".thumbnail_post_list").attr("data-id");
+  var url = $(element).parents(".thumbnail_post_list").attr("data-url");
+  var method = $(element).attr('method');
+  var url = url;
+  $.ajax({  // send post request to save comment
+    method: method,
+    url: url,
+    data: {
+      content: $("#comment_form_textfield_"+id).val(),
+      csrfmiddlewaretoken:'{{ csrf_token }}',
+    },
+    success:function(data) {
+        $.ajax({     // send get request to get first page
+          url: url,
+          success:function(data) {
+            $("#post_detail_page_"+id).replaceWith(data);
+            $('#post_detail_page_header_'+id).after(make_message("Comment created."));
+          }});
+          },
+        });
+      });
 
 
 $(document).on('click', '.delete_button', function(event) {
@@ -208,98 +221,15 @@ $(document).on('click', '.confirm_delete_button', function(event) {
 
 
 
-// Feature 5
-$(document).on('submit', '.comment_form', function(event) {
-  event.preventDefault();
-  var element = $(this);
-  var id = $(element).parents(".thumbnail_post_list").attr("data-id");
-  var url = $(element).parents(".thumbnail_post_list").attr("data-url");
-  var method = $(element).attr('method');
-
-  $.ajax({  // send post request to save comment
-    method: method,
-    url: url,
-    data: {
-      content: $("#comment_form_textfield_"+id).val(),
-      csrfmiddlewaretoken:'{{ csrf_token }}',
-      id:id,
-    },
-    success:function(data) {
-      if ($(element).data("pagenum") == 1){
-        $.ajax({     // send get request to get first page
-          url: url,
-          success:function(data) {
-            $("#comment_button_"+id).html('<span class="glyphicon glyphicon-comment" aria-hidden="true"></span> '+data.comments_count);
-            $("#comments_count_"+id).html(data.comments_count + " Comments");
-            $("#comment_form_textfield_"+id).val("");
-            $('#post_list_page_header_'+id).after(make_message(data.message));
-            if (data.comments_count == 1){
-              $("#no_comments_"+id).remove();
-            }
-            if($('#post_list_comment_list_'+id).length){
-              $('#post_list_comment_list_'+id).remove();
-              $('#post_list_pag_'+id).remove();
-              post_list_comment_list_pag(data,id,url);
-            }
-            else{
-              post_list_comment_list_pag(data,id,url);
-            }
-          }});
-        }
-        else{
-          $.ajax({     // send get request for the 1st page
-            url: url,
-            success:function(data) {
-              $("#comment_button_"+id).html('<span class="glyphicon glyphicon-comment" aria-hidden="true"></span> '+data.comments_count);
-              $("#comments_count_"+id).html(data.comments_count + " Comments");
-              $("#comment_form_textfield_"+id).val("");
-              $('#post_list_page_header_'+id).after(make_message(data.message));
-              $('#post_list_comment_list_'+id).remove();
-              $('#post_list_pag_'+id).remove();
-              post_list_comment_list_pag(data,id,url);
-              $("#comment_form_"+id).attr("data-pagenum",data.number);
-            }});
-          }
-        },
-      });
-    });
-
-
-
-    // Feature 6
-    $(document).on('click', '.page_button', function() {
-      event.preventDefault();
-      var element = $(this);
-      var id = $(element).parents(".thumbnail_post_list").attr("data-id");
-      var data_url = $(element).parents(".thumbnail_post_list").attr("data-url");
-      var url = $(element).attr("href");
-      $.ajax({     // send get request to get nth page
-        url: url,
-        success:function(data) {
-          $('#post_list_comment_list_'+id).remove();
-          $('#post_list_pag_'+id).remove();
-          post_list_comment_list_pag(data,id,data_url);
-          $("#comment_form_"+id).attr("data-pagenum",data.number);
-        }});
-      });
-
       // Feature 7
       $(document).on('click', '.profile_posts_page_button', function() {
         event.preventDefault();
         var element = $(this);
         var url = $(element).attr("href");
-        var pagenum = $(element).parents(".profile_posts_page").attr("data-pagenum");
-
         $.ajax({     // send get request to get nth page
           url: url,
           success:function(data) {
-            // $("#profile_posts_page_"+pagenum).after('<div id="container"></div>');
-            // var content = $('#container').append(data).find(".profile_posts_page");
-            // $("#profile_posts_page_"+pagenum).replaceWith(content);
-            // $('#container').remove();
-
-            $("#profile_posts_page_"+pagenum).replaceWith(data);
-
+            $("#profile_posts_page").replaceWith(data);
           }});
         });
   </script>
