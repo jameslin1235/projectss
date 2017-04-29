@@ -62,10 +62,13 @@ $(document).on('click', '.confirm_delete_button', function(event) {
     event.preventDefault();
     var element = $(this);
     var url = $(element).attr("href");
+    var option = $(element).parents("#profile_drafts_page").attr("data-option-selected");
     $.ajax({     // send get request to get nth page
       url: url,
+      data: {option:option},
       success:function(data) {
         $("#profile_drafts_page").replaceWith(data);
+        $("#profile_drafts_page").attr("data-option-selected",option);
       }});
     });
 
@@ -74,14 +77,34 @@ $(document).on('click', '.confirm_delete_button', function(event) {
       event.preventDefault();
       var element = $(this);
       var option = $(element).attr("data-option");
+      console.log(option);
       var pageurl= $(element).parents("#profile_drafts_page").attr("data-pageurl");
 
       $.ajax({     // send get request to get nth page
         url: pageurl,
         data: {option:option},
         success:function(data) {
+          alert('h');
           $("#profile_drafts_page").replaceWith(data);
+
         }});
+      });
+
+
+      $(document).on('change','#profile_drafts_select',function(){
+        event.preventDefault();
+        var element = $(this);
+        var option = ($(element).val());
+        var url= $(element).parents("#profile_drafts_page").attr("data-firstpage");
+
+        $.ajax({     // send get request to get nth page
+          url: url,
+          data: {option:option},
+          success:function(data) {
+            $("#profile_drafts_page").replaceWith(data);
+            $("#profile_drafts_page").attr("data-option-selected",option);
+          }});
+
       });
     </script>
     {% endblock javascript %}

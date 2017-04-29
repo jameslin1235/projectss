@@ -86,6 +86,9 @@ def profile_posts(request,id,slug):
 
         return render(request,template,context)
 
+# when you first come to page, you should be in first filter
+#when you click on a different option, send a request to view to get template with filter
+
 @login_required
 def profile_drafts(request,id,slug):
     if request.method == "GET":
@@ -98,16 +101,20 @@ def profile_drafts(request,id,slug):
             logged_in = False
             if request.user.is_authenticated:
                 logged_in = True
-            if request.GET.get('option'):
-                filter_option = request.GET.get('option')
-            else:
-                filter_option = 1
+            drafts = user.post_set.filter(is_draft = True).order_by("-date_created")
+            option = 0
 
-            if filter_option == 1:
-                # if by date created
-                drafts = user.post_set.filter(is_draft = True).order_by("-date_created")
-            elif filter_option == 2:
-                drafts = user.post_set.filter(is_draft = True).order_by("-date_edited")
+            if request.GET.get('option'):
+                option = int(request.GET.get('option'))
+                if option == 1:
+                    print('hello')
+                    drafts = user.post_set.filter(is_draft = True).order_by("-date_created")
+
+                elif option == 2:
+                    print('hello')
+                    drafts = user.post_set.filter(is_draft = True).order_by("-date_edited")
+
+
             drafts_count = drafts.count()
             posts_count = user.post_set.filter(is_draft = False).count()
             no_drafts = True
@@ -137,6 +144,7 @@ def profile_drafts(request,id,slug):
                 "current_page":current_page,
                 "form":form,
                 "current_url":current_url,
+                
             }
 
             if request.is_ajax():

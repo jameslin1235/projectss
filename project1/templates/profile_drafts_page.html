@@ -1,23 +1,18 @@
 {% load widget_tweaks %}
 
-<div id="profile_drafts_page" data-pageurl="{{current_url}}?page={{current_page.number}}">
+<div id="profile_drafts_page" data-pageurl="{{current_url}}?page={{current_page.number}}" data-firstpage="{{current_url}}" data-option-selected="1">
 <div class="page-header" id="profile_drafts_page_header">
   <h4><span id="profile_drafts_count">{{drafts_count}}</span> {{ title }}</h4>
 </div>
 
-<!-- Single button -->
-<div class="btn-group">
-  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    Action <span class="caret"></span>
-  </button>
-  <ul class="dropdown-menu">
-    <li><a href="#" class="filter_button" data-option = "1">By created date</a></li>
-    <li><a href="#" class="filter_button" data-option = "2">By edited date</a></li>
-    <li><a href="#" class="filter_button" data-option = "3">By created date</a></li>
-    <li><a href="#" class="filter_button" data-option = "4" >By edited date</a></li>
-  </ul>
+<div><span>Sort by: </span>
+<select id="profile_drafts_select">
+  <option class="filter_button" value="1" selected="selected">By date created</option>
+  <option class="filter_button" value="2">By date edited</option>
+  <option class="filter_button" value="3">Feature 3</option>
+  <option class="filter_button" value="4">Feature 4</option>
+</select>
 </div>
-
 {% if messages %}
 {% for message in messages %}
 <div class="alert alert-{{ message.tags }} alert-dismissible" role="alert">
@@ -46,6 +41,8 @@
       <p><a href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug %}">{{ draft.user.username }}</a></p>
       <p>{{ draft.content }}</p>
       <p><a href="{{ draft.get_absolute_url }}" data-toggle="tooltip" data-placement="top" title="Published {{ draft.date_published }}">Edited {{ draft.date_edited }}</a></p>
+      <p><a href="{{ draft.get_absolute_url }}" data-toggle="tooltip" data-placement="top" title="Published {{ draft.date_published }}">Created {{ draft.date_created}}</a></p>
+
       <p>
         <a href="{% url 'posts:post_edit' id=draft.id slug=draft.slug %}">Edit</a>
         <!-- Button trigger modal -->
