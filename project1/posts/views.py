@@ -138,7 +138,12 @@ def post_edit(request,id,slug):
                 "button_text":button_text,
                 "form":form,
             }
-            return render(request,"post_edit.html",context)
+            if request.is_ajax():
+                template = "post_edit_page.html"
+            else:
+                template = "post_edit.html"
+            return render(request,template,context)
+
     elif request.method == "POST":
         post = get_object_or_404(Post, id=id)
         form = PostForm(request.POST,instance=post)
@@ -147,15 +152,11 @@ def post_edit(request,id,slug):
             post.save()
             response_data = {}
             if post.is_draft == True:
-                response_data['is_draft'] = True
-                return JsonResponse(response_data,safe=False)
-                # messages.success(request, "Draft edited.")
-                # return redirect("posts:post_edit", id=id, slug=slug )
+                response_data['message'] = "Draft edited."
             else:
-                response_data['is_draft'] = False
-                return JsonResponse(response_data,safe=False)
-                # messages.success(request, "Post edited.")
-                # return redirect(post)
+                response_data['message'] = "Post edited."
+            return JsonResponse(response_data,safe=False)
+
 
 @login_required
 def post_delete(request,id,slug):
@@ -169,19 +170,10 @@ def post_delete(request,id,slug):
             post.delete()
             response_data = {}
             if post.is_draft == True:
-                response_data['is_draft'] = True
+                response_data['message'] = "Draft deleted."
             else:
-                response_data['is_draft'] = False
+                response_data['message'] = "Post deleted."
             return JsonResponse(response_data,safe=False)
-        #     messages.success(request, "Draft deleted.")
-        #     return redirect("profiles:profile_drafts", id=user.id, slug=user.profile.slug )
-        # else:
-        #     post.delete()
-        #     messages.success(request, 'Post deleted.')
-        #     return redirect("profiles:profile_posts", id=user.id, slug=user.profile.slug )
-
-
-
 
 @login_required
 def post_bookmark(request,id,slug):
@@ -247,39 +239,6 @@ def post_detail(request,id,slug):
         except EmptyPage:
             # If page is out of range (e.g. 9999), deliver last page of results.
             comments_current_page = paginator.page(paginator.num_pages)
-
-
-            # comment_count = comments_current_page.object_list.count()
-            # list1 = []
-            # list2 = []
-            # list3 = []
-            # list4 = []
-            # list5 = []
-            #
-            # for comment in comments_current_page.object_list:
-            #     list1.append(comment.user.profile.avatar.url)
-            #     list2.append(comment.user.username)
-            #     list3.append( comment.content)
-            #     list4.append(comment.date_created)
-            #     list5.append(reverse("profiles:profile_activity", kwargs={"id": comment.user.id, "slug":comment.user.profile.slug }))
-            #
-            # response_data = {}
-            # response_data['list1']= list1
-            # response_data['list2']= list2
-            # response_data['list3']= list3
-            # response_data['list4']= list4
-            # response_data['list5']= list5
-            # response_data['comment_count']= comment_count
-            # response_data['has_previous'] = comments_current_page.has_previous()
-            # response_data['has_next'] = comments_current_page.has_next()
-            # response_data['number'] = comments_current_page.number
-            # response_data['page_range'] = comments_current_page.paginator.page_range[-1]
-            # response_data['success'] = True
-            # response_data['message'] = "Comment created."
-            # response_data['comments_count'] = comments_count
-            #
-            # return JsonResponse(response_data,safe=False)
-
         context = {
             "post":post,
             "user":user,
@@ -308,8 +267,6 @@ def post_detail(request,id,slug):
             comment.user = request.user
             comment.post = post
             comment.save()
-
-
             response_data = {}
 
             return JsonResponse(response_data,safe=False)

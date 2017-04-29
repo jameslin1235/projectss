@@ -6,8 +6,8 @@
 {% block vertical_nav %}
 <ul class="nav nav-pills nav-stacked">
   <li role="presentation"><a href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug  %}" role="tab" >Activity</a></li>
-  <li role="presentation" class="active"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" role="tab" >Posts {{posts_count}}</a></li>
-  <li role="presentation"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" role="tab" >Drafts</a></li>
+  <li role="presentation" class="active"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" role="tab" >Posts <span id="profile_nav_posts_count">{{posts_count}}</span></a></li>
+  <li role="presentation"><a href="{% url 'profiles:profile_drafts' id=user.id slug=user.profile.slug  %}" role="tab" >Drafts <span id="profile_nav_drafts_count">{{drafts_count}}</span></a></li>
   <li role="presentation"><a href="{% url 'profiles:profile_comments' id=user.id slug=user.profile.slug  %}" role="tab">Comments</a></li>
   <li role="presentation"><a href="{% url 'profiles:profile_bookmarks' id=user.id slug=user.profile.slug  %}" role="tab">Bookmark</a></li>
   <li role="presentation"><a href="{% url 'profiles:profile_following' id=user.id slug=user.profile.slug  %}" role="tab">Following</a></li>
@@ -27,7 +27,7 @@
 $(document).on('click', '.like_button', function(event) {
   event.preventDefault();
   var element = $(this);
-  var url = $(element).parents(".thumbnail_post_list").attr("data-url");
+  var url = $(element).parents(".thumbnail_container").attr("data-url");
   if ($("#logged_in").data("logged-in")== true) {
     if($(element).data("liked")==false){
       $.ajax({
@@ -58,7 +58,7 @@ $(document).on('click', '.like_button', function(event) {
 $(document).on('click', '.dislike_button', function(event) {
   event.preventDefault();
   var element = $(this);
-  var url = $(element).parents(".thumbnail_post_list").attr("data-url");
+  var url = $(element).parents(".thumbnail_container").attr("data-url");
   if ($("#logged_in").data("logged-in")== true) {
     if($(element).data("disliked")==false){
       $.ajax({
@@ -86,12 +86,12 @@ $(document).on('click', '.dislike_button', function(event) {
   }
 });
 
-// Feature 3 Collapse the selected comments page
+// Feature 3 Open/close comments page
 $(document).on('click', '.comment_button', function(event) {
   event.preventDefault();
   var element = $(this);
-  var id = $(element).parents(".thumbnail_post_list").attr("data-id");
-  var url = $(element).parents(".thumbnail_post_list").attr("data-url");
+  var id = $(element).parents(".thumbnail_container").attr("data-id");
+  var url = $(element).parents(".thumbnail_container").attr("data-url");
   $("#profile_comments_page_"+id).collapse("toggle");
   if ($("#profile_comments_page_"+id).attr("aria-expanded")=="true"){
     $.ajax({     // send ajax get request to get 1st page of paginated comments
@@ -99,138 +99,113 @@ $(document).on('click', '.comment_button', function(event) {
       success:function(data) {
         $("#profile_comments_page_"+id).html(data);
       }});
-  }
-
-
-});
-
-// Feature 4 Get 1st page of paginated comments
-// $(document).on('shown.bs.collapse',".profile_comments_page", function(){
-//   var element = $(this);
-//   var url = $(element).parents(".thumbnail_post_list").attr("data-url");
-//   $.ajax({     // send ajax get request to get 1st page of paginated comments
-//     url: url,
-//     success:function(data) {
-//       $(element).html(data);
-//     }});
-//   });
-
-// Feature 5 Get nth page of paginated comments
-$(document).on('click', '.comments_page_button', function() {
-  event.preventDefault();
-  var element = $(this);
-  var url = $(element).attr("href");
-  var id = $(element).parents(".thumbnail_post_list").attr("data-id");
-  $.ajax({     // send ajax get request to get nth page of paginated comments
-    url: url,
-    success:function(data) {
-      $("#profile_comments_page_"+id).html(data);
-    }});
+    }
   });
 
+  // Feature 4 Get nth page of paginated comments
+  $(document).on('click', '.comments_page_button', function() {
+    event.preventDefault();
+    var element = $(this);
+    var url = $(element).attr("href");
+    var id = $(element).parents(".thumbnail_container").attr("data-id");
+    $.ajax({     // send ajax get request to get nth page of paginated comments
+      url: url,
+      success:function(data) {
+        $("#profile_comments_page_"+id).html(data);
+      }});
+    });
 
+    // Feature 6 Open comment form buttons
+    $(document).on('click', '.comment_form_textfield', function(event) {
+      event.preventDefault();
+      var element = $(this);
+      var id = $(element).parents(".thumbnail_container").attr("data-id");
+      if ($("#logged_in").data("logged-in")== true) {
+        $("#comment_form_collapse_"+id).collapse("show");
+      }
+      else{
+        $('#myModal').modal();
+      }
+    });
 
-// Feature 6 Open comment form buttons
-$(document).on('click', '.comment_form_textfield', function(event) {
-  event.preventDefault();
-  var element = $(this);
+    // Feature 7 Close comment form buttons
+    $(document).on('click', '.comment_form_close_button', function(event) {
+      event.preventDefault();
+      var element = $(this);
+      var id = $(element).parents(".thumbnail_container").attr("data-id");
+      $("#comment_form_collapse_"+id).collapse("hide");
+    });
 
-  var id = $(element).parents(".thumbnail_post_list").attr("data-id");
-  if ($("#logged_in").data("logged-in")== true) {
-    $("#comment_form_collapse_"+id).collapse("show");
-  }
-  else{
-    $('#myModal').modal();
-  }
-});
-
-// Feature 7 Close comment form buttons
-$(document).on('click', '.comment_form_close_button', function(event) {
-  event.preventDefault();
-  var element = $(this);
-  var id = $(element).parents(".thumbnail_post_list").attr("data-id");
-    $("#comment_form_collapse_"+id).collapse("hide");
-});
-
-// Feature 8
-$(document).on('submit', '.comment_form', function(event) {
-  event.preventDefault();
-  var element = $(this);
-  var id = $(element).parents(".thumbnail_post_list").attr("data-id");
-  var url = $(element).parents(".thumbnail_post_list").attr("data-url");
-  var method = $(element).attr('method');
-  var url = url;
-  $.ajax({  // send post request to save comment
-    method: method,
-    url: url,
-    data: {
-      content: $("#comment_form_textfield_"+id).val(),
-      csrfmiddlewaretoken:'{{ csrf_token }}',
-    },
-    success:function(data) {
-        $.ajax({     // send get request to get first page
-          url: url,
-          success:function(data) {
-            $("#post_detail_page_"+id).replaceWith(data);
-            $('#post_detail_page_header_'+id).after(make_message("Comment created."));
-          }});
+    // Feature 8 Post comment to DB and show first page
+    $(document).on('submit', '.comment_form', function(event) {
+      event.preventDefault();
+      var element = $(this);
+      var id = $(element).parents(".thumbnail_container").attr("data-id");
+      var url = $(element).parents(".thumbnail_container").attr("data-url");
+      var method = $(element).attr('method');
+      $.ajax({  // send post request to save comment
+        method: method,
+        url: url,
+        data: {
+          content: $("#comment_form_textfield_"+id).val(),
+          csrfmiddlewaretoken:'{{ csrf_token }}',
+        },
+        success:function(data) {
+          $.ajax({     // send get request to get first page
+            url: url,
+            success:function(data) {
+              $("#profile_comments_page_"+id).html(data);
+              $('#post_detail_page_header_'+id).after(make_message("Comment created."));
+              $('#comment_button_'+id).html('<span class="glyphicon glyphicon-comment" aria-hidden="true"></span> '+ $('#comments_count_'+id).html() );
+            }});
           },
         });
       });
 
-
-$(document).on('click', '.delete_button', function(event) {
-  event.preventDefault();
-  var element = $(this);
-  var id = $(element).parents(".thumbnail_post_list").attr("data-id");
-  $('#profile_posts_modal_'+id).modal();
-});
-
-
-
-$(document).on('click', '.confirm_delete_button', function(event) {
-  event.preventDefault();
-  var element = $(this);
-  var id = $(element).parents(".thumbnail_post_list").attr("data-id");
-  var url = $(element).parents(".thumbnail_post_list").attr("data-url");
-  var pageurl= $(element).parents(".profile_posts_page").attr("data-pageurl");
-  var pagenum = $(element).parents(".profile_posts_page").attr("data-pagenum");
-  $('#profile_posts_modal_'+id).modal('hide');
-
-  $.ajax({  // send GET request to delete post
-    url:url + "delete",
-    success:function(data) {
-      var is_draft = data.is_draft;
-
-      $.ajax({
-        url: pageurl, // send GET request to current url
-        success:function(data) {
-          $("#profile_posts_page_"+pagenum).replaceWith(data);
-          if ($(is_draft) == true) {
-            $('#profile_posts_page_header').after(make_message("Draft deleted."));
-          }
-          else{
-            $('#profile_posts_page_header').after(make_message("Post deleted."));
-          }
-
-        }});
-    }
-  })
-
-});
-
-
-
-      // Feature 7
-      $(document).on('click', '.profile_posts_page_button', function() {
+      // Feature 9 Open delete post modal
+      $(document).on('click', '.delete_button', function(event) {
         event.preventDefault();
         var element = $(this);
-        var url = $(element).attr("href");
-        $.ajax({     // send get request to get nth page
-          url: url,
+        var id = $(element).parents(".thumbnail_container").attr("data-id");
+        $('#profile_posts_modal_'+id).modal();
+      });
+
+
+      // Feature 10 Delete post and show current page with updated results
+      $(document).on('click', '.confirm_delete_button', function(event) {
+        event.preventDefault();
+        var element = $(this);
+        var id = $(element).parents(".thumbnail_container").attr("data-id");
+        var url = $(element).parents(".thumbnail_container").attr("data-url");
+        var pageurl= $(element).parents("#profile_posts_page").attr("data-pageurl");
+        $('#profile_posts_modal_'+id).modal('hide');
+
+        $.ajax({  // send GET request to delete post
+          url:url+"delete",
           success:function(data) {
-            $("#profile_posts_page").replaceWith(data);
-          }});
+            var message = data.message;
+            $.ajax({
+              url: pageurl, // send GET request to current url
+              success:function(data) {
+                $("#profile_posts_page").replaceWith(data);
+                $("#profile_nav_posts_count").html($("#profile_posts_count").html());
+                $('#profile_posts_page_header').after(make_message(message));
+              }});
+            }
+          })
+
         });
-  </script>
-  {% endblock javascript %}
+
+        // Feature 11 Get nth page of paginated posts
+        $(document).on('click', '.profile_posts_page_button', function() {
+          event.preventDefault();
+          var element = $(this);
+          var url = $(element).attr("href");
+          $.ajax({     // send get request to get nth page
+            url: url,
+            success:function(data) {
+              $("#profile_posts_page").replaceWith(data);
+            }});
+          });
+          </script>
+          {% endblock javascript %}

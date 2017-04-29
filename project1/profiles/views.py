@@ -9,9 +9,9 @@ from project1.project1.posts.models import Post
 from project1.project1.comments.models import Comment
 from project1.project1.profiles.models import Profile
 from project1.project1.posts.forms import PostForm
-from .forms import ProfileForm
 from project1.project1.comments.forms import CommentForm
 from project1.project1.comments.models import Comment
+from .forms import ProfileForm
 
 # Create your views here.
 def profile_activity(request,id,slug):
@@ -38,6 +38,7 @@ def profile_posts(request,id,slug):
             is_user = False
         posts = Post.objects.filter(user__id = id, is_draft = False)
         posts_count = posts.count()
+        drafts_count = user.post_set.filter(is_draft = True).count()
         no_posts = True
         if posts_count != 0:
             no_posts = False
@@ -55,28 +56,9 @@ def profile_posts(request,id,slug):
             # If page is out of range (e.g. 9999), deliver last page of results.
             current_page = paginator.page(paginator.num_pages)
 
-        # no_comments = []
+
         comments_count = []
-        # comments_first_pages = []
-        #
         for post in current_page.object_list:
-        #     paginator = Paginator(post.comment_set.all(), 5) # Show 25 contacts per page
-        #     page = request.GET.get('page')
-        #
-        #     try:
-        #         comments_first_page = paginator.page(1)
-        #     except PageNotAnInteger:
-        #         # If page is not an integer, deliver first page.
-        #         comments_first_page = paginator.page(1)
-        #     except EmptyPage:
-        #         # If page is out of range (e.g. 9999), deliver last page of results.
-        #         comments_first_page = paginator.page(paginator.num_pages)
-        #     comments_first_pages.append(comments_first_page)
-        #     # check2
-        #     if post.comment_set.all().count() == 0:
-        #         no_comments.append(True)
-        #     else:
-        #         no_comments.append(False)
             comments_count.append(post.comment_set.all().count())
         form = CommentForm()
         current_url = request.path
@@ -86,18 +68,16 @@ def profile_posts(request,id,slug):
             "logged_in":logged_in,
             "is_user":is_user,
             "posts_count":posts_count,
+            "drafts_count":drafts_count,
             "no_posts":no_posts,
             "title":title,
-            "current_page":current_page,
             "comment_title":comment_title,
             "comment_button_text":comment_button_text,
-            # "no_comments":no_comments,
+            "current_page":current_page,
             "comments_count":comments_count,
-            # "comments_first_pages":comments_first_pages,
             "form":form,
             "current_url":current_url,
         }
-
 
         if request.is_ajax():
             template = "profile_posts_page.html"
@@ -108,38 +88,64 @@ def profile_posts(request,id,slug):
 
 @login_required
 def profile_drafts(request,id,slug):
-    title = "Drafts"
-    User = get_user_model()
-    user = User.objects.get(id = id)
-    current_user = request.user
-    if current_user != user:
-        return redirect("posts:post_404")
-    drafts = Post.objects.filter(user__id = id, is_draft = True)
-    drafts_count = drafts.count()
-    no_drafts = True
-    if drafts_count != 0:
-        no_drafts = False
+    if request.method == "GET":
+        User = get_user_model()
+        user = get_object_or_404(User, id = id)
+        current_user = request.user
+        if current_user != user:
+            raise PermissionDenied;
+        else:
+            logged_in = False
+            if request.user.is_authenticated:
+                logged_in = True
+            if request.GET.get('option'):
+                filter_option = request.GET.get('option')
+            else:
+                filter_option = 1
 
-    paginator = Paginator(drafts, 5) # Show 25 contacts per page
-    page = request.GET.get("page")
-    try:
-        current_page = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        current_page = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        current_page = paginator.page(paginator.num_pages)
+            if filter_option == 1:
+                # if by date created
+                drafts = user.post_set.filter(is_draft = True).order_by("-date_created")
+            elif filter_option == 2:
+                drafts = user.post_set.filter(is_draft = True).order_by("-date_edited")
+            drafts_count = drafts.count()
+            posts_count = user.post_set.filter(is_draft = False).count()
+            no_drafts = True
+            if drafts_count != 0:
+                no_drafts = False
+            title = "Drafts"
+            paginator = Paginator(drafts, 10) # Show 25 contacts per page
+            page = request.GET.get('page')
+            try:
+                current_page = paginator.page(page)
+            except PageNotAnInteger:
+                # If page is not an integer, deliver first page.
+                current_page = paginator.page(1)
+            except EmptyPage:
+                # If page is out of range (e.g. 9999), deliver last page of results.
+                current_page = paginator.page(paginator.num_pages)
+            form = CommentForm()
+            current_url = request.path
 
-    context = {
-        "title":title,
-        "user":user,
-        "drafts_count":drafts_count,
-        "no_drafts":no_drafts,
-        "current_page":current_page,
-    }
+            context = {
+                "user":user,
+                "logged_in":logged_in,
+                "drafts_count":drafts_count,
+                "posts_count":posts_count,
+                "no_drafts":no_drafts,
+                "title":title,
+                "current_page":current_page,
+                "form":form,
+                "current_url":current_url,
+            }
 
-    return render(request,"profile_drafts.html",context)
+            if request.is_ajax():
+                template = "profile_drafts_page.html"
+            else:
+                template = "profile_drafts.html"
+
+            return render(request,template,context)
+
 
 def profile_comments(request,id,slug):
     title = "Comments"

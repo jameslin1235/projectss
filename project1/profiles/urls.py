@@ -2,7 +2,6 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-
     url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/$', views.profile_activity, name='profile_activity'),
     url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/posts/$', views.profile_posts, name='profile_posts'),
     url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/drafts/$', views.profile_drafts, name='profile_drafts'),
