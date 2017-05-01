@@ -2,7 +2,7 @@
 {% load widget_tweaks %}
 
 {% block body %}
-<section>
+<section id="profile_following_page" data-profile-url="{{profile_url}}">
   <div class="container">
     <div class="row" >
       <div class="col-md-12">
@@ -47,7 +47,7 @@
 
               {% if is_user == False %}
               <div >
-                <button type="button" class="btn btn-primary" id="follow_button">{{ follow_button_text }}</button>
+                <button type="button" class="btn btn-primary" id="follow_button">{{ top_follow_button_text }}</button>
               </div>
               <div >
                 <button type="button" class="btn btn-primary" id="message_button">Message</button>

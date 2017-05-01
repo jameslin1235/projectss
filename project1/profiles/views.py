@@ -38,18 +38,25 @@ def profile_follow(request,id,slug):
         User = get_user_model()
         user = get_object_or_404(User, id = id)
         current_user = request.user
-        if current_user == user:
-            raise PermissionDenied;
-        else:
-            response_data = {}
-            if current_user.profile.follows.filter(user= user).exists():
-                current_user.profile.follows.remove(user.profile)
-                response_data['message'] = "Follow"
-                return JsonResponse(response_data,safe=False)
+
+        # logged-in user
+        if current_user.is_authenticated:
+            if current_user == user:
+                raise PermissionDenied;
             else:
-                current_user.profile.follows.add(user.profile)
-                response_data['message'] = "Followed"
-                return JsonResponse(response_data,safe=False)
+                response_data = {}
+                if current_user.profile.follows.filter(user=user).exists():
+                    current_user.profile.follows.remove(user.profile)
+                    response_data['message'] = "Follow"
+                    return JsonResponse(response_data,safe=False)
+                else:
+                    current_user.profile.follows.add(user.profile)
+                    response_data['message'] = "Followed"
+                    return JsonResponse(response_data,safe=False)
+        # anonymous user
+        else:
+            raise PermissionDenied;
+
 
 def profile_posts(request,id,slug):
     if request.method == "GET":
@@ -279,7 +286,8 @@ def profile_following(request,id,slug):
         current_user = request.user
 
         # anonymous user
-        follow_button_text = "Follow"
+        top_follow_button_text = "Follow"
+        bottom_follow_button_text = "Follow"
         logged_in = False
         is_user = False
 
@@ -288,10 +296,13 @@ def profile_following(request,id,slug):
             logged_in = True
             if current_user == user:
                 is_user = True
+                bottom_follow_button_text = "Followed"
             else:
                 is_user = False
-                if current_user.profile.follows.filter(user= user).exists():
-                    follow_button_text = "Followed"
+                if current_user.profile.follows.filter(user=user).exists():
+                    top_follow_button_text = "Followed"
+
+        profile_url = user.profile.get_absolute_url()
         following = user.profile.follows.all()
         following_count = user.profile.follows.count()
         drafts_count = user.post_set.filter(is_draft = True).count()
@@ -311,10 +322,27 @@ def profile_following(request,id,slug):
             # If page is out of range (e.g. 9999), deliver last page of results.
             current_page = paginator.page(paginator.num_pages)
 
+        follow_status = []
+        follow_me = []
+        if current_user.is_authenticated:
+            if current_user != user:
+                for following in current_page:
+                    if following.user == current_user:
+                        follow_me.append(True)
+                    else:
+                        follow_me.append(False)
+
+                    if current_user.profile.follows.filter(user=following.user).exists():
+                        follow_status.append("Followed")
+                    else:
+                        follow_status.append("Follow")
+
         current_url = request.path
         context = {
             "user":user,
-            "follow_button_text":follow_button_text,
+            "current_user":current_user,
+            "top_follow_button_text":top_follow_button_text,
+            "bottom_follow_button_text":bottom_follow_button_text,
             "logged_in":logged_in,
             "is_user":is_user,
             "following_count":following_count,
@@ -323,6 +351,10 @@ def profile_following(request,id,slug):
             "no_following":no_following,
             "title":title,
             "current_page":current_page,
+            "follow_status":follow_status,
+            "follow_me":follow_me,
+            'logged_in':logged_in,
+            "profile_url":profile_url,
         }
 
         return render(request,"profile_following.html",context)

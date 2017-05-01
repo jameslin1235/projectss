@@ -21,21 +21,69 @@
 
 {% block javascript %}
 <script>
+
+// Feature 1 Bottom follow buttons
 $(document).on('click','.follow_button',function(){
   event.preventDefault();
   var element = $(this);
-  var url= $("#follow_url").attr("href");
+  var url= $(element).parents(".profile_following_container").attr("data-url");
   if ($("#logged_in").data("logged-in")== true) {
     $.ajax({     // send get request to get nth page
       url: url + "follow",
       success:function(data) {
         $(element).html(data.message);
       }});
-  }
-  else{
-    $('#myModal').modal();
-  }
-})
+    }
+    else{
+      $('#myModal').modal();
+    }
+  });
+
+  // Feature 2 Top follow button
+  $(document).on('click','#follow_button',function(){
+    event.preventDefault();
+    var element = $(this);
+    var url= $(element).parents("#profile_following_page").attr("data-profile-url");
+    if ($("#logged_in").data("logged-in")== true) {
+      $.ajax({     // send get request to get nth page
+        url: url + "follow",
+        success:function(data) {
+          $(element).html(data.message);
+        }});
+      }
+      else{
+        $('#myModal').modal();
+      }
+    });
+
+
+    // Feature 3 Follow/unfollow mouseenter button
+    $(document).on('mouseenter','#follow_button, .follow_button',function(){
+      event.preventDefault();
+      var element = $(this);
+      if ($("#logged_in").data("logged-in")== true){
+        if ($(element).html() == "Followed") {
+          $(element).html("Unfollow");
+        }
+      }
+      else{
+        event.preventDefault();
+      }
+    });
+
+    // Feature 4 Follow/unfollow mouseleave button
+    $(document).on('mouseleave','#follow_button, .follow_button',function(){
+      event.preventDefault();
+      var element = $(this);
+      if ($("#logged_in").data("logged-in")== true){
+        if ($(element).html() == "Unfollow") {
+          $(element).html("Followed");
+        }
+      }
+      else{
+        event.preventDefault();
+      }
+    });
 
 </script>
 {% endblock javascript %}
