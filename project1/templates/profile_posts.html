@@ -7,7 +7,7 @@
 <ul class="nav nav-pills nav-stacked">
   <li role="presentation"><a id="follow_url" href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug  %}" role="tab" >Activity</a></li>
   <li role="presentation" class="active"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" role="tab" >Posts <span id="profile_nav_posts_count">{{posts_count}}</span></a></li>
-  <li role="presentation"><a href="{% url 'profiles:profile_drafts' id=user.id slug=user.profile.slug  %}" role="tab" >Drafts <span id="profile_nav_drafts_count">{{drafts_count}}</span></a></li>
+  {% if is_user %}<li role="presentation"><a href="{% url 'profiles:profile_drafts' id=user.id slug=user.profile.slug  %}" role="tab" >Drafts <span id="profile_nav_drafts_count">{{drafts_count}}</span></a></li>{% endif %}
   <li role="presentation"><a href="{% url 'profiles:profile_comments' id=user.id slug=user.profile.slug  %}" role="tab">Comments</a></li>
   <li role="presentation"><a href="{% url 'profiles:profile_bookmarks' id=user.id slug=user.profile.slug  %}" role="tab">Bookmark</a></li>
   <li role="presentation"><a href="{% url 'profiles:profile_following' id=user.id slug=user.profile.slug  %}" role="tab">Following</a></li>
@@ -229,23 +229,50 @@ $(document).on('click', '.comment_button', function(event) {
               }});
             });
 
-            // Feature 13 Follow button
+            // Feature 13 Follow/Unfollow button
             $(document).on('click','#follow_button',function(){
               event.preventDefault();
               var element = $(this);
               var url= $("#follow_url").attr("href");
-
               if ($("#logged_in").data("logged-in")== true) {
                 $.ajax({     // send get request to get nth page
                   url: url + "follow",
                   success:function(data) {
-                    $(element).html("Followed");
+                    $(element).html(data.message);
                   }});
               }
               else{
                 $('#myModal').modal();
               }
-
             })
+
+            // Feature 14 Follow/unfollow mouseenter button
+            $(document).on('mouseenter','#follow_button',function(){
+              event.preventDefault();
+              var element = $(this);
+              if ($("#logged_in").data("logged-in")== true){
+                if ($(element).html() == "Followed") {
+                  $(element).html("Unfollow");
+                }
+              }
+              else{
+                event.preventDefault();
+              }
+            });
+
+            // Feature 15 Follow/unfollow mouseleave button
+              $(document).on('mouseleave','#follow_button',function(){
+                event.preventDefault();
+                var element = $(this);
+                if ($("#logged_in").data("logged-in")== true){
+                  if ($(element).html() == "Unfollow") {
+                    $(element).html("Followed");
+                  }
+                }
+                else{
+                  event.preventDefault();
+                }
+            });
+
           </script>
           {% endblock javascript %}

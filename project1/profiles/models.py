@@ -47,6 +47,8 @@ class Profile(models.Model):
         self.slug = slugify(self.user.username)
         super(Profile, self).save(*args, **kwargs) # Call the "real" save() method.
 
+    def get_absolute_url(self):
+        return reverse("profiles:profile_activity", kwargs={"id": self.id, "slug": self.slug})
     class Meta:
         ordering = ["-date_created"]
 

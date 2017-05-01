@@ -2,44 +2,40 @@
 
 {% block title %}{{ user }}'s Following{% endblock title %}
 
-{% block nav-tabs %}
-<!-- Nav tabs -->
-<ul class="nav nav-tabs" role="tablist">
-  <li role="presentation"><a href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug  %}" role="tab" >Activity</a></li>
-  <li role="presentation"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" role="tab">Posts <span>{{posts_count}}</span></a></li>
+{% block vertical_nav %}
+<ul class="nav nav-pills nav-stacked">
+  <li role="presentation"><a id="follow_url" href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug  %}" role="tab" >Activity</a></li>
+  <li role="presentation"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" role="tab" >Posts <span id="profile_nav_posts_count">{{posts_count}}</span></a></li>
+  {% if is_user %}<li role="presentation"><a href="{% url 'profiles:profile_drafts' id=user.id slug=user.profile.slug  %}" role="tab" >Drafts <span id="profile_nav_drafts_count">{{drafts_count}}</span></a></li>{% endif %}
   <li role="presentation"><a href="{% url 'profiles:profile_comments' id=user.id slug=user.profile.slug  %}" role="tab">Comments</a></li>
   <li role="presentation"><a href="{% url 'profiles:profile_bookmarks' id=user.id slug=user.profile.slug  %}" role="tab">Bookmark</a></li>
-  <li role="presentation"  class="active"><a href="{% url 'profiles:profile_following' id=user.id slug=user.profile.slug  %}" role="tab">Following</a></li>
+  <li role="presentation" class="active"><a href="{% url 'profiles:profile_following' id=user.id slug=user.profile.slug  %}" role="tab">Following <span id="profile_nav_following_count">{{following_count}}</span></a></li>
   <li role="presentation"><a href="{% url 'profiles:profile_followers' id=user.id slug=user.profile.slug  %}" role="tab">Followers</a></li>
 </ul>
+{% endblock vertical_nav %}
 
-{% endblock nav-tabs %}
+{% block content %}
+{% include "login_modal.html" %}
+{% include "profile_following_page.html" %}
+{% endblock content %}
 
-{% block tab-content %}
+{% block javascript %}
+<script>
+$(document).on('click','.follow_button',function(){
+  event.preventDefault();
+  var element = $(this);
+  var url= $("#follow_url").attr("href");
+  if ($("#logged_in").data("logged-in")== true) {
+    $.ajax({     // send get request to get nth page
+      url: url + "follow",
+      success:function(data) {
+        $(element).html(data.message);
+      }});
+  }
+  else{
+    $('#myModal').modal();
+  }
+})
 
-<!-- Tab panes -->
-<div class="tab-content">
-
-  <div role="tabpanel" class="tab-pane">
-  </div>
-  <div role="tabpanel" class="tab-pane">
-
-  </div>
-  <div role="tabpanel" class="tab-pane">
-
-  </div>
-  <div role="tabpanel" class="tab-pane">
-
-
-  </div>
-  <div role="tabpanel" class="tab-pane active">
-    <div class="page-header">
-      <h5>{{ title }}</h5>
-    </div>
-  </div>
-  <div role="tabpanel" class="tab-pane">
-
-  </div>
-</div>
-
-{% endblock tab-content %}
+</script>
+{% endblock javascript %}

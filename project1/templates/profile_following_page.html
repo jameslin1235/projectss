@@ -1,0 +1,62 @@
+{% load widget_tweaks %}
+
+<div id="profile_following_page" data-pageurl="{{current_url}}?page={{current_page.number}}" data-firstpage="{{current_url}}"  >
+  <div class="page-header" id="profile_following_page_header">
+    <h4><span id="profile_following_count">{{following_count}}</span> {{ title }}</h4>
+  </div>
+
+
+
+
+  {% if no_following == True %}
+  <div>
+    <p>There are no following.</p>
+  </div>
+
+  {% else %}
+  <div>
+    {% for following in current_page %}
+    <div class="media" data-url="{{following.get_absolute_url}}">
+      <div class="media-left">
+        <a href="#">
+          <img class="media-object" src="{{following.avatar.url}}" alt="...">
+        </a>
+      </div>
+      <div class="media-body">
+        <h4 class="media-heading"><a href="{{following.get_absolute_url}}">{{following.user.username}}</a></h4>
+        <div>
+          <span>{{following.user.comment_set.count}} Comments</span>
+          <span>{{following.user.post_set.count}} Posts</span>
+          <span>{{following.follows.count}} Following</span>
+        </div>
+        <div >
+          <button type="button" class="btn btn-primary follow_button" id="follow_button">{{ follow_button_text }}</button>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div>
+    <ul class="pagination">
+      {% if current_page.has_previous %}
+      <li><a class="profile_following_page_button" href="?page={{ current_page.previous_page_number }}">&laquo;</a></li>
+      {% else %}
+      <li class="disabled"><span>&laquo;</span></li>
+      {% endif %}
+      {% for i in current_page.paginator.page_range %}
+      {% if current_page.number == i %}
+      <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+      <li><a class="profile_following_page_button" href="?page={{ i }}">{{ i }}</a></li>
+      {% endif %}
+      {% endfor %}
+      {% if current_page.has_next %}
+      <li><a class="profile_following_page_button" href="?page={{ current_page.next_page_number }}">&raquo;</a></li>
+      {% else %}
+      <li class="disabled"><span>&raquo;</span></li>
+      {% endif %}
+    </ul>
+  </div>
+  {% endif %}
+</div>
