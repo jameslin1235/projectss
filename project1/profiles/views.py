@@ -5,6 +5,8 @@ from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
+from django.db.models import Count
+from django.http import JsonResponse
 from project1.project1.posts.models import Post
 from project1.project1.comments.models import Comment
 from project1.project1.profiles.models import Profile
@@ -17,14 +19,35 @@ from .forms import ProfileForm
 def profile_activity(request,id,slug):
     title = "Activity"
     User = get_user_model()
-    user = User.objects.get(id = id)
+    user = get_object_or_404(User, id = id)
+    posts_count = user.post_set.filter(is_draft = False).count()
+    drafts_count = user.post_set.filter(is_draft = True).count()
     context = {
         "title":title,
         "user":user,
+        "posts_count":posts_count,
+        "drafts_count":drafts_count,
+
     }
 
     return render(request,"profile_activity.html",context)
 
+def profile_follow(request,id,slug):
+    if request.method == "GET":
+        User = get_user_model()
+        user = get_object_or_404(User, id = id)
+        current_user = request.user
+        if current_user == user:
+            raise PermissionDenied;
+        else:
+            #find if you already followed this guy
+            if current_user.profile.objects.get(follows_)
+
+            else:
+                current_user.profile.follows.add(user.profile)
+                response_data = {}
+                response_data['message'] = "Draft edited."
+                return JsonResponse(response_data,safe=False)
 def profile_posts(request,id,slug):
     if request.method == "GET":
         User = get_user_model()
@@ -36,7 +59,30 @@ def profile_posts(request,id,slug):
         is_user = True
         if current_user != user:
             is_user = False
-        posts = Post.objects.filter(user__id = id, is_draft = False)
+        posts = user.post_set.filter(is_draft = False).order_by("-date_created")
+        option = 1
+
+        if request.GET.get('option'):
+            option = int(request.GET.get('option'))
+            if option == 1:
+                posts = user.post_set.filter(is_draft = False).order_by("-date_created")
+
+            elif option == 2:
+                posts = user.post_set.filter(is_draft = False).order_by("-date_edited")
+
+            elif option == 3:
+                posts = user.post_set.filter(is_draft = False).order_by("-date_published")
+
+            elif option == 4:
+                posts = user.post_set.filter(is_draft = False).order_by("-likes")
+
+            elif option == 5:
+                posts = user.post_set.filter(is_draft = False).order_by("-dislikes")
+
+            elif option == 6:
+                posts = user.post_set.filter(is_draft = False).annotate(num_comments=Count('comment')).order_by('-num_comments')
+
+
         posts_count = posts.count()
         drafts_count = user.post_set.filter(is_draft = True).count()
         no_posts = True
@@ -63,6 +109,7 @@ def profile_posts(request,id,slug):
         form = CommentForm()
         current_url = request.path
 
+
         context = {
             "user":user,
             "logged_in":logged_in,
@@ -77,6 +124,7 @@ def profile_posts(request,id,slug):
             "comments_count":comments_count,
             "form":form,
             "current_url":current_url,
+            "option":option,
         }
 
         if request.is_ajax():
@@ -98,20 +146,19 @@ def profile_drafts(request,id,slug):
         if current_user != user:
             raise PermissionDenied;
         else:
+            is_user = True
             logged_in = False
             if request.user.is_authenticated:
                 logged_in = True
             drafts = user.post_set.filter(is_draft = True).order_by("-date_created")
-            option = 0
+            option = 1
 
             if request.GET.get('option'):
                 option = int(request.GET.get('option'))
                 if option == 1:
-                    print('hello')
                     drafts = user.post_set.filter(is_draft = True).order_by("-date_created")
 
                 elif option == 2:
-                    print('hello')
                     drafts = user.post_set.filter(is_draft = True).order_by("-date_edited")
 
 
@@ -136,6 +183,7 @@ def profile_drafts(request,id,slug):
 
             context = {
                 "user":user,
+                "is_user":is_user,
                 "logged_in":logged_in,
                 "drafts_count":drafts_count,
                 "posts_count":posts_count,
@@ -144,7 +192,7 @@ def profile_drafts(request,id,slug):
                 "current_page":current_page,
                 "form":form,
                 "current_url":current_url,
-                
+                "option":option,
             }
 
             if request.is_ajax():

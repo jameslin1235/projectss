@@ -68,29 +68,12 @@ $(document).on('click', '.confirm_delete_button', function(event) {
       data: {option:option},
       success:function(data) {
         $("#profile_drafts_page").replaceWith(data);
-        $("#profile_drafts_page").attr("data-option-selected",option);
+        $("#profile_drafts_select").val(option);
       }});
     });
 
-    // Feature 4 Filter
-    $(document).on('click', '.filter_button', function() {
-      event.preventDefault();
-      var element = $(this);
-      var option = $(element).attr("data-option");
-      console.log(option);
-      var pageurl= $(element).parents("#profile_drafts_page").attr("data-pageurl");
 
-      $.ajax({     // send get request to get nth page
-        url: pageurl,
-        data: {option:option},
-        success:function(data) {
-          alert('h');
-          $("#profile_drafts_page").replaceWith(data);
-
-        }});
-      });
-
-
+    // Feature 4 Filter button
       $(document).on('change','#profile_drafts_select',function(){
         event.preventDefault();
         var element = $(this);
@@ -102,9 +85,11 @@ $(document).on('click', '.confirm_delete_button', function(event) {
           data: {option:option},
           success:function(data) {
             $("#profile_drafts_page").replaceWith(data);
-            $("#profile_drafts_page").attr("data-option-selected",option);
+            $("#profile_drafts_select").val(option);
           }});
 
       });
+
+
     </script>
     {% endblock javascript %}

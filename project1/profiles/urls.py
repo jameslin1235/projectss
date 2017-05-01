@@ -9,5 +9,6 @@ urlpatterns = [
     url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/bookmarks/$', views.profile_bookmarks, name='profile_bookmarks'),
     url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/following/$', views.profile_following, name='profile_following'),
     url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/followers/$', views.profile_followers, name='profile_followers'),
+    url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/follow/$', views.profile_follow, name='profile_follow'),
     url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/edit/$', views.profile_edit, name='profile_edit'),
 ]

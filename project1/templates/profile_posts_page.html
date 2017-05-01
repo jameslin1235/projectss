@@ -1,8 +1,20 @@
 {% load widget_tweaks %}
 {% load custom_tags %}
-<div id="profile_posts_page" data-pageurl="{{current_url}}?page={{current_page.number}}">
+<div id="profile_posts_page" data-pageurl="{{current_url}}?page={{current_page.number}}" data-firstpage="{{current_url}}" data-option-selected={{option}} >
   <div class="page-header" id="profile_posts_page_header">
     <h4><span id="profile_posts_count">{{posts_count}}</span> {{ title }}</h4>
+  </div>
+
+  <div><span>Sort by: </span>
+  <select id="profile_posts_select">
+    <option class="filter_button" value="1" selected="selected">By date created</option>
+    <option class="filter_button" value="2">By date edited</option>
+    <option class="filter_button" value="3">By date published</option>
+    <option class="filter_button" value="4">By likes</option>
+    <option class="filter_button" value="5">By dislikes</option>
+      <option class="filter_button" value="6">By comments</option>
+
+  </select>
   </div>
 
   <div>
@@ -23,6 +35,9 @@
         <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
         <p><a href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug %}">{{ post.user.username }}</a></p>
         <p>{{ post.content }}</p>
+        <p>created {{ post.date_created }}</p>
+        <p>published {{ post.date_published }}</p>
+
         <p><a href="{{ post.get_absolute_url }}" data-toggle="tooltip" data-placement="top" title="Published {{ post.date_published }}">Edited {{ post.date_edited }}</a></p>
         <p>
           <button type="button" class="btn btn-primary like_button"  {% if is_user == True %}disabled="disabled"{% endif %} data-liked="False"}><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> {{ post.likes }}</button>

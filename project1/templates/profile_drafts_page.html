@@ -1,6 +1,6 @@
 {% load widget_tweaks %}
 
-<div id="profile_drafts_page" data-pageurl="{{current_url}}?page={{current_page.number}}" data-firstpage="{{current_url}}" data-option-selected="1">
+<div id="profile_drafts_page" data-pageurl="{{current_url}}?page={{current_page.number}}" data-firstpage="{{current_url}}" data-option-selected={{option}} >
 <div class="page-header" id="profile_drafts_page_header">
   <h4><span id="profile_drafts_count">{{drafts_count}}</span> {{ title }}</h4>
 </div>
@@ -9,8 +9,7 @@
 <select id="profile_drafts_select">
   <option class="filter_button" value="1" selected="selected">By date created</option>
   <option class="filter_button" value="2">By date edited</option>
-  <option class="filter_button" value="3">Feature 3</option>
-  <option class="filter_button" value="4">Feature 4</option>
+  
 </select>
 </div>
 {% if messages %}

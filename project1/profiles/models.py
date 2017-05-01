@@ -10,6 +10,7 @@ from django.dispatch import receiver
 # Create your models here.
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    follows = models.ManyToManyField("self",null=True,symmetrical=False)
     position = models.CharField(
         max_length=100,
         blank=True,

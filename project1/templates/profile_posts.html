@@ -5,7 +5,7 @@
 
 {% block vertical_nav %}
 <ul class="nav nav-pills nav-stacked">
-  <li role="presentation"><a href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug  %}" role="tab" >Activity</a></li>
+  <li role="presentation"><a id="follow_url" href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug  %}" role="tab" >Activity</a></li>
   <li role="presentation" class="active"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" role="tab" >Posts <span id="profile_nav_posts_count">{{posts_count}}</span></a></li>
   <li role="presentation"><a href="{% url 'profiles:profile_drafts' id=user.id slug=user.profile.slug  %}" role="tab" >Drafts <span id="profile_nav_drafts_count">{{drafts_count}}</span></a></li>
   <li role="presentation"><a href="{% url 'profiles:profile_comments' id=user.id slug=user.profile.slug  %}" role="tab">Comments</a></li>
@@ -201,11 +201,51 @@ $(document).on('click', '.comment_button', function(event) {
           event.preventDefault();
           var element = $(this);
           var url = $(element).attr("href");
+          var option = $(element).parents("#profile_posts_page").attr("data-option-selected");
           $.ajax({     // send get request to get nth page
             url: url,
+            data: {option:option},
             success:function(data) {
               $("#profile_posts_page").replaceWith(data);
+              $("#profile_posts_select").val(option);
             }});
           });
+
+
+
+          // Feature 12 Filter button
+          $(document).on('change','#profile_posts_select',function(){
+            event.preventDefault();
+            var element = $(this);
+            var option = ($(element).val());
+            var url= $(element).parents("#profile_posts_page").attr("data-firstpage");
+
+            $.ajax({     // send get request to get nth page
+              url: url,
+              data: {option:option},
+              success:function(data) {
+                $("#profile_posts_page").replaceWith(data);
+                $("#profile_posts_select").val(option);
+              }});
+            });
+
+            // Feature 13 Follow button
+            $(document).on('click','#follow_button',function(){
+              event.preventDefault();
+              var element = $(this);
+              var url= $("#follow_url").attr("href");
+
+              if ($("#logged_in").data("logged-in")== true) {
+                $.ajax({     // send get request to get nth page
+                  url: url + "follow",
+                  success:function(data) {
+                    $(element).html("Followed");
+                  }});
+              }
+              else{
+                $('#myModal').modal();
+              }
+
+            })
           </script>
           {% endblock javascript %}
