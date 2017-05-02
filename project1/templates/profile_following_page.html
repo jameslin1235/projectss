@@ -18,7 +18,7 @@
     {% for following in current_page %}
     <div class="media profile_following_container" data-url="{{following.get_absolute_url}}">
       <div class="media-left">
-        <a href="#">
+        <a href="{{following.get_absolute_url}}">
           <img class="media-object" src="{{following.avatar.url}}" alt="...">
         </a>
       </div>

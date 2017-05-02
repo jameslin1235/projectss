@@ -7,9 +7,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count
+from django.utils import timezone
 from project1.project1.posts.models import Post
 from project1.project1.comments.models import Comment
-from project1.project1.profiles.models import Profile
+from project1.project1.profiles.models import Profile, Extra
 from project1.project1.posts.forms import PostForm
 from project1.project1.comments.forms import CommentForm
 from .forms import ProfileForm
@@ -46,11 +47,16 @@ def profile_follow(request,id,slug):
             else:
                 response_data = {}
                 if current_user.profile.follows.filter(user=user).exists():
-                    current_user.profile.follows.remove(user.profile)
+
+                    # current_user.profile.follows.remove(user.profile)
+                    Extra.objects.get(source = current_user.profile, dest = user.profile).delete()
                     response_data['message'] = "Follow"
                     return JsonResponse(response_data,safe=False)
                 else:
-                    current_user.profile.follows.add(user.profile)
+                    # current_user.profile.follows.add(user.profile)
+                    user_profile = user.profile
+                    current_user_profile = current_user.profile
+                    Extra.objects.create(source = current_user_profile, dest = user_profile, date_followed = timezone.now())
                     response_data['message'] = "Followed"
                     return JsonResponse(response_data,safe=False)
         # anonymous user
@@ -303,8 +309,12 @@ def profile_following(request,id,slug):
                     top_follow_button_text = "Followed"
 
         profile_url = user.profile.get_absolute_url()
-        following = user.profile.follows.all()
-        following_count = user.profile.follows.count()
+        current_url = request.path
+
+        following = user.profile.follows.all().order_by()
+        #find time Followed
+        user.profile.
+        following_count = following.count()
         drafts_count = user.post_set.filter(is_draft = True).count()
         posts_count = user.post_set.filter(is_draft = False).count()
         no_following = True
@@ -331,13 +341,12 @@ def profile_following(request,id,slug):
                         follow_me.append(True)
                     else:
                         follow_me.append(False)
-
                     if current_user.profile.follows.filter(user=following.user).exists():
                         follow_status.append("Followed")
                     else:
                         follow_status.append("Follow")
 
-        current_url = request.path
+
         context = {
             "user":user,
             "current_user":current_user,
@@ -345,6 +354,7 @@ def profile_following(request,id,slug):
             "bottom_follow_button_text":bottom_follow_button_text,
             "logged_in":logged_in,
             "is_user":is_user,
+            "profile_url":profile_url,
             "following_count":following_count,
             "drafts_count":drafts_count,
             "posts_count":posts_count,
@@ -353,8 +363,6 @@ def profile_following(request,id,slug):
             "current_page":current_page,
             "follow_status":follow_status,
             "follow_me":follow_me,
-            'logged_in':logged_in,
-            "profile_url":profile_url,
         }
 
         return render(request,"profile_following.html",context)
