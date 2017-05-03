@@ -10,7 +10,7 @@
   <li role="presentation"><a href="{% url 'profiles:profile_comments' id=user.id slug=user.profile.slug  %}" role="tab">Comments</a></li>
   <li role="presentation"><a href="{% url 'profiles:profile_bookmarks' id=user.id slug=user.profile.slug  %}" role="tab">Bookmark</a></li>
   <li role="presentation" class="active"><a href="{% url 'profiles:profile_following' id=user.id slug=user.profile.slug  %}" role="tab">Following <span id="profile_nav_following_count">{{following_count}}</span></a></li>
-  <li role="presentation"><a href="{% url 'profiles:profile_followers' id=user.id slug=user.profile.slug  %}" role="tab">Followers</a></li>
+  <li role="presentation"><a href="{% url 'profiles:profile_followers' id=user.id slug=user.profile.slug  %}" role="tab">Followers {{followers_count}}</a></li>
 </ul>
 {% endblock vertical_nav %}
 
@@ -21,6 +21,21 @@
 
 {% block javascript %}
 <script>
+
+// Feature 1 Get nth page of paginated posts
+$(document).on('click', '.profile_following_page_button', function() {
+  event.preventDefault();
+  var element = $(this);
+  var url = $(element).attr("href");
+
+  $.ajax({     // send get request to get nth page
+    url: url,
+    success:function(data) {
+      $("#profile_following_page").replaceWith(data);
+      // $("#profile_posts_select").val(option);
+    }});
+  });
+
 
 // Feature 1 Bottom follow buttons
 $(document).on('click','.follow_button',function(){
@@ -43,7 +58,7 @@ $(document).on('click','.follow_button',function(){
   $(document).on('click','#follow_button',function(){
     event.preventDefault();
     var element = $(this);
-    var url= $(element).parents("#profile_following_page").attr("data-profile-url");
+    var url= $(element).parents("#profile_base").attr("data-profile-url");
     if ($("#logged_in").data("logged-in")== true) {
       $.ajax({     // send get request to get nth page
         url: url + "follow",
@@ -84,6 +99,8 @@ $(document).on('click','.follow_button',function(){
         event.preventDefault();
       }
     });
+
+
 
 </script>
 {% endblock javascript %}

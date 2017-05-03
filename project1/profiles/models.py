@@ -67,4 +67,5 @@ class Extra(models.Model):
     dest = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name= "dest")
     date_followed = models.DateTimeField()
 
-    
+    class Meta:
+        ordering = ["-date_followed"]

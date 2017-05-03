@@ -1,11 +1,9 @@
 {% load widget_tweaks %}
 {% load custom_tags %}
-<div id="profile_following_page" data-pageurl="{{current_url}}?page={{current_page.number}}" data-firstpage="{{current_url}}"  >
+<div id="profile_following_page" data-profile-url="{{profile_url}}">
   <div class="page-header" id="profile_following_page_header">
     <h4><span id="profile_following_count">{{following_count}}</span> {{ title }}</h4>
   </div>
-
-
 
 
   {% if no_following == True %}

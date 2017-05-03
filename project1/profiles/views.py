@@ -311,12 +311,11 @@ def profile_following(request,id,slug):
         profile_url = user.profile.get_absolute_url()
         current_url = request.path
 
-        following = user.profile.follows.all().order_by()
-        #find time Followed
-        user.profile.
+        following = user.profile.follows.order_by('dest')  # sort following by latest
         following_count = following.count()
         drafts_count = user.post_set.filter(is_draft = True).count()
         posts_count = user.post_set.filter(is_draft = False).count()
+        followers_count = Profile.objects.filter(follows=user.profile).count()
         no_following = True
         if following_count != 0:
             no_following = False
@@ -346,7 +345,6 @@ def profile_following(request,id,slug):
                     else:
                         follow_status.append("Follow")
 
-
         context = {
             "user":user,
             "current_user":current_user,
@@ -358,6 +356,7 @@ def profile_following(request,id,slug):
             "following_count":following_count,
             "drafts_count":drafts_count,
             "posts_count":posts_count,
+            "followers_count":followers_count,
             "no_following":no_following,
             "title":title,
             "current_page":current_page,
@@ -365,20 +364,100 @@ def profile_following(request,id,slug):
             "follow_me":follow_me,
         }
 
-        return render(request,"profile_following.html",context)
+        if request.is_ajax():
+            template = "profile_following_page.html"
+        else:
+            template = "profile_following.html"
+
+        return render(request,template,context)
+
 
 
 def profile_followers(request,id,slug):
+    if request.method == "GET":
+        User = get_user_model()
+        user = User.objects.get(id = id)
+        current_user = request.user
 
-    title = "Followers"
-    User = get_user_model()
-    user = User.objects.get(id = id)
-    context = {
-        "title":title,
-        "user":user,
-    }
+        # anonymous user
+        top_follow_button_text = "Follow"
+        bottom_follow_button_text = "Follow"
+        logged_in = False
+        is_user = False
 
-    return render(request,"profile_followers.html",context)
+        # logged-in user
+        if current_user.is_authenticated:
+            logged_in = True
+            if current_user == user:
+                is_user = True
+
+            else:
+                is_user = False
+                if current_user.profile.follows.filter(user=user).exists():
+                    top_follow_button_text = "Followed"
+
+        profile_url = user.profile.get_absolute_url()
+        current_url = request.path
+        followers = Profile.objects.filter(follows=user.profile).order_by('source')
+        followers_count = followers.count()
+        posts_count = user.post_set.filter(is_draft = False).count()
+        drafts_count = user.post_set.filter(is_draft = True).count()
+        following_count = user.profile.follows.count()
+        no_followers = True
+        if followers_count != 0:
+            no_followers = False
+        title = "Followers"
+        paginator = Paginator(followers, 10) # Show 25 contacts per page
+        page = request.GET.get('page')
+        try:
+            current_page = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            current_page = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            current_page = paginator.page(paginator.num_pages)
+
+        follow_status = []
+        follow_me = []
+        if current_user.is_authenticated:
+            for follower in current_page:
+                if current_user.profile.follows.filter(user=follower.user).exists():
+                    follow_status.append("Followed")
+                else:
+                    follow_status.append("Follow")
+                if current_user != user:
+                    if follower.user == current_user:
+                        follow_me.append(True)
+                    else:
+                        follow_me.append(False)
+
+        context = {
+            "user":user,
+            "current_user":current_user,
+            "top_follow_button_text":top_follow_button_text,
+            "bottom_follow_button_text":bottom_follow_button_text,
+            "logged_in":logged_in,
+            "is_user":is_user,
+            "profile_url":profile_url,
+            "following_count":following_count,
+            "followers_count":followers_count,
+            "drafts_count":drafts_count,
+            "posts_count":posts_count,
+            "no_followers":no_followers,
+            "title":title,
+            "current_page":current_page,
+            "follow_status":follow_status,
+            "follow_me":follow_me,
+        }
+
+        if request.is_ajax():
+            template = "profile_followers_page.html"
+        else:
+            template = "profile_followers.html"
+
+        return render(request,template,context)
+
 
 @login_required
 def profile_edit(request,id,slug):

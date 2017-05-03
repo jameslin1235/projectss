@@ -1,0 +1,60 @@
+{% load widget_tweaks %}
+{% load custom_tags %}
+<div id="profile_followers_page" data-profile-url="{{profile_url}}">
+  <div class="page-header" id="profile_followers_page_header">
+    <h4><span id="profile_followers_count">{{followers_count}}</span> {{ title }}</h4>
+  </div>
+
+
+  {% if no_followers == True %}
+  <div>
+    <p>There are no follower.</p>
+  </div>
+
+  {% else %}
+  <div>
+    {% for follower in current_page %}
+    <div class="media profile_followers_container" data-url="{{follower.get_absolute_url}}">
+      <div class="media-left">
+        <a href="{{follower.get_absolute_url}}">
+          <img class="media-object" src="{{follower.avatar.url}}" alt="...">
+        </a>
+      </div>
+      <div class="media-body">
+        <h4 class="media-heading"><a href="{{follower.get_absolute_url}}">{{follower.user.username}}</a></h4>
+        <div>
+          <span>{{follower.user.comment_set.count}} Comments</span>
+          <span>{{follower.user.post_set.count}} Posts</span>
+          <span>{{follower.follows.count}} Following</span>
+        </div>
+        <div >
+          <button type="button" {% if follow_me|index:forloop.counter0 == True %}disabled="disabled"{% endif %} class="btn btn-primary follow_button">{% if logged_in == True %}{{ follow_status|index:forloop.counter0 }}{% else %}{{ bottom_follow_button_text }}{% endif %}</button>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div>
+    <ul class="pagination">
+      {% if current_page.has_previous %}
+      <li><a class="profile_followers_page_button" href="?page={{ current_page.previous_page_number }}">&laquo;</a></li>
+      {% else %}
+      <li class="disabled"><span>&laquo;</span></li>
+      {% endif %}
+      {% for i in current_page.paginator.page_range %}
+      {% if current_page.number == i %}
+      <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+      <li><a class="profile_followers_page_button" href="?page={{ i }}">{{ i }}</a></li>
+      {% endif %}
+      {% endfor %}
+      {% if current_page.has_next %}
+      <li><a class="profile_followers_page_button" href="?page={{ current_page.next_page_number }}">&raquo;</a></li>
+      {% else %}
+      <li class="disabled"><span>&raquo;</span></li>
+      {% endif %}
+    </ul>
+  </div>
+  {% endif %}
+</div>

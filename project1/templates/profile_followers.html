@@ -2,43 +2,103 @@
 
 {% block title %}{{ user }}'s Followers{% endblock title %}
 
-{% block nav-tabs %}
-<!-- Nav tabs -->
-<ul class="nav nav-tabs" role="tablist">
-  <li role="presentation"><a href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug  %}" role="tab" >Activity</a></li>
-  <li role="presentation"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" role="tab">Posts <span>{{posts_count}}</span></a></li>
+{% block vertical_nav %}
+<ul class="nav nav-pills nav-stacked">
+  <li role="presentation"><a id="follow_url" href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug  %}" role="tab" >Activity</a></li>
+  <li role="presentation"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" role="tab" >Posts <span id="profile_nav_posts_count">{{posts_count}}</span></a></li>
+  {% if is_user %}<li role="presentation"><a href="{% url 'profiles:profile_drafts' id=user.id slug=user.profile.slug  %}" role="tab" >Drafts <span id="profile_nav_drafts_count">{{drafts_count}}</span></a></li>{% endif %}
   <li role="presentation"><a href="{% url 'profiles:profile_comments' id=user.id slug=user.profile.slug  %}" role="tab">Comments</a></li>
   <li role="presentation"><a href="{% url 'profiles:profile_bookmarks' id=user.id slug=user.profile.slug  %}" role="tab">Bookmark</a></li>
-  <li role="presentation"><a href="{% url 'profiles:profile_following' id=user.id slug=user.profile.slug  %}" role="tab">Following</a></li>
-  <li role="presentation" class="active"><a href="{% url 'profiles:profile_followers' id=user.id slug=user.profile.slug  %}" role="tab">Followers</a></li>
+  <li role="presentation"><a href="{% url 'profiles:profile_following' id=user.id slug=user.profile.slug  %}" role="tab">Following <span id="profile_nav_following_count">{{following_count}}</span></a></li>
+  <li role="presentation" class="active"><a href="{% url 'profiles:profile_followers' id=user.id slug=user.profile.slug  %}" role="tab">Followers {{followers_count}}</a></li>
 </ul>
+{% endblock vertical_nav %}
 
-{% endblock nav-tabs %}
+{% block content %}
+{% include "login_modal.html" %}
+{% include "profile_followers_page.html" %}
+{% endblock content %}
 
-{% block tab-content %}
-<!-- Tab panes -->
-<div class="tab-content">
+{% block javascript %}
+<script>
 
-  <div role="tabpanel" class="tab-pane">
-  </div>
-  <div role="tabpanel" class="tab-pane">
+// Feature 1 Get nth page of paginated profiles
+$(document).on('click', '.profile_followers_page_button', function() {
+  event.preventDefault();
+  var element = $(this);
+  var url = $(element).attr("href");
+  $.ajax({     // send get request to get nth page
+    url: url,
+    success:function(data) {
+      $("#profile_followers_page").replaceWith(data);
+    }});
+  });
 
-  </div>
-  <div role="tabpanel" class="tab-pane">
 
-  </div>
-  <div role="tabpanel" class="tab-pane">
+// Feature 1 Bottom follow buttons
+$(document).on('click','.follow_button',function(){
+  event.preventDefault();
+  var element = $(this);
+  var url= $(element).parents(".profile_followers_container").attr("data-url");
+  if ($("#logged_in").data("logged-in")== true) {
+    $.ajax({
+      url: url + "follow",
+      success:function(data) {
+        $(element).html(data.message);
+      }});
+    }
+    else{
+      $('#myModal').modal();
+    }
+  });
+
+  // Feature 2 Top follow button
+  $(document).on('click','#follow_button',function(){
+    event.preventDefault();
+    var element = $(this);
+    var url= $(element).parents("#profile_base").attr("data-profile-url");
+    if ($("#logged_in").data("logged-in")== true) {
+      $.ajax({
+        url: url + "follow",
+        success:function(data) {
+          $(element).html(data.message);
+        }});
+      }
+      else{
+        $('#myModal').modal();
+      }
+    });
 
 
-  </div>
-  <div role="tabpanel" class="tab-pane">
+    // Feature 3 Follow/unfollow mouseenter button
+    $(document).on('mouseenter','#follow_button, .follow_button',function(){
+      event.preventDefault();
+      var element = $(this);
+      if ($("#logged_in").data("logged-in")== true){
+        if ($(element).html() == "Followed") {
+          $(element).html("Unfollow");
+        }
+      }
+      else{
+        event.preventDefault();
+      }
+    });
 
-  </div>
-  <div role="tabpanel" class="tab-pane active">
-    <div class="page-header">
-      <h5>{{ title }}</h5>
-    </div>
-  </div>
-</div>
+    // Feature 4 Follow/unfollow mouseleave button
+    $(document).on('mouseleave','#follow_button, .follow_button',function(){
+      event.preventDefault();
+      var element = $(this);
+      if ($("#logged_in").data("logged-in")== true){
+        if ($(element).html() == "Unfollow") {
+          $(element).html("Followed");
+        }
+      }
+      else{
+        event.preventDefault();
+      }
+    });
 
-{% endblock tab-content %}
+
+
+</script>
+{% endblock javascript %}
