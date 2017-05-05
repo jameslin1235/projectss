@@ -70,7 +70,7 @@ def profile_posts(request,id,slug):
         user = get_object_or_404(User, id = id)
         current_user = request.user
         # anonymous user
-        follow_button_text = "Follow"
+        top_follow_button_text = "Follow"
         logged_in = False
         is_user = False
 
@@ -82,7 +82,7 @@ def profile_posts(request,id,slug):
             else:
                 is_user = False
                 if current_user.profile.follows.filter(user= user).exists():
-                    follow_button_text = "Followed"
+                    top_follow_button_text = "Followed"
 
         posts = user.post_set.filter(is_draft = False).order_by("-date_created")
         option = 1
@@ -108,6 +108,8 @@ def profile_posts(request,id,slug):
 
         posts_count = posts.count()
         drafts_count = user.post_set.filter(is_draft = True).count()
+        following_count = user.profile.get_following_count()
+        followers_count = user.profile.get_followers_count()
         no_posts = True
         if posts_count != 0:
             no_posts = False
@@ -133,10 +135,14 @@ def profile_posts(request,id,slug):
 
         context = {
             "user":user,
+            "top_follow_button_text":top_follow_button_text,
             "logged_in":logged_in,
             "is_user":is_user,
+            "option":option,
             "posts_count":posts_count,
             "drafts_count":drafts_count,
+            "following_count":following_count,
+            "followers_count":followers_count,
             "no_posts":no_posts,
             "title":title,
             "comment_title":comment_title,
@@ -145,8 +151,6 @@ def profile_posts(request,id,slug):
             "comments_count":comments_count,
             "form":form,
             "current_url":current_url,
-            "option":option,
-            "follow_button_text":follow_button_text,
         }
 
         if request.is_ajax():
@@ -165,6 +169,7 @@ def profile_drafts(request,id,slug):
         User = get_user_model()
         user = get_object_or_404(User, id = id)
         current_user = request.user
+        profile_url = user.profile.get_absolute_url()
 
         follow_button_text = "Follow"
         logged_in = False
@@ -218,6 +223,7 @@ def profile_drafts(request,id,slug):
                     "form":form,
                     "current_url":current_url,
                     "option":option,
+                    "profile_url":profile_url
                 }
 
                 if request.is_ajax():
@@ -310,12 +316,11 @@ def profile_following(request,id,slug):
 
         profile_url = user.profile.get_absolute_url()
         current_url = request.path
-
         following = user.profile.follows.order_by('dest')  # sort following by latest
         following_count = following.count()
         drafts_count = user.post_set.filter(is_draft = True).count()
         posts_count = user.post_set.filter(is_draft = False).count()
-        followers_count = Profile.objects.filter(follows=user.profile).count()
+        followers_count = user.profile.get_followers_count()
         no_following = True
         if following_count != 0:
             no_following = False
@@ -371,8 +376,6 @@ def profile_following(request,id,slug):
 
         return render(request,template,context)
 
-
-
 def profile_followers(request,id,slug):
     if request.method == "GET":
         User = get_user_model()
@@ -390,7 +393,6 @@ def profile_followers(request,id,slug):
             logged_in = True
             if current_user == user:
                 is_user = True
-
             else:
                 is_user = False
                 if current_user.profile.follows.filter(user=user).exists():
@@ -402,7 +404,7 @@ def profile_followers(request,id,slug):
         followers_count = followers.count()
         posts_count = user.post_set.filter(is_draft = False).count()
         drafts_count = user.post_set.filter(is_draft = True).count()
-        following_count = user.profile.follows.count()
+        following_count = user.profile.get_following_count()
         no_followers = True
         if followers_count != 0:
             no_followers = False

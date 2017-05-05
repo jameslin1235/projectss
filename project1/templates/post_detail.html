@@ -11,41 +11,35 @@
     <div class="row">
       <div class="col-md-12">
         <div class="section">
-          <!-- {% if messages %}
-          {% for message in messages %}
-          <div class="alert alert-{{ message.tags }} alert-dismissible" role="alert">
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <strong>{{ message }}</strong>
-        </div>
-        {% endfor %}
-        {% endif %} -->
-
-        <div class="thumbnail thumbnail_post_detail">
-          <div class="caption">
-            <p><a href="{{ post.category.get_absolute_url }}">{{ post.category }}</a></p>
-            <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
-            <p><a href="{% url 'profiles:profile_activity' id=post.user.id slug=post.user.profile.slug %}">{{ post.user.username }}</a></p>
-            <p>{{ post.content }}</p>
-            <p><a href="{{ post.get_absolute_url }}" data-toggle="tooltip" data-placement="top" title="Published {{ post.date_published }}">Edited {{ post.date_edited }}</a></p>
-            <p>
-              <button type="button" class="btn btn-primary" id="like_button" {% if same_user %}disabled="disabled"{% endif %} data-liked="false"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> {{ post.likes }}</button>
-              <button type="button" class="btn btn-link" id="dislike_button" {% if same_user %}disabled="disabled"{% endif %} data-disliked="false"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> {{ post.dislikes }}</button>
-              <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
-              sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-share" aria-hidden="true"></span> Share</button>
-              <button type="button" class="btn btn-link" id='bookmark_button' ><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
-            </p>
+          <div class="thumbnail" id="post_container" data-url={{post.get_absolute_url}}>
+            <div class="caption">
+              <p><a href="{{ post.category.get_absolute_url }}">{{ post.category }}</a></p>
+              <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+              <p><a href="{% url 'profiles:profile_activity' id=post.user.id slug=post.user.profile.slug %}">{{ post.user.username }}</a></p>
+              <p>{{ post.content }}</p>
+              <p><a href="{{ post.get_absolute_url }}" data-toggle="tooltip" data-placement="top" title="Published {{ post.date_published }}">Edited {{ post.date_edited }}</a></p>
+              <p>
+                <button type="button" {% if liked == True %}class="btn btn-primary"{%else%}class="btn btn-link"{% endif %} id="like_button" {% if is_user == True %}disabled="disabled"{% endif %} data-liked="false"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> <span id="post_likes_count">{{ post.likes }}</span></button>
+                <button type="button" class="btn btn-link" id="dislike_button" {% if is_user == True %}disabled="disabled"{% endif %} data-disliked="false"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> <span id="post_dislikes_count">{{ post.dislikes }}</span></button>
+                <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
+                sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-share" aria-hidden="true"></span> Share</button>
+                <button type="button" class="btn btn-link" id='bookmark_button' ><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
+              </p>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="row">
-    <div class="col-md-12">
-      {% include "post_detail_pag.html" %}
+    <div class="row">
+      <div class="col-md-12">
+        <div class="section">
+          {% include "post_detail_page.html" %}
+        </div>
+
+      </div>
     </div>
   </div>
-</div>
 
 </section>
 {% endblock body %}
@@ -57,33 +51,30 @@
 $(document).on('click', '#like_button', function(event) {
   event.preventDefault();
   var element = $(this);
+  var url = $(element).parents("#post_container").attr("data-url");
   if ($("#logged_in").data("logged-in")== true) {
-    if($(element).data("liked")==false){
-      $.ajax({
-        url:window.location.href + "like",
+
+      $.ajax({  // ajax GET to like post
+        url:url + "like",
         success:function(data) {
-          $(element).html('<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> ' + data.likes_count);
-          $(element).data("liked",true);
-        }
-      })
-    }
-    else{
-      $.ajax({
-        url:window.location.href + "like",
-        data:{ unlike: "unlike" },
-        success:function(data) {
-          $(element).html('<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> ' + data.likes_count);
-          $(element).data("liked",false);
+          status = data.status;
+          if (status == "unliked") {
+            $("#like_button").attr("class","btn btn-link");
+          }
+          else{
+            $("#like_button").attr("class","btn btn-primary");
+          }
+          $("#post_likes_count").html(data.likes_count);
+
 
         }
       })
-    }
-
   }
   else{
     $('#myModal').modal()
   }
 });
+
 
 // Feature 2
 $(document).on('click', '#dislike_button', function(event) {
@@ -115,67 +106,64 @@ $(document).on('click', '#dislike_button', function(event) {
   }
 });
 
-    // // Feature 3
-    // $(document).on('click', '#bookmark_button', function(event) {
-    //   event.preventDefault();
-    //   var element = $(this);
-    //   if ($("#logged_in").attr("data-logged-in")=="True") {
-    //
-    //     alert("hello");
-    //   }
-    //   else{
-    //     $('#myModal').modal()
-    //   }
-    // });
+// Feature 3 Open comment form buttons or modal
+$(document).on('click', '#comment_form_textfield', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  if ($("#logged_in").data("logged-in")== true) {
+    $("#comment_form_collapse").collapse("show");
+  }
+  else{
+    $('#myModal').modal();
+  }
+});
+
+// Feature 4 Close comment form buttons
+$(document).on('click', '#comment_form_close_button', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  $("#comment_form_collapse").collapse("hide");
+});
 
 
+// Feature 5 Comment form
+$(document).on('submit', '#comment_form', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  var method = $(element).attr('method');
+  var url = $(element).attr('action');
 
-    // Feature 5
-    $(document).on('submit', '#comment_form', function(event) {
-      event.preventDefault();
-      var element = $(this);
-      var method = $(element).attr('method');
-      var url = $(element).attr('action');
-      var pagenum = $(element).parents("#post_detail_page").attr("data-pagenum");
-      $.ajax({  // send post request to save comment
-        method: method,
+  $.ajax({  // ajax POST to save comment
+    method: method,
+    url: url,
+    data: {
+      content: $("#comment_form_textfield").val(),
+      csrfmiddlewaretoken:'{{ csrf_token }}',
+    },
+    success:function(data) {
+      var message = data.message;
+
+      $.ajax({     // ajax GET to get first page
         url: url,
-        data: {
-          content: $("#comment_form_textfield").val(),
-          csrfmiddlewaretoken:'{{ csrf_token }}',
-        },
         success:function(data) {
-          if ($(pagenum) == 1){
-            $.ajax({     // send get request to get first page
-              url: url,
-              success:function(data) {
-                $("#post_detail_page").replaceWith(data);
-                $('#post_detail_page_header').after(make_message("Comment created."));
-              }});
-            }
-            else{
-                $.ajax({     // send get request for the 1st page
-                  url: url,
-                  success:function(data) {
-                    $("#post_detail_page").replaceWith(data);
-                    $('#post_detail_page_header').after(make_message("Comment created."));
-                  }});
-                }
-              },
-            });
-          });
+          $("#post_detail_page").replaceWith(data);
+          $('#post_detail_page_header').after(make_message(message));
+        }});
+      },
+    });
+  });
 
-          // Feature 6
-          $(document).on('click', '.page_button', function() {
-            event.preventDefault();
-            var element = $(this);
-            var url = $(element).attr("href");
-            $.ajax({     // send get request to get nth page
-              url: url,
-              success:function(data) {
-                $("#post_detail_page").replaceWith(data);
-              }});
-            });
+  // Feature 6 Go to nth page
+  $(document).on('click', '.page_button', function() {
+    event.preventDefault();
+    var element = $(this);
+    var url = $(element).attr("href");
+    $.ajax({     // ajax GET to get nth page
+      url: url,
+      success:function(data) {
+        $("#post_detail_page").replaceWith(data);
+      }});
+    });
 
-          </script>
-          {% endblock %}
+    </script>
+    {% endblock %}

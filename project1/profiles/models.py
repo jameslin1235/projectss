@@ -11,6 +11,7 @@ from django.dispatch import receiver
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     follows = models.ManyToManyField("self",null=True,symmetrical=False, through='Extra')
+    
     position = models.CharField(
         max_length=100,
         blank=True,
@@ -49,9 +50,15 @@ class Profile(models.Model):
 
     def get_absolute_url(self):
         return reverse("profiles:profile_activity", kwargs={"id": self.id, "slug": self.slug})
+
+    def get_following_count(self):
+        return self.source.count()
+
+    def get_followers_count(self):
+        return self.dest.count()
+
     class Meta:
         ordering = ["-date_created"]
-
 
     @receiver(post_save, sender=User)
     def create_user_profile(sender, instance, created, **kwargs):

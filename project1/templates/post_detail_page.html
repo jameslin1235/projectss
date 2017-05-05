@@ -1,0 +1,94 @@
+{% load static %}
+{% load widget_tweaks %}
+<div id="post_detail_page">
+
+  <div class="page-header" id="post_detail_page_header">
+    <h4><span>{{ comments_count }}</span> {{comment_title}}</h4>
+  </div>
+
+  {% if no_comments %}
+  <div>
+    <p>There are no comments.</p>
+  </div>
+  {% endif %}
+
+  <div class="media">
+    <div class="media-left">
+      <a href="#">
+        <img class="media-object" src="/media/profile_avatar/1.jpg" alt="..." width="64px" height="64px">
+      </a>
+    </div>
+    <div class="media-body">
+      <form method="post" id="comment_form">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger" role="alert">
+          {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+
+        <!-- Button trigger modal -->
+        <div class="form-group" >
+          <textarea class="form-control" id="comment_form_textfield" rows="3" placeholder="Leave a commment." required></textarea>
+
+          {% if form.content.errors %}
+          <div class="alert alert-danger" role="alert">
+            {{ form.content.errors }}
+          </div>
+          {% endif %}
+          {% if form.content.help_text %}
+          <p class="help-block">{{ form.content.help_text|safe }}</p>
+          {% endif %}
+        </div>
+
+        <div class="collapse" id="comment_form_collapse">
+          <button class="btn btn-primary" id="comment_form_close_button">Cancel</button>
+          <button type="submit" class="btn btn-primary" >{{ comment_button_text }}</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  {% if no_comments == False %}
+  <div>
+    {% for comment in current_page %}
+    <div class="media">
+      <div class="media-left">
+        <a href="{% url 'profiles:profile_activity' id=comment.user.id slug=comment.user.profile.slug %}">
+          <img class="media-object" src="{{ comment.user.profile.avatar.url }}" alt="..." width="64px" height="64px">
+        </a>
+      </div>
+      <div class="media-body">
+        <a class="media-heading" href="{% url 'profiles:profile_activity' id=comment.user.id slug=comment.user.profile.slug %}">{{ comment.user.username }}</a>
+        <p>{{ comment.content}} </p>
+        <p>{{ comment.date_created}} </p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div>
+    <ul class="pagination">
+      {% if current_page.has_previous %}
+      <li><a class="page_button" href="{{post.get_absolute_url}}?page={{ current_page.previous_page_number }}">&laquo;</a></li>
+      {% else %}
+      <li class="disabled"><span>&laquo;</span></li>
+      {% endif %}
+      {% for i in current_page.paginator.page_range %}
+      {% if current_page.number == i %}
+      <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+      <li><a class="page_button" href="{{post.get_absolute_url}}?page={{ i }}" >{{ i }}</a></li>
+      {% endif %}
+      {% endfor %}
+      {% if current_page.has_next %}
+      <li><a class="page_button" href="{{post.get_absolute_url}}?page={{ current_page.next_page_number }}">&raquo;</a></li>
+      {% else %}
+      <li class="disabled"><span>&raquo;</span></li>
+      {% endif %}
+    </ul>
+  </div>
+  {% endif %}
+</div>

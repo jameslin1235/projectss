@@ -26,6 +26,7 @@
           <span>{{following.user.comment_set.count}} Comments</span>
           <span>{{following.user.post_set.count}} Posts</span>
           <span>{{following.follows.count}} Following</span>
+          <span>{{following.dest.count}} Followers</span>
         </div>
         <div >
           <button type="button" {% if follow_me|index:forloop.counter0 == True %}disabled="disabled"{% endif %} class="btn btn-primary follow_button">{% if logged_in == True and current_user != user %}{{ follow_status|index:forloop.counter0 }}{% else %}{{ bottom_follow_button_text }}{% endif %}</button>
