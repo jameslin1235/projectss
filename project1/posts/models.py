@@ -8,7 +8,7 @@ from project1.project1.categories.models import Category
 from project1.project1.profiles.models import Profile
 # Create your models here.
 class Post(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name="posts")
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     likers = models.ManyToManyField(Profile,null=True,through='Like',related_name="liked_posts")
     dislikers = models.ManyToManyField(Profile,null=True,through='Dislike',related_name="disliked_posts")

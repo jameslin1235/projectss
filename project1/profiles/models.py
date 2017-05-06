@@ -10,8 +10,8 @@ from django.dispatch import receiver
 # Create your models here.
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    follows = models.ManyToManyField("self",null=True,symmetrical=False, through='Extra')
-    
+    following = models.ManyToManyField("self",null=True,symmetrical=False, through='Follow', related_name="followers")
+
     position = models.CharField(
         max_length=100,
         blank=True,
@@ -69,7 +69,7 @@ class Profile(models.Model):
     def save_user_profile(sender, instance, **kwargs):
         instance.profile.save()
 
-class Extra(models.Model):
+class Follow(models.Model):
     source = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name ="source")
     dest = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name= "dest")
     date_followed = models.DateTimeField()

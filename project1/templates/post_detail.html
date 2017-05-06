@@ -6,9 +6,7 @@
 
 {% block body %}
 
-{% if logged_in == False %}
-{% include "login_modal.html" %}
-{% endif %}
+
 
 <section >
   <div class='container'>
@@ -23,7 +21,7 @@
                 <div class="media">
                   <div class="media-left">
                     <a href="{% url 'profiles:profile_activity' id=post.user.id slug=post.user.profile.slug %}">
-                      <img class="media-object profile_avatar" src="{{post.user.profile.avatar.url}}" alt="...">
+                      <img class="media-object profile_avatar" src="{{post.user.profile.avatar.url}}" >
                     </a>
                   </div>
                   <div class="media-body">
@@ -38,11 +36,10 @@
               <div class="post_content_container">{{ post.content }}</div>
               <div class="post_date_container"><a href="{{ post.get_absolute_url }}" data-toggle="tooltip" data-placement="top" title="{{post.date_published}}">Edited {{ post.date_edited }}</a></div>
               <div class="post_buttons_container">
-                <button type="button" {% if liked == True %}class="btn btn-primary"{%else%}class="btn btn-link"{% endif %} id="post_like_button" {% if is_user == True %}disabled="disabled"{% endif %}><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> <span id="post_likes_count">{{ post.likes }}</span></button>
-                <button type="button" {% if disliked == True %}class="btn btn-primary"{%else%}class="btn btn-link"{% endif %} id="post_dislike_button" {% if is_user == True %}disabled="disabled"{% endif %}><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> <span id="post_dislikes_count">{{ post.dislikes }}</span></button>
+                <button type="button" {% if liked == True %}class="btn btn-primary"{%else%}class="btn btn-link"{% endif %} id="post_like_button" {% if user_status == "self" %}disabled="disabled"{% endif %}><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> <span id="post_likes_count">{{ post.likes }}</span></button>
+                <button type="button" {% if disliked == True %}class="btn btn-primary"{%else%}class="btn btn-link"{% endif %} id="post_dislike_button" {% if user_status == "self" %}disabled="disabled"{% endif %}><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> <span id="post_dislikes_count">{{ post.dislikes }}</span></button>
                 <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
                 sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-share" aria-hidden="true"></span> Share</button>
-                <button type="button" class="btn btn-link" id='post_bookmark_button' ><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
               </div>
             </div>
           </div>
@@ -61,15 +58,37 @@
   </div>
 
 </section>
+
 {% endblock body %}
 
 {% block javascript %}
 <script>
+function get_login_modal(){
+  $.ajax({     // ajax GET to get login modal
+    url: "/posts/getloginmodal/",
+    success:function(data) {
+      $("body").append(data);
+      $("#login_Modal").modal();
+    }});
 
-// Feature 1
+}
 
 
-// Feature 1 Post likers modal (Gets post's likers modal)
+// Feature 2 Close login modal
+$(document).on('click', '#login_Modal_close_button', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  $('#login_Modal').modal('hide');
+});
+
+// Feature 3 Remove login modal once it is hidden
+$(document).on('hidden.bs.modal', '#login_Modal', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  $(element).remove();
+});
+
+// Feature 1 Close post likers modal
 $(document).on('click', '#post_likers_button', function(event) {
   event.preventDefault();
   var element = $(this);
@@ -77,27 +96,106 @@ $(document).on('click', '#post_likers_button', function(event) {
   $.ajax({     // ajax GET to get post likers
     url: url + "likers",
     success:function(data) {
-      $("#post_container").after(data);
+      $("body").append(data);
       $("#post_likers_Modal").modal();
     }});
-
 });
 
-// Feature 2 Close and remove post likers modal
+// Feature 1 Open post likers modal
+$(document).on('click', '#post_likers_button', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  var url = $(element).parents("#post_container").attr("data-url");
+  $.ajax({     // ajax GET to get post likers
+    url: url + "likers",
+    success:function(data) {
+      $("body").append(data);
+      $("#post_likers_Modal").modal();
+    }});
+});
+
+// Feature 2 Close post likers modal
 $(document).on('click', '#post_likers_Modal_close_button', function(event) {
   event.preventDefault();
   var element = $(this);
   $('#post_likers_Modal').modal('hide');
-  $('#post_likers_Modal').on('hidden.bs.modal', function () {
-    $('#post_likers_Modal').remove();
-})
-
-
-
 });
 
+// Feature 3 Remove modal once it is hidden
+$(document).on('hidden.bs.modal', '#post_likers_Modal', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  $(element).remove();
+});
 
-// Feature 1 Like post
+// Feature 4 Get more post likers
+$(document).on('click', '#post_likers_more_button', function() {
+  event.preventDefault();
+  var element = $(this);
+  var url = $("#post_container").attr("data-url");
+  var nextpage = $("#post_likers_more_container").attr("data-nextpage");
+
+  $.ajax({     // ajax GET to get next page of post likers
+    url: url + "likers/?page=" + nextpage,
+    success:function(data) {
+      $("#post_likers_more_container").remove();
+      $("#post_likers_modal_body").append(data);
+    }});
+  });
+
+  // Feature 5 Post likers modal follow buttons
+  $(document).on('click','.follow_button',function(){
+    event.preventDefault();
+    var element = $(this);
+    var url= $(element).parents(".profile_container").attr("data-url");
+    if ($("#logged_in").data("logged-in")== true) {
+      $.ajax({
+        url: url + "follow",  // ajax GET to follow/unfollow a profile
+        success:function(data) {
+          $(element).html(data.message);
+          $.ajax({  // ajax GET to get profile followers count
+            url: url + "followerscount",
+            success:function(data) {
+              $(element).parents(".profile_container").find(".profile_followers_count").html(data.profile_followers_count + " Followers");
+            }});
+        }});
+      }
+      else{
+        get_login_modal();
+      }
+    });
+
+
+      // Feature 6 Post likers modal follow buttons mouseenter effect
+      $(document).on('mouseenter','.follow_button',function(){
+        event.preventDefault();
+        var element = $(this);
+        if ($("#logged_in").data("logged-in")== true){
+          if ($(element).html() == "Followed") {
+            $(element).html("Unfollow");
+          }
+        }
+        else{
+          event.preventDefault();
+        }
+      });
+
+      // Feature 7 Post likers modal follow buttons mouseleave effect
+      $(document).on('mouseleave','.follow_button',function(){
+        event.preventDefault();
+        var element = $(this);
+        if ($("#logged_in").data("logged-in")== true){
+          if ($(element).html() == "Unfollow") {
+            $(element).html("Followed");
+          }
+        }
+        else{
+          event.preventDefault();
+        }
+      });
+
+
+// Feature  Like post
 $(document).on('click', '#post_like_button', function(event) {
   event.preventDefault();
   var element = $(this);
@@ -114,6 +212,8 @@ $(document).on('click', '#post_like_button', function(event) {
           $("#post_like_button").attr("class","btn btn-primary");
         }
         $("#post_likes_count").html(data.likes_count);
+        $("#post_likers_button").html(data.likes_count+" people liked this post.");
+
       }
     })
   }

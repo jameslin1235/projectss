@@ -13,4 +13,6 @@ urlpatterns = [
     url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/dislike/$', views.post_dislike, name='post_dislike'),
     url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/likers/$', views.post_likers, name='post_likers'),
     url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/bookmark/$', views.post_bookmark, name='post_bookmark'),
+    url(r'^getloginmodal/$', views.get_login_modal, name='get_login_modal'),
+
 ]

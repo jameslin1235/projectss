@@ -10,7 +10,7 @@ from django.db.models import Count
 from django.utils import timezone
 from project1.project1.posts.models import Post
 from project1.project1.comments.models import Comment
-from project1.project1.profiles.models import Profile, Extra
+from project1.project1.profiles.models import Profile, Follow
 from project1.project1.posts.forms import PostForm
 from project1.project1.comments.forms import CommentForm
 from .forms import ProfileForm
@@ -46,23 +46,36 @@ def profile_follow(request,id,slug):
                 raise PermissionDenied;
             else:
                 response_data = {}
-                if current_user.profile.follows.filter(user=user).exists():
-
+                if current_user.profile.following.filter(user=user).exists():
                     # current_user.profile.follows.remove(user.profile)
-                    Extra.objects.get(source = current_user.profile, dest = user.profile).delete()
+                    Follow.objects.get(source=current_user.profile, dest=user.profile).delete()
+
                     response_data['message'] = "Follow"
                     return JsonResponse(response_data,safe=False)
                 else:
                     # current_user.profile.follows.add(user.profile)
-                    user_profile = user.profile
-                    current_user_profile = current_user.profile
-                    Extra.objects.create(source = current_user_profile, dest = user_profile, date_followed = timezone.now())
+                    Follow.objects.create(source=current_user.profile,dest=user.profile,date_followed=timezone.now())
                     response_data['message'] = "Followed"
                     return JsonResponse(response_data,safe=False)
         # anonymous user
         else:
             raise PermissionDenied;
 
+def profile_following_count(request,id,slug):
+    if request.method == "GET" and request.is_ajax():
+        profile = get_object_or_404(Profile, id = id)
+        profile_following_count = profile.following.count()
+        response_data = {}
+        response_data['profile_following_count'] = profile_following_count
+        return JsonResponse(response_data,safe=False)
+
+def profile_followers_count(request,id,slug):
+    if request.method == "GET" and request.is_ajax():
+        profile = get_object_or_404(Profile, id = id)
+        profile_followers_count = profile.followers.count()
+        response_data = {}
+        response_data['profile_followers_count'] = profile_followers_count
+        return JsonResponse(response_data,safe=False)
 
 def profile_posts(request,id,slug):
     if request.method == "GET":

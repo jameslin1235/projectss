@@ -50,7 +50,7 @@ def post_list(request):
         comments_first_pages = []
         same_user = []
         for post in current_page.object_list:
-            paginator = Paginator(post.comment_set.all(), 5) # Show 25 contacts per page
+            paginator = Paginator(post.comments.all(), 5) # Show 25 contacts per page
             try:
                 comments_first_page = paginator.page(1)
             except PageNotAnInteger:
@@ -61,11 +61,11 @@ def post_list(request):
                 comments_first_page = paginator.page(paginator.num_pages)
             comments_first_pages.append(comments_first_page)
 
-            if post.comment_set.all().count() == 0:
+            if post.comments.all().count() == 0:
                 no_comments.append(True)
             else:
                 no_comments.append(False)
-            comments_count.append(post.comment_set.all().count())
+            comments_count.append(post.comments.all().count())
 
             if current_user.is_authenticated:
 
@@ -254,6 +254,11 @@ def post_dislike(request,id,slug):
         response_data['dislikes_count'] = post.dislikes
         return JsonResponse(response_data,safe=False)
 
+def get_login_modal(request):
+    if request.method == "GET" and request.is_ajax():
+        template = "login_modal.html"
+        return render(request,template)
+
 def post_likers(request,id,slug):
     post = get_object_or_404(Post, id=id)
     user = post.user
@@ -261,19 +266,19 @@ def post_likers(request,id,slug):
     if request.method == "GET" and request.is_ajax():
         if post.is_draft == True:
             raise PermissionDenied
+
         # anonymous user
         follow_button_text = "Follow"
         logged_in = False
-        is_user = False
+        user_status = "anonymous"
 
         # logged-in user
         if current_user.is_authenticated:
             logged_in = True
             if current_user == user:
-                is_user = True
+                user_status = "self"
             else:
-                is_user = False
-
+                user_status = "user"
 
         no_likers = True
         if post.likes != 0:
@@ -289,26 +294,32 @@ def post_likers(request,id,slug):
         except EmptyPage:
             # If page is out of range (e.g. 9999), deliver last page of results.
             current_page = paginator.page(paginator.num_pages)
-        pagenum = current_page.number
+        next_page = 0
         is_more = False
         if current_page.has_next():
+            next_page = current_page.next_page_number()
             is_more = True
 
+
         follow_status = []
-        if current_user.is_authenticated:
+        if user_status != "anonymous":
             for profile in current_page:
-                if current_user.profile.follows.filter(user=profile.user).exists():
-                    follow_status.append("Followed")
+                if profile.user == current_user:
+                    follow_status.append("Self")
                 else:
-                    follow_status.append("Follow")
+                    if current_user.profile.following.filter(user=profile.user).exists():
+                        follow_status.append("Followed")
+                    else:
+                        follow_status.append("Follow")
+
         context = {
             "post":post,
             "follow_button_text":follow_button_text,
             "logged_in":logged_in,
-            "is_user":is_user,
+            "user_status":user_status,
             "no_likers":no_likers,
             "current_page":current_page,
-            "pagenum":pagenum,
+            "next_page":next_page,
             "is_more":is_more,
             "follow_status":follow_status,
         }
@@ -316,10 +327,7 @@ def post_likers(request,id,slug):
         template = "post_likers_modal.html"
         if page is not None:
             template = "post_likers_modal_page.html"
-
         return render(request,template,context)
-
-
 
 
 def post_detail(request,id,slug):
@@ -332,7 +340,7 @@ def post_detail(request,id,slug):
 
         # anonymous user
         logged_in = False
-        is_user = False
+        user_status = "anonymous"
         liked = False
         disliked = False
 
@@ -340,15 +348,15 @@ def post_detail(request,id,slug):
         if current_user.is_authenticated:
             logged_in = True
             if current_user == user:
-                is_user = True
+                user_status = "self"
             else:
-                is_user = False
+                user_status = "user"
                 if post.likers.filter(user=current_user).exists():
                     liked = True
                 if post.dislikers.filter(user=current_user).exists():
                     disliked = True
 
-        comments = post.comment_set.all()
+        comments = post.comments.all()
         comments_count = comments.count()
         no_comments = True
         if comments_count != 0:
@@ -371,7 +379,7 @@ def post_detail(request,id,slug):
             "user":user,
             "current_user":current_user,
             "logged_in":logged_in,
-            "is_user":is_user,
+            "user_status":user_status,
             "comments_count":comments_count,
             "no_comments":no_comments,
             "comment_title":comment_title,
