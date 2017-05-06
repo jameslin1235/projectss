@@ -9,7 +9,7 @@ from django.utils import timezone
 
 from django.core import serializers
 from django.core.exceptions import PermissionDenied
-from .models import Post, Like
+from .models import Post, Like, Dislike
 from .forms import PostForm
 from project1.project1.comments.forms import CommentForm
 from project1.project1.comments.models import Comment
@@ -215,38 +215,111 @@ def post_like(request,id,slug):
         if current_user == user:
             raise PermissionDenied
         response_data = {}
-        if post.liked_by.filter(user=current_user).exists():
-            post.likes -= 1
-            post.like_set.filter(post=post,profile=current_user.profile).delete()
+        if post.likers.filter(user=current_user).exists():
+            # post.likes -= 1
+            post.like_set.filter(profile=current_user.profile).delete()
+            post.likes = post.likers.count()
             response_data['status'] = "unliked"
         else:
-            post.likes += 1
-            Like.objects.create(post = post, profile = current_user.profile, date_liked = timezone.now())
+            # post.likes += 1
+            Like.objects.create(post=post, profile=current_user.profile, date_liked=timezone.now())
+            post.likes = post.likers.count()
             response_data['status'] = "liked"
         post.save()
-
-        
         response_data['likes_count'] = post.likes
         return JsonResponse(response_data,safe=False)
 
 @login_required
 def post_dislike(request,id,slug):
+    post = get_object_or_404(Post, id=id)
+    user = post.user
+    current_user = request.user
     if request.method == "GET":
-        post = get_object_or_404(Post, id=id)
         if post.is_draft == True:
             raise PermissionDenied
-        user = post.user
-        current_user = request.user
         if current_user == user:
             raise PermissionDenied
-        if request.GET.get('undislike'):
-            post.dislikes -= 1
-        else:
-            post.dislikes += 1
-        post.save()
         response_data = {}
+        if post.dislikers.filter(user=current_user).exists():
+            # post.dislikes -= 1
+            post.dislike_set.filter(profile=current_user.profile).delete()
+            post.dislikes = post.dislikers.count()
+            response_data['status'] = "undisliked"
+        else:
+            # post.dislikes += 1
+            Dislike.objects.create(post=post, profile=current_user.profile, date_disliked=timezone.now())
+            post.dislikes = post.dislikers.count()
+            response_data['status'] = "disliked"
+        post.save()
         response_data['dislikes_count'] = post.dislikes
         return JsonResponse(response_data,safe=False)
+
+def post_likers(request,id,slug):
+    post = get_object_or_404(Post, id=id)
+    user = post.user
+    current_user = request.user
+    if request.method == "GET" and request.is_ajax():
+        if post.is_draft == True:
+            raise PermissionDenied
+        # anonymous user
+        follow_button_text = "Follow"
+        logged_in = False
+        is_user = False
+
+        # logged-in user
+        if current_user.is_authenticated:
+            logged_in = True
+            if current_user == user:
+                is_user = True
+            else:
+                is_user = False
+
+
+        no_likers = True
+        if post.likes != 0:
+            no_likers = False
+        post_likers = post.likers.all().order_by("like")
+        paginator = Paginator(post_likers, 5) # Show 25 contacts per page
+        page = request.GET.get('page')
+        try:
+            current_page = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            current_page = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            current_page = paginator.page(paginator.num_pages)
+        pagenum = current_page.number
+        is_more = False
+        if current_page.has_next():
+            is_more = True
+
+        follow_status = []
+        if current_user.is_authenticated:
+            for profile in current_page:
+                if current_user.profile.follows.filter(user=profile.user).exists():
+                    follow_status.append("Followed")
+                else:
+                    follow_status.append("Follow")
+        context = {
+            "post":post,
+            "follow_button_text":follow_button_text,
+            "logged_in":logged_in,
+            "is_user":is_user,
+            "no_likers":no_likers,
+            "current_page":current_page,
+            "pagenum":pagenum,
+            "is_more":is_more,
+            "follow_status":follow_status,
+        }
+
+        template = "post_likers_modal.html"
+        if page is not None:
+            template = "post_likers_modal_page.html"
+
+        return render(request,template,context)
+
+
 
 
 def post_detail(request,id,slug):
@@ -261,16 +334,19 @@ def post_detail(request,id,slug):
         logged_in = False
         is_user = False
         liked = False
-        # logged-in user
+        disliked = False
 
+        # logged-in user
         if current_user.is_authenticated:
             logged_in = True
             if current_user == user:
                 is_user = True
             else:
                 is_user = False
-                if post.liked_by.filter(user=current_user).exists():
+                if post.likers.filter(user=current_user).exists():
                     liked = True
+                if post.dislikers.filter(user=current_user).exists():
+                    disliked = True
 
         comments = post.comment_set.all()
         comments_count = comments.count()
@@ -303,6 +379,7 @@ def post_detail(request,id,slug):
             "form":form,
             "current_page":current_page,
             "liked":liked,
+            "disliked":disliked,
             }
 
         if request.is_ajax():

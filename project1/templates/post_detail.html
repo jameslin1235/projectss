@@ -5,7 +5,11 @@
 {% block title %}{{ post.title }}{% endblock title %}
 
 {% block body %}
+
+{% if logged_in == False %}
 {% include "login_modal.html" %}
+{% endif %}
+
 <section >
   <div class='container'>
     <div class="row">
@@ -13,18 +17,33 @@
         <div class="section">
           <div class="thumbnail" id="post_container" data-url={{post.get_absolute_url}}>
             <div class="caption">
-              <p><a href="{{ post.category.get_absolute_url }}">{{ post.category }}</a></p>
-              <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
-              <p><a href="{% url 'profiles:profile_activity' id=post.user.id slug=post.user.profile.slug %}">{{ post.user.username }}</a></p>
-              <p>{{ post.content }}</p>
-              <p><a href="{{ post.get_absolute_url }}" data-toggle="tooltip" data-placement="top" title="Published {{ post.date_published }}">Edited {{ post.date_edited }}</a></p>
-              <p>
-                <button type="button" {% if liked == True %}class="btn btn-primary"{%else%}class="btn btn-link"{% endif %} id="like_button" {% if is_user == True %}disabled="disabled"{% endif %} data-liked="false"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> <span id="post_likes_count">{{ post.likes }}</span></button>
-                <button type="button" class="btn btn-link" id="dislike_button" {% if is_user == True %}disabled="disabled"{% endif %} data-disliked="false"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> <span id="post_dislikes_count">{{ post.dislikes }}</span></button>
+              <div><a href="{{ post.category.get_absolute_url }}">{{ post.category }}</a></div>
+              <div class="post_title_container"><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></div>
+              <div class="post_author_container">
+                <div class="media">
+                  <div class="media-left">
+                    <a href="{% url 'profiles:profile_activity' id=post.user.id slug=post.user.profile.slug %}">
+                      <img class="media-object profile_avatar" src="{{post.user.profile.avatar.url}}" alt="...">
+                    </a>
+                  </div>
+                  <div class="media-body">
+                    <h4 class="media-heading"><a href="{% url 'profiles:profile_activity' id=post.user.id slug=post.user.profile.slug %}">{{ post.user.username }}</a></h4>
+
+                  </div>
+                </div>
+              </div>
+              <div class="post_likers_container">
+                <button type="button" class="btn btn-link post_likers_button" id="post_likers_button">{{post.likes}} people liked this post.</button>
+              </div>
+              <div class="post_content_container">{{ post.content }}</div>
+              <div class="post_date_container"><a href="{{ post.get_absolute_url }}" data-toggle="tooltip" data-placement="top" title="{{post.date_published}}">Edited {{ post.date_edited }}</a></div>
+              <div class="post_buttons_container">
+                <button type="button" {% if liked == True %}class="btn btn-primary"{%else%}class="btn btn-link"{% endif %} id="post_like_button" {% if is_user == True %}disabled="disabled"{% endif %}><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> <span id="post_likes_count">{{ post.likes }}</span></button>
+                <button type="button" {% if disliked == True %}class="btn btn-primary"{%else%}class="btn btn-link"{% endif %} id="post_dislike_button" {% if is_user == True %}disabled="disabled"{% endif %}><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> <span id="post_dislikes_count">{{ post.dislikes }}</span></button>
                 <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
                 sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-share" aria-hidden="true"></span> Share</button>
-                <button type="button" class="btn btn-link" id='bookmark_button' ><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
-              </p>
+                <button type="button" class="btn btn-link" id='post_bookmark_button' ><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
+              </div>
             </div>
           </div>
         </div>
@@ -48,63 +67,115 @@
 <script>
 
 // Feature 1
-$(document).on('click', '#like_button', function(event) {
+
+
+// Feature 1 Post likers modal (Gets post's likers modal)
+$(document).on('click', '#post_likers_button', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  var url = $(element).parents("#post_container").attr("data-url");
+  $.ajax({     // ajax GET to get post likers
+    url: url + "likers",
+    success:function(data) {
+      $("#post_container").after(data);
+      $("#post_likers_Modal").modal();
+    }});
+
+});
+
+// Feature 2 Close and remove post likers modal
+$(document).on('click', '#post_likers_Modal_close_button', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  $('#post_likers_Modal').modal('hide');
+  $('#post_likers_Modal').on('hidden.bs.modal', function () {
+    $('#post_likers_Modal').remove();
+})
+
+
+
+});
+
+
+// Feature 1 Like post
+$(document).on('click', '#post_like_button', function(event) {
   event.preventDefault();
   var element = $(this);
   var url = $(element).parents("#post_container").attr("data-url");
   if ($("#logged_in").data("logged-in")== true) {
-
-      $.ajax({  // ajax GET to like post
-        url:url + "like",
-        success:function(data) {
-          status = data.status;
-          if (status == "unliked") {
-            $("#like_button").attr("class","btn btn-link");
-          }
-          else{
-            $("#like_button").attr("class","btn btn-primary");
-          }
-          $("#post_likes_count").html(data.likes_count);
-
-
+    $.ajax({  // ajax GET to like post
+      url:url + "like",
+      success:function(data) {
+        status = data.status;
+        if (status == "unliked") {
+          $("#post_like_button").attr("class","btn btn-link");
         }
-      })
+        else{
+          $("#post_like_button").attr("class","btn btn-primary");
+        }
+        $("#post_likes_count").html(data.likes_count);
+      }
+    })
   }
   else{
     $('#myModal').modal()
   }
 });
 
-
-// Feature 2
-$(document).on('click', '#dislike_button', function(event) {
+// Feature 2 Dislike post
+$(document).on('click', '#post_dislike_button', function(event) {
   event.preventDefault();
   var element = $(this);
+  var url = $(element).parents("#post_container").attr("data-url");
   if ($("#logged_in").data("logged-in")== true) {
-    if($(element).data("disliked")==false){
-      $.ajax({
-        url:window.location.href + "dislike",
-        success:function(data) {
-          $(element).html('<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> ' + data.dislikes_count);
-          $(element).data("disliked",true);
+    $.ajax({  // ajax GET to dislike post
+      url:url + "dislike",
+      success:function(data) {
+        status = data.status;
+        if (status == "undisliked") {
+          $("#post_dislike_button").attr("class","btn btn-link");
         }
-      })
-    }
-    else{
-      $.ajax({
-        url:window.location.href + "dislike",
-        data:{ undislike: "undislike" },
-        success:function(data) {
-          $(element).html('<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> ' + data.dislikes_count);
-          $(element).data("disliked",false);
+        else{
+          $("#post_dislike_button").attr("class","btn btn-primary");
         }
-      })
-    }
+        $("#post_dislikes_count").html(data.dislikes_count);
+      }
+    })
   }
   else{
     $('#myModal').modal()
   }
 });
+
+// // Feature 2
+// $(document).on('click', '#dislike_button', function(event) {
+//   event.preventDefault();
+//   var element = $(this);
+//   if ($("#logged_in").data("logged-in")== true) {
+//     if($(element).data("disliked")==false){
+//       $.ajax({
+//         url:window.location.href + "dislike",
+//         success:function(data) {
+//           $(element).html('<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> ' + data.dislikes_count);
+//           $(element).data("disliked",true);
+//         }
+//       })
+//     }
+//     else{
+//       $.ajax({
+//         url:window.location.href + "dislike",
+//         data:{ undislike: "undislike" },
+//         success:function(data) {
+//           $(element).html('<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> ' + data.dislikes_count);
+//           $(element).data("disliked",false);
+//         }
+//       })
+//     }
+//   }
+//   else{
+//     $('#myModal').modal()
+//   }
+// });
 
 // Feature 3 Open comment form buttons or modal
 $(document).on('click', '#comment_form_textfield', function(event) {

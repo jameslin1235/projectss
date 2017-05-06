@@ -1,0 +1,25 @@
+{% load widget_tweaks %}
+{% load custom_tags %}
+{% for profile in current_page %}
+<div class="media">
+  <div class="media-left">
+    <a href="{% url 'profiles:profile_activity' id=profile.id slug=profile.slug %}">
+      <img class="media-object post_likers_modal_profile_avatar" src="{{profile.avatar.url}}">
+    </a>
+  </div>
+  <div class="media-body">
+    <h4 class="media-heading"><a href="{% url 'profiles:profile_activity' id=profile.id slug=profile.slug %}">{{ profile.user.username }}</a></h4>
+
+  </div>
+  <div class="media-left media-middle">
+    <button type="button" class="btn btn-primary follow_button">{% if logged_in == True %}{{ follow_status|index:forloop.counter0 }}{% else %}{{ follow_button_text }}{% endif %}</button>
+
+  </div>
+</div>
+{% endfor %}
+
+{% if is_more %}
+<div class="post_seemore_container" data-pagenum={{pagenum}}>
+  <button type="button" class="btn btn-primary btn-lg btn-block" id="post_seemore_button">See More</button>
+</div>
+{% endif %}

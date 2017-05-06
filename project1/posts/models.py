@@ -10,6 +10,8 @@ from project1.project1.profiles.models import Profile
 class Post(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    likers = models.ManyToManyField(Profile,null=True,through='Like',related_name="liked_posts")
+    dislikers = models.ManyToManyField(Profile,null=True,through='Dislike',related_name="disliked_posts")
     title = models.CharField(
         max_length=100,
     )
@@ -18,7 +20,6 @@ class Post(models.Model):
     date_edited = models.DateTimeField(auto_now=True)
     date_published = models.DateTimeField(null=True)
     likes = models.IntegerField(default=0)
-    liked_by = models.ManyToManyField(Profile,null=True,through='Like')
     dislikes = models.IntegerField(default=0)
     is_draft = models.BooleanField(default=True)
     slug = models.SlugField()
@@ -39,3 +40,11 @@ class Like(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE,)
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE,)
     date_liked = models.DateTimeField()
+
+    class Meta:
+        ordering = ["-date_liked"]
+
+class Dislike(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE,)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE,)
+    date_disliked = models.DateTimeField()

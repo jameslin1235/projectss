@@ -1,0 +1,69 @@
+{% load widget_tweaks %}
+{% load custom_tags %}
+<div class="modal fade" id="post_likers_Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" id="post_likers_Modal_close_button"aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">{{post.likes}} people liked this post.</h4>
+      </div>
+      <div class="modal-body">
+        {% if no_likers == False %}
+        <div id="post_likers_modal_body" >
+          {% for profile in current_page %}
+          <div class="media">
+            <div class="media-left">
+              <a href="{% url 'profiles:profile_activity' id=profile.id slug=profile.slug %}">
+                <img class="media-object post_likers_modal_profile_avatar" src="{{profile.avatar.url}}">
+              </a>
+            </div>
+            <div class="media-body">
+              <h4 class="media-heading"><a href="{% url 'profiles:profile_activity' id=profile.id slug=profile.slug %}">{{ profile.user.username }}</a></h4>
+
+            </div>
+            <div class="media-left media-middle">
+              <button type="button" class="btn btn-primary follow_button">{% if logged_in == True %}{{ follow_status|index:forloop.counter0 }}{% else %}{{ follow_button_text }}{% endif %}</button>
+            </div>
+          </div>
+          {% endfor %}
+          {% if is_more %}
+          <div class="post_seemore_container" id="post_seemore_container" data-pagenum="{{ pagenum }}">
+            <button type="button" class="btn btn-primary btn-lg btn-block" id="post_seemore_button">See More</button>
+          </div>
+          {% endif %}
+        </div>
+
+
+        {% else %}
+        <div>
+          <p>0 people liked this post.</p>
+        </div>
+        {% endif %}
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% block javascript %}
+<script>
+
+// Feature 6 Go to nth page
+$(document).on('click', '#post_seemore_button', function() {
+  event.preventDefault();
+  var element = $(this);
+  var url = $("#post_container").attr("data-url");
+  var pagenum = Number($("#post_seemore_container").attr("data-pagenum")) + 1;
+
+  $.ajax({     // ajax GET to get nth page
+    url: url + "likers/" + "?page="+pagenum,
+    success:function(data) {
+      $("#post_seemore_container").remove();
+      $("#post_likers_modal_body").append(data);
+
+    }});
+  });
+
+  </script>
+  {% endblock %}

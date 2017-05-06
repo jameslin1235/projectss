@@ -41,3 +41,50 @@ body {
 #modal_comment_footer{
   text-align: center;
 }
+
+.profile_avatar{
+  width:40px;
+  height:40px;
+}
+
+/* post_detail */
+
+.post_title_container{
+  margin-top: 20px;
+}
+
+
+.post_author_container{
+  margin-top: 20px;
+}
+
+.post_likers_container{
+  margin-top: 20px;
+
+}
+
+.post_likers_button{
+  padding: 0;
+}
+
+.post_likers_modal_profile_avatar{
+  width:60px;
+  height:60px;
+}
+.post_content_container{
+  margin-top: 20px;
+}
+
+
+.post_date_container{
+  margin-top: 20px;
+}
+
+
+.post_buttons_container{
+  margin-top: 20px;
+}
+
+.post_seemore_container{
+  margin-top: 20px;
+}
