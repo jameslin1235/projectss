@@ -64,9 +64,24 @@ body {
   padding: 0;
 }
 
-.post_likers_profile_avatar{
+.post_likers_modal_profile_container{
+  margin: 0;
+  padding: 15px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.post_likers_modal_profile_container:last-child{
+  border-bottom: 0;
+}
+
+.post_likers_modal_profile_avatar{
   width:60px;
   height:60px;
+  border-radius: 2px;
+}
+
+.post_likers_more_container{
+  margin-top: 20px;
 }
 
 .post_content_container{
@@ -90,16 +105,20 @@ body {
   margin-left: 0;
 }
 
-.post_seemore_container{
-  margin-top: 20px;
-}
+/* following page */
 
-.post_likers_profile_container{
+.following_page_profile_container{
   margin: 0;
   padding: 15px 0;
   border-bottom: 1px solid #eee;
 }
 
-.post_likers_profile_container:last-child{
+.following_page_profile_container:last-child{
   border-bottom: 0;
+}
+
+.following_page_profile_avatar{
+  width:80px;
+  height:80px;
+  border-radius: 2px;
 }

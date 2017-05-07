@@ -20,8 +20,8 @@ def profile_activity(request,id,slug):
     title = "Activity"
     User = get_user_model()
     user = get_object_or_404(User, id = id)
-    posts_count = user.post_set.filter(is_draft = False).count()
-    drafts_count = user.post_set.filter(is_draft = True).count()
+    posts_count = user.posts.filter(is_draft = False).count()
+    drafts_count = user.posts.filter(is_draft = True).count()
 
     context = {
         "title":title,
@@ -47,13 +47,13 @@ def profile_follow(request,id,slug):
             else:
                 response_data = {}
                 if current_user.profile.following.filter(user=user).exists():
-                    # current_user.profile.follows.remove(user.profile)
+                    # current_user.profile.following.remove(user.profile)
                     Follow.objects.get(source=current_user.profile, dest=user.profile).delete()
 
                     response_data['message'] = "Follow"
                     return JsonResponse(response_data,safe=False)
                 else:
-                    # current_user.profile.follows.add(user.profile)
+                    # current_user.profile.following.add(user.profile)
                     Follow.objects.create(source=current_user.profile,dest=user.profile,date_followed=timezone.now())
                     response_data['message'] = "Followed"
                     return JsonResponse(response_data,safe=False)
@@ -94,33 +94,33 @@ def profile_posts(request,id,slug):
                 is_user = True
             else:
                 is_user = False
-                if current_user.profile.follows.filter(user= user).exists():
+                if current_user.profile.following.filter(user= user).exists():
                     top_follow_button_text = "Followed"
 
-        posts = user.post_set.filter(is_draft = False).order_by("-date_created")
+        posts = user.posts.filter(is_draft = False).order_by("-date_created")
         option = 1
         if request.GET.get('option'):
             option = int(request.GET.get('option'))
             if option == 1:
-                posts = user.post_set.filter(is_draft = False).order_by("-date_created")
+                posts = user.posts.filter(is_draft = False).order_by("-date_created")
 
             elif option == 2:
-                posts = user.post_set.filter(is_draft = False).order_by("-date_edited")
+                posts = user.posts.filter(is_draft = False).order_by("-date_edited")
 
             elif option == 3:
-                posts = user.post_set.filter(is_draft = False).order_by("-date_published")
+                posts = user.posts.filter(is_draft = False).order_by("-date_published")
 
             elif option == 4:
-                posts = user.post_set.filter(is_draft = False).order_by("-likes")
+                posts = user.posts.filter(is_draft = False).order_by("-likes")
 
             elif option == 5:
-                posts = user.post_set.filter(is_draft = False).order_by("-dislikes")
+                posts = user.posts.filter(is_draft = False).order_by("-dislikes")
 
             elif option == 6:
-                posts = user.post_set.filter(is_draft = False).annotate(num_comments=Count('comment')).order_by('-num_comments')
+                posts = user.posts.filter(is_draft = False).annotate(num_comments=Count('comment')).order_by('-num_comments')
 
         posts_count = posts.count()
-        drafts_count = user.post_set.filter(is_draft = True).count()
+        drafts_count = user.posts.filter(is_draft = True).count()
         following_count = user.profile.get_following_count()
         followers_count = user.profile.get_followers_count()
         no_posts = True
@@ -193,20 +193,20 @@ def profile_drafts(request,id,slug):
             logged_in = True
             if current_user == user:
                 is_user = True
-                drafts = user.post_set.filter(is_draft = True).order_by("-date_created")
+                drafts = user.posts.filter(is_draft = True).order_by("-date_created")
                 option = 1
 
                 if request.GET.get('option'):
                     option = int(request.GET.get('option'))
                     if option == 1:
-                        drafts = user.post_set.filter(is_draft = True).order_by("-date_created")
+                        drafts = user.posts.filter(is_draft = True).order_by("-date_created")
 
                     elif option == 2:
-                        drafts = user.post_set.filter(is_draft = True).order_by("-date_edited")
+                        drafts = user.posts.filter(is_draft = True).order_by("-date_edited")
 
 
                 drafts_count = drafts.count()
-                posts_count = user.post_set.filter(is_draft = False).count()
+                posts_count = user.posts.filter(is_draft = False).count()
                 no_drafts = True
                 if drafts_count != 0:
                     no_drafts = False
@@ -307,32 +307,40 @@ def profile_bookmarks(request,id,slug):
 def profile_following(request,id,slug):
     if request.method == "GET":
         User = get_user_model()
-        user = User.objects.get(id = id)
+        user = get_object_or_404(User, id=id)
         current_user = request.user
 
         # anonymous user
-        top_follow_button_text = "Follow"
-        bottom_follow_button_text = "Follow"
+        user_follow_button_text = "Follow"
+        follow_button_text = "Follow"
         logged_in = False
-        is_user = False
+        user_status = "anonymous"
 
         # logged-in user
         if current_user.is_authenticated:
             logged_in = True
             if current_user == user:
-                is_user = True
-                bottom_follow_button_text = "Followed"
+                user_status = "self"
             else:
-                is_user = False
-                if current_user.profile.follows.filter(user=user).exists():
-                    top_follow_button_text = "Followed"
+                user_status = "user"
 
-        profile_url = user.profile.get_absolute_url()
+        # # logged-in user
+        # if current_user.is_authenticated:
+        #     logged_in = True
+        #     if current_user == user:
+        #         is_user = True
+        #         bottom_follow_button_text = "Followed"
+        #     else:
+        #         is_user = False
+        #         if current_user.profile.following.filter(user=user).exists():
+        #             top_follow_button_text = "Followed"
+
+        user_profile_url = user.profile.get_absolute_url()
         current_url = request.path
-        following = user.profile.follows.order_by('dest')  # sort following by latest
+        following = user.profile.following.order_by('dest')  # sort following by latest
         following_count = following.count()
-        drafts_count = user.post_set.filter(is_draft = True).count()
-        posts_count = user.post_set.filter(is_draft = False).count()
+        drafts_count = user.posts.filter(is_draft = True).count()
+        posts_count = user.posts.filter(is_draft = False).count()
         followers_count = user.profile.get_followers_count()
         no_following = True
         if following_count != 0:
@@ -349,28 +357,38 @@ def profile_following(request,id,slug):
             # If page is out of range (e.g. 9999), deliver last page of results.
             current_page = paginator.page(paginator.num_pages)
 
+        # follow_status = []
+        # follow_me = []
+        # if current_user.is_authenticated:
+        #     if current_user != user:
+        #         for following in current_page:
+        #             if following.user == current_user:
+        #                 follow_me.append(True)
+        #             else:
+        #                 follow_me.append(False)
+        #             if current_user.profile.following.filter(user=following.user).exists():
+        #                 follow_status.append("Followed")
+        #             else:
+        #                 follow_status.append("Follow")
+
         follow_status = []
-        follow_me = []
-        if current_user.is_authenticated:
-            if current_user != user:
-                for following in current_page:
-                    if following.user == current_user:
-                        follow_me.append(True)
-                    else:
-                        follow_me.append(False)
-                    if current_user.profile.follows.filter(user=following.user).exists():
+        if user_status != "anonymous":
+            for profile in current_page:
+                if profile.user == current_user:
+                    follow_status.append("Self")
+                else:
+                    if current_user.profile.following.filter(user=profile.user).exists():
                         follow_status.append("Followed")
                     else:
                         follow_status.append("Follow")
-
         context = {
             "user":user,
             "current_user":current_user,
-            "top_follow_button_text":top_follow_button_text,
-            "bottom_follow_button_text":bottom_follow_button_text,
+            "user_follow_button_text":user_follow_button_text,
+            "follow_button_text":follow_button_text,
             "logged_in":logged_in,
-            "is_user":is_user,
-            "profile_url":profile_url,
+            "user_status":user_status,
+            "user_profile_url":user_profile_url,
             "following_count":following_count,
             "drafts_count":drafts_count,
             "posts_count":posts_count,
@@ -379,7 +397,7 @@ def profile_following(request,id,slug):
             "title":title,
             "current_page":current_page,
             "follow_status":follow_status,
-            "follow_me":follow_me,
+
         }
 
         if request.is_ajax():
@@ -408,15 +426,15 @@ def profile_followers(request,id,slug):
                 is_user = True
             else:
                 is_user = False
-                if current_user.profile.follows.filter(user=user).exists():
+                if current_user.profile.following.filter(user=user).exists():
                     top_follow_button_text = "Followed"
 
         profile_url = user.profile.get_absolute_url()
         current_url = request.path
-        followers = Profile.objects.filter(follows=user.profile).order_by('source')
+        followers = Profile.objects.filter(following=user.profile).order_by('source')
         followers_count = followers.count()
-        posts_count = user.post_set.filter(is_draft = False).count()
-        drafts_count = user.post_set.filter(is_draft = True).count()
+        posts_count = user.posts.filter(is_draft = False).count()
+        drafts_count = user.posts.filter(is_draft = True).count()
         following_count = user.profile.get_following_count()
         no_followers = True
         if followers_count != 0:
@@ -437,7 +455,7 @@ def profile_followers(request,id,slug):
         follow_me = []
         if current_user.is_authenticated:
             for follower in current_page:
-                if current_user.profile.follows.filter(user=follower.user).exists():
+                if current_user.profile.following.filter(user=follower.user).exists():
                     follow_status.append("Followed")
                 else:
                     follow_status.append("Follow")

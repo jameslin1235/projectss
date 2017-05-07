@@ -6,15 +6,36 @@
   </div>
 
 
-  {% if no_following == True %}
+  {% if no_following %}
   <div>
     <p>There are no following.</p>
   </div>
 
   {% else %}
   <div>
-    {% for following in current_page %}
-    <div class="media profile_following_container" data-url="{{following.get_absolute_url}}">
+    {% for profile in current_page %}
+    <div class="media following_page_profile_container" data-url="{{profile.get_absolute_url}}">
+      <div class="media-left">
+        <a href="{% url 'profiles:profile_activity' id=profile.id slug=profile.slug %}">
+          <img class="media-object following_page_profile_avatar" src="{{profile.avatar.url}}">
+        </a>
+      </div>
+      <div class="media-body">
+        <h4 class="media-heading"><a href="{% url 'profiles:profile_activity' id=profile.id slug=profile.slug %}">{{ profile.user.username }}</a></h4>
+        <div>
+          <span>{{profile.user.posts.count}} Posts</span>
+          <span>{{profile.user.comments.count}} Comments</span>
+          <span class="following_page_followers_count">{{profile.followers.count}} Followers</span>
+          <span>{{profile.following.count}} Following</span>
+        </div>
+      </div>
+      <div class="media-left media-middle">
+        {% if logged_in == False %}<button type="button" class="btn btn-primary following_page_follow_button">{{ follow_button_text }}</button>{% elif logged_in and follow_status|index:forloop.counter0 != "Self"%}<button type="button" class="btn btn-primary following_page_follow_button">{{ follow_status|index:forloop.counter0 }}</button>{% endif %}
+      </div>
+    </div>
+
+
+    <!-- <div class="media profile_following_container" data-url="{{following.get_absolute_url}}">
       <div class="media-left">
         <a href="{{following.get_absolute_url}}">
           <img class="media-object" src="{{following.avatar.url}}" alt="...">
@@ -32,7 +53,7 @@
           <button type="button" {% if follow_me|index:forloop.counter0 == True %}disabled="disabled"{% endif %} class="btn btn-primary follow_button">{% if logged_in == True and current_user != user %}{{ follow_status|index:forloop.counter0 }}{% else %}{{ bottom_follow_button_text }}{% endif %}</button>
         </div>
       </div>
-    </div>
+    </div> -->
     {% endfor %}
   </div>
 
