@@ -311,8 +311,6 @@ def profile_following(request,id,slug):
         current_user = request.user
 
         # anonymous user
-        user_follow_button_text = "Follow"
-        follow_button_text = "Follow"
         logged_in = False
         user_status = "anonymous"
 
@@ -324,23 +322,12 @@ def profile_following(request,id,slug):
             else:
                 user_status = "user"
 
-        # # logged-in user
-        # if current_user.is_authenticated:
-        #     logged_in = True
-        #     if current_user == user:
-        #         is_user = True
-        #         bottom_follow_button_text = "Followed"
-        #     else:
-        #         is_user = False
-        #         if current_user.profile.following.filter(user=user).exists():
-        #             top_follow_button_text = "Followed"
-
         user_profile_url = user.profile.get_absolute_url()
         current_url = request.path
         following = user.profile.following.order_by('dest')  # sort following by latest
         following_count = following.count()
-        drafts_count = user.posts.filter(is_draft = True).count()
         posts_count = user.posts.filter(is_draft = False).count()
+        drafts_count = user.posts.filter(is_draft = True).count()
         followers_count = user.profile.get_followers_count()
         no_following = True
         if following_count != 0:
@@ -357,35 +344,37 @@ def profile_following(request,id,slug):
             # If page is out of range (e.g. 9999), deliver last page of results.
             current_page = paginator.page(paginator.num_pages)
 
-        # follow_status = []
-        # follow_me = []
-        # if current_user.is_authenticated:
-        #     if current_user != user:
-        #         for following in current_page:
-        #             if following.user == current_user:
-        #                 follow_me.append(True)
-        #             else:
-        #                 follow_me.append(False)
-        #             if current_user.profile.following.filter(user=following.user).exists():
-        #                 follow_status.append("Followed")
-        #             else:
-        #                 follow_status.append("Follow")
+
+        user_follow_status = "Follow"
+        user_message_status = "Message"
+        if user_status == "self":
+            user_follow_status = "self"
+            user_message_status = "self"
+        elif user_status == "user":
+            if current_user.profile.following.filter(user=user).exists():
+                user_follow_status = "Followed"
+            else:
+                user_follow_status = "Follow"
+            user_message_status = "Message"
 
         follow_status = []
-        if user_status != "anonymous":
-            for profile in current_page:
-                if profile.user == current_user:
-                    follow_status.append("Self")
+        for profile in current_page:
+            if user_status == "anonymous":
+                follow_status.append("Follow")
+            elif user_status == "self":
+                follow_status.append("Followed")
+            else:
+                if current_user == profile.user:
+                    follow_status.append("")
                 else:
                     if current_user.profile.following.filter(user=profile.user).exists():
                         follow_status.append("Followed")
                     else:
                         follow_status.append("Follow")
+
         context = {
             "user":user,
             "current_user":current_user,
-            "user_follow_button_text":user_follow_button_text,
-            "follow_button_text":follow_button_text,
             "logged_in":logged_in,
             "user_status":user_status,
             "user_profile_url":user_profile_url,
@@ -396,6 +385,8 @@ def profile_following(request,id,slug):
             "no_following":no_following,
             "title":title,
             "current_page":current_page,
+            "user_follow_status":user_follow_status,
+            "user_message_status":user_message_status,
             "follow_status":follow_status,
 
         }
@@ -410,28 +401,35 @@ def profile_following(request,id,slug):
 def profile_followers(request,id,slug):
     if request.method == "GET":
         User = get_user_model()
-        user = User.objects.get(id = id)
+        user = get_object_or_404(User, id=id)
         current_user = request.user
 
         # anonymous user
-        top_follow_button_text = "Follow"
-        bottom_follow_button_text = "Follow"
         logged_in = False
-        is_user = False
+        user_status = "anonymous"
 
         # logged-in user
         if current_user.is_authenticated:
             logged_in = True
             if current_user == user:
-                is_user = True
+                user_status = "self"
             else:
-                is_user = False
-                if current_user.profile.following.filter(user=user).exists():
-                    top_follow_button_text = "Followed"
+                user_status = "user"
+        # # logged-in user
+        # if current_user.is_authenticated:
+        #     logged_in = True
+        #     if current_user == user:
+        #         is_user = True
+        #     else:
+        #         is_user = False
+        #         if current_user.profile.following.filter(user=user).exists():
+        #             top_follow_button_text = "Followed"
 
-        profile_url = user.profile.get_absolute_url()
+        user_profile_url = user.profile.get_absolute_url()
         current_url = request.path
-        followers = Profile.objects.filter(following=user.profile).order_by('source')
+        followers = user.profile.followers.order_by('source')
+
+        # followers = Profile.objects.filter(following=user.profile).order_by('source')
         followers_count = followers.count()
         posts_count = user.posts.filter(is_draft = False).count()
         drafts_count = user.posts.filter(is_draft = True).count()
@@ -451,37 +449,56 @@ def profile_followers(request,id,slug):
             # If page is out of range (e.g. 9999), deliver last page of results.
             current_page = paginator.page(paginator.num_pages)
 
+
+        user_follow_status = "Follow"
+        user_message_status = "Message"
+        if user_status == "self":
+            user_follow_status = "self"
+            user_message_status = "self"
+        elif user_status == "user":
+            if current_user.profile.following.filter(user=user).exists():
+                user_follow_status = "Followed"
+            else:
+                user_follow_status = "Follow"
+            user_message_status = "Message"
+
         follow_status = []
-        follow_me = []
-        if current_user.is_authenticated:
-            for follower in current_page:
-                if current_user.profile.following.filter(user=follower.user).exists():
+        for profile in current_page:
+            if user_status == "anonymous":
+                follow_status.append("Follow")
+            elif user_status == "self":
+                if current_user.profile.following.filter(user=profile.user).exists():
                     follow_status.append("Followed")
                 else:
                     follow_status.append("Follow")
-                if current_user != user:
-                    if follower.user == current_user:
-                        follow_me.append(True)
+            else:
+                if current_user == profile.user:
+                    follow_status.append("")
+                else:
+                    if current_user.profile.following.filter(user=profile.user).exists():
+                        follow_status.append("Followed")
                     else:
-                        follow_me.append(False)
+                        follow_status.append("Follow")
+
 
         context = {
             "user":user,
             "current_user":current_user,
-            "top_follow_button_text":top_follow_button_text,
-            "bottom_follow_button_text":bottom_follow_button_text,
+
             "logged_in":logged_in,
-            "is_user":is_user,
-            "profile_url":profile_url,
-            "following_count":following_count,
+            "user_status":user_status,
+            "user_profile_url":user_profile_url,
             "followers_count":followers_count,
+
             "drafts_count":drafts_count,
             "posts_count":posts_count,
+            "following_count":following_count,
             "no_followers":no_followers,
             "title":title,
             "current_page":current_page,
+            "user_follow_status":user_follow_status,
+            "user_message_status":user_message_status,
             "follow_status":follow_status,
-            "follow_me":follow_me,
         }
 
         if request.is_ajax():

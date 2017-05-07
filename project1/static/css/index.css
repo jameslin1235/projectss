@@ -107,17 +107,17 @@ body {
 
 /* following page */
 
-.following_page_profile_container{
+.list_item{
   margin: 0;
   padding: 15px 0;
   border-bottom: 1px solid #eee;
 }
 
-.following_page_profile_container:last-child{
+.list_item:last-child{
   border-bottom: 0;
 }
 
-.following_page_profile_avatar{
+.list_item_avatar{
   width:80px;
   height:80px;
   border-radius: 2px;

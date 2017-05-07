@@ -2,13 +2,12 @@
 {% load widget_tweaks %}
 
 {% block body %}
-<section id="profile_base" data-profile-url="{{profile_url}}">
+<section id="profile_base" data-user-profile-url="{{user_profile_url}}">
   <div class="container">
     <div class="row" >
       <div class="col-md-12">
         <div class="section">
           <div class="row">
-
             <div class="col-md-3">
               <div>
                 <img src="{{ user.profile.avatar.url }}" class="img-responsive img-thumbnail" alt="Responsive image" width="168px" height="168px">
@@ -45,17 +44,14 @@
               </div>
               {% endif %}
 
-              {% if is_user == False %}
+
               <div >
-                <button type="button" class="btn btn-primary" id="follow_button">{{ top_follow_button_text }}</button>
+                {% if user_follow_status != "self" %}<button type="button" class="btn btn-primary user_follow_button">{{ user_follow_status }}</button>{% endif %}
+
+                {% if user_message_status != "self" %}<button type="button" class="btn btn-primary">{{ user_message_status }}</button>{% endif %}
               </div>
-              <div >
-                <button type="button" class="btn btn-primary" id="message_button">Message</button>
-              </div>
-              {% endif %}
+
             </div>
-
-
           </div>
         </div>
       </div>
