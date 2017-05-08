@@ -6,21 +6,21 @@
 {% block vertical_nav %}
 <ul class="nav nav-pills nav-stacked">
   <li role="presentation"><a id="follow_url" href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug  %}" role="tab" >Activity</a></li>
-  <li role="presentation" class="active"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" role="tab" >Posts <span id="profile_nav_posts_count">{{posts_count}}</span></a></li>
-  {% if is_user %}<li role="presentation"><a href="{% url 'profiles:profile_drafts' id=user.id slug=user.profile.slug  %}" role="tab" >Drafts <span id="profile_nav_drafts_count">{{drafts_count}}</span></a></li>{% endif %}
+  <li role="presentation" class="active"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" role="tab" >Posts <span class="profile_sidebar_posts_count">{{posts_count}}</span></a></li>
+  {% if user_status == "self" %}<li role="presentation"><a href="{% url 'profiles:profile_drafts' id=user.id slug=user.profile.slug  %}" role="tab" >Drafts <span class="profile_sidebar_drafts_count">{{drafts_count}}</span></a></li>{% endif %}
   <li role="presentation"><a href="{% url 'profiles:profile_comments' id=user.id slug=user.profile.slug  %}" role="tab">Comments</a></li>
-  <li role="presentation"><a href="{% url 'profiles:profile_bookmarks' id=user.id slug=user.profile.slug  %}" role="tab">Bookmark</a></li>
-  <li role="presentation"><a href="{% url 'profiles:profile_following' id=user.id slug=user.profile.slug  %}" role="tab">Following {{following_count}}</a></li>
-  <li role="presentation"><a href="{% url 'profiles:profile_followers' id=user.id slug=user.profile.slug  %}" role="tab" >Followers {{followers_count}}</a></li>
+  <li role="presentation"><a href="{% url 'profiles:profile_bookmarks' id=user.id slug=user.profile.slug  %}" role="tab">Bookmarks</a></li>
+  <li role="presentation"><a href="{% url 'profiles:profile_following' id=user.id slug=user.profile.slug  %}" role="tab">Following <span class="profile_sidebar_following_count">{{following_count}}</span></a></li>
+  <li role="presentation"><a href="{% url 'profiles:profile_followers' id=user.id slug=user.profile.slug  %}" role="tab">Followers <span class="profile_sidebar_followers_count">{{followers_count}}</span></a></li>
 </ul>
 {% endblock vertical_nav %}
 
 {% block content %}
-{% include "login_modal.html" %}
 {% include "profile_posts_page.html" %}
 {% endblock content %}
 
 {% block javascript %}
+{{ block.super }}
 <script>
 
 // Feature 1

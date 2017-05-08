@@ -28,3 +28,18 @@ function get_login_modal(){
     var element = $(this);
     $(element).remove();
   });
+
+
+  // Feature 1 Get nth page of paginated results
+  $(document).on('click', '.page_button', function() {
+    event.preventDefault();
+    var element = $(this);
+    var url = $(element).attr("href");
+
+    $.ajax({     // ajax GET to get nth page
+      url: url,
+      success:function(data) {
+        $(".list_page").replaceWith(data);
+        // $("#profile_posts_select").val(option);
+      }});
+    });

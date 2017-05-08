@@ -28,7 +28,45 @@
 
   {% else %}
   <div>
+
     {% for post in current_page %}
+    <div class="list_item">
+      <div class="list_item_title">
+        <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+    </div>
+    <div class="list_item_meta">
+      <div class="media">
+      <div class="media-left">
+      <a href="{% url 'profiles:profile_activity' id=profile.id slug=profile.slug %}">
+        <img class="media-object list_item_avatar" src="{{profile.avatar.url}}">
+      </a>
+      </div>
+      <div class="media-body">
+      <h4 class="media-heading"><a href="{% url 'profiles:profile_activity' id=profile.id slug=profile.slug %}">{{ profile.user.username }}</a></h4>
+      <!-- <div>
+      <span>{{profile.user.posts.count}} Posts</span>
+      <span>{{profile.user.comments.count}} Comments</span>
+      <span class="list_item_followers_count">{{profile.followers.count}} Followers</span>
+      <span>{{profile.following.count}} Following</span>
+      </div> -->
+      </div>
+
+      </div>
+    </div>
+    <div class="list_item_content">
+      <div><p>{{ post.content }}</p><div>
+      <div><a>published {{ post.date_published }}</a></div>
+    </div>
+    <div class="list_item_actions">
+      <button type="button" class="btn btn-primary like_button"  {% if is_user == True %}disabled="disabled"{% endif %} data-liked="False"}><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> {{ post.likes }}</button>
+      <button type="button" class="btn btn-link dislike_button"  {% if is_user == True %}disabled="disabled"{% endif %} data-disliked="False"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> {{ post.dislikes }}</button>
+      <button type="button" class="btn btn-link comment_button" id="comment_button_{{post.id}}" ><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> {{ comments_count|index:forloop.counter0 }}</button>
+      <button type="button" class="btn btn-link" ><span class="glyphicon glyphicon-share" aria-hidden="true"></span> Share</button>
+      <button type="button" class="btn btn-link bookmark_button"><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> Bookmark</button>
+    </div>
+</div>
+
+
     <div class="thumbnail thumbnail_container" data-id="{{post.id}}" data-url="{{post.get_absolute_url}}" >
       <div class="caption">
         <p><a href="{{ post.category.get_absolute_url }}">{{ post.category }}</a></p>

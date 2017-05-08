@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% load widget_tweaks %}
 
 {% block body %}
@@ -86,3 +87,8 @@
 
 </section>
 {% endblock body %}
+
+{% block javascript %}
+<script src="{% static "js/profile_base.js" %}"></script>
+
+{% endblock javascript %}

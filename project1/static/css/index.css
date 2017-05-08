@@ -107,11 +107,11 @@ body {
 
 /* following page */
 
-.list_item{
+/*.list_item{
   margin: 0;
   padding: 15px 0;
   border-bottom: 1px solid #eee;
-}
+}*/
 
 .list_item:last-child{
   border-bottom: 0;
@@ -121,4 +121,17 @@ body {
   width:80px;
   height:80px;
   border-radius: 2px;
+}
+
+
+.list_page{
+
+}
+
+.list_header{
+
+}
+.list_item{
+  padding: 15px 0;
+  border-bottom: 1px solid #eee;
 }

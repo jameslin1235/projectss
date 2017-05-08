@@ -19,123 +19,47 @@
 {% endblock content %}
 
 {% block javascript %}
+{{ block.super }}
 <script>
-
-// Feature 1 Get nth page of paginated following
-$(document).on('click', '.page_button', function() {
+// Feature 1 list_item_follow_buttons
+$(document).on('click','.list_item_follow_button',function(){
   event.preventDefault();
   var element = $(this);
-  var url = $(element).attr("href");
-
-  $.ajax({     // ajax GET to get nth page
-    url: url,
-    success:function(data) {
-      $(".list_page").replaceWith(data);
-      // $("#profile_posts_select").val(option);
-    }});
-  });
-
-
-  // Feature 1 list_item_follow_buttons
-  $(document).on('click','.list_item_follow_button',function(){
-    event.preventDefault();
-    var element = $(this);
-    var url= $(element).parents(".list_item").attr("data-url");
-    var user_profile_url = $(element).parents("#profile_base").attr("data-user-profile-url");
-    var user_status = $("#user_status").attr("data-user-status");
-    if (user_status == "anonymous") {
-      get_login_modal();
-    }
-    else if (user_status == "self"){
-      $.ajax({
-        url: url + "follow",  // ajax GET to follow or unfollow
-        success:function(data) {
-          $(element).html(data.message);
-          $.ajax({  // ajax GET to get list item profile followers count
-            url: url + "followerscount",
-            success:function(data) {
-              $(element).parents(".list_item").find(".list_item_followers_count").html(data.profile_followers_count + " Followers");
-              $.ajax({  // ajax GET to get profile following count
-                url: user_profile_url + "followingcount",
-                success:function(data) {
-                  $(element).parents("#profile_base").find(".list_page_following_count").html(data.profile_following_count);
-                  $(element).parents("#profile_base").find(".profile_sidebar_following_count").html(data.profile_following_count);
-                }});
+  var url= $(element).parents(".list_item").attr("data-url");
+  var user_profile_url = $(element).parents("#profile_base").attr("data-user-profile-url");
+  var user_status = $("#user_status").attr("data-user-status");
+  if (user_status == "anonymous") {
+    get_login_modal();
+  }
+  else if (user_status == "self"){
+    $.ajax({
+      url: url + "follow",  // ajax GET to follow or unfollow
+      success:function(data) {
+        $(element).html(data.message);
+        $.ajax({  // ajax GET to get list item profile followers count
+          url: url + "followerscount",
+          success:function(data) {
+            $(element).parents(".list_item").find(".list_item_followers_count").html(data.profile_followers_count + " Followers");
+            $.ajax({  // ajax GET to get profile following count
+              url: user_profile_url + "followingcount",
+              success:function(data) {
+                $(element).parents("#profile_base").find(".list_page_header").html(data.profile_following_count);
+                $(element).parents("#profile_base").find(".profile_sidebar_following_count").html(data.profile_following_count);
               }});
             }});
-          }
-          else{
-            $.ajax({
-              url: url + "follow",  // ajax GET to follow or unfollow
-              success:function(data) {
-                $(element).html(data.message);
-                $.ajax({  // ajax GET to get list item profile followers count
-                  url: url + "followerscount",
-                  success:function(data) {
-                    $(element).parents(".list_item").find(".list_item_followers_count").html(data.profile_followers_count + " Followers");
-                    $.ajax({  // ajax GET to get profile following count
-                      url: user_profile_url + "followingcount",
-                      success:function(data) {
-                        $(element).parents("#profile_base").find(".profile_sidebar_following_count").html(data.profile_following_count);
-                      }});
-                  }});}});
-                }
-              });
-
-              // Feature 2 user_follow_button
-              $(document).on('click','.user_follow_button',function(){
-                event.preventDefault();
-                var element = $(this);
-                var user_profile_url= $(element).parents("#profile_base").attr("data-user-profile-url");
-                var user_status = $("#user_status").attr("data-user-status");
-
-                if (user_status == "anonymous") {
-                  get_login_modal();
-                }
-                else if (user_status == "user"){
-                  $.ajax({
-                    url: user_profile_url + "follow",
-                    success:function(data) {
-                      $(element).html(data.message);
-                      $.ajax({  // ajax GET to get profile followers count
-                        url: user_profile_url + "followerscount",
-                        success:function(data) {
-                          $(element).parents("#profile_base").find(".profile_sidebar_followers_count").html(data.profile_followers_count);
-                        }});
-                      }});
-                    }
-                  });
-
-
-                  // Feature 3 follow buttons mouseenter effect
-                  $(document).on('mouseenter','.user_follow_button, .list_item_follow_button',function(){
-                    event.preventDefault();
-                    var element = $(this);
-                    if ($("#logged_in").data("logged-in")== true){
-                      if ($(element).html() == "Followed") {
-                        $(element).html("Unfollow");
-                      }
-                    }
-                    else{
-                      event.preventDefault();
-                    }
-                  });
-
-                  // Feature 4 follow buttons mouseleave effect
-                  $(document).on('mouseleave','.user_follow_button, .list_item_follow_button',function(){
-                    event.preventDefault();
-                    var element = $(this);
-                    if ($("#logged_in").data("logged-in")== true){
-                      if ($(element).html() == "Unfollow") {
-                        $(element).html("Followed");
-                      }
-                    }
-                    else{
-                      event.preventDefault();
-                    }
-                  });
-
-
-
-                  </script>
-                  {% endblock javascript %}
+          }});
+        }
+        else{
+          $.ajax({
+            url: url + "follow",  // ajax GET to follow or unfollow
+            success:function(data) {
+              $(element).html(data.message);
+              $.ajax({  // ajax GET to get list item profile followers count
+                url: url + "followerscount",
+                success:function(data) {
+                  $(element).parents(".list_item").find(".list_item_followers_count").html(data.profile_followers_count + " Followers");
+                }});}});
+              }
+            });
+            </script>
+            {% endblock javascript %}

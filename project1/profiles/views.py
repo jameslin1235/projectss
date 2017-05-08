@@ -142,7 +142,7 @@ def profile_posts(request,id,slug):
 
         comments_count = []
         for post in current_page.object_list:
-            comments_count.append(post.comment_set.all().count())
+            comments_count.append(post.comments.all().count())
         form = CommentForm()
         current_url = request.path
 
