@@ -1,0 +1,71 @@
+{% load widget_tweaks %}
+{% load custom_tags %}
+<div class="collapse ContentItem_comments">
+  <div class="ContentItem_comments_topbar">
+    <div class="ContentItem_comments_topbar_meta">
+      <h2 class="ContentItem_comments_topbar_title">{{ comments_count }} Comments</h2>
+
+      <div class="ContentItem_comments_topbar_button">
+        <button type="button" class="btn btn-plain">Link</button>
+      </div>
+    </div>
+  </div>
+
+  <div >
+    {% for comment in current_page %}
+    <div class="ContentItem_CommentItem">
+      <div class="CommentItem-meta">
+        <span class="CommnetItem_avatar">
+          <a href="{% url 'profiles:profile_activity' id=comment.user.profile.id slug=comment.user.profile.slug %}">
+            <img src="{{comment.user.profile.avatar.url}}">
+          </a>
+        </span>
+        <span><a href="{% url 'profiles:profile_activity' id=comment.user.profile.id slug=comment.user.profile.slug %}">{{comment.user.username }}</a></span>
+        <span class="CommentItem-time">{{ comment.date_created|timesince }} ago</span>
+
+      </div>
+      <div class="CommentItem-content" >
+        <p>{{comment.content}}</p>
+      </div>
+      <div class="CommentItem-actions">
+        <button type="button" class="btn vote_button like_button {% if user_posts_like_status|index:forloop.counter0 == "Liked" %}active{% endif %}"  {% if disabled_buttons_status|index:forloop.counter0 == "Disabled" %}disabled="disabled"{% endif %} }><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> <span class="ContentItem_actions_likers_count">{{ post.likes }}</span></button>
+    </div>
+  </div>
+    {% endfor %}
+    <div class="Pagination">
+    </div>
+  </div>
+
+<div class="ContentItem_comments_form">
+  <form method="post">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger" role="alert">
+      {{ form.non_field_errors }}
+    </div>
+    {% endif %}
+
+    <!-- Button trigger modal -->
+    <div class="form-group" >
+      <textarea class="form-control comment_form_textfield" rows="3" placeholder="Leave a commment." required></textarea>
+
+      {% if form.content.errors %}
+      <div class="alert alert-danger" role="alert">
+        {{ form.content.errors }}
+      </div>
+      {% endif %}
+      {% if form.content.help_text %}
+      <p class="help-block">{{ form.content.help_text|safe }}</p>
+      {% endif %}
+    </div>
+
+    <div class="collapse comment_form_collapse">
+      <button class="btn btn-primary comment_form_close_button">Cancel</button>
+      <button type="submit" class="btn btn-primary" >{{ comment_button_text }}</button>
+    </div>
+
+  </form>
+</div>
+
+</div>

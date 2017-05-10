@@ -204,6 +204,55 @@ def post_publish(request,id,slug):
 def post_bookmark(request,id,slug):
     return render(request,"post_list.html",context)
 
+def post_comments(request,id,slug):
+
+    post = get_object_or_404(Post, id=id)
+    user = post.user
+    current_user = request.user
+    if request.method == "GET" and request.is_ajax():
+        if post.is_draft == True:
+            raise PermissionDenied
+        
+        # anonymous user
+        logged_in = False
+        user_status = "anonymous"
+
+        # logged-in user
+        if current_user.is_authenticated:
+            logged_in = True
+            if current_user == user:
+                user_status = "self"
+            else:
+                user_status = "user"
+
+        comments = post.comments.all()
+        comments_count = post.comments.count()
+        paginator = Paginator(comments, 10) # Show 25 contacts per page
+        page = request.GET.get('page')
+        try:
+            current_page = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            current_page = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            current_page = paginator.page(paginator.num_pages)
+
+        context = {
+            "post":post,
+            "logged_in":logged_in,
+            "comments_count":comments_count,
+            "user_status":user_status,
+            "current_page":current_page,
+
+        }
+
+        template = "post_comments_collapse.html"
+        # if page is not None:
+        #     template = "post_comments_modal_page.html"
+        return render(request,template,context)
+
+
 @login_required
 def post_like(request,id,slug):
     post = get_object_or_404(Post, id=id)
@@ -219,12 +268,13 @@ def post_like(request,id,slug):
             # post.likes -= 1
             post.like_set.filter(profile=current_user.profile).delete()
             post.likes = post.likers.count()
-            response_data['status'] = "unliked"
+            # response_data['status'] = "unliked"
         else:
             # post.likes += 1
             Like.objects.create(post=post, profile=current_user.profile, date_liked=timezone.now())
             post.likes = post.likers.count()
-            response_data['status'] = "liked"
+            # response_data['status'] = "liked"
+
         post.save()
         response_data['likes_count'] = post.likes
         return JsonResponse(response_data,safe=False)

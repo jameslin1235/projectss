@@ -5,7 +5,6 @@
 
 {% block vertical_nav %}
 <ul class="nav nav-pills nav-stacked">
-  <li role="presentation"><a id="follow_url" href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug  %}" role="tab" >Activity</a></li>
   <li role="presentation" class="active"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" role="tab" >Posts <span class="profile_sidebar_posts_count">{{posts_count}}</span></a></li>
   {% if user_status == "self" %}<li role="presentation"><a href="{% url 'profiles:profile_drafts' id=user.id slug=user.profile.slug  %}" role="tab" >Drafts <span class="profile_sidebar_drafts_count">{{drafts_count}}</span></a></li>{% endif %}
   <li role="presentation"><a href="{% url 'profiles:profile_comments' id=user.id slug=user.profile.slug  %}" role="tab">Comments</a></li>
@@ -23,68 +22,6 @@
 {{ block.super }}
 <script>
 
-// Feature 1
-$(document).on('click', '.like_button', function(event) {
-  event.preventDefault();
-  var element = $(this);
-  var url = $(element).parents(".thumbnail_container").attr("data-url");
-  if ($("#logged_in").data("logged-in")== true) {
-    if($(element).data("liked")==false){
-      $.ajax({
-        url:url + "like",
-        success:function(data) {
-          $(element).html('<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> ' + data.likes_count);
-          $(element).data("liked",true);
-        }
-      })
-    }
-    else{
-      $.ajax({
-        url:url + "like",
-        data:{ unlike: "unlike" },
-        success:function(data) {
-          $(element).html('<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> ' + data.likes_count);
-          $(element).data("liked",false);
-        }
-      })
-    }
-  }
-  else{
-    $('#myModal').modal()
-  }
-});
-
-// Feature 2
-$(document).on('click', '.dislike_button', function(event) {
-  event.preventDefault();
-  var element = $(this);
-  var url = $(element).parents(".thumbnail_container").attr("data-url");
-  if ($("#logged_in").data("logged-in")== true) {
-    if($(element).data("disliked")==false){
-      $.ajax({
-        url:url + "dislike",
-        success:function(data) {
-          $(element).html('<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> ' + data.dislikes_count);
-          $(element).data("disliked",true);
-        }
-      })
-    }
-    else{
-      $.ajax({
-        url:url + "dislike",
-        data:{ undislike: "undislike" },
-        success:function(data) {
-          $(element).html('<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> ' + data.dislikes_count);
-          $(element).data("disliked",false);
-        }
-      })
-    }
-
-  }
-  else{
-    $('#myModal').modal()
-  }
-});
 
 // Feature 3 Open/close comments page
 $(document).on('click', '.comment_button', function(event) {
@@ -229,50 +166,9 @@ $(document).on('click', '.comment_button', function(event) {
               }});
             });
 
-            // Feature 13 Follow/Unfollow button
-            $(document).on('click','#follow_button',function(){
-              event.preventDefault();
-              var element = $(this);
-              var url= $("#follow_url").attr("href");
-              if ($("#logged_in").data("logged-in")== true) {
-                $.ajax({     // send get request to get nth page
-                  url: url + "follow",
-                  success:function(data) {
-                    $(element).html(data.message);
-                  }});
-              }
-              else{
-                $('#myModal').modal();
-              }
-            })
 
-            // Feature 14 Follow/unfollow mouseenter button
-            $(document).on('mouseenter','#follow_button',function(){
-              event.preventDefault();
-              var element = $(this);
-              if ($("#logged_in").data("logged-in")== true){
-                if ($(element).html() == "Followed") {
-                  $(element).html("Unfollow");
-                }
-              }
-              else{
-                event.preventDefault();
-              }
-            });
 
-            // Feature 15 Follow/unfollow mouseleave button
-              $(document).on('mouseleave','#follow_button',function(){
-                event.preventDefault();
-                var element = $(this);
-                if ($("#logged_in").data("logged-in")== true){
-                  if ($(element).html() == "Unfollow") {
-                    $(element).html("Followed");
-                  }
-                }
-                else{
-                  event.preventDefault();
-                }
-            });
+
 
           </script>
           {% endblock javascript %}

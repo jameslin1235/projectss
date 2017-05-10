@@ -83,21 +83,18 @@ def profile_posts(request,id,slug):
         user = get_object_or_404(User, id = id)
         current_user = request.user
         # anonymous user
-        top_follow_button_text = "Follow"
         logged_in = False
-        is_user = False
+        user_status = "anonymous"
 
         # logged-in user
         if current_user.is_authenticated:
             logged_in = True
             if current_user == user:
-                is_user = True
+                user_status = "self"
             else:
-                is_user = False
-                if current_user.profile.following.filter(user= user).exists():
-                    top_follow_button_text = "Followed"
+                user_status = "user"
 
-        posts = user.posts.filter(is_draft = False).order_by("-date_created")
+        posts = user.posts.filter(is_draft = False).order_by("-date_published")
         option = 1
         if request.GET.get('option'):
             option = int(request.GET.get('option'))
@@ -119,6 +116,8 @@ def profile_posts(request,id,slug):
             elif option == 6:
                 posts = user.posts.filter(is_draft = False).annotate(num_comments=Count('comment')).order_by('-num_comments')
 
+        user_profile_url = user.profile.get_absolute_url()
+        current_url = request.path
         posts_count = posts.count()
         drafts_count = user.posts.filter(is_draft = True).count()
         following_count = user.profile.get_following_count()
@@ -141,16 +140,55 @@ def profile_posts(request,id,slug):
             current_page = paginator.page(paginator.num_pages)
 
         comments_count = []
-        for post in current_page.object_list:
-            comments_count.append(post.comments.all().count())
         form = CommentForm()
-        current_url = request.path
+        user_follow_status = "Follow"
+        user_message_status = "Message"
+        user_posts_like_status = []
+        user_posts_dislike_status = []
+        disabled_buttons_status = []
 
+        if user_status == "self":
+            user_follow_status = "self"
+            user_message_status = "self"
+        elif user_status == "user":
+            if current_user.profile.following.filter(user=user).exists():
+                user_follow_status = "Followed"
+            else:
+                user_follow_status = "Follow"
+            user_message_status = "Message"
+
+        for post in current_page.object_list:
+            if user_status == "anonymous":
+                user_posts_like_status.append("No")
+                user_posts_dislike_status.append("No")
+                disabled_buttons_status.append("Enabled")
+            elif user_status =="self":
+                user_posts_like_status.append("No")
+                user_posts_dislike_status.append("No")
+                disabled_buttons_status.append("Disabled")
+            elif user_status == "user":
+                if post.likers.filter(user=current_user).exists():
+                    user_posts_like_status.append("Liked")
+                else:
+                    user_posts_like_status.append("No")
+
+                if post.dislikers.filter(user=current_user).exists():
+                    user_posts_dislike_status.append("Disliked")
+                else:
+                    user_posts_dislike_status.append("No")
+                
+                disabled_buttons_status.append("Enabled")
+            comments_count.append(post.comments.all().count())
+        print(user_posts_like_status)
+        print(user_posts_dislike_status)
+        print(disabled_buttons_status)
         context = {
             "user":user,
-            "top_follow_button_text":top_follow_button_text,
+            "current_user":current_user,
             "logged_in":logged_in,
-            "is_user":is_user,
+            "user_status":user_status,
+            "user_profile_url":user_profile_url,
+            "current_url":current_url,
             "option":option,
             "posts_count":posts_count,
             "drafts_count":drafts_count,
@@ -163,7 +201,11 @@ def profile_posts(request,id,slug):
             "current_page":current_page,
             "comments_count":comments_count,
             "form":form,
-            "current_url":current_url,
+            "user_follow_status":user_follow_status,
+            "user_message_status":user_message_status,
+            "user_posts_like_status":user_posts_like_status,
+            "user_posts_dislike_status":user_posts_dislike_status,
+            "disabled_buttons_status":disabled_buttons_status,
         }
 
         if request.is_ajax():
