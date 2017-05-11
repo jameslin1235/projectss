@@ -177,10 +177,23 @@ border-bottom:1px solid #f0f2f7;
   width:25px;
   height:25px;
   border-radius: 2px;
+  vertical-align: text-top;
 }
+
 
 .CommentItem-time{
   float:right;
+  font-size: 14px;
+  color: #8590a6;
+}
+
+.Icon{
+  vertical-align:text-top;
+}
+
+
+.CommentItem-content, .CommentItem-actions{
+    margin-top:10px;
 }
 
 .ContentItem_comments_form{
@@ -201,6 +214,12 @@ border-bottom:1px solid #f0f2f7;
 
 .btn-plain:active{
   box-shadow: none;
+}
+
+.btn-plain.active {
+  background: #2d84cc;
+  border-color: #2d84cc;
+  color:#eef3f7;
 }
 
 .btn-plain:focus{
@@ -264,4 +283,20 @@ border-bottom:1px solid #f0f2f7;
   width:40px;
   height:40px;
   border-radius: 2px;
+}
+
+
+.Pagination{
+  padding: 16px 20px;
+  text-align: center;
+}
+
+.Paginationbtn{
+  padding: 0 15px;
+  color: #262626;
+  transition: color .2s;
+}
+
+.Paginationbtn_current{
+  color: #8590a6;
 }

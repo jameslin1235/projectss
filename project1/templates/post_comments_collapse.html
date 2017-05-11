@@ -15,7 +15,7 @@
     {% for comment in current_page %}
     <div class="ContentItem_CommentItem">
       <div class="CommentItem-meta">
-        <span class="CommnetItem_avatar">
+        <span class="CommentItem_avatar">
           <a href="{% url 'profiles:profile_activity' id=comment.user.profile.id slug=comment.user.profile.slug %}">
             <img src="{{comment.user.profile.avatar.url}}">
           </a>
@@ -28,11 +28,31 @@
         <p>{{comment.content}}</p>
       </div>
       <div class="CommentItem-actions">
-        <button type="button" class="btn vote_button like_button {% if user_posts_like_status|index:forloop.counter0 == "Liked" %}active{% endif %}"  {% if disabled_buttons_status|index:forloop.counter0 == "Disabled" %}disabled="disabled"{% endif %} }><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> <span class="ContentItem_actions_likers_count">{{ post.likes }}</span></button>
+        <button type="button" class="btn btn-plain CommentItem_likebtn"><span class="glyphicon glyphicon-thumbs-up Icon" aria-hidden="true"></span> <span class="CommentItem-actions_likers_count">{{ post.likes }}</span></button>
+        <button type="button" class="btn btn-plain ContentItem_action"><span class="glyphicon glyphicon-thumbs-down Icon" aria-hidden="true"></span> <span class="CommentItem-actions_likers_count">{{ post.likes }}</span></button>
+        <button type="button" class="btn btn-plain ContentItem_action"><span class="glyphicon glyphicon-share-alt Icon" aria-hidden="true"></span> <span class="CommentItem-actions_likers_count">{{ post.likes }}</span></button>
+
     </div>
   </div>
     {% endfor %}
     <div class="Pagination">
+        {% if current_page.has_previous %}
+        <button type="button" class="btn btn-plain Paginationbtn" data-url="?page={{ current_page.previous_page_number }}">Prev</button>
+
+        {% endif %}
+        {% for i in current_page.paginator.page_range %}
+        {% if current_page.number == i %}
+        <button type="button" class="btn btn-plain Paginationbtn Paginationbtn_current" disabled>{{ i }}</button>
+
+        {% else %}
+        <button type="button" class="btn btn-plain Paginationbtn">{{ i }}</button>
+
+        {% endif %}
+        {% endfor %}
+        {% if current_page.has_next %}
+        <button type="button" class="btn btn-plain Paginationbtn" data-url="?page={{ current_page.next_page_number }}">Next</button>
+        {% endif %}
+      </ul>
     </div>
   </div>
 
