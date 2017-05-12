@@ -32,9 +32,15 @@ class Post(models.Model):
         self.title = self.title.title()
         super(Post, self).save(*args, **kwargs) # Call the "real" save() method.
 
-
     def get_absolute_url(self):
         return reverse("posts:post_detail", kwargs={"id": self.id, "slug": self.slug})
+
+    def get_comments_count(self):
+        return self.comments.count()
+
+    def get_comments(self):
+        return self.comments.all()
+
 
 class Like(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE,)

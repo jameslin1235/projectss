@@ -31,6 +31,7 @@ urlpatterns = [
     url(r'^categories/', include("project1.project1.categories.urls", namespace="categories")),
     url(r'^profile/', include("project1.project1.profiles.urls", namespace="profiles")),
     url(r'^getloginmodal/$', home.get_login_modal, name='get_login_modal'),
+    url(r'^getnotification/$', home.get_notification, name='get_notification'),
 
 ]
 

@@ -28,7 +28,6 @@ def profile_activity(request,id,slug):
         "user":user,
         "posts_count":posts_count,
         "drafts_count":drafts_count,
-
     }
 
     return render(request,"profile_activity.html",context)
@@ -117,7 +116,6 @@ def profile_posts(request,id,slug):
                 posts = user.posts.filter(is_draft = False).annotate(num_comments=Count('comment')).order_by('-num_comments')
 
         user_profile_url = user.profile.get_absolute_url()
-        current_url = request.path
         posts_count = posts.count()
         drafts_count = user.posts.filter(is_draft = True).count()
         following_count = user.profile.get_following_count()
@@ -176,7 +174,7 @@ def profile_posts(request,id,slug):
                     user_posts_dislike_status.append("Disliked")
                 else:
                     user_posts_dislike_status.append("No")
-                
+
                 disabled_buttons_status.append("Enabled")
             comments_count.append(post.comments.all().count())
         print(user_posts_like_status)
@@ -188,7 +186,7 @@ def profile_posts(request,id,slug):
             "logged_in":logged_in,
             "user_status":user_status,
             "user_profile_url":user_profile_url,
-            "current_url":current_url,
+
             "option":option,
             "posts_count":posts_count,
             "drafts_count":drafts_count,
@@ -214,6 +212,8 @@ def profile_posts(request,id,slug):
             template = "profile_posts.html"
 
         return render(request,template,context)
+
+
 
 # when you first come to page, you should be in first filter
 #when you click on a different option, send a request to view to get template with filter

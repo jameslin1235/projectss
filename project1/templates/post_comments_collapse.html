@@ -3,7 +3,7 @@
 <div class="collapse ContentItem_comments">
   <div class="ContentItem_comments_topbar">
     <div class="ContentItem_comments_topbar_meta">
-      <h2 class="ContentItem_comments_topbar_title">{{ comments_count }} Comments</h2>
+      <h2 class="ContentItem_comments_topbar_title"><span class="ContentItem_comments_topbar_title_comments_count">{{ comments_count }}</span> Comments</h2>
 
       <div class="ContentItem_comments_topbar_button">
         <button type="button" class="btn btn-plain">Link</button>
@@ -32,32 +32,29 @@
         <button type="button" class="btn btn-plain ContentItem_action"><span class="glyphicon glyphicon-thumbs-down Icon" aria-hidden="true"></span> <span class="CommentItem-actions_likers_count">{{ post.likes }}</span></button>
         <button type="button" class="btn btn-plain ContentItem_action"><span class="glyphicon glyphicon-share-alt Icon" aria-hidden="true"></span> <span class="CommentItem-actions_likers_count">{{ post.likes }}</span></button>
 
+      </div>
     </div>
-  </div>
     {% endfor %}
     <div class="Pagination">
-        {% if current_page.has_previous %}
-        <button type="button" class="btn btn-plain Paginationbtn" data-url="?page={{ current_page.previous_page_number }}">Prev</button>
-
-        {% endif %}
-        {% for i in current_page.paginator.page_range %}
-        {% if current_page.number == i %}
-        <button type="button" class="btn btn-plain Paginationbtn Paginationbtn_current" disabled>{{ i }}</button>
-
-        {% else %}
-        <button type="button" class="btn btn-plain Paginationbtn">{{ i }}</button>
-
-        {% endif %}
-        {% endfor %}
-        {% if current_page.has_next %}
-        <button type="button" class="btn btn-plain Paginationbtn" data-url="?page={{ current_page.next_page_number }}">Next</button>
-        {% endif %}
-      </ul>
-    </div>
+      {% if current_page.has_previous %}
+      <button type="button" class="btn btn-plain Paginationbtn" data-url="{{post.get_absolute_url}}comments/?page={{ current_page.previous_page_number }}">Prev</button>
+      {% endif %}
+      {% for i in current_page.paginator.page_range %}
+      {% if current_page.number == i %}
+      <button type="button" class="btn btn-plain Paginationbtn Paginationbtn_current Paginationbtn_disabled">{{ i }}</button>
+      {% else %}
+      <button type="button" class="btn btn-plain Paginationbtn" data-url="{{post.get_absolute_url}}comments/?page={{ i  }}">{{ i }}</button>
+      {% endif %}
+      {% endfor %}
+      {% if current_page.has_next %}
+      <button type="button" class="btn btn-plain Paginationbtn" data-url="{{post.get_absolute_url}}comments/?page={{ current_page.next_page_number }}">Next</button>
+      {% endif %}
+    </ul>
   </div>
+</div>
 
-<div class="ContentItem_comments_form">
-  <form method="post">
+<div class="ContentItem_form">
+  <form method="post" class="ContentItem_comments_form">
     {% csrf_token %}
 
     {% if form.non_field_errors %}
@@ -68,7 +65,7 @@
 
     <!-- Button trigger modal -->
     <div class="form-group" >
-      <textarea class="form-control comment_form_textfield" rows="3" placeholder="Leave a commment." required></textarea>
+      <textarea class="form-control ContentItem_comments_form_textfield"  placeholder="Leave a commment." required></textarea>
 
       {% if form.content.errors %}
       <div class="alert alert-danger" role="alert">
@@ -80,11 +77,10 @@
       {% endif %}
     </div>
 
-    <div class="collapse comment_form_collapse">
-      <button class="btn btn-primary comment_form_close_button">Cancel</button>
-      <button type="submit" class="btn btn-primary" >{{ comment_button_text }}</button>
+    <div class="collapse ContentItem_comments_form_collapse">
+      <button class="btn btn-plain ContentItem_comments_form_cancel_btn">Cancel</button>
+      <button type="submit" class="btn btn-submit" >{{ submit_button_text }}</button>
     </div>
-
   </form>
 </div>
 

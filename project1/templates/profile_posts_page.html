@@ -58,9 +58,9 @@
         </div>
         <div class="ContentItem_actions">
 
-          <button type="button" class="btn vote_button like_button {% if user_posts_like_status|index:forloop.counter0 == "Liked" %}active{% endif %}"  {% if disabled_buttons_status|index:forloop.counter0 == "Disabled" %}disabled="disabled"{% endif %} }><span class="glyphicon glyphicon-thumbs-up Icon" aria-hidden="true"></span> <span class="ContentItem_actions_likers_count">{{ post.likes }}</span></button>
-          <button type="button" class="btn vote_button dislike_button {% if user_posts_dislike_status|index:forloop.counter0 == "Disliked" %}active{% endif %}" {% if disabled_buttons_status|index:forloop.counter0 == "Disabled" %}disabled="disabled"{% endif %} ><span class="glyphicon glyphicon-thumbs-down Icon" aria-hidden="true"></span> <span class="ContentItem_actions_dislikers_count">{{ post.dislikes }}</span></button>
-          <button type="button" class="btn btn-plain ContentItem_action comment_button"><span class="glyphicon glyphicon-comment Icon" aria-hidden="true"></span> {{ comments_count|index:forloop.counter0 }}</button>
+          <button type="button" class="btn btn-vote like_button {% if user_posts_like_status|index:forloop.counter0 == "Liked" %}active{% endif %}"  {% if disabled_buttons_status|index:forloop.counter0 == "Disabled" %}disabled="disabled"{% endif %} }><span class="glyphicon glyphicon-thumbs-up Icon" aria-hidden="true"></span> <span class="ContentItem_actions_likers_count">{{ post.likes }}</span></button>
+          <button type="button" class="btn btn-vote dislike_button {% if user_posts_dislike_status|index:forloop.counter0 == "Disliked" %}active{% endif %}" {% if disabled_buttons_status|index:forloop.counter0 == "Disabled" %}disabled="disabled"{% endif %} ><span class="glyphicon glyphicon-thumbs-down Icon" aria-hidden="true"></span> <span class="ContentItem_actions_dislikers_count">{{ post.dislikes }}</span></button>
+          <button type="button" class="btn btn-plain ContentItem_action comment_button"><span class="glyphicon glyphicon-comment Icon" aria-hidden="true"></span> <span class="ContentItem_actions_comments_count">{{ comments_count|index:forloop.counter0 }}</span></button>
           <button type="button" class="btn btn-plain ContentItem_action" ><span class="glyphicon glyphicon-share Icon" aria-hidden="true"></span> Share</button>
           <button type="button" class="btn btn-plain ContentItem_action  bookmark_button"><span class="glyphicon glyphicon-bookmark Icon" aria-hidden="true"></span> Bookmark</button>
         </div>

@@ -1,19 +1,17 @@
+from django.core import serializers
+from django.core.exceptions import PermissionDenied
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.http import HttpResponse,JsonResponse, QueryDict
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import get_user_model
 from django.utils import timezone
-
-from django.core import serializers
-from django.core.exceptions import PermissionDenied
 from .models import Post, Like, Dislike
 from .forms import PostForm
 from project1.project1.comments.forms import CommentForm
 from project1.project1.comments.models import Comment
-
 
 # Create your views here.
 def post_list(request):
@@ -91,8 +89,6 @@ def post_list(request):
 
         return render(request,"post_list.html",context)
 
-
-
 @login_required
 def post_create(request):
     current_user = request.user
@@ -123,8 +119,6 @@ def post_create(request):
                 post.save()
                 messages.success(request, "Post created.")
                 return redirect(post)
-
-
 
 @login_required
 def post_edit(request,id,slug):
@@ -165,7 +159,6 @@ def post_edit(request,id,slug):
                 response_data['message'] = "Post edited."
             return JsonResponse(response_data,safe=False)
 
-
 @login_required
 def post_delete(request,id,slug):
     post = get_object_or_404(Post, id=id)
@@ -199,24 +192,30 @@ def post_publish(request,id,slug):
         response_data['message'] = "Draft published."
         return JsonResponse(response_data,safe=False)
 
-
 @login_required
 def post_bookmark(request,id,slug):
     return render(request,"post_list.html",context)
 
-def post_comments(request,id,slug):
+def post_comments_count(request,id,slug):
+    post = get_object_or_404(Post, id=id)
+    if request.method == "GET" and request.is_ajax():
+        if post.is_draft == True:
+            raise PermissionDenied
+        post_comments_count = post.get_comments_count()
+        response_data = {}
+        response_data['post_comments_count'] = post_comments_count
+        return JsonResponse(response_data,safe=False)
 
+def post_comments(request,id,slug):
     post = get_object_or_404(Post, id=id)
     user = post.user
     current_user = request.user
     if request.method == "GET" and request.is_ajax():
         if post.is_draft == True:
             raise PermissionDenied
-        
         # anonymous user
         logged_in = False
         user_status = "anonymous"
-
         # logged-in user
         if current_user.is_authenticated:
             logged_in = True
@@ -225,8 +224,9 @@ def post_comments(request,id,slug):
             else:
                 user_status = "user"
 
-        comments = post.comments.all()
-        comments_count = post.comments.count()
+        submit_button_text = "Comment"
+        comments = post.get_comments()
+        comments_count = post.get_comments_count()
         paginator = Paginator(comments, 10) # Show 25 contacts per page
         page = request.GET.get('page')
         try:
@@ -241,15 +241,13 @@ def post_comments(request,id,slug):
         context = {
             "post":post,
             "logged_in":logged_in,
-            "comments_count":comments_count,
             "user_status":user_status,
+            "submit_button_text":submit_button_text,
+            "comments_count":comments_count,
             "current_page":current_page,
-
         }
 
         template = "post_comments_collapse.html"
-        # if page is not None:
-        #     template = "post_comments_modal_page.html"
         return render(request,template,context)
 
 
@@ -308,6 +306,15 @@ def get_login_modal(request):
     if request.method == "GET" and request.is_ajax():
         template = "login_modal.html"
         return render(request,template)
+
+def get_notification(request):
+    if request.method == "GET" and request.is_ajax():
+        message = request.GET.get("message")
+        context = {
+            "message":message,
+        }
+        template = "notification.html"
+        return render(request,template,context)
 
 def post_likers(request,id,slug):
     post = get_object_or_404(Post, id=id)
@@ -379,7 +386,6 @@ def post_likers(request,id,slug):
             template = "post_likers_modal_page.html"
         return render(request,template,context)
 
-
 def post_detail(request,id,slug):
     post = get_object_or_404(Post, id=id)
     user = post.user
@@ -406,13 +412,13 @@ def post_detail(request,id,slug):
                 if post.dislikers.filter(user=current_user).exists():
                     disliked = True
 
-        comments = post.comments.all()
-        comments_count = comments.count()
+        comments = post.get_comments()
+        comments_count = post.get_comments_count()
         no_comments = True
         if comments_count != 0:
             no_comments = False
         comment_title = "Comments"
-        comment_button_text = "Comment"
+        submit_button_text = "Comment"
         form = CommentForm()
         paginator = Paginator(comments, 5) # Show 25 contacts per page
         page = request.GET.get('page')
@@ -424,6 +430,7 @@ def post_detail(request,id,slug):
         except EmptyPage:
             # If page is out of range (e.g. 9999), deliver last page of results.
             current_page = paginator.page(paginator.num_pages)
+
         context = {
             "post":post,
             "user":user,
@@ -433,7 +440,7 @@ def post_detail(request,id,slug):
             "comments_count":comments_count,
             "no_comments":no_comments,
             "comment_title":comment_title,
-            "comment_button_text":comment_button_text,
+            "submit_button_text":submit_button_text,
             "form":form,
             "current_page":current_page,
             "liked":liked,
