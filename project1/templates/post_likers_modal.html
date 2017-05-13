@@ -3,25 +3,25 @@
 <div class="modal fade"tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close btn-closeModal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">{{post.likes}} people liked this post.</h4>
+      <div class="ContentItem_modal_header">
+        <div class="ContentItem-modal-header-title"><span>{{post.likes}} people liked this post.</span></div>
+        <button type="button" class="btn btn-closeModal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
       </div>
-      <div class="modal-body">
         {% if no_likers == False %}
-        <div >
+        <div class="ContentItem_modal_body">
           {% for profile in current_page %}
           <div class="list_item">
       <div class="ContentItem" data-url="{{profile.get_absolute_url}}">
         <div class="ContentItem_modal_main">
           <div class="ContentItem_modal_avatar">
             <a href="{% url 'profiles:profile_activity' id=profile.id slug=profile.slug %}">
-          <img src="{{profile.avatar.url}}">
+          <img class="avatar-large" src="{{profile.avatar.url}}">
         </a>
           </div>
           <div class="ContentItem_modal_meta">
             <div class="ContentItem-modal-meta-title">
-              <h2><span>{{ profile.user.username }}</span></h2>
+              <h2><a href="{% url 'profiles:profile_activity' id=profile.id slug=profile.slug %}">{{ profile.user.username }}</a></h2>
             </div>
             <div class="ContentItem-modal-meta-status">
               <span class="ContentItem-modal-meta-StatusItem">{{ profile.get_posts_count }} Posts</span>
@@ -31,7 +31,7 @@
           </div>
 
           <div class="ContentItem_modal_follow">
-            <button type="button" class="btn btn-follow like_button {% if user_posts_like_status|index:forloop.counter0 == "Liked" %}active{% endif %}"  {% if disabled_buttons_status|index:forloop.counter0 == "Disabled" %}disabled="disabled"{% endif %} }><span class="glyphicon glyphicon-thumbs-up Icon" aria-hidden="true"></span> <span class="ContentItem_actions_likers_count">{{ post.likes }}</span></button>
+            <button type="button" class="btn btn-follow follow_button"><span class="glyphicon glyphicon-plus Icon" aria-hidden="true"></span> <span class="ContentItem_modal_follow_status">Follow</span></button>
           </div>
         </div>
 
@@ -56,7 +56,6 @@
         </div>
         {% endif %}
 
-      </div>
 
     </div>
   </div>
