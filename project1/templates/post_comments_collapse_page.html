@@ -1,47 +1,45 @@
 {% load widget_tweaks %}
 {% load custom_tags %}
 <div class="ContentItem_comments_container">
-<div class="ContentItem_comments_topbar">
-  <div class="ContentItem_comments_topbar_meta">
-    <h2 class="ContentItem_comments_topbar_title"><span class="ContentItem_comments_topbar_title_comments_count">{{ comments_count }}</span> Comments</h2>
-
-    <div class="ContentItem_comments_topbar_button">
-      <button type="button" class="btn btn-plain">Link</button>
+  <div class="ContentItem_comments_topbar">
+    <div class="ContentItem_comments_topbar_meta">
+      <h2 class="ContentItem_comments_topbar_title"><span class="ContentItem_comments_topbar_title_comments_count">{{ comments_count }}</span> Comments</h2>
+      <div class="ContentItem_comments_topbar_button">
+        <button type="button" class="btn btn-plain">Link</button>
+      </div>
     </div>
   </div>
-</div>
 
-{% include "post_comments_collapse_body.html" %}
+  {% include "post_comments_collapse_body.html" %}
 
+  <div class="ContentItem_form">
+    <form method="post" class="ContentItem_comments_form">
+      {% csrf_token %}
 
-<div class="ContentItem_form">
-<form method="post" class="ContentItem_comments_form">
-  {% csrf_token %}
+      {% if form.non_field_errors %}
+      <div class="alert alert-danger" role="alert">
+        {{ form.non_field_errors }}
+      </div>
+      {% endif %}
 
-  {% if form.non_field_errors %}
-  <div class="alert alert-danger" role="alert">
-    {{ form.non_field_errors }}
+      <!-- Button trigger modal -->
+      <div class="form-group" >
+        <textarea class="form-control ContentItem_comments_form_textfield"  placeholder="Leave a commment." required></textarea>
+
+        {% if form.content.errors %}
+        <div class="alert alert-danger" role="alert">
+          {{ form.content.errors }}
+        </div>
+        {% endif %}
+        {% if form.content.help_text %}
+        <p class="help-block">{{ form.content.help_text|safe }}</p>
+        {% endif %}
+      </div>
+
+      <div class="collapse ContentItem_comments_form_collapse">
+        <button class="btn btn-plain ContentItem_comments_form_cancel_btn">Cancel</button>
+        <button type="submit" class="btn btn-submit" >{{ submit_button_text }}</button>
+      </div>
+    </form>
   </div>
-  {% endif %}
-
-  <!-- Button trigger modal -->
-  <div class="form-group" >
-    <textarea class="form-control ContentItem_comments_form_textfield"  placeholder="Leave a commment." required></textarea>
-
-    {% if form.content.errors %}
-    <div class="alert alert-danger" role="alert">
-      {{ form.content.errors }}
-    </div>
-    {% endif %}
-    {% if form.content.help_text %}
-    <p class="help-block">{{ form.content.help_text|safe }}</p>
-    {% endif %}
-  </div>
-
-  <div class="collapse ContentItem_comments_form_collapse">
-    <button class="btn btn-plain ContentItem_comments_form_cancel_btn">Cancel</button>
-    <button type="submit" class="btn btn-submit" >{{ submit_button_text }}</button>
-  </div>
-</form>
-</div>
 </div>

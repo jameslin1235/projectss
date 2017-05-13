@@ -1,57 +1,17 @@
-/*.navbar {
-  margin-bottom: 0;
-}*/
+
 body {
   padding-top: 70px;
   background-color: #f7f8fa;
 }
 
-.section{
-  background-color: #fff;
-  padding: 20px;
-  margin-bottom: 20px;
-  border:1px solid #ddd;
-}
-
-
-
-.thumbnail_post_list{
-  border:0;
-  border-bottom: 1px solid #eee;
-}
-
-.thumbnail_post_detail{
-  border:0;
-}
-
-.thumbnail a>img {
-  max-width: none;
-}
-
-
-
-#profile_base_username{
-  margin-top: 0;
-}
-
-#modal_comment_body{
-  text-align: center;
-}
-
-#modal_comment_footer{
-  text-align: center;
-}
-
-
 .list_page{
 }
 
 .list_header{
-
 }
 
 .list_item{
-  padding: 15px 0;
+  padding: 20px 0;
   border-bottom: 1px solid #eee;
 }
 
@@ -59,22 +19,31 @@ body {
   border-bottom: 0;
 }
 
-.ContentItem_likers, .ContentItem_content,.ContentItem_time
-.ContentItem_comments
-{
-  margin-top:10px;
+.ContentItem_title h2{
+  margin: 0;
 }
 
+.ContentItem_avatar{
+  width:40px;
+  height:40px;
+  border-radius: 2px;
+}
 
-
-.ContentItem_action{
-  margin-left: 25px;
+.ContentItem_meta, .ContentItem_likers, .ContentItem_content,.ContentItem_time,.ContentItem_comments
+{
+  margin-top:10px;
 }
 
 .ContentItem_actions{
   margin-top:31px;
   padding: 5px 0;
 }
+
+.ContentItem_action{
+  margin-left: 25px;
+}
+
+
 /* post_comments_collpase.html */
 .ContentItem_comments{
   border: 1px solid #e7eaf2;
@@ -115,15 +84,10 @@ border-bottom:1px solid #f0f2f7;
   vertical-align: text-top;
 }
 
-
 .CommentItem-time{
   float:right;
   font-size: 14px;
   color: #8590a6;
-}
-
-.Icon{
-  vertical-align:text-top;
 }
 
 
@@ -140,19 +104,25 @@ border-bottom:1px solid #f0f2f7;
   text-align: right;
 }
 
+/* textarea */
 textarea {
     resize: none;
 }
 
+/* icons */
+
+.Icon{
+  vertical-align:text-top;
+}
 /* buttons */
 
 .btn-plain{
   background-color: transparent;
   border: none;
+  border-radius: 0;
   color:#8590a6;
   padding: 0;
   border: none;
-  border-radius: 0;
 }
 
 .btn-plain:hover{
@@ -240,11 +210,7 @@ textarea {
 
 
 
-.ContentItem_avatar{
-  width:40px;
-  height:40px;
-  border-radius: 2px;
-}
+
 
 /* Pagination */
 
@@ -253,17 +219,26 @@ textarea {
   text-align: center;
 }
 
-.Paginationbtn{
+.btn-pagination{
   padding: 0 15px;
   color: #262626;
   transition: color .2s;
 }
 
-.Paginationbtn_current{
+.btn-pagination-current{
   color: #8590a6;
 }
 
-.Paginationbtn_disabled{
+.btn-pagination-disabled{
   cursor: default;
-    opacity: .5;
+  opacity: .5;
+}
+
+.notification{
+  position: fixed;
+  top: 55px;
+  width:33%;
+  left:33%;
+
+
 }

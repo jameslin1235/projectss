@@ -26,17 +26,17 @@
   {% endfor %}
   <div class="Pagination">
     {% if current_page.has_previous %}
-    <button type="button" class="btn btn-plain Paginationbtn" data-url="{{post.get_absolute_url}}comments/?page={{ current_page.previous_page_number }}">Prev</button>
+    <button type="button" class="btn btn-plain btn-pagination" data-url="{{post.get_absolute_url}}comments/?page={{ current_page.previous_page_number }}">Prev</button>
     {% endif %}
     {% for i in current_page.paginator.page_range %}
     {% if current_page.number == i %}
-    <button type="button" class="btn btn-plain Paginationbtn Paginationbtn_current Paginationbtn_disabled">{{ i }}</button>
+    <button type="button" class="btn btn-plain btn-pagination btn-pagination-current btn-pagination-disabled">{{ i }}</button>
     {% else %}
-    <button type="button" class="btn btn-plain Paginationbtn" data-url="{{post.get_absolute_url}}comments/?page={{ i  }}">{{ i }}</button>
+    <button type="button" class="btn btn-plain btn-pagination" data-url="{{post.get_absolute_url}}comments/?page={{ i  }}">{{ i }}</button>
     {% endif %}
     {% endfor %}
     {% if current_page.has_next %}
-    <button type="button" class="btn btn-plain Paginationbtn" data-url="{{post.get_absolute_url}}comments/?page={{ current_page.next_page_number }}">Next</button>
+    <button type="button" class="btn btn-plain btn-pagination" data-url="{{post.get_absolute_url}}comments/?page={{ current_page.next_page_number }}">Next</button>
     {% endif %}
   </ul>
 </div>

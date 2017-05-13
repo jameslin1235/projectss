@@ -12,9 +12,10 @@ function get_notification(message){
       message:message,
     },
     success:function(data) {
+      $("body").append(data);
+      $(".notification").hide().slideDown(500).delay(3000).slideUp(500,
+      function(){$(this).remove();});
 
-      $(".navbar-fixed-top").after(data);
-      $(".notification").hide().show(2000).hide(500);
     }});
 
 }
@@ -44,52 +45,90 @@ function get_login_modal(){
   });
 
 
-  function get_loader(parent){
+  function get_loader(parent,template){
     $.ajax({     // ajax GET to get loader
       url: "/getloader/",
       success:function(data) {
-
-        $(parent).find(".ContentItem_comments_body").hide().remove();
-
-        // console.log($(".ContentItem_comments_topbar").offset().top);
-        $('html, body').animate({
-          scrollTop: $(parent).find(".ContentItem_time").offset().top
-        }, 2000);
-        // $('html, body').animate(
-        //   {scrollTop: $(parent).find(".ContentItem_comments_topbar").offset().top},
-        //   "fast",
-        //   "linear",
-        //   function(){
-        //     $(parent).find(".ContentItem_comments_topbar").after(data);
-        //     $(parent).find(".loader").hide(3000);
-        //   }
-        // );
+        if (template == "template2") {
+          $(parent).find(".ContentItem_comments_body").remove();
+          $('body').animate({
+            scrollTop: $(parent).find(".ContentItem_time").offset().top
+          }, 0);
+          $(parent).find(".ContentItem_comments_topbar").after(data);
+        }
+        else if (template == "template3"){
+          $(parent).find(".ContentItem_comments_container").remove();
+          $('body').animate({
+            scrollTop: $(parent).find(".ContentItem_time").offset().top
+          }, 0);
+          $(parent).find(".ContentItem_comments").append(data);
+        }
 
       }});
   }
 
-
-
-    $(document).on('click', '.Paginationbtn', function() {
+    $(document).on('click', '.btn-pagination', function() {
       event.preventDefault();
       var element = $(this);
       var url = $(element).attr("data-url");
       var parent = (element).parents(".ContentItem");
       var template2 = "template2";
-      get_loader(parent);
       $.ajax({     // ajax GET to /posts/id/slug/comments/?page=
         url: url,
-        // beforeSend:get_loader(parent),
+        beforeSend:get_loader(parent,template2),
         data: {
           template2:template2,
         },
         success:function(data) {
-
-          $(parent).find("#loader").replaceWith(data);
-
-           }});
-
+          $(parent).find(".loader").fadeOut(1000,
+            function(){$(parent).find("#loader").replaceWith(data);
+});
+}});
       });
+
+
+      // Feature 8 Post comment to DB, show first page of post comments, show message
+      $(document).on('submit', '.ContentItem_comments_form', function(event) {
+        event.preventDefault();
+        var element = $(this);
+        var parent = (element).parents(".ContentItem");
+        var item_url = $(parent).attr("data-url");
+        var method = $(element).attr('method');
+        var content = $(parent).find(".ContentItem_comments_form_textfield").val();
+        var csrf_token = $(parent).find("[type='hidden']").val();
+        var template3 = "template3";
+        $.ajax({  // ajax POST to save comment /posts/id/slug/
+          method: method,
+          url: item_url,
+          beforeSend:get_loader(parent,template3),
+          data: {
+            content: content,
+            csrfmiddlewaretoken:csrf_token,
+          },
+          success:function(data) {
+            var message = data.message;
+            $.ajax({  // ajax GET to /posts/id/slug/comments using template 3
+              url:item_url + "comments",
+              data: {
+                template3:template3,
+              },
+              success:function(data) {
+                $(parent).find(".loader").fadeOut(1000,
+                  function(){
+                    $(parent).find("#loader").replaceWith(data);
+                    $.ajax({
+                      url:item_url + "commentscount",  // ajax GET to /posts/id/slug/commentscount
+                      success:function(data){
+                        $(parent).find(".ContentItem_actions_comments_count").html(data.post_comments_count);
+                        get_notification(message);
+                      }
+                    });
+                  });
+                }
+              });
+            },
+          });
+        });
 
 
     // Feature 1 Like item
@@ -158,7 +197,7 @@ function get_login_modal(){
           $(ContentItem_comments).remove();});
       }
       else{
-        $.ajax({  // ajax GET to /posts/id/slug/comments
+        $.ajax({  // ajax GET to /posts/id/slug/comments (brand new collapse)
           url:item_url + "comments",
           success:function(data) {
             $(parent).append(data);
@@ -170,53 +209,6 @@ function get_login_modal(){
 
     });
 
-    // Feature 8 Post comment to DB, show first page of post comments, show message
-    $(document).on('submit', '.ContentItem_comments_form', function(event) {
-      event.preventDefault();
-      var element = $(this);
-      var parent = (element).parents(".ContentItem");
-      var item_url = $(parent).attr("data-url");
-      var method = $(element).attr('method');
-      var content = $(parent).find(".ContentItem_comments_form_textfield").val();
-      var csrf_token = $(parent).find("[type='hidden']").val();
-      var template2 = "template2";
-      $.ajax({  // ajax POST to save comment /posts/id/slug/
-        method: method,
-        url: item_url,
-        data: {
-          content: content,
-          csrfmiddlewaretoken:csrf_token,
-        },
-        success:function(data) {
-          var message = data.message;
-          $.ajax({  // ajax GET to /posts/id/slug/comments
-            url:item_url + "comments",
-            data: {
-              template2:template2,
-            },
-            success:function(data) {
-              get_loader(parent);
-
-
-              //scroll to top
-              //show loader
-              //hide it
-              //show comments gotten
-
-
-              $.ajax({
-                url:item_url + "commentscount",  // ajax GET to /posts/id/slug/commentscount
-                success:function(data){
-                  $(parent).find(".ContentItem_actions_comments_count").html(data.post_comments_count);
-                  get_notification(message);
-                }
-              });
-            }
-          });
-
-          },
-        });
-      });
 
 
 
