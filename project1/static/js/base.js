@@ -43,17 +43,52 @@ function get_login_modal(){
     $(element).remove();
   });
 
+
+  function get_loader(parent){
+    $.ajax({     // ajax GET to get loader
+      url: "/getloader/",
+      success:function(data) {
+
+        $(parent).find(".ContentItem_comments_body").hide().remove();
+
+        // console.log($(".ContentItem_comments_topbar").offset().top);
+        $('html, body').animate({
+          scrollTop: $(parent).find(".ContentItem_time").offset().top
+        }, 2000);
+        // $('html, body').animate(
+        //   {scrollTop: $(parent).find(".ContentItem_comments_topbar").offset().top},
+        //   "fast",
+        //   "linear",
+        //   function(){
+        //     $(parent).find(".ContentItem_comments_topbar").after(data);
+        //     $(parent).find(".loader").hide(3000);
+        //   }
+        // );
+
+      }});
+  }
+
+
+
     $(document).on('click', '.Paginationbtn', function() {
       event.preventDefault();
       var element = $(this);
       var url = $(element).attr("data-url");
-      var parent = (element).parents(".ContentItem")
-      $.ajax({     // ajax GET to get nth page
+      var parent = (element).parents(".ContentItem");
+      var template2 = "template2";
+      get_loader(parent);
+      $.ajax({     // ajax GET to /posts/id/slug/comments/?page=
         url: url,
+        // beforeSend:get_loader(parent),
+        data: {
+          template2:template2,
+        },
         success:function(data) {
-          $(parent).find(".ContentItem_comments").replaceWith(data);
-          $(parent).find(".ContentItem_comments").collapse('show');
-        }});
+
+          $(parent).find("#loader").replaceWith(data);
+
+           }});
+
       });
 
 
@@ -144,6 +179,7 @@ function get_login_modal(){
       var method = $(element).attr('method');
       var content = $(parent).find(".ContentItem_comments_form_textfield").val();
       var csrf_token = $(parent).find("[type='hidden']").val();
+      var template2 = "template2";
       $.ajax({  // ajax POST to save comment /posts/id/slug/
         method: method,
         url: item_url,
@@ -155,11 +191,18 @@ function get_login_modal(){
           var message = data.message;
           $.ajax({  // ajax GET to /posts/id/slug/comments
             url:item_url + "comments",
+            data: {
+              template2:template2,
+            },
             success:function(data) {
-              $(parent).find(".ContentItem_comments").replaceWith(data);
-              // gif
-              // 
-              $(parent).find(".ContentItem_comments").collapse('show').hide();
+              get_loader(parent);
+
+
+              //scroll to top
+              //show loader
+              //hide it
+              //show comments gotten
+
 
               $.ajax({
                 url:item_url + "commentscount",  // ajax GET to /posts/id/slug/commentscount

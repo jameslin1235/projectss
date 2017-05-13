@@ -59,17 +59,22 @@ body {
   border-bottom: 0;
 }
 
-.ContentItem_likers, .ContentItem_content, .ContentItem_time, .ContentItem_actions,
+.ContentItem_likers, .ContentItem_content,.ContentItem_time
 .ContentItem_comments
 {
   margin-top:10px;
 }
 
 
+
 .ContentItem_action{
   margin-left: 25px;
 }
 
+.ContentItem_actions{
+  margin-top:31px;
+  padding: 5px 0;
+}
 /* post_comments_collpase.html */
 .ContentItem_comments{
   border: 1px solid #e7eaf2;

@@ -248,6 +248,10 @@ def post_comments(request,id,slug):
         }
 
         template = "post_comments_collapse.html"
+        if request.GET.get("template2"):
+            template = "post_comments_collapse_body.html"
+        elif request.GET.get("template3"):
+            template = "post_comments_collapse_page.html"
         return render(request,template,context)
 
 
@@ -316,6 +320,11 @@ def get_notification(request):
         template = "notification.html"
         return render(request,template,context)
 
+def get_loader(request):
+    if request.method == "GET" and request.is_ajax():
+        template = "loading_gif.html"
+        return render(request,template)
+        
 def post_likers(request,id,slug):
     post = get_object_or_404(Post, id=id)
     user = post.user
