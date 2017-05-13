@@ -30,9 +30,9 @@
   <div>
 
     {% for post in current_page %}
-    <div class="list_item">
+    <div class="list-item">
       <div class="ContentItem" data-url="{{post.get_absolute_url}}">
-        <div class="ContentItem_title">
+        <div class="ContentItem-title">
           <h2><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
         </div>
         <div class="ContentItem_meta">
@@ -50,7 +50,7 @@
           </div>
         </div>
         <div class="ContentItem_likers">
-          <button type="button" class="btn btn-plain ContentItem_likers_count">{{post.likes}} people liked this post.</button>
+          <button type="button" class="btn btn-plain btn-ContentItem_likers_count"><span class="ContentItem_likers_count">{{post.likes}} people liked this post.</span></button>
         </div>
         <div class="ContentItem_content">
           <div><p>{{ post.content }}</p></div>

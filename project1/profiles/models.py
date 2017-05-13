@@ -57,6 +57,11 @@ class Profile(models.Model):
     def get_followers_count(self):
         return self.dest.count()
 
+    def get_posts_count(self):
+        return self.user.posts.count()
+
+    def get_comments_count(self):
+        return self.user.comments.count()
     class Meta:
         ordering = ["-date_created"]
 
