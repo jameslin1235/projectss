@@ -324,7 +324,7 @@ def get_loader(request):
     if request.method == "GET" and request.is_ajax():
         template = "loading_gif.html"
         return render(request,template)
-        
+
 def post_likers(request,id,slug):
     post = get_object_or_404(Post, id=id)
     user = post.user
@@ -334,7 +334,6 @@ def post_likers(request,id,slug):
             raise PermissionDenied
 
         # anonymous user
-        follow_button_text = "Follow"
         logged_in = False
         user_status = "anonymous"
 
@@ -347,9 +346,9 @@ def post_likers(request,id,slug):
                 user_status = "user"
 
         no_likers = True
-        if post.likes != 0:
+        if post.get_likers_count != 0:
             no_likers = False
-        post_likers = post.likers.all().order_by("like")
+        post_likers = post.get_likers()
         paginator = Paginator(post_likers, 5) # Show 25 contacts per page
         page = request.GET.get('page')
         try:
@@ -366,21 +365,29 @@ def post_likers(request,id,slug):
             next_page = current_page.next_page_number()
             is_more = True
 
-
+            # person requests likers of a posts
+            # if ano, follow
+            # if self, check if you followed any of these people
+            # if other, first check if among likers include you, if yes exclude yourself. Then check if you followed any of other people (leads to either follow or followed)
         follow_status = []
-        if user_status != "anonymous":
-            for profile in current_page:
-                if profile.user == current_user:
-                    follow_status.append("Self")
+        for profile in current_page:
+            if user_status == "anonymous":
+                follow_status.append("Follow")
+            elif user_status == "self":
+                if current_user.profile.followed_user(profile):
+                    follow_status.append("Followed")
                 else:
-                    if current_user.profile.following.filter(user=profile.user).exists():
+                    follow_status.append("Follow")
+            else:
+                if current_user == profile.user:
+                    follow_status.append("self")
+                else:
+                    if current_user.profile.followed_user(profile):
                         follow_status.append("Followed")
                     else:
                         follow_status.append("Follow")
-
         context = {
             "post":post,
-            "follow_button_text":follow_button_text,
             "logged_in":logged_in,
             "user_status":user_status,
             "no_likers":no_likers,

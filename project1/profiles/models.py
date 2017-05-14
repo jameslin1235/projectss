@@ -5,7 +5,7 @@ from django.utils.text import slugify
 from django.core.urlresolvers import reverse
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-
+from django.utils import timezone
 
 # Create your models here.
 class Profile(models.Model):
@@ -51,6 +51,17 @@ class Profile(models.Model):
     def get_absolute_url(self):
         return reverse("profiles:profile_activity", kwargs={"id": self.id, "slug": self.slug})
 
+    def followed_user(self, profile):
+        return self.following.filter(user=profile.user).exists()
+
+    def follow_user(self,profile):
+        Follow.objects.create(source=self,dest=profile,date_followed=timezone.now())
+        return None
+
+    def unfollow_user(self,profile):
+        Follow.objects.get(source=self, dest=profile).delete()
+        return None
+        
     def get_following_count(self):
         return self.source.count()
 
@@ -62,6 +73,10 @@ class Profile(models.Model):
 
     def get_comments_count(self):
         return self.user.comments.count()
+
+
+
+
     class Meta:
         ordering = ["-date_created"]
 

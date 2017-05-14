@@ -3,13 +3,12 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils.text import slugify
 from django.core.urlresolvers import reverse
-
 from project1.project1.categories.models import Category
 from project1.project1.profiles.models import Profile
 # Create your models here.
 class Post(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name="posts")
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE,related_name="posts")
     likers = models.ManyToManyField(Profile,null=True,through='Like',related_name="liked_posts")
     dislikers = models.ManyToManyField(Profile,null=True,through='Dislike',related_name="disliked_posts")
     title = models.CharField(
@@ -40,6 +39,12 @@ class Post(models.Model):
 
     def get_comments(self):
         return self.comments.all()
+
+    def get_likers_count(self):
+        return self.likes
+
+    def get_likers(self):
+        return self.likers.order_by("like")
 
 
 class Like(models.Model):

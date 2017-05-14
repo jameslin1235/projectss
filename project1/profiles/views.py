@@ -34,7 +34,7 @@ def profile_activity(request,id,slug):
 
 @login_required
 def profile_follow(request,id,slug):
-    if request.method == "GET":
+    if request.method == "GET" and request.is_ajax():
         User = get_user_model()
         user = get_object_or_404(User, id = id)
         current_user = request.user
@@ -45,20 +45,29 @@ def profile_follow(request,id,slug):
                 raise PermissionDenied;
             else:
                 response_data = {}
-                if current_user.profile.following.filter(user=user).exists():
-                    # current_user.profile.following.remove(user.profile)
-                    Follow.objects.get(source=current_user.profile, dest=user.profile).delete()
+                if request.GET.get("follow_status"):
+                    follow_status = request.GET.get("follow_status")
+                    if follow_status == "Follow":
+                        current_user.profile.follow_user(user.profile)
+                        response_data['follow_status'] = "Followed"
+                        #follow this Person
+                    elif follow_status == "Followed":
+                        current_user.profile.unfollow_user(user.profile)
+                        response_data['follow_status'] = "Follow"
+                        #unfollow
+                return JsonResponse(response_data,safe=False)
+                # if current_user.profile.following.filter(user=user).exists():
+                #     # current_user.profile.following.remove(user.profile)
+                #     Follow.objects.get(source=current_user.profile, dest=user.profile).delete()
+                #
+                #     response_data['message'] = "Follow"
+                #     return JsonResponse(response_data,safe=False)
+                # else:
+                #     # current_user.profile.following.add(user.profile)
+                #     Follow.objects.create(source=current_user.profile,dest=user.profile,date_followed=timezone.now())
+                #     response_data['message'] = "Followed"
+                #     return JsonResponse(response_data,safe=False)
 
-                    response_data['message'] = "Follow"
-                    return JsonResponse(response_data,safe=False)
-                else:
-                    # current_user.profile.following.add(user.profile)
-                    Follow.objects.create(source=current_user.profile,dest=user.profile,date_followed=timezone.now())
-                    response_data['message'] = "Followed"
-                    return JsonResponse(response_data,safe=False)
-        # anonymous user
-        else:
-            raise PermissionDenied;
 
 def profile_following_count(request,id,slug):
     if request.method == "GET" and request.is_ajax():

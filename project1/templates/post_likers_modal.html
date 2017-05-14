@@ -31,13 +31,9 @@
           </div>
 
           <div class="ContentItem_modal_follow">
-            <button type="button" class="btn btn-follow follow_button"><span class="glyphicon glyphicon-plus Icon" aria-hidden="true"></span> <span class="ContentItem_modal_follow_status">Follow</span></button>
+            {% if follow_status|index:forloop.counter0 != "self" %}<button type="button" class="btn btn-follow follow_button"><span class="glyphicon glyphicon-plus Icon" aria-hidden="true"></span> <span class="ContentItem_modal_follow_status">{{ follow_status|index:forloop.counter0 }}</span></button>{% endif %}
           </div>
         </div>
-
-
-
-
       </div>
     </div>
 
@@ -55,8 +51,6 @@
           <p>0 people liked this post.</p>
         </div>
         {% endif %}
-
-
     </div>
   </div>
 </div>

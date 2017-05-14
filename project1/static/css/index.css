@@ -106,7 +106,7 @@ border-bottom:1px solid #f0f2f7;
 
 .ContentItem_modal_header{
   display: flex;
-  padding: 16px 20px;
+  padding: 0 20px;
   border-bottom: 1px solid #f0f2f7;
   align-items: center;
   justify-content: space-between;
@@ -261,8 +261,17 @@ textarea {
   color:#fff;
 }
 
+.btn-follow:focus{
+  outline: none;
+  color:#fff;
+}
+
+.btn-follow:active{
+  box-shadow: none;
+}
+
 .btn-closeModal{
-  padding: 0;
+  padding: 12px;
   font-weight: 700;
   font-size: 20px;
   opacity: 0.2;
@@ -272,6 +281,14 @@ textarea {
 
 .btn-closeModal:hover{
   opacity: 1;
+}
+
+.btn-closeModal:focus{
+  outline: none;
+}
+
+.btn-closeModal:active{
+  box-shadow: none;
 }
 
 /* Pagination */
@@ -301,6 +318,4 @@ textarea {
   top: 55px;
   width:33%;
   left:33%;
-
-
 }
