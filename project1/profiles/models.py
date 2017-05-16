@@ -61,12 +61,12 @@ class Profile(models.Model):
     def unfollow_user(self,profile):
         Follow.objects.get(source=self, dest=profile).delete()
         return None
-        
+
     def get_following_count(self):
-        return self.source.count()
+        return self.following.count()
 
     def get_followers_count(self):
-        return self.dest.count()
+        return self.followers.count()
 
     def get_posts_count(self):
         return self.user.posts.count()

@@ -1,56 +1,21 @@
 {% load widget_tweaks %}
 {% load custom_tags %}
-<div class="modal fade"tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade"tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-url="{{post.get_absolute_url}}" data-nextpage="{{next_page}}">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <div class="ContentItem_modal_header">
+      <div class="ContentItem-modal-header">
         <div class="ContentItem-modal-header-title"><span>{{post.likes}} people liked this post.</span></div>
         <button type="button" class="btn btn-closeModal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-
       </div>
-        {% if no_likers == False %}
-        <div class="ContentItem_modal_body">
-          {% for profile in current_page %}
-          <div class="list_item">
-      <div class="ContentItem" data-url="{{profile.get_absolute_url}}">
-        <div class="ContentItem_modal_main">
-          <div class="ContentItem_modal_avatar">
-            <a href="{% url 'profiles:profile_activity' id=profile.id slug=profile.slug %}">
-          <img class="avatar-large" src="{{profile.avatar.url}}">
-        </a>
-          </div>
-          <div class="ContentItem_modal_meta">
-            <div class="ContentItem-modal-meta-title">
-              <h2><a href="{% url 'profiles:profile_activity' id=profile.id slug=profile.slug %}">{{ profile.user.username }}</a></h2>
-            </div>
-            <div class="ContentItem-modal-meta-status">
-              <span class="ContentItem-modal-meta-StatusItem">{{ profile.get_posts_count }} Posts</span>
-              <span class="ContentItem-modal-meta-StatusItem">{{ profile.get_comments_count }} Comments</span>
-              <span class="ContentItem-modal-meta-StatusItem">{{ profile.get_followers_count }} Followers</span>
-            </div>
-          </div>
+      {% if no_likers == False %}
+      {% include "post_likers_modal_page.html" %}
 
-          <div class="ContentItem_modal_follow">
-            {% if follow_status|index:forloop.counter0 != "self" %}<button type="button" class="btn btn-follow follow_button"><span class="glyphicon glyphicon-plus Icon" aria-hidden="true"></span> <span class="ContentItem_modal_follow_status">{{ follow_status|index:forloop.counter0 }}</span></button>{% endif %}
-          </div>
-        </div>
+
+      {% else %}
+      <div>
+        <p>0 people liked this post.</p>
       </div>
-    </div>
-
-          {% endfor %}
-          {% if is_more %}
-          <div class="post_likers_more_container" id="post_likers_more_container" data-nextpage="{{ next_page }}">
-            <button type="button" class="btn btn-primary btn-lg btn-block" id="post_likers_more_button">See More</button>
-          </div>
-          {% endif %}
-        </div>
-
-
-        {% else %}
-        <div>
-          <p>0 people liked this post.</p>
-        </div>
-        {% endif %}
+      {% endif %}
     </div>
   </div>
 </div>

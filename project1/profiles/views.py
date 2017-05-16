@@ -51,28 +51,18 @@ def profile_follow(request,id,slug):
                         current_user.profile.follow_user(user.profile)
                         response_data['follow_status'] = "Followed"
                         #follow this Person
-                    elif follow_status == "Followed":
+                    elif follow_status == "Followed" or follow_status == "Unfollow":
                         current_user.profile.unfollow_user(user.profile)
                         response_data['follow_status'] = "Follow"
                         #unfollow
                 return JsonResponse(response_data,safe=False)
-                # if current_user.profile.following.filter(user=user).exists():
-                #     # current_user.profile.following.remove(user.profile)
-                #     Follow.objects.get(source=current_user.profile, dest=user.profile).delete()
-                #
-                #     response_data['message'] = "Follow"
-                #     return JsonResponse(response_data,safe=False)
-                # else:
-                #     # current_user.profile.following.add(user.profile)
-                #     Follow.objects.create(source=current_user.profile,dest=user.profile,date_followed=timezone.now())
-                #     response_data['message'] = "Followed"
-                #     return JsonResponse(response_data,safe=False)
+
 
 
 def profile_following_count(request,id,slug):
     if request.method == "GET" and request.is_ajax():
         profile = get_object_or_404(Profile, id = id)
-        profile_following_count = profile.following.count()
+        profile_following_count = profile.get_following_count()
         response_data = {}
         response_data['profile_following_count'] = profile_following_count
         return JsonResponse(response_data,safe=False)
@@ -80,7 +70,7 @@ def profile_following_count(request,id,slug):
 def profile_followers_count(request,id,slug):
     if request.method == "GET" and request.is_ajax():
         profile = get_object_or_404(Profile, id = id)
-        profile_followers_count = profile.followers.count()
+        profile_followers_count = profile.get_followers_count()
         response_data = {}
         response_data['profile_followers_count'] = profile_followers_count
         return JsonResponse(response_data,safe=False)

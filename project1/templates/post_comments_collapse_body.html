@@ -1,10 +1,10 @@
 {% load widget_tweaks %}
 {% load custom_tags %}
-<div class="ContentItem_comments_body">
+<div class="ContentItem-comments-body">
   {% for comment in current_page %}
-  <div class="ContentItem_CommentItem">
+  <div class="ContentItem-CommentItem">
     <div class="CommentItem-meta">
-      <span class="CommentItem_avatar">
+      <span class="CommentItem-avatar">
         <a href="{% url 'profiles:profile_activity' id=comment.user.profile.id slug=comment.user.profile.slug %}">
           <img src="{{comment.user.profile.avatar.url}}">
         </a>
@@ -17,9 +17,9 @@
       <p>{{comment.content}}</p>
     </div>
     <div class="CommentItem-actions">
-      <button type="button" class="btn btn-plain CommentItem_likebtn"><span class="glyphicon glyphicon-thumbs-up Icon" aria-hidden="true"></span> <span class="CommentItem-actions_likers_count">{{ post.likes }}</span></button>
-      <button type="button" class="btn btn-plain ContentItem_action"><span class="glyphicon glyphicon-thumbs-down Icon" aria-hidden="true"></span> <span class="CommentItem-actions_likers_count">{{ post.likes }}</span></button>
-      <button type="button" class="btn btn-plain ContentItem_action"><span class="glyphicon glyphicon-share-alt Icon" aria-hidden="true"></span> <span class="CommentItem-actions_likers_count">{{ post.likes }}</span></button>
+      <button type="button" class="btn btn-plain CommentItem-likebtn"><span class="glyphicon glyphicon-thumbs-up Icon" aria-hidden="true"></span> <span class="CommentItem-actions-likers-count">{{ post.likes }}</span></button>
+      <button type="button" class="btn btn-plain ContentItem-action"><span class="glyphicon glyphicon-thumbs-down Icon" aria-hidden="true"></span> <span class="CommentItem-actions-likers-count">{{ post.likes }}</span></button>
+      <button type="button" class="btn btn-plain ContentItem-action"><span class="glyphicon glyphicon-share-alt Icon" aria-hidden="true"></span> <span class="CommentItem-actions-likers-count">{{ post.likes }}</span></button>
 
     </div>
   </div>

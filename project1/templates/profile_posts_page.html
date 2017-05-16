@@ -1,8 +1,8 @@
 {% load widget_tweaks %}
 {% load custom_tags %}
-<div class="list_page" id="profile_posts_page" data-pageurl="{{current_url}}?page={{current_page.number}}" data-firstpage="{{current_url}}" data-option-selected={{option}} >
-  <div class="page-header list_header">
-    <h4 class="list_header_text"><span>{{posts_count}}</span> {{ title }}</h4>
+<div class="list-page" id="profile_posts_page" data-pageurl="{{current_url}}?page={{current_page.number}}" data-firstpage="{{current_url}}" data-option-selected={{option}} >
+  <div class="page-header list-header">
+    <h4 class="list-header-text"><span>{{posts_count}}</span> {{ title }}</h4>
 
 
     <div class="list_header_options">
@@ -35,11 +35,11 @@
         <div class="ContentItem-title">
           <h2><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
         </div>
-        <div class="ContentItem_meta">
+        <div class="ContentItem-meta">
           <div class="media">
             <div class="media-left">
               <a href="{% url 'profiles:profile_activity' id=user.profile.id slug=user.profile.slug %}">
-                <img class="media-object ContentItem_avatar" src="{{user.profile.avatar.url}}">
+                <img class="media-object ContentItem-avatar" src="{{user.profile.avatar.url}}">
               </a>
             </div>
             <div class="media-body">
@@ -49,19 +49,19 @@
 
           </div>
         </div>
-        <div class="ContentItem_likers">
-          <button type="button" class="btn btn-plain btn-ContentItem_likers_count"><span class="ContentItem_likers_count">{{post.likes}} people liked this post.</span></button>
+        <div class="ContentItem-likers">
+          <button type="button" class="btn btn-plain btn-ContentItem-likers-count"><span class="ContentItem-likers-count">{{post.likes}} people liked this post.</span></button>
         </div>
-        <div class="ContentItem_content">
+        <div class="ContentItem-content">
           <div><p>{{ post.content }}</p></div>
-          <div class="ContentItem_time"><a href="{{ post.get_absolute_url }}">Published {{ post.date_published }}</a></div>
+          <div class="ContentItem-time"><a href="{{ post.get_absolute_url }}">Published {{ post.date_published }}</a></div>
         </div>
-        <div class="ContentItem_actions">
-          <button type="button" class="btn btn-vote like_button {% if user_posts_like_status|index:forloop.counter0 == "Liked" %}active{% endif %}"  {% if disabled_buttons_status|index:forloop.counter0 == "Disabled" %}disabled="disabled"{% endif %} }><span class="glyphicon glyphicon-thumbs-up Icon" aria-hidden="true"></span> <span class="ContentItem_actions_likers_count">{{ post.likes }}</span></button>
-          <button type="button" class="btn btn-vote dislike_button {% if user_posts_dislike_status|index:forloop.counter0 == "Disliked" %}active{% endif %}" {% if disabled_buttons_status|index:forloop.counter0 == "Disabled" %}disabled="disabled"{% endif %} ><span class="glyphicon glyphicon-thumbs-down Icon" aria-hidden="true"></span> <span class="ContentItem_actions_dislikers_count">{{ post.dislikes }}</span></button>
-          <button type="button" class="btn btn-plain ContentItem_action comment_button"><span class="glyphicon glyphicon-comment Icon" aria-hidden="true"></span> <span class="ContentItem_actions_comments_count">{{ comments_count|index:forloop.counter0 }}</span></button>
-          <button type="button" class="btn btn-plain ContentItem_action" ><span class="glyphicon glyphicon-share Icon" aria-hidden="true"></span> Share</button>
-          <button type="button" class="btn btn-plain ContentItem_action  bookmark_button"><span class="glyphicon glyphicon-bookmark Icon" aria-hidden="true"></span> Bookmark</button>
+        <div class="ContentItem-actions">
+          <button type="button" class="btn btn-vote like-button {% if user_posts_like_status|index:forloop.counter0 == "Liked" %}active{% endif %}"  {% if disabled_buttons_status|index:forloop.counter0 == "Disabled" %}disabled="disabled"{% endif %} }><span class="glyphicon glyphicon-thumbs-up Icon" aria-hidden="true"></span> <span class="ContentItem-actions-likers-count">{{ post.likes }}</span></button>
+          <button type="button" class="btn btn-vote dislike-button {% if user_posts_dislike_status|index:forloop.counter0 == "Disliked" %}active{% endif %}" {% if disabled_buttons_status|index:forloop.counter0 == "Disabled" %}disabled="disabled"{% endif %} ><span class="glyphicon glyphicon-thumbs-down Icon" aria-hidden="true"></span> <span class="ContentItem-actions-dislikers-count">{{ post.dislikes }}</span></button>
+          <button type="button" class="btn btn-plain ContentItem-action comment-button"><span class="glyphicon glyphicon-comment Icon" aria-hidden="true"></span> <span class="ContentItem-actions-comments-count">{{ comments_count|index:forloop.counter0 }}</span></button>
+          <button type="button" class="btn btn-plain ContentItem-action" ><span class="glyphicon glyphicon-share Icon" aria-hidden="true"></span> Share</button>
+          <button type="button" class="btn btn-plain ContentItem-action  bookmark-button"><span class="glyphicon glyphicon-bookmark Icon" aria-hidden="true"></span> Bookmark</button>
         </div>
       </div>
     </div>
@@ -71,7 +71,7 @@
   <div>
     <ul class="pagination">
       {% if current_page.has_previous %}
-      <li><a class="page_button" href="?page={{ current_page.previous_page_number }}">&laquo;</a></li>
+      <li><a class="page-button" href="?page={{ current_page.previous_page_number }}">&laquo;</a></li>
       {% else %}
       <li class="disabled"><span>&laquo;</span></li>
       {% endif %}
@@ -79,11 +79,11 @@
       {% if current_page.number == i %}
       <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
       {% else %}
-      <li><a class="page_button" href="?page={{ i }}">{{ i }}</a></li>
+      <li><a class="page-button" href="?page={{ i }}">{{ i }}</a></li>
       {% endif %}
       {% endfor %}
       {% if current_page.has_next %}
-      <li><a class="page_button" href="?page={{ current_page.next_page_number }}">&raquo;</a></li>
+      <li><a class="page-button" href="?page={{ current_page.next_page_number }}">&raquo;</a></li>
       {% else %}
       <li class="disabled"><span>&raquo;</span></li>
       {% endif %}
