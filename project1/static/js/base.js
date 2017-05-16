@@ -1,14 +1,24 @@
-function get_notification(message,func){
+function get_notification(callback, callback_args = ["default"], args){
+  console.log(callback_args);
+  console.log(args);
+  var message = args[0];
   $.ajax({     // ajax GET to get notification
     url: "/getnotification/",
     data:{
       message:message,
     },
     success:function(data) {
-      func(data);
+      callback_args[0] = (data);
+      callback(callback_args);
       }});
 }
 
+function add_notification(args){
+  var message = args[0];
+  $("body").append(message);
+  $(".notification").hide().slideDown(500).delay(3000).slideUp(500,
+          function(){$(this).remove();});
+}
 function get_login_modal(){
       $.ajax({     // ajax GET to /getloginmodal/
         url: "/getloginmodal/",
@@ -73,47 +83,66 @@ $(document).on('hidden.bs.modal', '#login-modal', function(event) {
 
 
 function post_comments_collapse(args){
-
   var parent = args[0];
   var template = args[1];
   var data = args[2];
-  console.log(args[0]);
-  console.log(args[1]);
-  console.log(args[2]);
-  // if (template == "template2") {
-  //   $(parent).find(".ContentItem-comments-body").remove();
-  //   $('body').animate({
-  //     scrollTop: $(parent).find(".ContentItem-time").offset().top
-  //   }, 0);
-  //   $(parent).find(".ContentItem-comments-topbar").after(data);
-  // }
-  // else if (template == "template3"){
-  //   $(parent).find(".ContentItem-comments-container").remove();
-  //   $('body').animate({
-  //     scrollTop: $(parent).find(".ContentItem-time").offset().top
-  //   }, 0);
-  //   $(parent).find(".ContentItem-comments").append(data);
-  // }
+  // console.log(args[0]);
+  // console.log(args[1]);
+  // console.log(args[2]);
+  if (template == "template2") {
+    $(parent).find(".ContentItem-comments-body").remove();
+    $('body').animate({
+      scrollTop: $(parent).find(".ContentItem-time").offset().top
+    }, 0);
+    $(parent).find(".ContentItem-comments-topbar").after(data);
+  }
+  else if (template == "template3"){
+    $(parent).find(".ContentItem-comments-container").remove();
+    $('body').animate({
+      scrollTop: $(parent).find(".ContentItem-time").offset().top
+    }, 0);
+    $(parent).find(".ContentItem-comments").append(data);
+  }
 }
 
-function get_post_comments(item_url,template,func){
+function get_post_comments(callback, callback_args, args){
+  var item_url = args[0];
+  var template = args[1];
   $.ajax({  // ajax GET to /posts/id/slug/comments using template
     url:item_url + "comments",
     data: {
       template:template,
     },
     success:function(data){
-      func(data);
+      callback_args.push(data);
+      callback(callback_args);
     }
 });}
 
-function get_post_comments_count(item_url,func){
+function fade_loader(args){
+  var parent = args[0];
+  var data = args[1];
+  $(parent).find(".loader").fadeOut(1000,function(){
+      $(this).replaceWith(data);
+  })
+}
+
+function get_post_comments_count(callback, callback_args, args){
+  var item_url = args[0];
   $.ajax({
     url:item_url + "commentscount",  // ajax GET to /posts/id/slug/commentscount
     success:function(data){
-      func(data);
+      callback_args.push(data);
+      callback(data);
     }
   });
+}
+
+function update_comments_count(args){
+  var parent = args[0];
+  var data = args[1];
+  $(parent).find(".ContentItem-actions-comments-count").html(data);
+
 }
 
 $(document).on('click', '.btn-pagination', function() {
@@ -152,7 +181,6 @@ $(document).on('click', '.btn-pagination', function() {
     var csrf_token = $(parent).find("[type='hidden']").val();
     var template = "template3";
 
-
     $.ajax({  // ajax POST to save comment /posts/id/slug/
       method: method,
       url: item_url,
@@ -165,7 +193,9 @@ $(document).on('click', '.btn-pagination', function() {
       },
       success:function(data) {
         // var message = data.message;
-        // var post_comments = get_post_comments(item_url,template,get_ajax_data);
+        // get_post_comments(fadeout,[parent],[item_url,template]);
+        // get_post_comments_count(update_comments_count,[item_url])
+        // get_notification(add_notification,[message])
         // $(parent).find(".loader").fadeOut(1000,function(){
         //   $(this).replaceWith(post_comments);
         //   var post_comments_count = get_post_comments_count(item_url, get_ajax_data);
