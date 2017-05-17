@@ -250,7 +250,7 @@ def post_comments(request,id,slug):
         template = "post_comments_collapse.html"
         if request.GET.get("template") and request.GET.get("template") == "template2":
             template = "post_comments_collapse_body.html"
-        elif request.GET.get("template3") and request.GET.get("template") == "template3":
+        elif request.GET.get("template") and request.GET.get("template") == "template3":
             template = "post_comments_collapse_page.html"
         return render(request,template,context)
 

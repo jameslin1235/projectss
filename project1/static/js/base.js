@@ -1,24 +1,23 @@
-function get_notification(callback, callback_args = ["default"], args){
-  console.log(callback_args);
-  console.log(args);
+function get_notification(callback, args){
   var message = args[0];
-  $.ajax({     // ajax GET to get notification
+  $.ajax({     // ajax GET to /getnotification/
     url: "/getnotification/",
     data:{
       message:message,
     },
     success:function(data) {
-      callback_args[0] = (data);
+      var callback_args = [data];
       callback(callback_args);
       }});
 }
 
 function add_notification(args){
-  var message = args[0];
-  $("body").append(message);
-  $(".notification").hide().slideDown(500).delay(3000).slideUp(500,
-          function(){$(this).remove();});
+  console.log("add_notification");
+  var data = args[0];
+  $("body").append(data);
+  $(".notification").hide().slideDown(500).delay(3000).slideUp(500,function(){$(this).remove();});
 }
+
 function get_login_modal(){
       $.ajax({     // ajax GET to /getloginmodal/
         url: "/getloginmodal/",
@@ -27,45 +26,6 @@ function get_login_modal(){
           $("#login-modal").modal();
         }});
 }
-
-function get_user_status(){
-  var user_status = $("#user-status").attr("data-user-status");
-  return user_status;
-}
-
-function get_ajax_data(data){
-  post_comments_collapse(data);
-  console.log(data);
-
-}
-
-// var func = arguments[0];
-// var args = Array.prototype.slice.call(arguments, 1)
-// console.log(func);
-// args.push(data);
-// func(args);
-function get_loader(callback, args){
-  // console.log(arguments);
-  //
-  // for (var i = 0; i < arguments.length; i++) {
-  //     console.log(arguments[i]);
-  //   }
-  $.ajax({     // ajax GET to /getloader/
-    url: "/getloader/",
-    success:function(data) {
-      args.push(data);
-      // console.log(arguments);
-      // console.log(args);
-      // console.log(args[0]);
-      // console.log(args[1]);
-      // console.log(args[2]);
-      callback(args);
-      // callback.apply(this,args);
-    }});
-  }
-
-
-
 
 // Feature 1 Close login modal
 $(document).on('click', '#login-modal-close-button', function(event) {
@@ -80,69 +40,102 @@ $(document).on('hidden.bs.modal', '#login-modal', function(event) {
   $(element).remove();
 });
 
-
-
-function post_comments_collapse(args){
-  var parent = args[0];
-  var template = args[1];
-  var data = args[2];
-  // console.log(args[0]);
-  // console.log(args[1]);
-  // console.log(args[2]);
-  if (template == "template2") {
-    $(parent).find(".ContentItem-comments-body").remove();
-    $('body').animate({
-      scrollTop: $(parent).find(".ContentItem-time").offset().top
-    }, 0);
-    $(parent).find(".ContentItem-comments-topbar").after(data);
-  }
-  else if (template == "template3"){
-    $(parent).find(".ContentItem-comments-container").remove();
-    $('body').animate({
-      scrollTop: $(parent).find(".ContentItem-time").offset().top
-    }, 0);
-    $(parent).find(".ContentItem-comments").append(data);
-  }
+function get_user_status(){
+  var user_status = $("#user-status").attr("data-user-status");
+  return user_status;
 }
 
-function get_post_comments(callback, callback_args, args){
-  var item_url = args[0];
-  var template = args[1];
-  $.ajax({  // ajax GET to /posts/id/slug/comments using template
-    url:item_url + "comments",
-    data: {
-      template:template,
-    },
-    success:function(data){
-      callback_args.push(data);
-      callback(callback_args);
-    }
-});}
-
-function fade_loader(args){
-  var parent = args[0];
-  var data = args[1];
-  $(parent).find(".loader").fadeOut(1000,function(){
-      $(this).replaceWith(data);
-  })
-}
-
-function get_post_comments_count(callback, callback_args, args){
-  var item_url = args[0];
-  $.ajax({
-    url:item_url + "commentscount",  // ajax GET to /posts/id/slug/commentscount
-    success:function(data){
-      callback_args.push(data);
-      callback(data);
-    }
+// function get_loader(callback, callback_args){
+//   $.ajax({      // ajax GET to /getloader/
+//     url: "/getloader/",
+//     success:function(data) {
+//       callback_args.push(data);
+//       callback(callback_args);
+//       get_post_comments();
+//     }});
+//   }
+//
+function get_loader(){
+  return $.ajax({      // ajax GET to /getloader/
+    url: "/getloader/",
   });
 }
 
-function update_comments_count(args){
+function save_comment(args){
+  var method = args[0];
+  var item_url = args[1];
+  var data = args[2];
+  return $.ajax({
+    method: method,
+    url: item_url,
+    data: data,
+  });
+}
+
+function get_post_comments(args){
+  var item_url = args[0];
+  var template = args[1];
+  return $.ajax({  // ajax GET to /posts/id/slug/comments using template
+    url:item_url + "comments",
+    data: {
+      template:template,
+    }
+});}
+
+function get_post_comments_count(args){
+  var item_url = args[0];
+  return $.ajax({
+    url:item_url + "commentscount",  // ajax GET to /posts/id/slug/commentscount
+
+  });
+}
+
+function post_comments_collapse(callbacks,callback_args,args){
+  var callback1 = callbacks[0];
+  var callback2 = callbacks[1];
+  var callback1_args = callback_args[0];
+  var callback2_args = callback_args[1];
+  console.log(callback1_args);
+  var parent = args[0];
+  var template = args[1];
+  var loader = args[2];
+  var comments = args[3];
+
+
+  if (template == "template2") {
+    $(parent).find(".ContentItem-comments-body").remove();
+    $('body').animate({scrollTop: $(parent).find(".ContentItem-time").offset().top}, 0, function(){$(parent).find(".ContentItem-comments-topbar").after(loader);});
+  }
+  else if (template == "template3"){
+    $(parent).find(".ContentItem-comments-container").remove();
+    $('body').animate({scrollTop: $(parent).find(".ContentItem-time").offset().top}, 0, function(){
+      console.log('s');
+      $(parent).find(".ContentItem-comments").append(loader);
+      $(parent).find(".loader").fadeOut(1000,function(){
+        $(this).replaceWith(comments);
+        callback1(callback1_args);
+        // callback2(callback2_args);
+
+      });
+      });
+      console.log('sss');
+
+  }
+}
+
+// function fade_loader(args){
+//   console.log("loader_faded");
+//   var parent = args[0];
+//   var data = args[1];
+//   $(parent).find(".loader").fadeOut(1000,function(){$(this).replaceWith(data);});
+// }
+
+function update_post_comments_count(args){
   var parent = args[0];
   var data = args[1];
+  console.log(data);
+  console.log("update_p_c_count");
   $(parent).find(".ContentItem-actions-comments-count").html(data);
-
 }
 
 $(document).on('click', '.btn-pagination', function() {
@@ -180,32 +173,46 @@ $(document).on('click', '.btn-pagination', function() {
     var content = $(parent).find(".ContentItem-comments-form-textfield").val();
     var csrf_token = $(parent).find("[type='hidden']").val();
     var template = "template3";
+    var data = {content:content, csrfmiddlewaretoken:csrf_token};
 
-    $.ajax({  // ajax POST to save comment /posts/id/slug/
-      method: method,
-      url: item_url,
-      beforeSend:function(){
-        get_loader(post_comments_collapse,[parent,template]);
-      },
-      data: {
-        content: content,
-        csrfmiddlewaretoken:csrf_token,
-      },
-      success:function(data) {
-        // var message = data.message;
-        // get_post_comments(fadeout,[parent],[item_url,template]);
-        // get_post_comments_count(update_comments_count,[item_url])
-        // get_notification(add_notification,[message])
-        // $(parent).find(".loader").fadeOut(1000,function(){
-        //   $(this).replaceWith(post_comments);
-        //   var post_comments_count = get_post_comments_count(item_url, get_ajax_data);
-        //   $(parent).find(".ContentItem-actions-comments-count").html(post_comments_count);
-        //   var message = get_notification(message,get_ajax_data);
-        //   $("body").append(message);
-        //   $(".notification").hide().slideDown(500).delay(3000).slideUp(500,
-        //     function(){$(this).remove();});
-      }});
+    $.when(get_loader(),save_comment([method, item_url, data]),get_post_comments([item_url, template]),get_post_comments_count([item_url])).done(function(a1, a2, a3, a4){
+      var loader = a1[0];
+      var message = a2[0];
+      var comments = a3[0];
+      var comments_count = a4[0];
+
+      var callbacks = [update_post_comments_count,get_notification];
+      var callback_args = [[parent,comments_count],[add_notification,message]];
+      var args = [parent,template,loader,comments];
+      post_comments_collapse(callbacks,callback_args,args);
+      // update_post_comments_count([parent,comments_count]);
+      // get_notification(add_notification,[message]);
+      // console.log(a1);
+      // console.log(a2);
+      // console.log(a3);
+      // console.log(a4);
+
     });
+    // $.ajax({  // ajax POST to save comment /posts/id/slug/
+    //   method: method,
+    //   url: item_url,
+    //   beforeSend:function(){
+    //     get_loader(post_comments_collapse,[parent,template]); // ajax GET to /getloader/
+    //   },
+    //   data: {
+    //     content: content,
+    //     csrfmiddlewaretoken:csrf_token,
+    //   },
+    //   success:function(data) {
+    //     console.log("post_saved");
+    //     var message = data.message;
+    //     get_post_comments(fade_loader,[parent],[item_url,template]); // ajax GET to /posts/id/slug/comments using template
+    //     console.log("comments_grabbed");
+    //     get_post_comments_count(update_post_comments_count,[parent],[item_url]); // ajax GET to /posts/id/slug/commentscount
+    //     get_notification(add_notification,[message]); // ajax GET to /getnotification/
+    //
+    // }});
+  });
 
 
             //
