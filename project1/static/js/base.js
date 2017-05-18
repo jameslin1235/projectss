@@ -1,4 +1,5 @@
-function get_notification(callback, args){
+function get_notification(callback,args){
+  console.log("eight");
   var message = args[0];
   $.ajax({     // ajax GET to /getnotification/
     url: "/getnotification/",
@@ -12,9 +13,9 @@ function get_notification(callback, args){
 }
 
 function add_notification(args){
-  console.log("add_notification");
-  var data = args[0];
-  $("body").append(data);
+  console.log("nine");
+  var message = args[0];
+  $("body").append(message);
   $(".notification").hide().slideDown(500).delay(3000).slideUp(500,function(){$(this).remove();});
 }
 
@@ -90,17 +91,16 @@ function get_post_comments_count(args){
   });
 }
 
-function post_comments_collapse(callbacks,callback_args,args){
-  var callback1 = callbacks[0];
-  var callback2 = callbacks[1];
+function post_comments_collapse(callback,callback_args,callback_callback,args){
+  var callback1 = callback[0];
+  var callback2 = callback[1];
   var callback1_args = callback_args[0];
   var callback2_args = callback_args[1];
-  console.log(callback1_args);
+  var callback2_callback = callback_callback[0];
   var parent = args[0];
   var template = args[1];
   var loader = args[2];
   var comments = args[3];
-
 
   if (template == "template2") {
     $(parent).find(".ContentItem-comments-body").remove();
@@ -108,18 +108,21 @@ function post_comments_collapse(callbacks,callback_args,args){
   }
   else if (template == "template3"){
     $(parent).find(".ContentItem-comments-container").remove();
+    console.log('one');
     $('body').animate({scrollTop: $(parent).find(".ContentItem-time").offset().top}, 0, function(){
-      console.log('s');
+      console.log('two');
       $(parent).find(".ContentItem-comments").append(loader);
-      $(parent).find(".loader").fadeOut(1000,function(){
+      console.log('three');
+      $(parent).find(".loader").fadeOut(3000,function(){
+        console.log('four');
         $(this).replaceWith(comments);
+        console.log('five');
         callback1(callback1_args);
-        // callback2(callback2_args);
-
+        console.log('seven');
+        callback2(callback2_callback, callback2_args);
+        // console.log('ten');
       });
       });
-      console.log('sss');
-
   }
 }
 
@@ -133,9 +136,8 @@ function post_comments_collapse(callbacks,callback_args,args){
 function update_post_comments_count(args){
   var parent = args[0];
   var data = args[1];
-  console.log(data);
-  console.log("update_p_c_count");
   $(parent).find(".ContentItem-actions-comments-count").html(data);
+  console.log('six');
 }
 
 $(document).on('click', '.btn-pagination', function() {
@@ -177,14 +179,15 @@ $(document).on('click', '.btn-pagination', function() {
 
     $.when(get_loader(),save_comment([method, item_url, data]),get_post_comments([item_url, template]),get_post_comments_count([item_url])).done(function(a1, a2, a3, a4){
       var loader = a1[0];
-      var message = a2[0];
+      var message = a2[0].message;
       var comments = a3[0];
-      var comments_count = a4[0];
+      var comments_count = a4[0].post_comments_count;
 
-      var callbacks = [update_post_comments_count,get_notification];
-      var callback_args = [[parent,comments_count],[add_notification,message]];
+      var callback = [update_post_comments_count,get_notification];
+      var callback_args = [[parent,comments_count],[message]];
+      var callback_callback = [add_notification];
       var args = [parent,template,loader,comments];
-      post_comments_collapse(callbacks,callback_args,args);
+      post_comments_collapse(callback,callback_args,callback_callback,args);
       // update_post_comments_count([parent,comments_count]);
       // get_notification(add_notification,[message]);
       // console.log(a1);
