@@ -1,6 +1,14 @@
 {% load widget_tweaks %}
 {% load custom_tags %}
 <div class="ContentItem-comments-body">
+
+  {% if no_comments %}
+  <div>
+    No comments.
+  </div>
+
+  {% else %}
+
   {% for comment in current_page %}
   <div class="ContentItem-CommentItem">
     <div class="CommentItem-meta">
@@ -24,20 +32,29 @@
     </div>
   </div>
   {% endfor %}
+
+  {% if is_pagination %}
   <div class="Pagination">
     {% if current_page.has_previous %}
     <button type="button" class="btn btn-plain btn-pagination" data-url="{{post.get_absolute_url}}comments/?page={{ current_page.previous_page_number }}">Prev</button>
     {% endif %}
-    {% for i in current_page.paginator.page_range %}
-    {% if current_page.number == i %}
+
+    {% for i in page_num %}
+    {% if i == current_page.number %}
     <button type="button" class="btn btn-plain btn-pagination btn-pagination-current btn-pagination-disabled">{{ i }}</button>
+    {% elif i == -1 %}
+    <button type="button" class="btn btn-plain btn-pagination btn-pagination-disabled">..</button>
+
     {% else %}
-    <button type="button" class="btn btn-plain btn-pagination" data-url="{{post.get_absolute_url}}comments/?page={{ i  }}">{{ i }}</button>
+    <button type="button" class="btn btn-plain btn-pagination" data-url="{{post.get_absolute_url}}comments/?page={{ i }}">{{ i }}</button>
     {% endif %}
     {% endfor %}
+
     {% if current_page.has_next %}
     <button type="button" class="btn btn-plain btn-pagination" data-url="{{post.get_absolute_url}}comments/?page={{ current_page.next_page_number }}">Next</button>
     {% endif %}
-  </ul>
-</div>
+  </div>
+  {% endif %}
+
+  {% endif %}
 </div>

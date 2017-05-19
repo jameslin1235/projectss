@@ -12,7 +12,7 @@ from .models import Post, Like, Dislike
 from .forms import PostForm
 from project1.project1.comments.forms import CommentForm
 from project1.project1.comments.models import Comment
-
+from . import functions
 # Create your views here.
 def post_list(request):
     if request.method == "GET":
@@ -227,16 +227,11 @@ def post_comments(request,id,slug):
         submit_button_text = "Comment"
         comments = post.get_comments()
         comments_count = post.get_comments_count()
-        paginator = Paginator(comments, 10) # Show 25 contacts per page
-        page = request.GET.get('page')
-        try:
-            current_page = paginator.page(page)
-        except PageNotAnInteger:
-            # If page is not an integer, deliver first page.
-            current_page = paginator.page(1)
-        except EmptyPage:
-            # If page is out of range (e.g. 9999), deliver last page of results.
-            current_page = paginator.page(paginator.num_pages)
+        no_comments = True
+        if comments_count != 0:
+            no_comments = False
+            args = [comments,10,request]
+            current_page, is_pagination, page_num = functions.paginate(args)
 
         context = {
             "post":post,
@@ -245,6 +240,9 @@ def post_comments(request,id,slug):
             "submit_button_text":submit_button_text,
             "comments_count":comments_count,
             "current_page":current_page,
+            "is_pagination":is_pagination,
+            "page_num":page_num,
+            "no_comments":no_comments,
         }
 
         template = "post_comments_collapse.html"

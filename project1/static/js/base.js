@@ -1,24 +1,3 @@
-function get_notification(callback,args){
-  console.log("eight");
-  var message = args[0];
-  $.ajax({     // ajax GET to /getnotification/
-    url: "/getnotification/",
-    data:{
-      message:message,
-    },
-    success:function(data) {
-      var callback_args = [data];
-      callback(callback_args);
-      }});
-}
-
-function add_notification(args){
-  console.log("nine");
-  var message = args[0];
-  $("body").append(message);
-  $(".notification").hide().slideDown(500).delay(3000).slideUp(500,function(){$(this).remove();});
-}
-
 function get_login_modal(){
       $.ajax({     // ajax GET to /getloginmodal/
         url: "/getloginmodal/",
@@ -46,38 +25,36 @@ function get_user_status(){
   return user_status;
 }
 
-// function get_loader(callback, callback_args){
-//   $.ajax({      // ajax GET to /getloader/
-//     url: "/getloader/",
-//     success:function(data) {
-//       callback_args.push(data);
-//       callback(callback_args);
-//       get_post_comments();
-//     }});
-//   }
-//
+function get_notification(callback,args){
+  var message = args[0];
+  $.ajax({     // ajax GET to /getnotification/
+    url: "/getnotification/",
+    data:{
+      message:message,
+    },
+    success:function(data) {
+      var callback_args = [data];
+      callback(callback_args);
+      }});
+}
+
+function add_notification(args){
+  var message = args[0];
+  $("body").append(message);
+  $(".notification").hide().slideDown(500).delay(3000).slideUp(500,function(){$(this).remove();});
+}
+
 function get_loader(){
   return $.ajax({      // ajax GET to /getloader/
     url: "/getloader/",
   });
 }
 
-function save_comment(args){
-  var method = args[0];
-  var item_url = args[1];
-  var data = args[2];
-  return $.ajax({
-    method: method,
-    url: item_url,
-    data: data,
-  });
-}
-
 function get_post_comments(args){
-  var item_url = args[0];
+  var item_comments_url = args[0];
   var template = args[1];
   return $.ajax({  // ajax GET to /posts/id/slug/comments using template
-    url:item_url + "comments",
+    url:item_comments_url,
     data: {
       template:template,
     }
@@ -85,136 +62,99 @@ function get_post_comments(args){
 
 function get_post_comments_count(args){
   var item_url = args[0];
-  return $.ajax({
-    url:item_url + "commentscount",  // ajax GET to /posts/id/slug/commentscount
-
+  return $.ajax({   // ajax GET to /posts/id/slug/commentscount
+    url:item_url + "commentscount",
   });
 }
 
-function post_comments_collapse(callback,callback_args,callback_callback,args){
+function save_comment(args){
+  var method = args[0];
+  var item_url = args[1];
+  var data = args[2];
+  return $.ajax({  // ajax POST to /posts/id/slug/
+    method: method,
+    url: item_url,
+    data: data,
+  });
+}
+
+function update_post_comments_count(args){
+  var parent = args[0];
+  var data = args[1];
+  $(parent).find(".ContentItem-actions-comments-count").html(data);
+}
+
+function post_comments_get_page(args){
+    var parent = args[0];
+    var loader = args[1];
+    var comments = args[2];
+    $(parent).find(".ContentItem-comments-body").remove();
+    $('body').animate({scrollTop: $(parent).find(".ContentItem-time").offset().top}, 0, function(){
+      $(parent).find(".ContentItem-comments-topbar").after(loader);
+      $(parent).find(".loader").fadeOut(3000,function(){
+        $(this).replaceWith(comments);
+      });
+    });
+}
+
+function post_comments_add(callback,callback_args,callback_callback,args){
   var callback1 = callback[0];
   var callback2 = callback[1];
   var callback1_args = callback_args[0];
   var callback2_args = callback_args[1];
   var callback2_callback = callback_callback[0];
   var parent = args[0];
-  var template = args[1];
-  var loader = args[2];
-  var comments = args[3];
-
-  if (template == "template2") {
-    $(parent).find(".ContentItem-comments-body").remove();
-    $('body').animate({scrollTop: $(parent).find(".ContentItem-time").offset().top}, 0, function(){$(parent).find(".ContentItem-comments-topbar").after(loader);});
-  }
-  else if (template == "template3"){
-    $(parent).find(".ContentItem-comments-container").remove();
-    console.log('one');
-    $('body').animate({scrollTop: $(parent).find(".ContentItem-time").offset().top}, 0, function(){
-      console.log('two');
-      $(parent).find(".ContentItem-comments").append(loader);
-      console.log('three');
-      $(parent).find(".loader").fadeOut(3000,function(){
-        console.log('four');
-        $(this).replaceWith(comments);
-        console.log('five');
-        callback1(callback1_args);
-        console.log('seven');
-        callback2(callback2_callback, callback2_args);
-        // console.log('ten');
-      });
-      });
-  }
-}
-
-// function fade_loader(args){
-//   console.log("loader_faded");
-//   var parent = args[0];
-//   var data = args[1];
-//   $(parent).find(".loader").fadeOut(1000,function(){$(this).replaceWith(data);});
-// }
-
-function update_post_comments_count(args){
-  var parent = args[0];
-  var data = args[1];
-  $(parent).find(".ContentItem-actions-comments-count").html(data);
-  console.log('six');
+  var loader = args[1];
+  var comments = args[2];
+  $(parent).find(".ContentItem-comments-container").remove();
+  $('body').animate({scrollTop: $(parent).find(".ContentItem-time").offset().top}, 0, function(){
+    $(parent).find(".ContentItem-comments").append(loader);
+    $(parent).find(".loader").fadeOut(3000,function(){
+      $(this).replaceWith(comments);
+      callback1(callback1_args);
+      callback2(callback2_callback, callback2_args);
+    });
+  });
 }
 
 $(document).on('click', '.btn-pagination', function() {
   event.preventDefault();
   var element = $(this);
-  var url = $(element).attr("data-url");
   var parent = (element).parents(".ContentItem");
-  var template2 = "template2";
-  $.ajax({     // ajax GET to /posts/id/slug/comments/?page=
-    url: url,
-    beforeSend:function(){
-      var loader = get_loader();
-      console.log(loader);
-      post_comments_collapse(parent,template2,loader);
-    },
-    data: {
-      template2:template2,
-    },
-    success:function(data) {
-      alert('yes');
-      $(parent).find(".loader").fadeOut(1000,
-        function(){$(parent).find("#loader").replaceWith(data);
-      });
-    }});
+  var item_comments_url = $(element).attr("data-url");
+  var template = "template2";
+  $.when(get_loader(),get_post_comments([item_comments_url, template])).done(function(a1, a2){
+    var loader = a1[0];
+    var comments = a2[0];
+    var args = [parent,loader,comments];
+    post_comments_get_page(args);
   });
+    });
 
-
-  // Save comment,
   $(document).on('submit', '.ContentItem-comments-form', function(event) {
     event.preventDefault();
     var element = $(this);
     var parent = (element).parents(".ContentItem");
     var item_url = $(parent).attr("data-url");
+    var item_comments_url = item_url + "comments";
+    console.log(item_comments_url);
     var method = $(element).attr('method');
     var content = $(parent).find(".ContentItem-comments-form-textfield").val();
     var csrf_token = $(parent).find("[type='hidden']").val();
     var template = "template3";
     var data = {content:content, csrfmiddlewaretoken:csrf_token};
 
-    $.when(get_loader(),save_comment([method, item_url, data]),get_post_comments([item_url, template]),get_post_comments_count([item_url])).done(function(a1, a2, a3, a4){
+    $.when(get_loader(),save_comment([method, item_url, data]),get_post_comments([item_comments_url, template]),get_post_comments_count([item_url])).done(function(a1, a2, a3, a4){
       var loader = a1[0];
       var message = a2[0].message;
       var comments = a3[0];
       var comments_count = a4[0].post_comments_count;
-
       var callback = [update_post_comments_count,get_notification];
       var callback_args = [[parent,comments_count],[message]];
       var callback_callback = [add_notification];
-      var args = [parent,template,loader,comments];
-      post_comments_collapse(callback,callback_args,callback_callback,args);
-      // update_post_comments_count([parent,comments_count]);
-      // get_notification(add_notification,[message]);
-      // console.log(a1);
-      // console.log(a2);
-      // console.log(a3);
-      // console.log(a4);
-
+      var args = [parent,loader,comments];
+      post_comments_add(callback,callback_args,callback_callback,args);
     });
-    // $.ajax({  // ajax POST to save comment /posts/id/slug/
-    //   method: method,
-    //   url: item_url,
-    //   beforeSend:function(){
-    //     get_loader(post_comments_collapse,[parent,template]); // ajax GET to /getloader/
-    //   },
-    //   data: {
-    //     content: content,
-    //     csrfmiddlewaretoken:csrf_token,
-    //   },
-    //   success:function(data) {
-    //     console.log("post_saved");
-    //     var message = data.message;
-    //     get_post_comments(fade_loader,[parent],[item_url,template]); // ajax GET to /posts/id/slug/comments using template
-    //     console.log("comments_grabbed");
-    //     get_post_comments_count(update_post_comments_count,[parent],[item_url]); // ajax GET to /posts/id/slug/commentscount
-    //     get_notification(add_notification,[message]); // ajax GET to /getnotification/
-    //
-    // }});
   });
 
 
