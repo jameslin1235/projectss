@@ -3,7 +3,7 @@
 <div class="ContentItem-comments-body">
 
   {% if no_comments %}
-  <div>
+  <div class="ContentItem-comments-status">
     No comments.
   </div>
 
@@ -41,10 +41,9 @@
 
     {% for i in page_num %}
     {% if i == current_page.number %}
-    <button type="button" class="btn btn-plain btn-pagination btn-pagination-current btn-pagination-disabled">{{ i }}</button>
+    <button type="button" class="btn btn-plain btn-pagination-disabled">{{ i }}</button>
     {% elif i == -1 %}
-    <button type="button" class="btn btn-plain btn-pagination btn-pagination-disabled">..</button>
-
+    <button type="button" class="btn btn-plain btn-pagination-more">..</button>
     {% else %}
     <button type="button" class="btn btn-plain btn-pagination" data-url="{{post.get_absolute_url}}comments/?page={{ i }}">{{ i }}</button>
     {% endif %}

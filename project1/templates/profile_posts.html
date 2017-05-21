@@ -1,9 +1,11 @@
 {% extends "profile_base.html" %}
 {% load widget_tweaks %}
+{% load custom_tags %}
 
 {% block title %}{{ user }}'s {{ title }}{% endblock title %}
 
 {% block vertical_nav %}
+<div class="Card-list">
 <ul class="nav nav-pills nav-stacked">
   <li role="presentation" class="active"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" role="tab" >Posts <span class="profile_sidebar_posts_count">{{posts_count}}</span></a></li>
   {% if user_status == "self" %}<li role="presentation"><a href="{% url 'profiles:profile_drafts' id=user.id slug=user.profile.slug  %}" role="tab" >Drafts <span class="profile_sidebar_drafts_count">{{drafts_count}}</span></a></li>{% endif %}
@@ -12,6 +14,7 @@
   <li role="presentation"><a href="{% url 'profiles:profile_following' id=user.id slug=user.profile.slug  %}" role="tab">Following <span class="profile_sidebar_following_count">{{following_count}}</span></a></li>
   <li role="presentation"><a href="{% url 'profiles:profile_followers' id=user.id slug=user.profile.slug  %}" role="tab">Followers <span class="profile_sidebar_followers_count">{{followers_count}}</span></a></li>
 </ul>
+</div>
 {% endblock vertical_nav %}
 
 {% block content %}
@@ -22,79 +25,5 @@
 {{ block.super }}
 <script>
 
-
-
-
-      // Feature 9 Open delete post modal
-      $(document).on('click', '.delete_button', function(event) {
-        event.preventDefault();
-        var element = $(this);
-        var id = $(element).parents(".thumbnail_container").attr("data-id");
-        $('#profile_posts_modal_'+id).modal();
-      });
-
-
-      // Feature 10 Delete post and show current page with updated results
-      $(document).on('click', '.confirm_delete_button', function(event) {
-        event.preventDefault();
-        var element = $(this);
-        var id = $(element).parents(".thumbnail_container").attr("data-id");
-        var url = $(element).parents(".thumbnail_container").attr("data-url");
-        var pageurl= $(element).parents("#profile_posts_page").attr("data-pageurl");
-        $('#profile_posts_modal_'+id).modal('hide');
-
-        $.ajax({  // send GET request to delete post
-          url:url+"delete",
-          success:function(data) {
-            var message = data.message;
-            $.ajax({
-              url: pageurl, // send GET request to current url
-              success:function(data) {
-                $("#profile_posts_page").replaceWith(data);
-                $("#profile_nav_posts_count").html($("#profile_posts_count").html());
-                $('#profile_posts_page_header').after(make_message(message));
-              }});
-            }
-          })
-
-        });
-
-        // Feature 11 Get nth page of paginated posts
-        $(document).on('click', '.profile_posts_page_button', function() {
-          event.preventDefault();
-          var element = $(this);
-          var url = $(element).attr("href");
-          var option = $(element).parents("#profile_posts_page").attr("data-option-selected");
-          $.ajax({     // send get request to get nth page
-            url: url,
-            data: {option:option},
-            success:function(data) {
-              $("#profile_posts_page").replaceWith(data);
-              $("#profile_posts_select").val(option);
-            }});
-          });
-
-
-
-          // Feature 12 Filter button
-          $(document).on('change','#profile_posts_select',function(){
-            event.preventDefault();
-            var element = $(this);
-            var option = ($(element).val());
-            var url= $(element).parents("#profile_posts_page").attr("data-firstpage");
-
-            $.ajax({     // send get request to get nth page
-              url: url,
-              data: {option:option},
-              success:function(data) {
-                $("#profile_posts_page").replaceWith(data);
-                $("#profile_posts_select").val(option);
-              }});
-            });
-
-
-
-
-
-          </script>
-          {% endblock javascript %}
+</script>
+{% endblock javascript %}

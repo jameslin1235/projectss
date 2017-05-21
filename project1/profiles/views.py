@@ -14,6 +14,7 @@ from project1.project1.profiles.models import Profile, Follow
 from project1.project1.posts.forms import PostForm
 from project1.project1.comments.forms import CommentForm
 from .forms import ProfileForm
+from project1.project1.config import functions
 
 # Create your views here.
 def profile_activity(request,id,slug):
@@ -80,143 +81,95 @@ def profile_posts(request,id,slug):
         User = get_user_model()
         user = get_object_or_404(User, id = id)
         current_user = request.user
-        # anonymous user
-        logged_in = False
-        user_status = "anonymous"
+        users = [user,current_user]
+        logged_in, user_status = functions.get_user_status(users)
 
-        # logged-in user
-        if current_user.is_authenticated:
-            logged_in = True
-            if current_user == user:
-                user_status = "self"
-            else:
-                user_status = "user"
-
-        posts = user.posts.filter(is_draft = False).order_by("-date_published")
-        option = 1
-        if request.GET.get('option'):
-            option = int(request.GET.get('option'))
-            if option == 1:
-                posts = user.posts.filter(is_draft = False).order_by("-date_created")
-
-            elif option == 2:
-                posts = user.posts.filter(is_draft = False).order_by("-date_edited")
-
-            elif option == 3:
-                posts = user.posts.filter(is_draft = False).order_by("-date_published")
-
-            elif option == 4:
-                posts = user.posts.filter(is_draft = False).order_by("-likes")
-
-            elif option == 5:
-                posts = user.posts.filter(is_draft = False).order_by("-dislikes")
-
-            elif option == 6:
-                posts = user.posts.filter(is_draft = False).annotate(num_comments=Count('comment')).order_by('-num_comments')
-
-        user_profile_url = user.profile.get_absolute_url()
+        posts = user.profile.get_posts()
         posts_count = posts.count()
-        drafts_count = user.posts.filter(is_draft = True).count()
-        following_count = user.profile.get_following_count()
-        followers_count = user.profile.get_followers_count()
-        no_posts = True
-        if posts_count != 0:
+        if posts_count == 0:
+            no_posts = True
+        else:
             no_posts = False
-        title = "Posts"
-        comment_title = "Comments"
-        comment_button_text = "Comment"
-        paginator = Paginator(posts, 10) # Show 25 contacts per page
-        page = request.GET.get('page')
-        try:
-            current_page = paginator.page(page)
-        except PageNotAnInteger:
-            # If page is not an integer, deliver first page.
-            current_page = paginator.page(1)
-        except EmptyPage:
-            # If page is out of range (e.g. 9999), deliver last page of results.
-            current_page = paginator.page(paginator.num_pages)
+            drafts_count = user.profile.get_drafts_count()
+            following_count = user.profile.get_following_count()
+            followers_count = user.profile.get_followers_count()
+            user_profile_url = user.profile.get_absolute_url()
+            form = CommentForm()
+            title = "Posts"
+            comment_title = "Comments"
+            comment_button_text = "Comment"
+            args = [posts,10,request]
+            current_page, is_pagination, page_num = functions.paginate(args)
 
-        comments_count = []
-        form = CommentForm()
-        user_follow_status = "Follow"
-        user_message_status = "Message"
-        user_posts_like_status = []
-        user_posts_dislike_status = []
-        disabled_buttons_status = []
+            # option = 1
+            # if request.GET.get('option'):
+            #     option = int(request.GET.get('option'))
+            #     if option == 1:
+            #         posts = user.posts.filter(is_draft = False).order_by("-date_created")
+            #
+            #     elif option == 2:
+            #         posts = user.posts.filter(is_draft = False).order_by("-date_edited")
+            #
+            #     elif option == 3:
+            #         posts = user.posts.filter(is_draft = False).order_by("-date_published")
+            #
+            #     elif option == 4:
+            #         posts = user.posts.filter(is_draft = False).order_by("-likes")
+            #
+            #     elif option == 5:
+            #         posts = user.posts.filter(is_draft = False).order_by("-dislikes")
+            #
+            #     elif option == 6:
+            #         posts = user.posts.filter(is_draft = False).annotate(num_comments=Count('comment')).order_by('-num_comments')
 
-        if user_status == "self":
-            user_follow_status = "self"
-            user_message_status = "self"
-        elif user_status == "user":
-            if current_user.profile.following.filter(user=user).exists():
-                user_follow_status = "Followed"
-            else:
-                user_follow_status = "Follow"
-            user_message_status = "Message"
+            args = [user_status,user,current_user]
+            print(args)
+            user_follow_status = functions.get_user_follow_status(args)
+            args = [user_status]
+            print(args)
+            user_message_status = functions.get_user_message_status(args)
+            args = [user_status,current_user,current_page]
+            print(args)
+            user_posts_like_status = functions.get_user_posts_like_status(args)
+            user_posts_dislike_status = functions.get_user_posts_dislike_status(args)
+            args = [user_status,current_page]
+            print(args)
+            like_dislike_buttons_status = functions.get_like_dislike_buttons_status(args)
+            args = [current_page]
+            print(args)
+            posts_comments_count = functions.get_user_posts_comments_count(args)
+            print(posts_comments_count)
 
-        for post in current_page.object_list:
-            if user_status == "anonymous":
-                user_posts_like_status.append("No")
-                user_posts_dislike_status.append("No")
-                disabled_buttons_status.append("Enabled")
-            elif user_status =="self":
-                user_posts_like_status.append("No")
-                user_posts_dislike_status.append("No")
-                disabled_buttons_status.append("Disabled")
-            elif user_status == "user":
-                if post.likers.filter(user=current_user).exists():
-                    user_posts_like_status.append("Liked")
-                else:
-                    user_posts_like_status.append("No")
-
-                if post.dislikers.filter(user=current_user).exists():
-                    user_posts_dislike_status.append("Disliked")
-                else:
-                    user_posts_dislike_status.append("No")
-
-                disabled_buttons_status.append("Enabled")
-            comments_count.append(post.comments.all().count())
-        print(user_posts_like_status)
-        print(user_posts_dislike_status)
-        print(disabled_buttons_status)
-        context = {
-            "user":user,
-            "current_user":current_user,
-            "logged_in":logged_in,
-            "user_status":user_status,
-            "user_profile_url":user_profile_url,
-
-            "option":option,
-            "posts_count":posts_count,
-            "drafts_count":drafts_count,
-            "following_count":following_count,
-            "followers_count":followers_count,
-            "no_posts":no_posts,
-            "title":title,
-            "comment_title":comment_title,
-            "comment_button_text":comment_button_text,
-            "current_page":current_page,
-            "comments_count":comments_count,
-            "form":form,
-            "user_follow_status":user_follow_status,
-            "user_message_status":user_message_status,
-            "user_posts_like_status":user_posts_like_status,
-            "user_posts_dislike_status":user_posts_dislike_status,
-            "disabled_buttons_status":disabled_buttons_status,
-        }
+            context = {
+                "user":user,
+                "current_user":current_user,
+                "logged_in":logged_in,
+                "user_status":user_status,
+                "posts_count":posts_count,
+                "no_posts":no_posts,
+                "drafts_count":drafts_count,
+                "following_count":following_count,
+                "followers_count":followers_count,
+                "form":form,
+                "title":title,
+                "comment_title":comment_title,
+                "comment_button_text":comment_button_text,
+                "current_page":current_page,
+                "is_pagination":is_pagination,
+                "page_num":page_num,
+                "user_follow_status":user_follow_status,
+                "user_message_status":user_message_status,
+                "user_posts_like_status":user_posts_like_status,
+                "user_posts_dislike_status":user_posts_dislike_status,
+                "like_dislike_buttons_status":like_dislike_buttons_status,
+                "posts_comments_count":posts_comments_count,
+            }
 
         if request.is_ajax():
             template = "profile_posts_page.html"
         else:
             template = "profile_posts.html"
-
         return render(request,template,context)
-
-
-
-# when you first come to page, you should be in first filter
-#when you click on a different option, send a request to view to get template with filter
-
 
 def profile_drafts(request,id,slug):
     if request.method == "GET":

@@ -99,12 +99,8 @@ def pagination_last(*args):
 
 
 def get_user_status(*args):
-    current_user = args[0]
-    user = args[1]
-    # anonymous user
-    logged_in = False
-    user_status = "anonymous"
-
+    user = args[0][0]
+    current_user = args[0][1]
     # logged-in user
     if current_user.is_authenticated:
         logged_in = True
@@ -112,4 +108,90 @@ def get_user_status(*args):
             user_status = "self"
         else:
             user_status = "user"
+    # anonymous user
+    else:
+        logged_in = False
+        user_status = "anonymous"
+
     return logged_in, user_status
+
+
+def get_user_follow_status(*args):
+    user_status = args[0][0]
+    user = args[0][1]
+    current_user = args[0][1]
+    if user_status == "anonymous":
+        user_follow_status = "Follow"
+    elif user_status == "self":
+        user_follow_status = "self"
+    elif user_status == "user":
+        if current_user.profile.followed_user(user):
+            user_follow_status = "Followed"
+        else:
+            user_follow_status = "Follow"
+    return user_follow_status
+
+def get_user_message_status(*args):
+    user_status = args[0][0]
+    if user_status == "anonymous":
+        user_message_status = "Message"
+    elif user_status == "self":
+        user_message_status = "self"
+    elif user_status == "user":
+        user_message_status = "Message"
+    return user_message_status
+
+def get_user_posts_like_status(*args):
+    user_status = args[0][0]
+    current_user = args[0][1]
+    current_page = args[0][2]
+    user_posts_like_status = []
+    for post in current_page.object_list:
+        if user_status == "anonymous":
+            user_posts_like_status.append("No")
+        elif user_status =="self":
+            user_posts_like_status.append("No")
+        elif user_status == "user":
+            if current_user.profile.liked_post(post):
+                user_posts_like_status.append("Liked")
+            else:
+                user_posts_like_status.append("No")
+    return user_posts_like_status
+
+
+def get_user_posts_dislike_status(*args):
+    user_status = args[0][0]
+    current_user = args[0][1]
+    current_page = args[0][2]
+    user_posts_dislike_status = []
+    for post in current_page.object_list:
+        if user_status == "anonymous":
+            user_posts_dislike_status.append("No")
+        elif user_status =="self":
+            user_posts_dislike_status.append("No")
+        elif user_status == "user":
+            if current_user.profile.disliked_post(post):
+                user_posts_dislike_status.append("Disliked")
+            else:
+                user_posts_dislike_status.append("No")
+    return user_posts_dislike_status
+
+def get_like_dislike_buttons_status(*args):
+    user_status = args[0][0]
+    current_page = args[0][1]
+    like_dislike_buttons_status = []
+    for post in current_page.object_list:
+        if user_status == "anonymous":
+            like_dislike_buttons_status.append("Enabled")
+        elif user_status =="self":
+            like_dislike_buttons_status.append("Disabled")
+        elif user_status == "user":
+            like_dislike_buttons_status.append("Enabled")
+    return like_dislike_buttons_status
+
+def get_user_posts_comments_count(*args):
+    current_page = args[0][0]
+    comments_count = []
+    for post in current_page.object_list:
+        comments_count.append(post.get_comments_count())
+    return comments_count

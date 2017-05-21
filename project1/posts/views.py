@@ -12,7 +12,7 @@ from .models import Post, Like, Dislike
 from .forms import PostForm
 from project1.project1.comments.forms import CommentForm
 from project1.project1.comments.models import Comment
-from . import functions
+from project1.project1.config import functions
 # Create your views here.
 def post_list(request):
     if request.method == "GET":
@@ -213,36 +213,27 @@ def post_comments(request,id,slug):
     if request.method == "GET" and request.is_ajax():
         if post.is_draft == True:
             raise PermissionDenied
-        # anonymous user
-        logged_in = False
-        user_status = "anonymous"
-        # logged-in user
-        if current_user.is_authenticated:
-            logged_in = True
-            if current_user == user:
-                user_status = "self"
-            else:
-                user_status = "user"
-
         submit_button_text = "Comment"
         comments = post.get_comments()
         comments_count = post.get_comments_count()
-        no_comments = True
-        if comments_count != 0:
+        if comments_count == 0:
+            no_comments = True
+            current_page = 0
+            is_pagination = 0
+            page_num = 0
+        else:
             no_comments = False
             args = [comments,10,request]
             current_page, is_pagination, page_num = functions.paginate(args)
 
         context = {
             "post":post,
-            "logged_in":logged_in,
-            "user_status":user_status,
             "submit_button_text":submit_button_text,
             "comments_count":comments_count,
+            "no_comments":no_comments,
             "current_page":current_page,
             "is_pagination":is_pagination,
             "page_num":page_num,
-            "no_comments":no_comments,
         }
 
         template = "post_comments_collapse.html"
@@ -330,18 +321,9 @@ def post_likers(request,id,slug):
     if request.method == "GET" and request.is_ajax():
         if post.is_draft == True:
             raise PermissionDenied
+        users = [user,current_user]
+        logged_in, user_status = get_user_status(users)
 
-        # anonymous user
-        logged_in = False
-        user_status = "anonymous"
-
-        # logged-in user
-        if current_user.is_authenticated:
-            logged_in = True
-            if current_user == user:
-                user_status = "self"
-            else:
-                user_status = "user"
 
         no_likers = True
         if post.get_likers_count != 0:

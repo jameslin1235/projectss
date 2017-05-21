@@ -51,8 +51,8 @@ class Profile(models.Model):
     def get_absolute_url(self):
         return reverse("profiles:profile_activity", kwargs={"id": self.id, "slug": self.slug})
 
-    def followed_user(self, profile):
-        return self.following.filter(user=profile.user).exists()
+    def followed_user(self, user):
+        return self.following.filter(user=user).exists()
 
     def follow_user(self,profile):
         Follow.objects.create(source=self,dest=profile,date_followed=timezone.now())
@@ -69,13 +69,23 @@ class Profile(models.Model):
         return self.followers.count()
 
     def get_posts_count(self):
-        return self.user.posts.count()
+        return self.user.posts.filter(is_draft = False).count()
+
+    def get_posts(self):
+        return self.user.posts.filter(is_draft = False).order_by("-date_published")
+
+    def get_drafts_count(self):
+        return self.user.posts.filter(is_draft = True).count()
+
 
     def get_comments_count(self):
         return self.user.comments.count()
 
+    def liked_post(self,post):
+        return self.liked_posts.filter(id=post.id).exists()
 
-
+    def disliked_post(self,post):
+        return self.disliked_posts.filter(id=post.id).exists()
 
     class Meta:
         ordering = ["-date_created"]

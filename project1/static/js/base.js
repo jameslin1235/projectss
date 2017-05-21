@@ -25,6 +25,103 @@ function get_user_status(){
   return user_status;
 }
 
+// Feature 3 Get and open post likers modal
+$(document).on('click', '.btn-ContentItem-likers-count', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  var parent = $(element).parents(".ContentItem");
+  var item_url = $(parent).attr("data-url");
+  $.ajax({     // ajax GET to /posts/id/slug/likers
+    url: item_url + "likers",
+    success:function(data) {
+      $("body").append(data);
+      $(".modal").modal();
+
+    }});
+  });
+
+
+//
+// Feature 1 Like item
+$(document).on('click', '.like-button', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  var parent = (element).parents(".ContentItem");
+  var item_url = $(parent).attr("data-url");
+  var user_status = $("#user_status").attr("data-user-status");
+  if (user_status == "anonymous") {
+    get_login_modal();
+  }
+  else if (user_status == "user"){
+    $.ajax({  // ajax GET to /posts/id/slug/like
+      url:item_url + "like",
+      success:function(data) {
+        if ($(element).hasClass("active")) {
+          $(element).removeClass("active");
+        }
+        else{
+          $(element).addClass("active");
+        }
+        $(parent).find(".ContentItem-likers-count").html(data.likes_count+" people liked this post.");
+        $(parent).find(".ContentItem-actions-likers-count").html(data.likes_count);
+      }
+    });
+  }
+});
+
+// Feature 2 Dislike item
+$(document).on('click', '.dislike-button', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  var parent = (element).parents(".ContentItem");
+  var item_url = $(parent).attr("data-url");
+  var user_status = $("#user_status").attr("data-user-status");
+  if (user_status == "anonymous") {
+    get_login_modal();
+  }
+  else if (user_status == "user"){
+    $.ajax({  // ajax GET to /posts/id/slug/dislike
+      url:item_url + "dislike",
+      success:function(data) {
+        if ($(element).hasClass("active")) {
+          $(element).removeClass("active");
+        }
+        else{
+          $(element).addClass("active");
+        }
+        $(parent).find(".ContentItem-actions-dislikers-count").html(data.dislikes_count);
+      }
+    });
+  }
+});
+
+// Feature 3 post comments collapse
+$(document).on('click', '.comment-button', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  var parent = (element).parents(".ContentItem")
+  var item_url = $(parent).attr("data-url");
+  if ($(parent).find(".ContentItem-comments").length) {
+    var ContentItem_comments = $(parent).find(".ContentItem-comments");
+    $(ContentItem_comments).collapse('hide');
+    $(ContentItem_comments).on('hidden.bs.collapse', function () {
+      $(ContentItem_comments).remove();});
+    }
+    else{
+      $.ajax({  // ajax GET to /posts/id/slug/comments (brand new collapse)
+        url:item_url + "comments",
+        success:function(data) {
+          $(parent).append(data);
+          $(parent).find(".ContentItem-comments").collapse('show');
+          autosize($('textarea'));
+        }
+      });
+    }
+
+  });
+
+
+
 function get_notification(callback,args){
   var message = args[0];
   $.ajax({     // ajax GET to /getnotification/
@@ -97,6 +194,8 @@ function post_comments_get_page(args){
     });
 }
 
+
+
 function post_comments_add(callback,callback_args,callback_callback,args){
   var callback1 = callback[0];
   var callback2 = callback[1];
@@ -117,7 +216,10 @@ function post_comments_add(callback,callback_args,callback_callback,args){
   });
 }
 
-$(document).on('click', '.btn-pagination', function() {
+
+
+
+$(document).on('click', '.btn-pagination-list-page', function() {
   event.preventDefault();
   var element = $(this);
   var parent = (element).parents(".ContentItem");
@@ -130,6 +232,21 @@ $(document).on('click', '.btn-pagination', function() {
     post_comments_get_page(args);
   });
     });
+
+
+    $(document).on('click', '.btn-pagination-comments', function() {
+      event.preventDefault();
+      var element = $(this);
+      var parent = (element).parents(".ContentItem");
+      var item_comments_url = $(element).attr("data-url");
+      var template = "template2";
+      $.when(get_loader(),get_post_comments([item_comments_url, template])).done(function(a1, a2){
+        var loader = a1[0];
+        var comments = a2[0];
+        var args = [parent,loader,comments];
+        post_comments_get_page(args);
+      });
+        });
 
   $(document).on('submit', '.ContentItem-comments-form', function(event) {
     event.preventDefault();
@@ -157,85 +274,6 @@ $(document).on('click', '.btn-pagination', function() {
     });
   });
 
-
-            //
-            // Feature 1 Like item
-            $(document).on('click', '.like-button', function(event) {
-              event.preventDefault();
-              var element = $(this);
-              var parent = (element).parents(".ContentItem");
-              var item_url = $(parent).attr("data-url");
-              var user_status = $("#user_status").attr("data-user-status");
-              if (user_status == "anonymous") {
-                get_login_modal();
-              }
-              else if (user_status == "user"){
-                $.ajax({  // ajax GET to /posts/id/slug/like
-                  url:item_url + "like",
-                  success:function(data) {
-                    if ($(element).hasClass("active")) {
-                      $(element).removeClass("active");
-                    }
-                    else{
-                      $(element).addClass("active");
-                    }
-                    $(parent).find(".ContentItem-likers-count").html(data.likes_count+" people liked this post.");
-                    $(parent).find(".ContentItem-actions-likers-count").html(data.likes_count);
-                  }
-                });
-              }
-            });
-
-            // Feature 2 Dislike item
-            $(document).on('click', '.dislike-button', function(event) {
-              event.preventDefault();
-              var element = $(this);
-              var parent = (element).parents(".ContentItem");
-              var item_url = $(parent).attr("data-url");
-              var user_status = $("#user_status").attr("data-user-status");
-              if (user_status == "anonymous") {
-                get_login_modal();
-              }
-              else if (user_status == "user"){
-                $.ajax({  // ajax GET to /posts/id/slug/dislike
-                  url:item_url + "dislike",
-                  success:function(data) {
-                    if ($(element).hasClass("active")) {
-                      $(element).removeClass("active");
-                    }
-                    else{
-                      $(element).addClass("active");
-                    }
-                    $(parent).find(".ContentItem-actions-dislikers-count").html(data.dislikes_count);
-                  }
-                });
-              }
-            });
-
-            // Feature 3 post comments collapse
-            $(document).on('click', '.comment-button', function(event) {
-              event.preventDefault();
-              var element = $(this);
-              var parent = (element).parents(".ContentItem")
-              var item_url = $(parent).attr("data-url");
-              if ($(parent).find(".ContentItem-comments").length) {
-                var ContentItem_comments = $(parent).find(".ContentItem-comments");
-                $(ContentItem_comments).collapse('hide');
-                $(ContentItem_comments).on('hidden.bs.collapse', function () {
-                  $(ContentItem_comments).remove();});
-                }
-                else{
-                  $.ajax({  // ajax GET to /posts/id/slug/comments (brand new collapse)
-                    url:item_url + "comments",
-                    success:function(data) {
-                      $(parent).append(data);
-                      $(parent).find(".ContentItem-comments").collapse('show');
-                      autosize($('textarea'));
-                    }
-                  });
-                }
-
-              });
 
 
 
@@ -268,20 +306,7 @@ $(document).on('click', '.btn-pagination', function() {
               });
 
 
-              // Feature 3 Get and open post likers modal
-              $(document).on('click', '.btn-ContentItem-likers-count', function(event) {
-                event.preventDefault();
-                var element = $(this);
-                var parent = $(element).parents(".ContentItem");
-                var item_url = $(parent).attr("data-url");
-                $.ajax({     // ajax GET to /posts/id/slug/likers
-                  url: item_url + "likers",
-                  success:function(data) {
-                    $("body").append(data);
-                    $(".modal").modal();
 
-                  }});
-                });
 
 // Feature 4 Close post likers modal
 $(document).on('click', '.btn-closeModal', function(event) {
