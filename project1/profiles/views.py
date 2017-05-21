@@ -150,6 +150,7 @@ def profile_posts(request,id,slug):
                 "drafts_count":drafts_count,
                 "following_count":following_count,
                 "followers_count":followers_count,
+                "user_profile_url":user_profile_url,
                 "form":form,
                 "title":title,
                 "comment_title":comment_title,

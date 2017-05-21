@@ -1,3 +1,96 @@
+// loader
+function get_loader(){
+  return $.ajax({      // ajax GET to /getloader/
+    url: "/getloader/",
+  });
+}
+
+
+// List
+function get_list_page(args){
+  var list_page_url = args[0];
+  return $.ajax({      // ajax GET to get_list_page
+    url: list_page_url,
+  });
+}
+
+function add_list_page(args){
+  var parent = args[0];
+  var loader = args[1];
+  var list_page = args[2];
+  $(parent).find(".List-body").css("visibility","hidden");
+  $('body').animate({scrollTop: $(parent).offset().top - 51}, 0, function(){
+    $(parent).find(".List-header").after(loader);
+    // $(parent).find(".List-header").after(loader);
+    $(parent).find(".loader").fadeOut(3000,function(){
+      $(this).next().remove();
+      $(this).replaceWith(list_page);
+    });
+  });
+
+}
+
+
+
+// ContentItem pagination
+
+function get_post_comments_page(args){
+  var post_comments_url = args[0];
+  var template = args[1];
+  return $.ajax({  // ajax GET to /posts/id/slug/comments using template
+    url:post_comments_url,
+    data: {
+      template:template,
+    }
+});}
+
+function add_post_comments_page(args){
+    var parent = args[0];
+    var loader = args[1];
+    var post_comments = args[2];
+    $(parent).find(".ContentItem-comments-body").css("visibility","hidden");
+    $('body').animate({scrollTop: $(parent).find(".ContentItem-time").offset().top}, 0, function(){
+      $(parent).find(".ContentItem-comments-topbar").after(loader);
+      $(parent).find(".loader").fadeOut(3000,function(){
+        $(this).next().remove();
+        $(this).replaceWith(post_comments);
+      });
+    });
+}
+
+// ContentItem collapse
+function get_post_comments(args){
+  var post_comments_url = args[0];
+  return $.ajax({  // ajax GET to /posts/id/slug/comments using template
+    url:post_comments_url,
+});
+}
+
+
+$(document).on('click', '.btn-comment', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  var parent = $(element).parents(".ContentItem");
+  var post_comments_url = $(parent).attr("data-url") + "comments";
+  if ($(parent).find(".ContentItem-comments").length) {
+    var ContentItem_comments = $(parent).find(".ContentItem-comments");
+    $(ContentItem_comments).collapse('hide');
+    $(ContentItem_comments).on('hidden.bs.collapse', function () {$(this).remove();});
+    }
+  else{
+    var args = [post_comments_url];
+    $.when(get_post_comments(args)).done(function(a1){
+      var post_comments = a1[0];
+      console.log(parent);
+      $(parent).append($(post_comments));
+      $(parent).find(".ContentItem-comments").collapse('show');
+      autosize($('textarea'));
+  });
+}});
+
+
+// login modal
+
 function get_login_modal(){
       $.ajax({     // ajax GET to /getloginmodal/
         url: "/getloginmodal/",
@@ -6,6 +99,8 @@ function get_login_modal(){
           $("#login-modal").modal();
         }});
 }
+
+
 
 // Feature 1 Close login modal
 $(document).on('click', '#login-modal-close-button', function(event) {
@@ -20,11 +115,39 @@ $(document).on('hidden.bs.modal', '#login-modal', function(event) {
   $(element).remove();
 });
 
+
+// user status
 function get_user_status(){
   var user_status = $("#user-status").attr("data-user-status");
   return user_status;
 }
 
+
+
+// notification
+function get_notification(callback,args){
+  var message = args[0];
+  $.ajax({     // ajax GET to /getnotification/
+    url: "/getnotification/",
+    data:{
+      message:message,
+    },
+    success:function(data) {
+      var callback_args = [data];
+      callback(callback_args);
+      }});
+}
+
+function add_notification(args){
+  var message = args[0];
+  $("body").append(message);
+  $(".notification").hide().slideDown(500).delay(3000).slideUp(500,function(){$(this).remove();});
+}
+
+
+
+
+// contentitem likers modal
 // Feature 3 Get and open post likers modal
 $(document).on('click', '.btn-ContentItem-likers-count', function(event) {
   event.preventDefault();
@@ -41,7 +164,7 @@ $(document).on('click', '.btn-ContentItem-likers-count', function(event) {
   });
 
 
-//
+
 // Feature 1 Like item
 $(document).on('click', '.like-button', function(event) {
   event.preventDefault();
@@ -96,66 +219,21 @@ $(document).on('click', '.dislike-button', function(event) {
 });
 
 // Feature 3 post comments collapse
-$(document).on('click', '.comment-button', function(event) {
-  event.preventDefault();
-  var element = $(this);
-  var parent = (element).parents(".ContentItem")
-  var item_url = $(parent).attr("data-url");
-  if ($(parent).find(".ContentItem-comments").length) {
-    var ContentItem_comments = $(parent).find(".ContentItem-comments");
-    $(ContentItem_comments).collapse('hide');
-    $(ContentItem_comments).on('hidden.bs.collapse', function () {
-      $(ContentItem_comments).remove();});
-    }
-    else{
-      $.ajax({  // ajax GET to /posts/id/slug/comments (brand new collapse)
-        url:item_url + "comments",
-        success:function(data) {
-          $(parent).append(data);
-          $(parent).find(".ContentItem-comments").collapse('show');
-          autosize($('textarea'));
-        }
-      });
-    }
 
-  });
+
+  // function get_post_comments(args){
+  //   var item_comments_url = args[0];
+  //   var template = args[1];
+  //   return $.ajax({  // ajax GET to /posts/id/slug/comments using template
+  //     url:item_comments_url,
+  //     data: {
+  //       template:template,
+  //     }
+  // });}
 
 
 
-function get_notification(callback,args){
-  var message = args[0];
-  $.ajax({     // ajax GET to /getnotification/
-    url: "/getnotification/",
-    data:{
-      message:message,
-    },
-    success:function(data) {
-      var callback_args = [data];
-      callback(callback_args);
-      }});
-}
 
-function add_notification(args){
-  var message = args[0];
-  $("body").append(message);
-  $(".notification").hide().slideDown(500).delay(3000).slideUp(500,function(){$(this).remove();});
-}
-
-function get_loader(){
-  return $.ajax({      // ajax GET to /getloader/
-    url: "/getloader/",
-  });
-}
-
-function get_post_comments(args){
-  var item_comments_url = args[0];
-  var template = args[1];
-  return $.ajax({  // ajax GET to /posts/id/slug/comments using template
-    url:item_comments_url,
-    data: {
-      template:template,
-    }
-});}
 
 function get_post_comments_count(args){
   var item_url = args[0];
@@ -181,19 +259,19 @@ function update_post_comments_count(args){
   $(parent).find(".ContentItem-actions-comments-count").html(data);
 }
 
-function post_comments_get_page(args){
-    var parent = args[0];
-    var loader = args[1];
-    var comments = args[2];
-    $(parent).find(".ContentItem-comments-body").remove();
-    $('body').animate({scrollTop: $(parent).find(".ContentItem-time").offset().top}, 0, function(){
-      $(parent).find(".ContentItem-comments-topbar").after(loader);
-      $(parent).find(".loader").fadeOut(3000,function(){
-        $(this).replaceWith(comments);
-      });
-    });
-}
-
+// function post_comments_get_page(args){
+//     var parent = args[0];
+//     var loader = args[1];
+//     var comments = args[2];
+//     $(parent).find(".ContentItem-comments-body").remove();
+//     $('body').animate({scrollTop: $(parent).find(".ContentItem-time").offset().top}, 0, function(){
+//       $(parent).find(".ContentItem-comments-topbar").after(loader);
+//       $(parent).find(".loader").fadeOut(3000,function(){
+//         $(this).replaceWith(comments);
+//       });
+//     });
+// }
+//
 
 
 function post_comments_add(callback,callback_args,callback_callback,args){
@@ -217,36 +295,27 @@ function post_comments_add(callback,callback_args,callback_callback,args){
 }
 
 
+// Pagination for comments, list page, for front page
 
 
-$(document).on('click', '.btn-pagination-list-page', function() {
-  event.preventDefault();
-  var element = $(this);
-  var parent = (element).parents(".ContentItem");
-  var item_comments_url = $(element).attr("data-url");
-  var template = "template2";
-  $.when(get_loader(),get_post_comments([item_comments_url, template])).done(function(a1, a2){
-    var loader = a1[0];
-    var comments = a2[0];
-    var args = [parent,loader,comments];
-    post_comments_get_page(args);
-  });
-    });
+
+// $(document).on('click', '.btn-pagination', function() {
+//   event.preventDefault();
+//   var element = $(this);
+//   var parent = (element).parents(".ContentItem");
+//   var item_comments_url = $(element).attr("data-url");
+//   var template = "template2";
+//   $.when(get_loader(),get_post_comments([item_comments_url, template])).done(function(a1, a2){
+//     var loader = a1[0];
+//     var comments = a2[0];
+//     var args = [parent,loader,comments];
+//     post_comments_get_page(args);
+//   alert('java');
+//   });
 
 
-    $(document).on('click', '.btn-pagination-comments', function() {
-      event.preventDefault();
-      var element = $(this);
-      var parent = (element).parents(".ContentItem");
-      var item_comments_url = $(element).attr("data-url");
-      var template = "template2";
-      $.when(get_loader(),get_post_comments([item_comments_url, template])).done(function(a1, a2){
-        var loader = a1[0];
-        var comments = a2[0];
-        var args = [parent,loader,comments];
-        post_comments_get_page(args);
-      });
-        });
+
+
 
   $(document).on('submit', '.ContentItem-comments-form', function(event) {
     event.preventDefault();

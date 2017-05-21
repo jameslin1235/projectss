@@ -34,7 +34,7 @@
   {% endfor %}
 
   {% if is_pagination %}
-  <div class="Pagination">
+  <div class="Pagination comments-Pagination">
     {% if current_page.has_previous %}
     <button type="button" class="btn btn-plain btn-pagination" data-url="{{post.get_absolute_url}}comments/?page={{ current_page.previous_page_number }}">Prev</button>
     {% endif %}
