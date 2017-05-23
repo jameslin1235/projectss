@@ -1,3 +1,4 @@
+import os
 from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
@@ -7,31 +8,36 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
 
+countries_path = os.path.join(settings.BASE_DIR, "project1/static/data/countries.txt")
+print(countries_path)
+with open(countries_path) as f:
+    for line in f:
+        countries_tuple = tuple(tuple(i.rstrip('\n').split(':')) for i in f)
+
+
 # Create your models here.
 class Profile(models.Model):
+    residence_choices = countries_tuple
+    print(residence_choices)
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     following = models.ManyToManyField("self",null=True,symmetrical=False, through='Follow', related_name="followers")
+    gender = models.NullBooleanField(
+        blank=True,
+    )
+    profile_credential = models.CharField(
+        max_length = 100,
+        blank=True,
+    )
 
-    position = models.CharField(
-        max_length=100,
+    profile_description = models.TextField(
         blank=True,
     )
-    company = models.CharField(
-        max_length=100,
-        blank=True,
+    residence = models.CharField(
+        max_length = 2,
+        choices = residence_choices,
+        blank = True,
     )
-    school = models.CharField(
-        max_length=100,
-        blank=True,
-    )
-    concentration = models.CharField(
-        max_length=100,
-        blank=True,
-    )
-    degree_type = models.CharField(
-        max_length=100,
-        blank=True,
-    )
+
     avatar = models.FileField(
         upload_to = "profile_avatar/",
         blank=True,

@@ -7,78 +7,60 @@
   <div class="container">
     <div class="row" >
       <div class="col-md-12">
-        <div class="section">
-          <div class="row">
-            <div class="col-md-3">
-              <div>
-                <img src="{{ user.profile.avatar.url }}" class="img-responsive img-thumbnail" alt="Responsive image" width="168px" height="168px">
-              </div>
+        <div class="Card">
+          <div class="profile-cover">
+          </div>
+
+          <div class="profile-body">
+            <div class="profile-avatar">
+              <img src="{{ user.profile.avatar.url }}" class="img-responsive Avatar Avatar-large" alt="Responsive image">
             </div>
-            <div class="col-md-3">
 
-              <div >
-                <h1 id="profile_base_username">{{ user }}</h1>
-                {% if user.profile.position %}
-                <p><span class="glyphicon glyphicon-briefcase" aria-hidden="true"></span> {{ user.profile.position }}</p>
-                {% endif %}
-
-                {% if user.profile.company %}
-                <p><span class="glyphicon glyphicon-briefcase" aria-hidden="true"></span> {{ user.profile.company }}</p>
-                {% endif %}
-
-                {% if user.profile.school %}
-                <p><span class="glyphicon glyphicon-education" aria-hidden="true"></span> {{ user.profile.school }}</p>
-                {% endif %}
-
-                {% if user.profile.concentration %}
-                <p><span class="glyphicon glyphicon-education" aria-hidden="true"></span> {{ user.profile.concentration }}</p>
-                {% endif %}
-
-                {% if user.profile.degree_type %}
-                <p><span class="glyphicon glyphicon-education" aria-hidden="true"></span> {{ user.profile.degree_type }}</p>
-                {% endif %}
-
+            <div class="profile-content">
+              <div class="profile-contentHeader">
+                <h1>{{user.username}}</h1>
               </div>
-              {% if user_status == "user" %}
-              <div >
-                <a class="btn btn-primary" href="{% url 'profiles:profile_edit' id=user.id slug=user.profile.slug %}"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit Profile</a>
+              <div class="profile-contentBody">
+                <div class="profile-contentBodyItem">
+                  <span></span>
+                </div>
+                <div class="profile-contentBodyItem">
+
+                </div>
+                <div>
+                </div>
+                aaa
               </div>
-              {% endif %}
-
-
-              <div >
-                {% if user_follow_status != "self" %}<button type="button" class="btn btn-primary user_follow_button">{{ user_follow_status }}</button>{% endif %}
-
-                {% if user_message_status != "self" %}<button type="button" class="btn btn-primary">{{ user_message_status }}</button>{% endif %}
+              <div class="profile-contentFooter">
+                aaa
               </div>
-
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="row">
-      <div class="col-md-2">
-        <div class="Card">
+  <div class="row">
+    <div class="col-md-2">
+      <div class="Card">
         <div class="Card-header">
           <h4 class="Card-header-title">Feeds</h4>
         </div>
         {% block vertical_nav %}
         {% endblock vertical_nav %}
       </div>
-      </div>
-      <div class="col-md-7">
-        <div class="Card">
+    </div>
+    <div class="col-md-7">
+      <div class="Card">
         {% block content %}
         {% endblock content %}
       </div>
-      </div>
-      <div class="col-md-3">
+    </div>
+    <div class="col-md-3">
 
-        <div class="Card">
-          <h1>text</h1>
-        </div>
+      <div class="Card">
+        <h1>text</h1>
       </div>
     </div>
   </div>
