@@ -5,7 +5,6 @@ function get_loader(){
   });
 }
 
-
 // List
 function get_list_page(args){
   var list_page_url = args[0];
@@ -22,7 +21,7 @@ function add_list_page(args){
   $('body').animate({scrollTop: $(parent).offset().top - 51}, 0, function(){
     $(parent).find(".List-header").after(loader);
     // $(parent).find(".List-header").after(loader);
-    $(parent).find(".loader").fadeOut(3000,function(){
+    $(parent).find(".loader").fadeOut("fast",function(){
       $(this).next().remove();
       $(this).replaceWith(list_page);
     });
@@ -31,38 +30,60 @@ function add_list_page(args){
 }
 
 
+$(document).on('click', '.btn-show', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  $(element).addClass("collapsed");
+  $(element).next().removeClass("collapsed");
+  var parent = $(element).parents(".ContentItem");
+
+  // $(element).hide().next().show();
+  var item_comments_url = $(parent).attr("data-url") + "comments";
+  });
+
+  $(document).on('click', '.btn-hide', function(event) {
+    event.preventDefault();
+    var element = $(this);
+    var parent = $(element).parents(".ContentItem");
+    $(element).addClass("collapsed");
+    $(element).prev().removeClass("collapsed");
+    // $(element).hide().prev().show();
+    var item_comments_url = $(parent).attr("data-url") + "comments";
+    });
+
+
+
 
 // ContentItem pagination
-
-function get_post_comments_page(args){
-  var post_comments_url = args[0];
+function get_item_comments_page(args){
+  var item_comments_url = args[0];
   var template = args[1];
-  return $.ajax({  // ajax GET to /posts/id/slug/comments using template
-    url:post_comments_url,
+  return $.ajax({
+    url:item_comments_url,
     data: {
       template:template,
     }
 });}
 
-function add_post_comments_page(args){
+function add_item_comments_page(args){
     var parent = args[0];
     var loader = args[1];
-    var post_comments = args[2];
+    var item_comments = args[2];
     $(parent).find(".ContentItem-comments-body").css("visibility","hidden");
-    $('body').animate({scrollTop: $(parent).find(".ContentItem-time").offset().top}, 0, function(){
+    $('body').animate({scrollTop: $(parent).find(".ContentItem-actions").offset().top - 51}, 0, function(){
       $(parent).find(".ContentItem-comments-topbar").after(loader);
-      $(parent).find(".loader").fadeOut(3000,function(){
+      $(parent).find(".loader").fadeOut("fast",function(){
         $(this).next().remove();
-        $(this).replaceWith(post_comments);
+        $(this).replaceWith(item_comments);
       });
     });
 }
 
 // ContentItem collapse
-function get_post_comments(args){
-  var post_comments_url = args[0];
-  return $.ajax({  // ajax GET to /posts/id/slug/comments using template
-    url:post_comments_url,
+function get_item_comments(args){
+  var item_comments_url = args[0];
+  return $.ajax({
+    url:item_comments_url,
 });
 }
 
@@ -71,18 +92,17 @@ $(document).on('click', '.btn-comment', function(event) {
   event.preventDefault();
   var element = $(this);
   var parent = $(element).parents(".ContentItem");
-  var post_comments_url = $(parent).attr("data-url") + "comments";
+  var item_comments_url = $(parent).attr("data-url") + "comments";
   if ($(parent).find(".ContentItem-comments").length) {
     var ContentItem_comments = $(parent).find(".ContentItem-comments");
     $(ContentItem_comments).collapse('hide');
     $(ContentItem_comments).on('hidden.bs.collapse', function () {$(this).remove();});
     }
   else{
-    var args = [post_comments_url];
-    $.when(get_post_comments(args)).done(function(a1){
-      var post_comments = a1[0];
-      console.log(parent);
-      $(parent).append($(post_comments));
+    var args = [item_comments_url];
+    $.when(get_item_comments(args)).done(function(a1){
+      var item_comments = a1;
+      $(parent).append($(item_comments));
       $(parent).find(".ContentItem-comments").collapse('show');
       autosize($('textarea'));
   });
@@ -218,19 +238,6 @@ $(document).on('click', '.dislike-button', function(event) {
   }
 });
 
-// Feature 3 post comments collapse
-
-
-  // function get_post_comments(args){
-  //   var item_comments_url = args[0];
-  //   var template = args[1];
-  //   return $.ajax({  // ajax GET to /posts/id/slug/comments using template
-  //     url:item_comments_url,
-  //     data: {
-  //       template:template,
-  //     }
-  // });}
-
 
 
 
@@ -259,19 +266,7 @@ function update_post_comments_count(args){
   $(parent).find(".ContentItem-actions-comments-count").html(data);
 }
 
-// function post_comments_get_page(args){
-//     var parent = args[0];
-//     var loader = args[1];
-//     var comments = args[2];
-//     $(parent).find(".ContentItem-comments-body").remove();
-//     $('body').animate({scrollTop: $(parent).find(".ContentItem-time").offset().top}, 0, function(){
-//       $(parent).find(".ContentItem-comments-topbar").after(loader);
-//       $(parent).find(".loader").fadeOut(3000,function(){
-//         $(this).replaceWith(comments);
-//       });
-//     });
-// }
-//
+
 
 
 function post_comments_add(callback,callback_args,callback_callback,args){
@@ -295,26 +290,6 @@ function post_comments_add(callback,callback_args,callback_callback,args){
 }
 
 
-// Pagination for comments, list page, for front page
-
-
-
-// $(document).on('click', '.btn-pagination', function() {
-//   event.preventDefault();
-//   var element = $(this);
-//   var parent = (element).parents(".ContentItem");
-//   var item_comments_url = $(element).attr("data-url");
-//   var template = "template2";
-//   $.when(get_loader(),get_post_comments([item_comments_url, template])).done(function(a1, a2){
-//     var loader = a1[0];
-//     var comments = a2[0];
-//     var args = [parent,loader,comments];
-//     post_comments_get_page(args);
-//   alert('java');
-//   });
-
-
-
 
 
   $(document).on('submit', '.ContentItem-comments-form', function(event) {
@@ -323,14 +298,16 @@ function post_comments_add(callback,callback_args,callback_callback,args){
     var parent = (element).parents(".ContentItem");
     var item_url = $(parent).attr("data-url");
     var item_comments_url = item_url + "comments";
-    console.log(item_comments_url);
     var method = $(element).attr('method');
     var content = $(parent).find(".ContentItem-comments-form-textfield").val();
     var csrf_token = $(parent).find("[type='hidden']").val();
     var template = "template3";
     var data = {content:content, csrfmiddlewaretoken:csrf_token};
 
-    $.when(get_loader(),save_comment([method, item_url, data]),get_post_comments([item_comments_url, template]),get_post_comments_count([item_url])).done(function(a1, a2, a3, a4){
+    var args1 = [method,item_url,data];
+    var args2 = [item_comments_url, template];
+    var args3 = [item_url];
+    $.when(get_loader(),save_comment(args1),get_post_comments(args2),get_post_comments_count(args3)).done(function(a1, a2, a3, a4){
       var loader = a1[0];
       var message = a2[0].message;
       var comments = a3[0];
@@ -346,33 +323,26 @@ function post_comments_add(callback,callback_args,callback_callback,args){
 
 
 
-
-              // Feature 6 Open comment form buttons
-              $(document).on('click', '.ContentItem-comments-form-textfield', function(event) {
-                event.preventDefault();
-                var element = $(this);
-                var parent = (element).parents(".ContentItem")
-                var user_status = $("#user_status").attr("data-user-status");
-                if (user_status == "anonymous") {
-                  get_login_modal();
-                }
-                else {
-                  $(parent).find(".ContentItem-comments-form-collapse").collapse('show');
-                }
-              });
-
-              // Feature 7 Close comment form buttons
-              $(document).on('click', '.ContentItem-comments-form-cancel-btn', function(event) {
-                event.preventDefault();
-                var element = $(this);
-                var parent = $(element).parents(".ContentItem");
-                $(parent).find(".ContentItem-comments-form-collapse").collapse('hide');
+    $(document).on('click', '.ContentItem-comments-form-textfield', function(event) {
+      event.preventDefault();
+      var element = $(this);
+      var parent = (element).parents(".ContentItem")
+      var user_status = get_user_status();
+      if (user_status == "anonymous") {
+        get_login_modal();
+      }
+      else {
+        $(parent).find(".ContentItem-comments-form-collapse").collapse('show');
+      }
+    });
 
 
-
-
-
-              });
+    $(document).on('click', '.btn-ContentItem-comments-form-cancel', function(event) {
+      event.preventDefault();
+      var element = $(this);
+      var parent = $(element).parents(".ContentItem");
+      $(parent).find(".ContentItem-comments-form-collapse").collapse('hide');
+    });
 
 
 

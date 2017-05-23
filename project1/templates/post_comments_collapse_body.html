@@ -4,37 +4,35 @@
 
   {% if no_comments %}
   <div class="ContentItem-comments-status">
-    No comments.
+    <p>No comments.</p>
   </div>
 
   {% else %}
 
   {% for comment in current_page %}
-  <div class="ContentItem-CommentItem">
-    <div class="CommentItem-meta">
-      <span class="CommentItem-avatar">
+  <div class="ContentItem-CommentItem {% if forloop.last %}ContentItem-CommentItem-last{% endif %}">
+    <div class="ContentItem-CommentItem-meta">
+      <span class="ContentItem-CommentItem-avatar">
         <a href="{% url 'profiles:profile_activity' id=comment.user.profile.id slug=comment.user.profile.slug %}">
-          <img src="{{comment.user.profile.avatar.url}}">
+          <img class="Avatar Avatar-small" src="{{comment.user.profile.avatar.url}}">
         </a>
       </span>
-      <span><a href="{% url 'profiles:profile_activity' id=comment.user.profile.id slug=comment.user.profile.slug %}">{{comment.user.username }}</a></span>
-      <span class="CommentItem-time">{{ comment.date_created|timesince }} ago</span>
-
+      <span class="ContentItem-CommentItem-profilelink"><a href="{% url 'profiles:profile_activity' id=comment.user.profile.id slug=comment.user.profile.slug %}">{{comment.user.username }}</a></span>
+      <span class="ContentItem-CommentItem-time">{{ comment.date_created|timesince }} ago</span>
     </div>
-    <div class="CommentItem-content" >
-      <p>{{comment.content}}</p>
+    <div class="ContentItem-CommentItem-content" >
+      <p>{{comment.content|linebreaks}}</p>
     </div>
-    <div class="CommentItem-actions">
-      <button type="button" class="btn btn-plain CommentItem-likebtn"><span class="glyphicon glyphicon-thumbs-up Icon" aria-hidden="true"></span> <span class="CommentItem-actions-likers-count">{{ post.likes }}</span></button>
-      <button type="button" class="btn btn-plain ContentItem-action"><span class="glyphicon glyphicon-thumbs-down Icon" aria-hidden="true"></span> <span class="CommentItem-actions-likers-count">{{ post.likes }}</span></button>
-      <button type="button" class="btn btn-plain ContentItem-action"><span class="glyphicon glyphicon-share-alt Icon" aria-hidden="true"></span> <span class="CommentItem-actions-likers-count">{{ post.likes }}</span></button>
-
+    <div class="ContentItem-CommentItem-actions">
+      <button type="button" class="btn btn-plain "><span class="glyphicon glyphicon-thumbs-up Icon" aria-hidden="true"></span> <span class="ContentItem-CommentItem-actions-likers-count">{{ post.likes }}</span></button>
+      <button type="button" class="btn btn-plain ContentItem-action"><span class="glyphicon glyphicon-thumbs-down Icon" aria-hidden="true"></span> <span class="ContentItem-CommentItem-actions-likers-count">{{ post.likes }}</span></button>
+      <button type="button" class="btn btn-plain ContentItem-action"><span class="glyphicon glyphicon-share-alt Icon" aria-hidden="true"></span> <span class="ContentItem-CommentItem-actions-likers-count">{{ post.likes }}</span></button>
     </div>
   </div>
   {% endfor %}
 
   {% if is_pagination %}
-  <div class="Pagination comments-Pagination">
+  <div class="Pagination ContentItem-Pagination">
     {% if current_page.has_previous %}
     <button type="button" class="btn btn-plain btn-pagination" data-url="{{post.get_absolute_url}}comments/?page={{ current_page.previous_page_number }}">Prev</button>
     {% endif %}
