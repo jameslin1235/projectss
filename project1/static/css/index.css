@@ -30,7 +30,6 @@ textarea {
   height: 150px;
   border-top-left-radius:1px;
   border-top-right-radius:1px;
-
 }
 
 .profile-body{
@@ -50,9 +49,15 @@ textarea {
 }
 
 .profile-contentBody{
-
   margin-bottom: 10px;
 }
+
+.profile-contentFooter{
+  display: flex;
+  align-items: center;
+  justify-content:space-between;
+}
+
 .Card{
   background: #fff;
   border: 1px solid #e7eaf1;
@@ -285,28 +290,42 @@ textarea {
 .Icon{
   vertical-align:text-top;
 }
-/* buttons */
 
-.btn-plain{
+.Icon-left{
+  margin-right: 5px;
+}
+
+
+
+/* buttons */
+.Button{
   background-color: transparent;
   border: none;
+  border-radius: 4px;
+  padding:6px 12px;
+}
+
+.Button:focus{
+  outline: none;
+}
+
+.btn-blue{
+  border: 1px solid #0f88eb;
+  color: #0f88eb;
+}
+
+.btn-blue:hover{
+  background-color: rgba(13,121,209,.06);
+}
+
+.btn-plain{
   border-radius: 0;
   color:#8590a6;
   padding: 0;
-  border: none;
 }
 
 .btn-plain:hover{
   color:#7a8599;
-}
-
-.btn-plain:focus{
-  outline: none;
-  color:#8590a6;
-}
-
-.btn-plain:active{
-  box-shadow: none;
 }
 
 .btn-plain.active {
@@ -328,13 +347,11 @@ textarea {
 }
 
 .btn-submit:focus{
-  outline: none;
   color:#fff;
 }
 
 .btn-submit:active{
   background: linear-gradient(to bottom,#1d7fe2,#0865c2);
-  box-shadow: none;
 }
 
 .btn-dislike{
@@ -348,13 +365,10 @@ textarea {
 }
 
 .btn-vote:focus{
-  outline: none;
   color:#2d84cc;
 }
 
-.btn-vote:active{
-  box-shadow: none;
-}
+
 
 .btn-vote:hover{
   background: #e4ebf3;
@@ -475,13 +489,10 @@ textarea {
   cursor:text;
 }
 
-.btn-show{
-  margin-left: auto;
-}
 
-.btn-hide{
-  margin-left: auto;
-}
+
+
+
 
 
 .notification{

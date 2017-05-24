@@ -1,4 +1,5 @@
 import os
+import csv
 from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
@@ -9,18 +10,25 @@ from django.dispatch import receiver
 from django.utils import timezone
 
 countries_path = os.path.join(settings.BASE_DIR, "project1/static/data/countries.txt")
+occupations_path = os.path.join(settings.BASE_DIR, "project1/static/data/occupations.csv")
 print(countries_path)
-with open(countries_path) as f:
-    for line in f:
-        countries_tuple = tuple(tuple(i.rstrip('\n').split(':')) for i in f)
+with open(countries_path) as txtfile:
+    countries_tuple = tuple(tuple(line.rstrip('\n').split(':')) for line in txtfile)
 
+with open(occupations_path) as csvfile:
+    reader = csv.reader(csvfile)
+    occupations_tuple = tuple(tuple(row)*2 for row in reader)
 
 # Create your models here.
 class Profile(models.Model):
     residence_choices = countries_tuple
+    occupations_choices = occupations_tuple
     print(residence_choices)
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     following = models.ManyToManyField("self",null=True,symmetrical=False, through='Follow', related_name="followers")
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_edited = models.DateTimeField(auto_now=True)
+    slug = models.SlugField()
     gender = models.NullBooleanField(
         blank=True,
     )
@@ -38,14 +46,36 @@ class Profile(models.Model):
         blank = True,
     )
 
+    occupation = models.CharField(
+        max_length = 2,
+        choices = occupations_choices,
+        blank = True,
+    )
+
+    position = models.CharField(
+        max_length = 100,
+        blank = True,
+    )
+
+    company = models.CharField(
+        max_length = 100,
+        blank = True,
+    )
+    school = models.CharField(
+        max_length = 100,
+        blank = True,
+    )
+    major = models.CharField(
+        max_length = 100,
+        blank = True,
+    )
+
     avatar = models.FileField(
         upload_to = "profile_avatar/",
         blank=True,
         default="profile_avatar/1.jpg",
     )
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_edited = models.DateTimeField(auto_now=True)
-    slug = models.SlugField()
+
 
     def __str__(self):
         return self.user.username
