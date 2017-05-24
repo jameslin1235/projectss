@@ -18,28 +18,23 @@ from project1.project1.config import functions
 
 # Create your views here.
 def profile_activity(request,id,slug):
-    if request.method == "GET":
-        User = get_user_model()
-        user = get_object_or_404(User, id = id)
-        current_user = request.user
-        users = [user,current_user]
-        logged_in, user_status = functions.get_user_status(users)
+    title = "Activity"
+    User = get_user_model()
+    user = get_object_or_404(User, id = id)
+    args = [user]
+    fields_status = functions.get_user_profile_fields_status(args)
+    print(fields_status)
+    posts_count = user.posts.filter(is_draft = False).count()
+    drafts_count = user.posts.filter(is_draft = True).count()
 
-        
-        title = "Activity"
-        User = get_user_model()
-        user = get_object_or_404(User, id = id)
-        posts_count = user.posts.filter(is_draft = False).count()
-        drafts_count = user.posts.filter(is_draft = True).count()
+    context = {
+        "title":title,
+        "user":user,
+        "posts_count":posts_count,
+        "drafts_count":drafts_count,
+    }
 
-        context = {
-            "title":title,
-            "user":user,
-            "posts_count":posts_count,
-            "drafts_count":drafts_count,
-        }
-
-        return render(request,"profile_activity.html",context)
+    return render(request,"profile_activity.html",context)
 
 @login_required
 def profile_follow(request,id,slug):
@@ -148,31 +143,31 @@ def profile_posts(request,id,slug):
             posts_comments_count = functions.get_user_posts_comments_count(args)
             print(posts_comments_count)
 
-        context = {
-            "user":user,
-            "current_user":current_user,
-            "logged_in":logged_in,
-            "user_status":user_status,
-            "posts_count":posts_count,
-            "no_posts":no_posts,
-            "drafts_count":drafts_count,
-            "following_count":following_count,
-            "followers_count":followers_count,
-            "user_profile_url":user_profile_url,
-            "form":form,
-            "title":title,
-            "comment_title":comment_title,
-            "comment_button_text":comment_button_text,
-            "current_page":current_page,
-            "is_pagination":is_pagination,
-            "page_num":page_num,
-            "user_follow_status":user_follow_status,
-            "user_message_status":user_message_status,
-            "user_posts_like_status":user_posts_like_status,
-            "user_posts_dislike_status":user_posts_dislike_status,
-            "like_dislike_buttons_status":like_dislike_buttons_status,
-            "posts_comments_count":posts_comments_count,
-        }
+            context = {
+                "user":user,
+                "current_user":current_user,
+                "logged_in":logged_in,
+                "user_status":user_status,
+                "posts_count":posts_count,
+                "no_posts":no_posts,
+                "drafts_count":drafts_count,
+                "following_count":following_count,
+                "followers_count":followers_count,
+                "user_profile_url":user_profile_url,
+                "form":form,
+                "title":title,
+                "comment_title":comment_title,
+                "comment_button_text":comment_button_text,
+                "current_page":current_page,
+                "is_pagination":is_pagination,
+                "page_num":page_num,
+                "user_follow_status":user_follow_status,
+                "user_message_status":user_message_status,
+                "user_posts_like_status":user_posts_like_status,
+                "user_posts_dislike_status":user_posts_dislike_status,
+                "like_dislike_buttons_status":like_dislike_buttons_status,
+                "posts_comments_count":posts_comments_count,
+            }
 
         if request.is_ajax():
             template = "profile_posts_page.html"
@@ -514,6 +509,10 @@ def profile_followers(request,id,slug):
 
 @login_required
 def profile_edit(request,id,slug):
+
+    #check who the user is (request object)
+    # if user is ano, redirect to 403
+    # if user is not user himself,
     title = "Edit Profile"
     button_text = "Edit Profile"
     User = get_user_model()

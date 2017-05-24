@@ -29,7 +29,7 @@ class Profile(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_edited = models.DateTimeField(auto_now=True)
     slug = models.SlugField()
-    gender = models.NullBooleanField(
+    profile_gender = models.NullBooleanField(
         blank=True,
     )
     profile_credential = models.CharField(
@@ -40,32 +40,32 @@ class Profile(models.Model):
     profile_description = models.TextField(
         blank=True,
     )
-    residence = models.CharField(
+    profile_residence = models.CharField(
         max_length = 2,
         choices = residence_choices,
         blank = True,
     )
 
-    occupation = models.CharField(
+    profile_occupation = models.CharField(
         max_length = 2,
         choices = occupations_choices,
         blank = True,
     )
 
-    position = models.CharField(
+    profile_position = models.CharField(
         max_length = 100,
         blank = True,
     )
 
-    company = models.CharField(
+    profile_company = models.CharField(
         max_length = 100,
         blank = True,
     )
-    school = models.CharField(
+    profile_school = models.CharField(
         max_length = 100,
         blank = True,
     )
-    major = models.CharField(
+    profile_major = models.CharField(
         max_length = 100,
         blank = True,
     )

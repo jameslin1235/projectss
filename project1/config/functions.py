@@ -1,5 +1,5 @@
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
+from project1.project1.profiles.models import Profile
 def paginate(*args):
     comments = args[0][0]
     objects_count = args[0][1]
@@ -195,3 +195,12 @@ def get_user_posts_comments_count(*args):
     for post in current_page.object_list:
         comments_count.append(post.get_comments_count())
     return comments_count
+
+def get_user_profile_fields_status(*args):
+    user = args[0][0]
+    fields = [field.name for field in Profile._meta.get_fields() if field.name.startswith("profile_")]
+    fields_values = Profile.objects.filter(id=user.id).values(*fields)
+    fields_values_dict = fields_values[0]
+    fields_values_dict_values = fields_values_dict.values()
+    fields_status = [True if value == "None" or "" else False for value in fields_values_dict_values]
+    return fields_status
