@@ -8,32 +8,45 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count
 from django.utils import timezone
+from project1.project1.config import functions
 from project1.project1.posts.models import Post
 from project1.project1.comments.models import Comment
 from project1.project1.profiles.models import Profile, Follow
 from project1.project1.posts.forms import PostForm
 from project1.project1.comments.forms import CommentForm
 from .forms import ProfileForm
-from project1.project1.config import functions
 
 # Create your views here.
 def profile_activity(request,id,slug):
-    title = "Activity"
     User = get_user_model()
     user = get_object_or_404(User, id = id)
-    args = [user]
-    fields_status = functions.get_user_profile_fields_status(args)
-    print(fields_status)
+    current_user = request.user
+    context = {}
+    users = [user,current_user]
+    user_status = functions.get_user_status(users)
+    args = current_user
+    logged_in_status = functions.get_logged_in_status(args)
+
+    title = "Activity"
     posts_count = user.posts.filter(is_draft = False).count()
     drafts_count = user.posts.filter(is_draft = True).count()
+    # fields_values_list = functions.get_user_profile_fields(args)
+    args = user
+    user_profile_status = functions.get_user_profile_status(args)
+    if user_profile_status:
+        fields_values_list = functions.get_user_profile_fields(args)
+        context['fields_values_list'] = fields_values_list
+    else:
+        context['fields_values_list'] = False
 
-    context = {
-        "title":title,
-        "user":user,
-        "posts_count":posts_count,
-        "drafts_count":drafts_count,
-    }
-
+    context['user'] = user
+    context['user_status'] = user_status
+    context['logged_in_status'] = logged_in_status
+    context['title'] = title
+    context['posts_count'] = posts_count
+    context['drafts_count'] = drafts_count
+    print(user_status)
+    print(logged_in_status)
     return render(request,"profile_activity.html",context)
 
 @login_required

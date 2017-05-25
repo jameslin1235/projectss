@@ -97,23 +97,16 @@ def pagination_last(*args):
             page_num.insert(0,-1)
         page_num.insert(0,first_page_num)
 
+def get_logged_in_status (*args):
+    current_user = args[0]
+    logged_in_status = [True if current_user.is_authenticated else False]
+    return logged_in_status[0]
 
 def get_user_status(*args):
     user = args[0][0]
     current_user = args[0][1]
-    # logged-in user
-    if current_user.is_authenticated:
-        logged_in = True
-        if current_user == user:
-            user_status = "self"
-        else:
-            user_status = "user"
-    # anonymous user
-    else:
-        logged_in = False
-        user_status = "anonymous"
-
-    return logged_in, user_status
+    user_status = ["self" if current_user == user else "user" if current_user.is_authenticated else "anonymous"]
+    return user_status[0]
 
 
 def get_user_follow_status(*args):
@@ -196,11 +189,21 @@ def get_user_posts_comments_count(*args):
         comments_count.append(post.get_comments_count())
     return comments_count
 
-def get_user_profile_fields_status(*args):
-    user = args[0][0]
-    fields = [field.name for field in Profile._meta.get_fields() if field.name.startswith("profile_")]
-    fields_values = Profile.objects.filter(id=user.id).values(*fields)
+def get_user_profile_status(*args):
+    user = args[0]
+    print(user)
+    fields_names = [field.name for field in Profile._meta.get_fields() if field.name.startswith("profile_")]
+
+    fields_values = Profile.objects.filter(id=user.id).values(*fields_names)
+    print(fields_values)
     fields_values_dict = fields_values[0]
-    fields_values_dict_values = fields_values_dict.values()
-    fields_status = [True if value == "None" or "" else False for value in fields_values_dict_values]
-    return fields_status
+    user_profile_status  = [False if not fields_values_dict else True]
+    return user_profile_status[0]
+
+def get_user_profile_fields(*args):
+    user = args[0]
+    fields_names = [field.name for field in Profile._meta.get_fields() if field.name.startswith("profile_")]
+    fields_values = Profile.objects.filter(id=user.id).values(*fields_names)
+    fields_values_dict = fields_values[0]
+    fields_values_list = [[field,value] for field, value in fields_values_dict.items() if value != None and value != '' ]
+    return fields_values_list

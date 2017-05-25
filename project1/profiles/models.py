@@ -47,7 +47,7 @@ class Profile(models.Model):
     )
 
     profile_occupation = models.CharField(
-        max_length = 2,
+        max_length = 100,
         choices = occupations_choices,
         blank = True,
     )

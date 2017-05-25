@@ -52,6 +52,22 @@ textarea {
   margin-bottom: 10px;
 }
 
+.profile-contentBodyItem{
+  margin-bottom: 10px;
+}
+
+.profile-contentBodyItem.last{
+  margin-bottom: 0;
+}
+
+.profile-contentBodyItemLabel{
+  margin-right: 10px;
+}
+
+.profile-contentBody-message{
+  color:#8590a6;
+}
+
 .profile-contentFooter{
   display: flex;
   align-items: center;

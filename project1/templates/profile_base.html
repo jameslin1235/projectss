@@ -21,19 +21,23 @@
                 <h1>{{user.username}}</h1>
               </div>
               <div class="profile-contentBody">
-                
-                <div class="profile-contentBodyItem">
-                  <span></span>
+                {% if fields_values_list %}
+                {% for list in fields_values_list %}
+                <div class="profile-contentBodyItem {% if forloop.last %}last{% endif %}">
+                  <span class="profile-contentBodyItemLabel">{{ list.0 }}</span>
+                  <span class="profile-contentBodyItemValue">{{ list.1 }}</span>
                 </div>
-                <div class="profile-contentBodyItem">
-
+                {% endfor %}
+                {% else %}
+                <div class="profile-contentBody-message">
+                  <span>Empty Profile</span>
                 </div>
-                <div>
-                </div>
-                aaa
+                {% endif %}
               </div>
               <div class="profile-contentFooter">
+                {% if fields_values_list %}
                 <button type="button" class="Button btn-plain btn-expand"><span class="glyphicon glyphicon-menu-down Icon Icon-left" aria-hidden="true"></span> Show</button>
+                {% endif %}
                 <button type="button" class="Button btn-blue">Edit</button>
               </div>
             </div>
