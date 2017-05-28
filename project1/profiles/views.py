@@ -18,36 +18,91 @@ from .forms import ProfileForm
 
 # Create your views here.
 def profile_activity(request,id,slug):
-    User = get_user_model()
-    user = get_object_or_404(User, id = id)
-    current_user = request.user
-    context = {}
-    users = [user,current_user]
-    user_status = functions.get_user_status(users)
-    args = current_user
-    logged_in_status = functions.get_logged_in_status(args)
+    if request.method == "GET":
+        User = get_user_model()
+        user = get_object_or_404(User, id = id)
+        current_user = request.user
+        context = {}
+        users = [user,current_user]
+        user_status = functions.get_user_status(users)
+        logged_in_status = functions.get_logged_in_status(current_user)
+        user_edit_status = functions.get_user_edit_status(user_status)
+        user_message_status = functions.get_user_message_status(user_status)
+        args = [user,current_user,user_status]
+        user_follow_status = functions.get_user_follow_status(args)
+        user_profile_status = functions.get_user_profile_status(user)
+        if user_profile_status:
+            fields_values_list = functions.get_user_profile_fields(user)
+            context['fields_values_list'] = fields_values_list
+        else:
+            context['fields_values_list'] = False
 
-    title = "Activity"
-    posts_count = user.posts.filter(is_draft = False).count()
-    drafts_count = user.posts.filter(is_draft = True).count()
-    # fields_values_list = functions.get_user_profile_fields(args)
-    args = user
-    user_profile_status = functions.get_user_profile_status(args)
-    if user_profile_status:
-        fields_values_list = functions.get_user_profile_fields(args)
-        context['fields_values_list'] = fields_values_list
-    else:
-        context['fields_values_list'] = False
+        title = "Activity"
+        posts_count = user.posts.filter(is_draft = False).count()
+        drafts_count = user.posts.filter(is_draft = True).count()
+        template_name = "profile_activity.html"
+        context['user'] = user
+        context['user_status'] = user_status
+        context['logged_in_status'] = logged_in_status
+        context['user_edit_status'] = user_edit_status
+        context['user_message_status'] = user_message_status
+        context['user_follow_status'] = user_follow_status
+        context['title'] = title
+        context['posts_count'] = posts_count
+        context['drafts_count'] = drafts_count
+        context['template_name'] = template_name
 
-    context['user'] = user
-    context['user_status'] = user_status
-    context['logged_in_status'] = logged_in_status
-    context['title'] = title
-    context['posts_count'] = posts_count
-    context['drafts_count'] = drafts_count
-    print(user_status)
-    print(logged_in_status)
-    return render(request,"profile_activity.html",context)
+        if request.is_ajax() and "profile_header" in request.GET:
+            template = "profile_header.html"
+        elif request.is_ajax() and "profile_body" in request.GET:
+            template = "profile_activity.html"
+        else:
+            template = "profile_base.html"
+        return render(request,template,context)
+
+def profile_edit(request):
+    if request.method == "GET" and request.is_ajax():
+        current_user = request.user
+        current_user_profile = current_user.profile
+        current_user_profile_url = current_user.profile.get_absolute_url()
+        form = ProfileForm(instance = current_user_profile)
+        context = {
+            "current_user_profile_url":current_user_profile_url,
+            "form":form,
+        }
+        return render(request,"profile_edit.html",context)
+
+#
+# @login_required
+# def profile_edit(request,id,slug):
+#
+#     #check who the user is (request object)
+#     # if user is ano, redirect to 403
+#     # if user is not user himself,
+#     title = "Edit Profile"
+#     button_text = "Edit Profile"
+#     User = get_user_model()
+#     user = User.objects.get(id = id)
+#     profile = user.profile
+#     current_user = request.user
+#     if current_user != user:
+#         return redirect("posts:post_404")
+#     else:
+#         if request.method == "POST":
+#             form = ProfileForm(request.POST, request.FILES, instance = profile)
+#             if form.is_valid():
+#                 post = form.save(commit=False)
+#                 post.save()
+#                 messages.success(request, 'Profile edited.')
+#                 return redirect('profiles:profile_edit', id=user.id, slug=user.profile.slug )
+#         else:
+#             form = ProfileForm(instance = profile)
+#     context = {
+#         "title":title,
+#         "button_text":button_text,
+#         "form":form,
+#     }
+#     return render(request,"profile_edit.html",context)
 
 @login_required
 def profile_follow(request,id,slug):
@@ -518,35 +573,3 @@ def profile_followers(request,id,slug):
             template = "profile_followers.html"
 
         return render(request,template,context)
-
-
-@login_required
-def profile_edit(request,id,slug):
-
-    #check who the user is (request object)
-    # if user is ano, redirect to 403
-    # if user is not user himself,
-    title = "Edit Profile"
-    button_text = "Edit Profile"
-    User = get_user_model()
-    user = User.objects.get(id = id)
-    profile = user.profile
-    current_user = request.user
-    if current_user != user:
-        return redirect("posts:post_404")
-    else:
-        if request.method == "POST":
-            form = ProfileForm(request.POST, request.FILES, instance = profile)
-            if form.is_valid():
-                post = form.save(commit=False)
-                post.save()
-                messages.success(request, 'Profile edited.')
-                return redirect('profiles:profile_edit', id=user.id, slug=user.profile.slug )
-        else:
-            form = ProfileForm(instance = profile)
-    context = {
-        "title":title,
-        "button_text":button_text,
-        "form":form,
-    }
-    return render(request,"profile_edit.html",context)

@@ -21,7 +21,7 @@
 </head>
 <body>
 
-  <div>
+
     <nav class="navbar navbar-default navbar-fixed-top">
       <div class="container">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -68,15 +68,16 @@
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->
     </nav>
-  </div>
+
 
   <div id="logged-in" {% if logged_in %}data-logged-in="true"{% else %}data-logged-in="false"{% endif %} style="display: none;">
   </div>
   <div id="user-status" data-user-status="{{user_status}}"></div>
+  <div class="main">
   {% block body %}
 
   {% endblock body %}
-
+</div>
 
 
   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

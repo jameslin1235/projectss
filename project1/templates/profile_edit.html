@@ -1,118 +1,135 @@
 
-{% load widget_tweaks %}
-
-{% block title %}{{ title }}{% endblock title %}
-
-{% block body %}
-<section >
-  <div class='container'>
-    <div class='row'>
-
-      <div class='col-md-6 col-md-offset-3'>
-        <div class="section">
-          {% if messages %}
-          {% for message in messages %}
-          <div class="alert alert-{{ message.tags }} alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <strong>{{ message }}</strong>
+<div class="profile-form">
+  <div class="container">
+    <div class="row" >
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card__cover">
           </div>
-          {% endfor %}
-          {% endif %}
+          <div class="card__body">
+            <div class="card__avatar">
+              <img src="{{ user.profile.avatar.url }}" class="img-responsive Avatar Avatar-large" alt="Responsive image">
+            </div>
+            <div class="card__content">
+              <div class="card__contentheader">
+                <h1>{{user.username}}</h1>
+                <button type="button" class="button button-plain js-get-profile" data-url="{{ current_user_profile_url }}">Back to Profile<span class="glyphicon glyphicon-menu-right Icon Icon-right" aria-hidden="true"></span></button>
+              </div>
+              <div class="card__contentbody">
+                {% if fields_values_list %}
+                {% for list in fields_values_list %}
+                <div class="card__contentitem {% if forloop.last %}card__contentitem--last{% endif %}">
+                  <span class="card__contentitemlabel">{{ list.0 }}</span>
+                  <span class="card__contentitemvalue">{{ list.1 }}</span>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="card__message">
+                  <span>Empty Profile</span>
+                </div>
+                {% endif %}
+              </div>
+              <div class="card__form">
+                <form method="post">
+                  {% csrf_token %}
 
-        <div class="page-header">
-          <h2>{{title}}</h2>
+                  <div class="card__formfield">
+                  {{ form.profile_gender.errors }}
+                  <div class="card__formfieldlabel">
+                  <label for="{{ form.profile_gender.id_for_label }}">{{ form.profile_gender.label }}</label>
+                </div>
+                  <div class="card__formfieldvalue">
+                    <div class="card__formfieldnoninput">
+                    {% for radio in form.profile_gender %}
+                    {{ radio }}
+                    {% endfor %}
+                  </div>
+                  </div>
+                  </div>
+
+                  <div class="card__formfield">
+                  {{ form.profile_credential.errors }}
+                  <div class="card__formfieldlabel">
+                  <label for="{{ form.profile_credential.id_for_label }}">{{ form.profile_credential.label }}</label>
+                </div>
+                  <div class="card__formfieldvalue">
+                    <div class="card__formfieldinput">
+                  {{ form.profile_credential }}
+                </div>
+                    </div>
+                  </div>
+
+                  <div class="card__formfield">
+                  {{ form.profile_description.errors }}
+                  <div class="card__formfieldlabel">
+                  <label for="{{ form.profile_description.id_for_label }}">{{ form.profile_description.label }}</label>
+                    </div>
+                    <div class="card__formfieldvalue">
+                      <div class="card__formfieldinput">
+                  {{ form.profile_description }}
+                </div>
+                    </div>
+                  </div>
+
+                  <div class="card__formfield">
+                  {{ form.profile_residence.errors }}
+                  <label for="{{ form.profile_residence.id_for_label }}">{{ form.profile_residence.label }}</label>
+                  {{ form.profile_residence }}
+                  </div>
+
+                  <div class="card__formfield">
+                  {{ form.profile_occupation.errors }}
+                  <label for="{{ form.profile_occupation.id_for_label }}">{{ form.profile_occupation.label }}</label>
+                  {{ form.profile_occupation }}
+                  </div>
+
+                  <div class="card__formfield">
+                  {{ form.profile_position.errors }}
+                  <label for="{{ form.profile_position.id_for_label }}">{{ form.profile_position.label }}</label>
+                  {{ form.profile_position }}
+                  </div>
+
+                  <div class="card__formfield">
+                  {{ form.profile_company.errors }}
+                  <label for="{{ form.profile_company.id_for_label }}">{{ form.profile_company.label }}</label>
+                  {{ form.profile_company }}
+                  </div>
+
+                  <div class="card__formfield">
+                  {{ form.profile_school.errors }}
+                  <label for="{{ form.profile_school.id_for_label }}">{{ form.profile_school.label }}</label>
+                  {{ form.profile_school }}
+                  </div>
+
+                  <div class="card__formfield">
+                  {{ form.profile_major.errors }}
+                  <label for="{{ form.profile_major.id_for_label }}">{{ form.profile_major.label }}</label>
+                  {{ form.profile_major }}
+                  </div>
+
+
+
+
+
+
+                  <!-- {% for field in form %}
+                  <div class="card__formfield">
+                  {{ field.errors }}
+                  {{ field.label_tag }} {{ field }}
+                  {% if field.help_text %}
+                  <p class="help">{{ field.help_text|safe }}</p>
+                  {% endif %}
+                  </div>
+                  {% endfor %} -->
+
+                  <!-- <button type="submit" class="btn btn-primary">{{ button_text }}</button> -->
+                <button type="button" class="button button--blue button--primary">Save</button>
+                </form>
+              </div>
+            </div>
+          </div>
         </div>
-
-        <form method="post" enctype="multipart/form-data">
-          {% csrf_token %}
-
-          {% if form.non_field_errors %}
-          <div class="alert alert-danger" role="alert">
-            {{ form.non_field_errors }}
-          </div>
-          {% endif %}
-
-          <div class="form-group">
-            {{ form.position|add_class:"form-control"|attr:"autofocus"|attr:"placeholder:Position" }}
-            {% if form.position.errors %}
-            <div class="alert alert-danger" role="alert">
-              {{ form.position.errors }}
-            </div>
-            {% endif %}
-            {% if form.position.help_text %}
-            <p class="help-block">{{ form.position.help_text|safe }}</p>
-            {% endif %}
-          </div>
-
-          <div class="form-group">
-            {{ form.company|add_class:"form-control"|attr:"placeholder:Company" }}
-            {% if form.company.errors %}
-            <div class="alert alert-danger" role="alert">
-              {{ form.company.errors }}
-            </div>
-            {% endif %}
-            {% if form.company.help_text %}
-            <p class="help-block">{{ form.company.help_text|safe }}</p>
-            {% endif %}
-          </div>
-
-          <div class="form-group">
-            {{ form.school|add_class:"form-control"|attr:"placeholder:School" }}
-            {% if form.school.errors %}
-            <div class="alert alert-danger" role="alert">
-              {{ form.school.errors }}
-            </div>
-            {% endif %}
-            {% if form.school.help_text %}
-            <p class="help-block">{{ form.school.help_text|safe }}</p>
-            {% endif %}
-          </div>
-
-          <div class="form-group">
-            {{ form.concentration|add_class:"form-control"|attr:"placeholder:Concentration" }}
-            {% if form.concentration.errors %}
-            <div class="alert alert-danger" role="alert">
-              {{ form.concentration.errors }}
-            </div>
-            {% endif %}
-            {% if form.concentration.help_text %}
-            <p class="help-block">{{ form.concentration.help_text|safe }}</p>
-            {% endif %}
-          </div>
-
-          <div class="form-group">
-            {{ form.degree_type|add_class:"form-control"|attr:"placeholder:Degree_type" }}
-            {% if form.degree_type.errors %}
-            <div class="alert alert-danger" role="alert">
-              {{ form.degree_type.errors }}
-            </div>
-            {% endif %}
-            {% if form.degree_type.help_text %}
-            <p class="help-block">{{ form.degree_type.help_text|safe }}</p>
-            {% endif %}
-          </div>
-
-          <div class="form-group">
-            {{ form.avatar|add_class:"form-control"|attr:"placeholder:Avatar" }}
-            {% if form.avatar.errors %}
-            <div class="alert alert-danger" role="alert">
-              {{ form.avatar.errors }}
-            </div>
-            {% endif %}
-            {% if form.avatar.help_text %}
-            <p class="help-block">{{ form.avatar.help_text|safe }}</p>
-            {% endif %}
-          </div>
-
-
-
-          <button type="submit" class="btn btn-primary">{{ button_text }}</button>
-
-        </form>
       </div>
     </div>
-    </div>
   </div>
-</section>
-<!-- <a href="{% url 'login' %}?next=/posts/create/"><li>Test link</li></a> -->
-{% endblock body %}
+</div>

@@ -84,3 +84,75 @@ $(document).on('click', '.btn-pagination', function() {
     });
   }
 });
+
+
+// Get & Add profile form
+function get_profile_form(){
+  var args = Array.prototype.slice.call(arguments);
+  edit_profile_url = args[0]
+  return $.ajax({
+    url: edit_profile_url,
+  });
+}
+
+function add_profile_form(){
+    var args = Array.prototype.slice.call(arguments);
+    parent = args[0];
+    profile_form = args[1];
+    $(parent).empty().append(profile_form);
+}
+
+// Get & Add profile header, body
+function get_profile_header(){
+  var args = Array.prototype.slice.call(arguments);
+  profile_url = args[0]
+  query_string = args[1]
+  return $.ajax({
+    url: profile_url,
+    data: query_string,
+  });
+}
+
+function get_profile_body(){
+  var args = Array.prototype.slice.call(arguments);
+  profile_url = args[0]
+  query_string = args[1]
+  return $.ajax({
+    url: profile_url,
+    data: query_string,
+  });
+}
+
+function add_profile(){
+    var args = Array.prototype.slice.call(arguments);
+    parent = args[0];
+    profile_header = args[1];
+    profile_body = args[2];
+    $(parent).empty().append(profile_header).append(profile_body);
+}
+
+$(document).on('click', '.js-edit-profile', function() {
+  event.preventDefault();
+  var element = $(this);
+  var edit_profile_url = $(element).attr("data-url");
+  var parent = (element).parents(".profile");
+  $.when(get_profile_form(edit_profile_url)).done(function(a1){
+    var profile_form = a1;
+    add_profile_form(parent,profile_form);
+  });
+
+});
+
+$(document).on('click', '.js-get-profile', function() {
+  event.preventDefault();
+  var element = $(this);
+  var profile_url = $(element).attr("data-url");
+  var parent = (element).parents(".profile");
+  var query_string1 = "profile_header";
+  var query_string2 = "profile_body";
+  $.when(get_profile_header(profile_url,query_string1),get_profile_body(profile_url,query_string2)).done(function(a1,a2){
+    var profile_header = a1[0];
+    var profile_body = a2[0];
+    add_profile(parent,profile_header,profile_body);
+  });
+});

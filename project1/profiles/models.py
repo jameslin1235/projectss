@@ -11,7 +11,7 @@ from django.utils import timezone
 
 countries_path = os.path.join(settings.BASE_DIR, "project1/static/data/countries.txt")
 occupations_path = os.path.join(settings.BASE_DIR, "project1/static/data/occupations.csv")
-print(countries_path)
+
 with open(countries_path) as txtfile:
     countries_tuple = tuple(tuple(line.rstrip('\n').split(':')) for line in txtfile)
 
@@ -22,14 +22,20 @@ with open(occupations_path) as csvfile:
 # Create your models here.
 class Profile(models.Model):
     residence_choices = countries_tuple
-    occupations_choices = occupations_tuple
-    print(residence_choices)
+    occupation_choices = occupations_tuple
+    gender_choices = (
+        ('M', 'Male'),
+        ('F', 'Female'),
+
+    )
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     following = models.ManyToManyField("self",null=True,symmetrical=False, through='Follow', related_name="followers")
     date_created = models.DateTimeField(auto_now_add=True)
     date_edited = models.DateTimeField(auto_now=True)
     slug = models.SlugField()
-    profile_gender = models.NullBooleanField(
+    profile_gender = models.CharField(
+        max_length = 1,
+        choices = gender_choices,
         blank=True,
     )
     profile_credential = models.CharField(
@@ -48,7 +54,7 @@ class Profile(models.Model):
 
     profile_occupation = models.CharField(
         max_length = 100,
-        choices = occupations_choices,
+        choices = occupation_choices,
         blank = True,
     )
 

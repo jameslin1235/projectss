@@ -2,79 +2,16 @@
 {% load static %}
 {% load widget_tweaks %}
 
+{% block title %}{{ user }}'s {{ title }}{% endblock title %}
+
 {% block body %}
-<div id="profile_base" data-user-profile-url="{{user_profile_url}}">
-  <div class="container">
-    <div class="row" >
-      <div class="col-md-12">
-        <div class="Card">
-          <div class="profile-cover">
-          </div>
 
-          <div class="profile-body">
-            <div class="profile-avatar">
-              <img src="{{ user.profile.avatar.url }}" class="img-responsive Avatar Avatar-large" alt="Responsive image">
-            </div>
-
-            <div class="profile-content">
-              <div class="profile-contentHeader">
-                <h1>{{user.username}}</h1>
-              </div>
-              <div class="profile-contentBody">
-                {% if fields_values_list %}
-                {% for list in fields_values_list %}
-                <div class="profile-contentBodyItem {% if forloop.last %}last{% endif %}">
-                  <span class="profile-contentBodyItemLabel">{{ list.0 }}</span>
-                  <span class="profile-contentBodyItemValue">{{ list.1 }}</span>
-                </div>
-                {% endfor %}
-                {% else %}
-                <div class="profile-contentBody-message">
-                  <span>Empty Profile</span>
-                </div>
-                {% endif %}
-              </div>
-              <div class="profile-contentFooter">
-                {% if fields_values_list %}
-                <button type="button" class="Button btn-plain btn-expand"><span class="glyphicon glyphicon-menu-down Icon Icon-left" aria-hidden="true"></span> Show</button>
-                {% endif %}
-                <button type="button" class="Button btn-blue">Edit</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-2">
-      <div class="Card">
-        <div class="Card-header">
-          <h4 class="Card-header-title">Feeds</h4>
-        </div>
-        {% block vertical_nav %}
-        {% endblock vertical_nav %}
-      </div>
-    </div>
-    <div class="col-md-7">
-      <div class="Card">
-        {% block content %}
-        {% endblock content %}
-      </div>
-    </div>
-    <div class="col-md-3">
-
-      <div class="Card">
-        <h1>text</h1>
-      </div>
-    </div>
-  </div>
-
+<div class="profile">
+  {% include "profile_header.html" %}
+  {% include template_name %}
 </div>
-{% endblock body %}
 
+{% endblock body %}
 {% block javascript %}
 <script src="{% static "js/profile_base.js" %}"></script>
-
 {% endblock javascript %}

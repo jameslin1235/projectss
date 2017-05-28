@@ -108,15 +108,19 @@ def get_user_status(*args):
     user_status = ["self" if current_user == user else "user" if current_user.is_authenticated else "anonymous"]
     return user_status[0]
 
+def get_user_edit_status(*args):
+    user_status = args[0]
+    user_edit_status = [True if user_status == "self" else False]
+    return user_edit_status[0]
 
 def get_user_follow_status(*args):
-    user_status = args[0][0]
-    user = args[0][1]
+    user = args[0][0]
     current_user = args[0][1]
+    user_status = args[0][2]
     if user_status == "anonymous":
         user_follow_status = "Follow"
     elif user_status == "self":
-        user_follow_status = "self"
+        user_follow_status = False
     elif user_status == "user":
         if current_user.profile.followed_user(user):
             user_follow_status = "Followed"
@@ -125,11 +129,11 @@ def get_user_follow_status(*args):
     return user_follow_status
 
 def get_user_message_status(*args):
-    user_status = args[0][0]
+    user_status = args[0]
     if user_status == "anonymous":
         user_message_status = "Message"
     elif user_status == "self":
-        user_message_status = "self"
+        user_message_status = False
     elif user_status == "user":
         user_message_status = "Message"
     return user_message_status
@@ -193,7 +197,6 @@ def get_user_profile_status(*args):
     user = args[0]
     print(user)
     fields_names = [field.name for field in Profile._meta.get_fields() if field.name.startswith("profile_")]
-
     fields_values = Profile.objects.filter(id=user.id).values(*fields_names)
     print(fields_values)
     fields_values_dict = fields_values[0]

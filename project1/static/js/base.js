@@ -5,6 +5,7 @@ function get_loader(){
   });
 }
 
+
 // List
 function get_list_page(args){
   var list_page_url = args[0];

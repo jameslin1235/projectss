@@ -1,0 +1,55 @@
+<div class="profile-header">
+<div class="container">
+  <div class="row" >
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card__cover">
+        </div>
+        <div class="card__body">
+          <div class="card__avatar">
+            <img src="{{ user.profile.avatar.url }}" class="img-responsive Avatar Avatar-large" alt="Responsive image">
+          </div>
+          <div class="card__content">
+            <div class="card__contentheader">
+              <h1>{{user.username}}</h1>
+            </div>
+            <div class="card__contentbody">
+              {% if fields_values_list %}
+              {% for list in fields_values_list %}
+              <div class="card__contentitem {% if forloop.last %}card__contentitem--last{% endif %}">
+                <span class="card__contentitemlabel">{{ list.0 }}</span>
+                <span class="card__contentitemvalue">{{ list.1 }}</span>
+              </div>
+              {% endfor %}
+              {% else %}
+              <div class="card__message">
+                <span>Empty Profile</span>
+              </div>
+              {% endif %}
+            </div>
+            <div class="card__contentfooter">
+              <div class="card__contentfooterleft">
+                {% if fields_values_list %}
+                <button type="button" class="button button--plain"><span class="glyphicon glyphicon-menu-down Icon Icon-left" aria-hidden="true"></span> Show</button>
+                {% endif %}
+              </div>
+              <div class="card__contentfooterright">
+                {% if user_edit_status %}
+                <button type="button" class="button button--blue js-edit-profile" data-url="/profile/edit">Edit</button>
+                {% endif %}
+
+                {% if user_follow_status %}
+                <button type="button" class="button button--follow"><span class="glyphicon glyphicon-plus Icon Icon-left" aria-hidden="true"></span>{{ user_follow_status }}</button>
+                {% endif %}
+                {% if user_message_status %}
+                <button type="button" class="button button--message">{{ user_message_status }}</button>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
