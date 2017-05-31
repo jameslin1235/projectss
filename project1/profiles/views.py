@@ -59,6 +59,14 @@ def profile_activity(request,id,slug):
         else:
             template = "profile_base.html"
         return render(request,template,context)
+    elif request.method == "POST" and request.is_ajax():
+        print(request.POST)
+        form = ProfileForm(request.POST,instance=request.user.profile)
+        if form.is_valid():
+            form.save()
+
+        response = {}
+        return JsonResponse(response)
 
 def profile_edit(request):
     if request.method == "GET" and request.is_ajax():
@@ -72,6 +80,8 @@ def profile_edit(request):
         }
         return render(request,"profile_edit.html",context)
 
+def demo(request):
+        return render(request,"demo.html")
 #
 # @login_required
 # def profile_edit(request,id,slug):

@@ -145,26 +145,25 @@ function get_user_status(){
 
 
 
-// notification
-function get_notification(callback,args){
+function get_notification(){
+  var args = Array.prototype.slice.call(arguments);
   var message = args[0];
-  $.ajax({     // ajax GET to /getnotification/
+  return $.ajax({
     url: "/getnotification/",
-    data:{
+    data: {
       message:message,
     },
-    success:function(data) {
-      var callback_args = [data];
-      callback(callback_args);
-      }});
+  });
 }
 
-function add_notification(args){
+function add_notification(){
+  console.log('second');
+  var args = Array.prototype.slice.call(arguments);
   var message = args[0];
   $("body").append(message);
-  $(".notification").hide().slideDown(500).delay(3000).slideUp(500,function(){$(this).remove();});
-}
+  $(".alertbox").hide().slideDown(500).delay(3000).slideUp(500,function(){$(this).remove();});
 
+}
 
 
 

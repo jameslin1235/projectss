@@ -9,24 +9,24 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
 
-countries_path = os.path.join(settings.BASE_DIR, "project1/static/data/countries.txt")
-occupations_path = os.path.join(settings.BASE_DIR, "project1/static/data/occupations.csv")
+path1 = os.path.join(settings.BASE_DIR, "project1/static/data/countries.txt")
+path2 = os.path.join(settings.BASE_DIR, "project1/static/data/occupations.txt")
+with open(path1) as f1:
+    countries_tuple = tuple(tuple(line.rstrip('\n').split(':')) for line in f1)
+    print(countries_tuple)
 
-with open(countries_path) as txtfile:
-    countries_tuple = tuple(tuple(line.rstrip('\n').split(':')) for line in txtfile)
-
-with open(occupations_path) as csvfile:
-    reader = csv.reader(csvfile)
-    occupations_tuple = tuple(tuple(row)*2 for row in reader)
+with open(path2) as f2:
+    occupations_tuple = tuple(('',line[1].rstrip('\n')) if line[0] == 1 else (line[1].rstrip('\n'),)*2 for line in enumerate(f2, 1))
+    print(occupations_tuple)
 
 # Create your models here.
 class Profile(models.Model):
     residence_choices = countries_tuple
     occupation_choices = occupations_tuple
     gender_choices = (
+        ('','Select a Gender'),
         ('M', 'Male'),
         ('F', 'Female'),
-
     )
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     following = models.ManyToManyField("self",null=True,symmetrical=False, through='Follow', related_name="followers")

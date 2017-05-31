@@ -85,7 +85,34 @@ $(document).on('click', '.btn-pagination', function() {
   }
 });
 
+$(document).on('focus', '.js-add-focus', function() {
+  event.preventDefault();
+  var element = $(this);
+  var parent = (element).parents(".card__formfieldtextinput");
+  $(parent).addClass('card__formfieldtextinput--focus');
 
+});
+
+$(document).on('blur', '.js-add-focus', function() {
+  event.preventDefault();
+  var element = $(this);
+  var parent = (element).parents(".card__formfieldtextinput");
+  $(parent).removeClass('card__formfieldtextinput--focus');
+
+});
+
+// Submit profile form
+function submit_profile_form(){
+  var args = Array.prototype.slice.call(arguments);
+  submit_url = args[0];
+  data = args[1];
+  method = args[2];
+  return $.ajax({
+    url: submit_url,
+    data: data,
+    method: method,
+  });
+}
 // Get & Add profile form
 function get_profile_form(){
   var args = Array.prototype.slice.call(arguments);
@@ -155,4 +182,23 @@ $(document).on('click', '.js-get-profile', function() {
     var profile_body = a2[0];
     add_profile(parent,profile_header,profile_body);
   });
+});
+
+
+$(document).on('submit', '.js-submit-profile-form', function() {
+  event.preventDefault();
+  var element = $(this);
+  var submit_url = $(element).attr("action");
+  var data = $(element).serialize();
+  var method = $(element).attr("method");
+  var parent = (element).parents(".profile");
+  var message = "Profile updated";
+  $.when(submit_profile_form(submit_url,data,method),get_notification(message)).done(function(a1,a2){
+    var message = a2;
+    $('body').animate({scrollTop:0}, 0, function(){
+      console.log('first');
+    add_notification(message);
+
+  });
+});
 });

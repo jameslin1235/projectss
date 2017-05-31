@@ -1,6 +1,7 @@
 
-<div class="profile-form">
-  <div class="container">
+{% load widget_tweaks %}
+
+  <div class="container profile-form">
     <div class="row" >
       <div class="col-md-12">
         <div class="card">
@@ -30,88 +31,116 @@
                 {% endif %}
               </div>
               <div class="card__form">
-                <form method="post">
+                <form method="post" class="js-submit-profile-form">
                   {% csrf_token %}
 
                   <div class="card__formfield">
-                  {{ form.profile_gender.errors }}
-                  <div class="card__formfieldlabel">
-                  <label for="{{ form.profile_gender.id_for_label }}">{{ form.profile_gender.label }}</label>
-                </div>
-                  <div class="card__formfieldvalue">
-                    <div class="card__formfieldnoninput">
-                    {% for radio in form.profile_gender %}
-                    {{ radio }}
-                    {% endfor %}
-                  </div>
-                  </div>
-                  </div>
-
-                  <div class="card__formfield">
-                  {{ form.profile_credential.errors }}
-                  <div class="card__formfieldlabel">
-                  <label for="{{ form.profile_credential.id_for_label }}">{{ form.profile_credential.label }}</label>
-                </div>
-                  <div class="card__formfieldvalue">
-                    <div class="card__formfieldinput">
-                  {{ form.profile_credential }}
-                </div>
-                    </div>
-                  </div>
-
-                  <div class="card__formfield">
-                  {{ form.profile_description.errors }}
-                  <div class="card__formfieldlabel">
-                  <label for="{{ form.profile_description.id_for_label }}">{{ form.profile_description.label }}</label>
+                    {{ form.profile_gender.errors }}
+                    <div class="card__formfieldlabel">
+                        <label for="{{ form.profile_gender.id_for_label }}">{{ form.profile_gender.label }}</label>
                     </div>
                     <div class="card__formfieldvalue">
-                      <div class="card__formfieldinput">
-                  {{ form.profile_description }}
-                </div>
+                      <div class="card__formfieldnontextinput">
+                        {{ form.profile_gender }}
+                      </div>
                     </div>
                   </div>
 
                   <div class="card__formfield">
-                  {{ form.profile_residence.errors }}
-                  <label for="{{ form.profile_residence.id_for_label }}">{{ form.profile_residence.label }}</label>
-                  {{ form.profile_residence }}
+                    {{ form.profile_credential.errors }}
+                    <div class="card__formfieldlabel">
+                      <label for="{{ form.profile_credential.id_for_label }}">{{ form.profile_credential.label }}</label>
+                    </div>
+                    <div class="card__formfieldvalue">
+                      <div class="card__formfieldtextinput">
+                        {{ form.profile_credential|add_class:"js-add-focus"|attr:"placeholder:Credential"  }}
+                      </div>
+                    </div>
                   </div>
 
                   <div class="card__formfield">
-                  {{ form.profile_occupation.errors }}
-                  <label for="{{ form.profile_occupation.id_for_label }}">{{ form.profile_occupation.label }}</label>
-                  {{ form.profile_occupation }}
+                    {{ form.profile_description.errors }}
+                    <div class="card__formfieldlabel">
+                      <label for="{{ form.profile_description.id_for_label }}">{{ form.profile_description.label }}</label>
+                    </div>
+                    <div class="card__formfieldvalue">
+                      <div class="card__formfieldtextinput">
+                        {{ form.profile_description|attr:"rows:3"|attr:"cols:20"|add_class:"js-add-focus"|attr:"placeholder:Description" }}
+                      </div>
+                    </div>
                   </div>
 
                   <div class="card__formfield">
-                  {{ form.profile_position.errors }}
-                  <label for="{{ form.profile_position.id_for_label }}">{{ form.profile_position.label }}</label>
-                  {{ form.profile_position }}
+                    {{ form.profile_residence.errors }}
+                    <div class="card__formfieldlabel">
+                        <label for="{{ form.profile_residence.id_for_label }}">{{ form.profile_residence.label }}</label>
+                    </div>
+                    <div class="card__formfieldvalue">
+                      <div class="card__formfieldnontextinput">
+                        {{ form.profile_residence }}
+                      </div>
+                    </div>
                   </div>
 
                   <div class="card__formfield">
-                  {{ form.profile_company.errors }}
-                  <label for="{{ form.profile_company.id_for_label }}">{{ form.profile_company.label }}</label>
-                  {{ form.profile_company }}
+                    {{ form.profile_occupation.errors }}
+                    <div class="card__formfieldlabel">
+                        <label for="{{ form.profile_occupation.id_for_label }}">{{ form.profile_occupation.label }}</label>
+                    </div>
+                    <div class="card__formfieldvalue">
+                      <div class="card__formfieldnontextinput">
+                        {{ form.profile_occupation }}
+                      </div>
+                    </div>
                   </div>
 
                   <div class="card__formfield">
-                  {{ form.profile_school.errors }}
-                  <label for="{{ form.profile_school.id_for_label }}">{{ form.profile_school.label }}</label>
-                  {{ form.profile_school }}
+                    {{ form.profile_position.errors }}
+                    <div class="card__formfieldlabel">
+                      <label for="{{ form.profile_position.id_for_label }}">{{ form.profile_position.label }}</label>
+                    </div>
+                    <div class="card__formfieldvalue">
+                      <div class="card__formfieldtextinput">
+                        {{ form.profile_position|add_class:"js-add-focus"|attr:"placeholder:Position" }}
+                      </div>
+                    </div>
                   </div>
 
                   <div class="card__formfield">
-                  {{ form.profile_major.errors }}
-                  <label for="{{ form.profile_major.id_for_label }}">{{ form.profile_major.label }}</label>
-                  {{ form.profile_major }}
+                    {{ form.profile_company.errors }}
+                    <div class="card__formfieldlabel">
+                      <label for="{{ form.profile_company.id_for_label }}">{{ form.profile_company.label }}</label>
+                    </div>
+                    <div class="card__formfieldvalue">
+                      <div class="card__formfieldtextinput">
+                        {{ form.profile_company|add_class:"js-add-focus"|attr:"placeholder:Company" }}
+                      </div>
+                    </div>
                   </div>
 
+                  <div class="card__formfield">
+                    {{ form.profile_school.errors }}
+                    <div class="card__formfieldlabel">
+                      <label for="{{ form.profile_school.id_for_label }}">{{ form.profile_school.label }}</label>
+                    </div>
+                    <div class="card__formfieldvalue">
+                      <div class="card__formfieldtextinput">
+                        {{ form.profile_school|add_class:"js-add-focus"|attr:"placeholder:School" }}
+                      </div>
+                    </div>
+                  </div>
 
-
-
-
-
+                  <div class="card__formfield card__formfield--last">
+                    {{ form.profile_major.errors }}
+                    <div class="card__formfieldlabel">
+                      <label for="{{ form.profile_major.id_for_label }}">{{ form.profile_major.label }}</label>
+                    </div>
+                    <div class="card__formfieldvalue">
+                      <div class="card__formfieldtextinput">
+                        {{ form.profile_major|add_class:"js-add-focus"|attr:"placeholder:Major" }}
+                      </div>
+                    </div>
+                  </div>
                   <!-- {% for field in form %}
                   <div class="card__formfield">
                   {{ field.errors }}
@@ -119,13 +148,12 @@
                   {% if field.help_text %}
                   <p class="help">{{ field.help_text|safe }}</p>
                   {% endif %}
-                  </div>
-                  {% endfor %} -->
+                </div>
+                {% endfor %} -->
 
-                  <!-- <button type="submit" class="btn btn-primary">{{ button_text }}</button> -->
-                <button type="button" class="button button--blue button--primary">Save</button>
-                </form>
-              </div>
+                <!-- <button type="submit" class="btn btn-primary">{{ button_text }}</button> -->
+                <button type="submit" class="button button--blue button--primary">Save</button>
+              </form>
             </div>
           </div>
         </div>

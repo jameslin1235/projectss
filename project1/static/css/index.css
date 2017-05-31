@@ -1,3 +1,12 @@
+/* Media Queries */
+
+@media (min-width: 992px) {
+  .container {
+    width: 850px;
+  }
+}
+
+
 /* General */
 body {
   padding-top: 70px;
@@ -8,20 +17,33 @@ h1,h2,h3,h4,a{
   margin: 0;
 }
 
-h1{
+h1 {
   font-size: 26px;
 }
 
-p{
+p {
   margin: 0;
 }
 
-/* textarea */
-textarea {
-    resize: none;
+select {
+  border: 0;
 }
 
-input:focus{
+
+textarea {
+  resize: none;
+  border:none;
+  padding: 0;
+}
+textarea:focus {
+  outline: none;
+}
+
+input {
+  border:none;
+  padding: 0;
+}
+input:focus {
   outline:none;
 }
 
@@ -53,7 +75,7 @@ input:focus{
 
 .card__avatar{
   position: absolute;
-  bottom: 0;
+  top:-25px;
 }
 
 .card__content{
@@ -103,37 +125,56 @@ input:focus{
 }
 
 .card__formfield{
-  display: flex;
+  position: relative;
   padding: 30px 0;
   border-bottom: 1px solid #ebeef5;
-  align-items: center;
+}
+
+.card__formfield--last{
+  border-bottom: 0;
 }
 
 .card__formfieldlabel{
-  flex:1;
+  position: absolute;
 }
 
 .card__formfieldvalue{
-  flex:2;
+  padding: 0 50px 0 150px;
   display:flex;
-
 }
 
-.card__formfieldnoninput{
+.card__formfieldnontextinput{
   flex:1;
+  display: flex;
 }
-.card__formfieldinput{
+
+.card__formfieldnontextinput select{
+  border:1px solid #ccd8e1;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.card__formfieldtextinput{
   flex:1;
   display: flex;
   padding: 10px;
   border:1px solid #e7eaf1;
 }
 
-.card__formfieldinput input{
+.card__formfieldtextinput input {
   flex:1;
-  border:none;
-  padding: 0;
 }
+
+.card__formfieldtextinput textarea{
+  flex:1;
+}
+
+.card__formfieldtextinput--focus{
+  border: 1px solid #9fadc7;
+}
+
+
+
 
 
 
@@ -570,18 +611,28 @@ input:focus{
   cursor:text;
 }
 
-
-
-
-
-
-
-.notification{
+/* Alerts */
+.alertbox{
   position: fixed;
-  top: 55px;
   width:33%;
+  top: 55px;
   left:33%;
+  border-radius: 4px;
+  padding: 15px;
+  text-align: center;
 }
+
+.alertbox--success{
+  background-color: #fff;
+  border: 1px solid #e7eaf1;
+  box-shadow: 0 1px 3px rgba(0,37,55,.05);
+  color:#8590a6;
+}
+
+
+
+
+
 
 
 /* Avatars */

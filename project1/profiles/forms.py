@@ -15,6 +15,4 @@ class ProfileForm(ModelForm):
             "profile_school",
             "profile_major",
         ]
-        widgets = {
-            'profile_gender': RadioSelect(),
-        }
+    
