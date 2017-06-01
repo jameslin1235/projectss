@@ -1,35 +1,58 @@
 
 {% load widget_tweaks %}
-
   <div class="container profile-form">
     <div class="row" >
       <div class="col-md-12">
         <div class="card">
           <div class="card__cover">
+            <div class="card__form">
+            <form method="post" enctype="multipart/form-data" class="js-submit-profile-background-form">
+              {% csrf_token %}
+
+              <div class="card__formfield">
+                {{ profilebackgroundform.background.errors }}
+                <div class="card__formfieldlabel">
+                    <label for="{{ profilebackgroundform.background.id_for_label }}">{{ profilebackgroundform.background.label }}</label>
+                </div>
+                <div class="card__formfieldvalue">
+                  <div class="card__formfieldnontextinput">
+                    {{ profilebackgroundform.background }}
+                  </div>
+                </div>
+              </div>
+              <button type="submit" class="button button--blue button--primary">Save</button>
+            </form >
+          </div>
           </div>
           <div class="card__body">
             <div class="card__avatar">
               <img src="{{ user.profile.avatar.url }}" class="img-responsive Avatar Avatar-large" alt="Responsive image">
+              <div class="card__form">
+              <form method="post" enctype="multipart/form-data" class="js-submit-profile-avatar-form">
+                {% csrf_token %}
+
+                <div class="card__formfield">
+                  {{ profileavatarform.avatar.errors }}
+                  <div class="card__formfieldlabel">
+                      <label for="{{ profileavatarform.avatar.id_for_label }}">{{ profileavatarform.avatar.label }}</label>
+                  </div>
+                  <div class="card__formfieldvalue">
+                    <div class="card__formfieldnontextinput">
+                      {{ profileavatarform.avatar }}
+                    </div>
+                  </div>
+                </div>
+                <button type="submit" class="button button--blue button--primary">Save</button>
+              </form>
+            </div>
             </div>
             <div class="card__content">
               <div class="card__contentheader">
                 <h1>{{user.username}}</h1>
                 <button type="button" class="button button-plain js-get-profile" data-url="{{ current_user_profile_url }}">Back to Profile<span class="glyphicon glyphicon-menu-right Icon Icon-right" aria-hidden="true"></span></button>
+
               </div>
-              <div class="card__contentbody">
-                {% if fields_values_list %}
-                {% for list in fields_values_list %}
-                <div class="card__contentitem {% if forloop.last %}card__contentitem--last{% endif %}">
-                  <span class="card__contentitemlabel">{{ list.0 }}</span>
-                  <span class="card__contentitemvalue">{{ list.1 }}</span>
-                </div>
-                {% endfor %}
-                {% else %}
-                <div class="card__message">
-                  <span>Empty Profile</span>
-                </div>
-                {% endif %}
-              </div>
+
               <div class="card__form">
                 <form method="post" class="js-submit-profile-form">
                   {% csrf_token %}
@@ -141,17 +164,7 @@
                       </div>
                     </div>
                   </div>
-                  <!-- {% for field in form %}
-                  <div class="card__formfield">
-                  {{ field.errors }}
-                  {{ field.label_tag }} {{ field }}
-                  {% if field.help_text %}
-                  <p class="help">{{ field.help_text|safe }}</p>
-                  {% endif %}
-                </div>
-                {% endfor %} -->
 
-                <!-- <button type="submit" class="btn btn-primary">{{ button_text }}</button> -->
                 <button type="submit" class="button button--blue button--primary">Save</button>
               </form>
             </div>

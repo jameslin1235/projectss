@@ -157,7 +157,6 @@ function get_notification(){
 }
 
 function add_notification(){
-  console.log('second');
   var args = Array.prototype.slice.call(arguments);
   var message = args[0];
   $("body").append(message);

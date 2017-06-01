@@ -113,6 +113,7 @@ function submit_profile_form(){
     method: method,
   });
 }
+
 // Get & Add profile form
 function get_profile_form(){
   var args = Array.prototype.slice.call(arguments);
@@ -194,11 +195,9 @@ $(document).on('submit', '.js-submit-profile-form', function() {
   var parent = (element).parents(".profile");
   var message = "Profile updated";
   $.when(submit_profile_form(submit_url,data,method),get_notification(message)).done(function(a1,a2){
-    var message = a2;
+    var message = a2[0];
     $('body').animate({scrollTop:0}, 0, function(){
-      console.log('first');
     add_notification(message);
-
   });
 });
 });

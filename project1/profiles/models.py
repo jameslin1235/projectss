@@ -2,12 +2,15 @@ import os
 import csv
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.conf import settings
 from django.utils.text import slugify
 from django.core.urlresolvers import reverse
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.utils import timezone
+
+def upload_location(instance, filename):
+    return "/users/%s/%s" %(instance.id, filename)
 
 path1 = os.path.join(settings.BASE_DIR, "project1/static/data/countries.txt")
 path2 = os.path.join(settings.BASE_DIR, "project1/static/data/occupations.txt")
@@ -75,13 +78,25 @@ class Profile(models.Model):
         max_length = 100,
         blank = True,
     )
-
-    avatar = models.FileField(
-        upload_to = "profile_avatar/",
+    avatar_width_field = models.IntegerField()
+    avatar_height_field = models.IntegerField()
+    avatar = models.ImageField(
+        upload_to = upload_location,
+        height_field = "avatar_height_field",
+        width_field = "avatar_width_field",
         blank=True,
-        default="profile_avatar/1.jpg",
+        default="default/avatar.jpg",
     )
 
+    background_width_field = models.IntegerField()
+    background_height_field = models.IntegerField()
+    background = models.ImageField(
+        upload_to = upload_location,
+        height_field = "background_height_field",
+        width_field = "background_width_field",
+        blank=True,
+        default="default/background.jpg",
+    )
 
     def __str__(self):
         return self.user.username
@@ -119,7 +134,6 @@ class Profile(models.Model):
     def get_drafts_count(self):
         return self.user.posts.filter(is_draft = True).count()
 
-
     def get_comments_count(self):
         return self.user.comments.count()
 
@@ -137,9 +151,7 @@ class Profile(models.Model):
         if created:
             Profile.objects.create(user=instance)
 
-    @receiver(post_save, sender=User)
-    def save_user_profile(sender, instance, **kwargs):
-        instance.profile.save()
+
 
 class Follow(models.Model):
     source = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name ="source")

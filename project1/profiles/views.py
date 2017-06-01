@@ -15,6 +15,8 @@ from project1.project1.profiles.models import Profile, Follow
 from project1.project1.posts.forms import PostForm
 from project1.project1.comments.forms import CommentForm
 from .forms import ProfileForm
+from .forms import ProfileAvatarForm
+from .forms import ProfileBackgroundForm
 
 # Create your views here.
 def profile_activity(request,id,slug):
@@ -60,23 +62,31 @@ def profile_activity(request,id,slug):
             template = "profile_base.html"
         return render(request,template,context)
     elif request.method == "POST" and request.is_ajax():
-        print(request.POST)
         form = ProfileForm(request.POST,instance=request.user.profile)
         if form.is_valid():
             form.save()
+            response = {}
+            return JsonResponse(response)
+        else:
+            return JsonResponse(form.errors)
 
-        response = {}
-        return JsonResponse(response)
+
+
+
 
 def profile_edit(request):
     if request.method == "GET" and request.is_ajax():
         current_user = request.user
         current_user_profile = current_user.profile
         current_user_profile_url = current_user.profile.get_absolute_url()
-        form = ProfileForm(instance = current_user_profile)
+        profileform = ProfileForm(instance = current_user_profile)
+        profileavatarform = ProfileAvatarForm(instance = current_user_profile)
+        profilebackgroundform = ProfileBackgroundForm(instance = current_user_profile)
         context = {
             "current_user_profile_url":current_user_profile_url,
-            "form":form,
+            "profileform":profileform,
+            "profileavatarform":profileavatarform,
+            "profilebackgroundform":profilebackgroundform,
         }
         return render(request,"profile_edit.html",context)
 
