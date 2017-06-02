@@ -12,7 +12,12 @@ urlpatterns = [
     url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/follow/$', views.profile_follow, name='profile_follow'),
     url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/followingcount/$', views.profile_following_count, name='profile_following_count'),
     url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/followerscount/$', views.profile_followers_count, name='profile_followers_count'),
-    url(r'^edit/$', views.profile_edit, name='profile_edit'),
 
+    url(r'^edit/$', views.profile_edit, name='profile_edit'),
+    url(r'^editprofileavatar/$', views.profile_editprofileavatar, name='profile_editprofileavatar'),
+    url(r'^editprofilebackground/$', views.profile_editprofilebackground, name='profile_editprofilebackground'),
+
+    
+    url(r'^edit/$', views.profile_edit, name='profile_edit'),
     url(r'^demo/$', views.demo, name='demo'),
 ]

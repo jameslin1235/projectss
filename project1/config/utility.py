@@ -1,5 +1,7 @@
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from project1.project1.profiles.models import Profile
+from django.shortcuts import render
+
 def paginate(*args):
     comments = args[0][0]
     objects_count = args[0][1]
@@ -210,3 +212,27 @@ def get_user_profile_fields(*args):
     fields_values_dict = fields_values[0]
     fields_values_list = [[field,value] for field, value in fields_values_dict.items() if value != None and value != '' ]
     return fields_values_list
+
+
+def get_modal(request):
+    if request.method == "GET" and request.is_ajax():
+        print(request.GET)
+        query_string_dict = request.GET.dict()
+        print(query_string_dict['modal_name'])
+        template = query_string_dict['modal_name']
+        return render(request,template)
+
+
+def get_notification(request):
+    if request.method == "GET" and request.is_ajax():
+        message = request.GET.get("message")
+        context = {
+            "message":message,
+        }
+        template = "notification.html"
+        return render(request,template,context)
+
+def get_loader(request):
+    if request.method == "GET" and request.is_ajax():
+        template = "loading_gif.html"
+        return render(request,template)

@@ -18,21 +18,22 @@ from django.contrib import admin
 from django.contrib.auth import views
 from django.conf import settings
 from django.conf.urls.static import static
-from project1.project1.posts import views as home
+from project1.project1.config import utility
+from project1.project1.posts import views as posts
 
 
 urlpatterns = [
     url(r'^', include('django.contrib.auth.urls')),
-    url(r'^$', home.post_list, name='post_list'),
+    url(r'^$', posts.post_list, name='post_list'),
     url(r'^register/', include("project1.project1.accounts.urls", namespace="accounts") ),
     url(r'^admin/', admin.site.urls),
     url(r'^posts/', include("project1.project1.posts.urls", namespace="posts")),
     url(r'^comments/', include("project1.project1.comments.urls", namespace="comments")),
     url(r'^categories/', include("project1.project1.categories.urls", namespace="categories")),
     url(r'^profile/', include("project1.project1.profiles.urls", namespace="profiles")),
-    url(r'^getloginmodal/$', home.get_login_modal, name='get_login_modal'),
-    url(r'^getnotification/$', home.get_notification, name='get_notification'),
-    url(r'^getloader/$', home.get_loader, name='get_loader'),
+    url(r'^get_modal/$', utility.get_modal, name='get_modal'),
+    url(r'^getnotification/$', utility.get_notification, name='get_notification'),
+    url(r'^getloader/$', utility.get_loader, name='get_loader'),
 
 ]
 

@@ -58,9 +58,9 @@ input:focus {
   margin-bottom: 10px;
 }
 
-.card__cover{
-  background: #96a1a9 no-repeat;
-  height: 200px;
+.card__background{
+  position: relative;
+  height:200px;
   border-top-left-radius:1px;
   border-top-right-radius:1px;
 }
@@ -124,11 +124,16 @@ input:focus {
   padding: 15px;
 }
 
+.card__hiddenform{
+  display: none;
+}
 .card__formfield{
   position: relative;
   padding: 30px 0;
   border-bottom: 1px solid #ebeef5;
 }
+
+
 
 .card__formfield--last{
   border-bottom: 0;
@@ -388,7 +393,11 @@ input:focus {
   align-self: center;
 }
 
-
+/* Images */
+.profile-background{
+  width: 100%;
+  height: 100%;
+}
 
 
 /* icons */
@@ -453,6 +462,18 @@ input:focus {
 
 .button--blue.button--primary:hover{
   background-color: #0d79d1;
+}
+
+.button--editbackground{
+  position: absolute;
+  top:20px;
+  right:20px;
+  color: hsla(0,0%,100%,.7);
+  border:1px solid hsla(0,0%,100%,.24);
+}
+
+.button--editbackground:hover{
+  background: hsla(0,0%,100%,.04);
 }
 
 .button--follow{
@@ -656,4 +677,43 @@ input:focus {
   height: 160px;
   border: 4px solid #fff;
   border-radius:8px;
+}
+
+
+/* Modals */
+.Modal{
+  position:fixed;
+  top:0;
+  left:0;
+  width: 100%;
+  height: 100%;
+  background:rgba(0,0,0,.65);
+  z-index:2000;
+  overflow-y:auto;
+  overflow-x: hidden;
+  display:flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.Modal__content{
+  position: relative;
+  top:-500px;
+  text-align: center;
+  width:400px;
+  background: #FFF;
+  border-radius: 2px;
+  box-shadow: 0 5px 20px 0 rgba(0,34,77,.5);
+}
+
+.Modal__header{
+  padding: 20px;
+}
+
+.Modal__body{
+  padding: 20px;
+}
+
+.Modal__footer{
+  padding: 20px;
 }

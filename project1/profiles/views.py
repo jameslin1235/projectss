@@ -8,17 +8,19 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count
 from django.utils import timezone
-from project1.project1.config import functions
 from project1.project1.posts.models import Post
 from project1.project1.comments.models import Comment
-from project1.project1.profiles.models import Profile, Follow
+from .models import Profile, Follow
 from project1.project1.posts.forms import PostForm
 from project1.project1.comments.forms import CommentForm
 from .forms import ProfileForm
 from .forms import ProfileAvatarForm
 from .forms import ProfileBackgroundForm
-
+from project1.project1.config import utility
 # Create your views here.
+
+
+
 def profile_activity(request,id,slug):
     if request.method == "GET":
         User = get_user_model()
@@ -26,15 +28,15 @@ def profile_activity(request,id,slug):
         current_user = request.user
         context = {}
         users = [user,current_user]
-        user_status = functions.get_user_status(users)
-        logged_in_status = functions.get_logged_in_status(current_user)
-        user_edit_status = functions.get_user_edit_status(user_status)
-        user_message_status = functions.get_user_message_status(user_status)
+        user_status = utility.get_user_status(users)
+        logged_in_status = utility.get_logged_in_status(current_user)
+        user_edit_status = utility.get_user_edit_status(user_status)
+        user_message_status = utility.get_user_message_status(user_status)
         args = [user,current_user,user_status]
-        user_follow_status = functions.get_user_follow_status(args)
-        user_profile_status = functions.get_user_profile_status(user)
+        user_follow_status = utility.get_user_follow_status(args)
+        user_profile_status = utility.get_user_profile_status(user)
         if user_profile_status:
-            fields_values_list = functions.get_user_profile_fields(user)
+            fields_values_list = utility.get_user_profile_fields(user)
             context['fields_values_list'] = fields_values_list
         else:
             context['fields_values_list'] = False
@@ -61,14 +63,7 @@ def profile_activity(request,id,slug):
         else:
             template = "profile_base.html"
         return render(request,template,context)
-    elif request.method == "POST" and request.is_ajax():
-        form = ProfileForm(request.POST,instance=request.user.profile)
-        if form.is_valid():
-            form.save()
-            response = {}
-            return JsonResponse(response)
-        else:
-            return JsonResponse(form.errors)
+
 
 
 
@@ -89,6 +84,35 @@ def profile_edit(request):
             "profilebackgroundform":profilebackgroundform,
         }
         return render(request,"profile_edit.html",context)
+    elif request.method == "POST" and request.is_ajax():
+        form = ProfileForm(request.POST,instance=request.user.profile)
+        if form.is_valid():
+            form.save()
+            response = {}
+            return JsonResponse(response)
+        else:
+            return JsonResponse(form.errors)
+
+def profile_editprofileavatar(request):
+    if request.method == "POST" and request.is_ajax():
+        form = ProfileAvatarForm(request.FILES,instance=request.user.profile)
+        if form.is_valid():
+            form.save()
+            response = {}
+            return JsonResponse(response)
+        else:
+            return JsonResponse(form.errors)
+
+def profile_editprofilebackground(request):
+    if request.method == "POST" and request.is_ajax():
+        form = ProfileBackgroundForm(request.FILES,instance=request.user.profile)
+        if form.is_valid():
+            form.save()
+            response = {}
+            return JsonResponse(response)
+        else:
+            return JsonResponse(form.errors)
+
 
 def demo(request):
         return render(request,"demo.html")

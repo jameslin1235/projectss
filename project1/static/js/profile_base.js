@@ -85,21 +85,7 @@ $(document).on('click', '.btn-pagination', function() {
   }
 });
 
-$(document).on('focus', '.js-add-focus', function() {
-  event.preventDefault();
-  var element = $(this);
-  var parent = (element).parents(".card__formfieldtextinput");
-  $(parent).addClass('card__formfieldtextinput--focus');
 
-});
-
-$(document).on('blur', '.js-add-focus', function() {
-  event.preventDefault();
-  var element = $(this);
-  var parent = (element).parents(".card__formfieldtextinput");
-  $(parent).removeClass('card__formfieldtextinput--focus');
-
-});
 
 // Submit profile form
 function submit_profile_form(){
@@ -200,4 +186,62 @@ $(document).on('submit', '.js-submit-profile-form', function() {
     add_notification(message);
   });
 });
+});
+
+$(document).on('click', '.js-edit-background', function() {
+  event.preventDefault();
+  var element = $(this);
+  $('#id_background').click();
+});
+
+$(document).on('change', '#id_background', function() {
+  event.preventDefault();
+  var element = $(this);
+  var query_string = "modal_name=profile_edit_modal.html";
+  $.when(get_modal(query_string)).done(function(a1){
+    profile_edit_modal = a1;
+    $('body').append(profile_edit_modal);
+    // $('.Modal').hide().;
+    $(".Modal__content").animate({
+        top: '0',
+    },"5000");
+
+
+  });
+});
+
+
+$(document).on('submit', '.js-submit-profile-background-form', function() {
+  event.preventDefault();
+  var element = $(this);
+  var submit_url = $(element).attr("action");
+  var data = $(element).serialize();
+  var method = $(element).attr("method");
+  var parent = (element).parents(".profile");
+  var message = "Profile background updated";
+  $.when(submit_profile_form(submit_url,data,method),get_notification(message)).done(function(a1,a2){
+    var message = a2[0];
+    $('body').animate({scrollTop:0}, 0, function(){
+    add_notification(message);
+  });
+});
+});
+
+
+
+
+$(document).on('focus', '.js-add-focus', function() {
+  event.preventDefault();
+  var element = $(this);
+  var parent = (element).parents(".card__formfieldtextinput");
+  $(parent).addClass('card__formfieldtextinput--focus');
+
+});
+
+$(document).on('blur', '.js-add-focus', function() {
+  event.preventDefault();
+  var element = $(this);
+  var parent = (element).parents(".card__formfieldtextinput");
+  $(parent).removeClass('card__formfieldtextinput--focus');
+
 });

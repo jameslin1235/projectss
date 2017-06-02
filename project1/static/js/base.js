@@ -1,3 +1,50 @@
+// Modals
+
+function get_modal(){
+  var args = Array.prototype.slice.call(arguments);
+  var query_string = args[0];
+  return $.ajax({
+    url: "/get_modal/?" + query_string,
+  });
+}
+
+
+
+// Feature 1 Close login modal
+$(document).on('click', '#login-modal-close-button', function(event) {
+  event.preventDefault();
+  $('#login-modal').modal('hide');
+});
+
+// Feature 2 Remove login modal once it is hidden
+$(document).on('hidden.bs.modal', '#login-modal', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  $(element).remove();
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // loader
 function get_loader(){
   return $.ajax({      // ajax GET to /getloader/
@@ -110,31 +157,7 @@ $(document).on('click', '.btn-comment', function(event) {
 }});
 
 
-// login modal
 
-function get_login_modal(){
-      $.ajax({     // ajax GET to /getloginmodal/
-        url: "/getloginmodal/",
-        success:function(data) {
-          $("body").append(data);
-          $("#login-modal").modal();
-        }});
-}
-
-
-
-// Feature 1 Close login modal
-$(document).on('click', '#login-modal-close-button', function(event) {
-  event.preventDefault();
-  $('#login-modal').modal('hide');
-});
-
-// Feature 2 Remove login modal once it is hidden
-$(document).on('hidden.bs.modal', '#login-modal', function(event) {
-  event.preventDefault();
-  var element = $(this);
-  $(element).remove();
-});
 
 
 // user status

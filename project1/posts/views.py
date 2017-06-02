@@ -12,7 +12,6 @@ from .models import Post, Like, Dislike
 from .forms import PostForm
 from project1.project1.comments.forms import CommentForm
 from project1.project1.comments.models import Comment
-from project1.project1.config import functions
 # Create your views here.
 def post_list(request):
     if request.method == "GET":
@@ -295,24 +294,7 @@ def post_dislike(request,id,slug):
         response_data['dislikes_count'] = post.dislikes
         return JsonResponse(response_data,safe=False)
 
-def get_login_modal(request):
-    if request.method == "GET" and request.is_ajax():
-        template = "login_modal.html"
-        return render(request,template)
 
-def get_notification(request):
-    if request.method == "GET" and request.is_ajax():
-        message = request.GET.get("message")
-        context = {
-            "message":message,
-        }
-        template = "notification.html"
-        return render(request,template,context)
-
-def get_loader(request):
-    if request.method == "GET" and request.is_ajax():
-        template = "loading_gif.html"
-        return render(request,template)
 
 def post_likers(request,id,slug):
     post = get_object_or_404(Post, id=id)
