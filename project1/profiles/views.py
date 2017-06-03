@@ -93,7 +93,7 @@ def profile_edit(request):
         else:
             return JsonResponse(form.errors)
 
-def profile_editprofileavatar(request):
+def profile_edit_avatar(request):
     if request.method == "POST" and request.is_ajax():
         form = ProfileAvatarForm(request.FILES,instance=request.user.profile)
         if form.is_valid():
@@ -103,9 +103,11 @@ def profile_editprofileavatar(request):
         else:
             return JsonResponse(form.errors)
 
-def profile_editprofilebackground(request):
+def profile_edit_background(request):
+    print('x')
     if request.method == "POST" and request.is_ajax():
-        form = ProfileBackgroundForm(request.FILES,instance=request.user.profile)
+        print('y')
+        form = ProfileBackgroundForm(request.POST,request.FILES,instance=request.user.profile)
         if form.is_valid():
             form.save()
             response = {}

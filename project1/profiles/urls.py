@@ -14,10 +14,9 @@ urlpatterns = [
     url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/followerscount/$', views.profile_followers_count, name='profile_followers_count'),
 
     url(r'^edit/$', views.profile_edit, name='profile_edit'),
-    url(r'^editprofileavatar/$', views.profile_editprofileavatar, name='profile_editprofileavatar'),
-    url(r'^editprofilebackground/$', views.profile_editprofilebackground, name='profile_editprofilebackground'),
+    url(r'^editavatar/$', views.profile_edit_avatar, name='profile_edit_avatar'),
+    url(r'^editbackground/$', views.profile_edit_background, name='profile_edit_background'),
 
-    
-    url(r'^edit/$', views.profile_edit, name='profile_edit'),
+
     url(r'^demo/$', views.demo, name='demo'),
 ]

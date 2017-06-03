@@ -1,5 +1,4 @@
 // Modals
-
 function get_modal(){
   var args = Array.prototype.slice.call(arguments);
   var query_string = args[0];
@@ -23,10 +22,28 @@ $(document).on('hidden.bs.modal', '#login-modal', function(event) {
   $(element).remove();
 });
 
+///////////////////////////////////
 
+// Alerts
+function get_alert(){
+  var args = Array.prototype.slice.call(arguments);
+  var message = args[0];
+  return $.ajax({
+    url: "/getnotification/",
+    data: {
+      message:message,
+    },
+  });
+}
 
+function add_alert(){
+  var args = Array.prototype.slice.call(arguments);
+  var message = args[0];
+  $("body").append(message);
+  $(".alertbox").hide().slideDown(500).delay(3000).slideUp(500,function(){$(this).remove();});
+}
 
-
+///////////////////////////////////////
 
 
 
@@ -168,24 +185,7 @@ function get_user_status(){
 
 
 
-function get_notification(){
-  var args = Array.prototype.slice.call(arguments);
-  var message = args[0];
-  return $.ajax({
-    url: "/getnotification/",
-    data: {
-      message:message,
-    },
-  });
-}
 
-function add_notification(){
-  var args = Array.prototype.slice.call(arguments);
-  var message = args[0];
-  $("body").append(message);
-  $(".alertbox").hide().slideDown(500).delay(3000).slideUp(500,function(){$(this).remove();});
-
-}
 
 
 

@@ -73,10 +73,41 @@ input:focus {
   position: relative;
 }
 
-.card__avatar{
+
+.card__avatarwrapper{
   position: absolute;
   top:-25px;
 }
+
+.card__avatarwrapper:hover{
+  cursor:pointer;
+}
+
+.card__avatar{
+  position: relative;
+}
+
+.card__avatarmask{
+  position: absolute;
+  top: 0;
+  left:0;
+  right:0;
+  bottom: 0;
+  background: #000;
+  opacity: 0.4;
+  border: 4px solid #FFF;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.card__avatarmaskinner{
+  text-align: center;
+  color:#FFF;
+}
+
+
 
 .card__content{
   padding: 15px 0 0 180px;
@@ -406,7 +437,7 @@ input:focus {
   vertical-align:text-top;
 }
 
-.Icon-left{
+.Icon--left{
   margin-right: 5px;
 }
 
@@ -414,7 +445,10 @@ input:focus {
   margin-left: 5px;
 }
 
-
+.Icon--avatar{
+  margin-bottom: 10px;
+  color:#FFF;
+}
 
 /* Buttons */
 .button{
@@ -427,8 +461,6 @@ input:focus {
 .button:focus{
   outline: none;
 }
-
-
 
 .button--plain{
   border-radius: 0;
@@ -474,6 +506,16 @@ input:focus {
 
 .button--editbackground:hover{
   background: hsla(0,0%,100%,.04);
+}
+
+.button--closemodal{
+  position: absolute;
+  right:-50px;
+  color:#FFF;
+}
+
+.button--closemodal:hover{
+  opacity: 0.5;
 }
 
 .button--follow{
@@ -699,7 +741,7 @@ input:focus {
 .Modal__content{
   position: relative;
   top:-500px;
-  text-align: center;
+
   width:400px;
   background: #FFF;
   border-radius: 2px;
@@ -707,13 +749,21 @@ input:focus {
 }
 
 .Modal__header{
-  padding: 20px;
+  padding: 50px 30px 30px;
+  text-align: center;
 }
 
 .Modal__body{
-  padding: 20px;
+  padding: 30px;
+  text-align: center;
+}
+
+.Modal__bodyimage{
+  width: 200px;
+  height: 200px;
 }
 
 .Modal__footer{
-  padding: 20px;
+  padding: 30px 30px 50px;
+  text-align: center;
 }
