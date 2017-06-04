@@ -89,7 +89,7 @@ $(document).on('click', '.btn-pagination', function() {
 function render_uploaded_image(){
   var args = Array.prototype.slice.call(arguments);
   var element = args[0];
-  var files = $(element)[0].files;
+  var files = element.files;
   var file = files[0];
   var reader = new FileReader();
   reader.onload = function(event) {
@@ -109,6 +109,21 @@ function submit_profile_form(){
     url: url,
     method: method,
     data: data,
+  });
+}
+
+// Submit profile files
+function submit_profile_files(){
+  var args = Array.prototype.slice.call(arguments);
+  url = args[0];
+  method = args[1];
+  data = args[2];
+  return $.ajax({
+    url: url,
+    method: method,
+    data: data,
+    processData: false,
+    contentType: false,
   });
 }
 
@@ -204,85 +219,101 @@ $(document).on('submit', '.js-profile-form', function() {
 $(document).on('click', '.js-profile-edit-background', function() {
   event.preventDefault();
   var element = $(this);
-  var parent = $(element).parent();
-  var input_field = $(parent).find("input[type='file']");
-  $(input_field).click();
+  var parent = element.parent();
+  var input_field = parent.find("input[type='file']");
+  input_field.click();
 });
 
 
 $(document).on('change', '#id_background', function() {
   event.preventDefault();
   var element = $(this);
-  var query_string = "modal_name=profile_edit_background_modal.html";
-  $.when(get_modal(query_string)).done(function(a1){
-    modal = a1;
+  var template = "profile_edit_background_modal.html";
+  $.when(get_modal(template)).done(function(a1){
+    var modal = a1;
     $('body').append(modal);
-    render_uploaded_image($(element));
+    render_uploaded_image(element[0]);
     $(".Modal__content").animate({
       top: '0',
     },"5000");
   });
 });
 
-$(document).on('click', '.js-profile-submit-edit-background-modal', function() {
+$(document).on('click', '.js-close-modal', function() {
   event.preventDefault();
   var element = $(this);
+  var parent = element.parents(".Modal");
+  parent.remove();
+});
+
+$(document).keyup(function(e) {
+  if (e.keyCode == 27) { // escape key maps to keycode `27`
+    $(".Modal").remove();
+  }
+});
+
+$(document).on('click', '.js-profile-submit-edit-background-modal', function() {
+  event.preventDefault();
   $('.js-profile-submit-edit-background-form').click();
 });
 
-
-$(document).on('submit', '.js-profile-edit-background-form, ', function() {
+$(document).on('submit', '.js-profile-edit-background-form', function() {
   event.preventDefault();
-  console.log('yes');
   var element = $(this);
-  var url = $(element).attr("action");
-  var method = $(element).attr("method");
-  var data = $(element).serialize();
-  console.log(data);
+  var parent = element.parents(".card__background");
+  var url = element.attr("action");
+  var method = element.attr("method");
+  var formdata = new FormData(element[0]);
   var message = "Profile background updated";
-  $.when(submit_profile_form(url,method,data),get_alert(message)).done(function(a1,a2){
+  $.when(submit_profile_files(url,method,formdata),get_alert(message)).done(function(a1,a2){
+    var profile_background_url = a1[0]["profile_background_url"];
     var message = a2[0];
+    parent.find("img").attr("src",profile_background_url);
+    $('.Modal').remove();
     $('body').animate({scrollTop:0}, 0,
       function(){
         add_alert(message);
       });
-});
-});
-
+    });
+  });
 
 /////////////////////////////////////////////////
 
-$(document).on('click', '.js-edit-avatar', function() {
-  event.preventDefault();
-  $('#id_avatar').click();
-});
-
-
-
-
-$(document).on('click', '.js-modal-submit', function() {
+// Edit Profile Avatar
+$(document).on('click', '.js-profile-edit-avatar', function() {
   event.preventDefault();
   var element = $(this);
-  $('.js-submit-profile-background-form').click();
+  var input_field = element.find("input[type='file']");
+  console.log(input_field);
+  input_field.click();
 });
 
 
 
+//
+// $(document).on('click', '.js-modal-submit', function() {
+//   event.preventDefault();
+//   var element = $(this);
+//   $('.js-submit-profile-background-form').click();
+// });
 
 
 
-$(document).on('focus', '.js-add-focus', function() {
-  event.preventDefault();
-  var element = $(this);
-  var parent = (element).parents(".card__formfieldtextinput");
-  $(parent).addClass('card__formfieldtextinput--focus');
 
-});
 
-$(document).on('blur', '.js-add-focus', function() {
-  event.preventDefault();
-  var element = $(this);
-  var parent = (element).parents(".card__formfieldtextinput");
-  $(parent).removeClass('card__formfieldtextinput--focus');
 
-});
+// $(document).on('focus', '.js-add-focus', function() {
+//   event.preventDefault();
+//   var element = $(this);
+//   var parent = (element).parents(".card__formfieldtextinput");
+//   $(parent).addClass('card__formfieldtextinput--focus');
+//
+// });
+//
+// $(document).on('blur', '.js-add-focus', function() {
+//   event.preventDefault();
+//   var element = $(this);
+//   var parent = (element).parents(".card__formfieldtextinput");
+//   $(parent).removeClass('card__formfieldtextinput--focus');
+//
+// });

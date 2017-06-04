@@ -216,10 +216,9 @@ def get_user_profile_fields(*args):
 
 def get_modal(request):
     if request.method == "GET" and request.is_ajax():
-        print(request.GET)
         query_string_dict = request.GET.dict()
-        print(query_string_dict['modal_name'])
-        template = query_string_dict['modal_name']
+        print(query_string_dict['template'])
+        template = query_string_dict['template']
         return render(request,template)
 
 

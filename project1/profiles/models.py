@@ -9,8 +9,8 @@ from django.utils.text import slugify
 from django.core.urlresolvers import reverse
 from django.utils import timezone
 
-def upload_location(instance, filename):
-    return "/users/%s/%s" %(instance.id, filename)
+def get_upload_location(instance, filename):
+    return "users/%s/%s" % (instance.user.username,filename)
 
 path1 = os.path.join(settings.BASE_DIR, "project1/static/data/countries.txt")
 path2 = os.path.join(settings.BASE_DIR, "project1/static/data/occupations.txt")
@@ -81,7 +81,7 @@ class Profile(models.Model):
     avatar_width_field = models.IntegerField()
     avatar_height_field = models.IntegerField()
     avatar = models.ImageField(
-        upload_to = upload_location,
+        upload_to = get_upload_location,
         height_field = "avatar_height_field",
         width_field = "avatar_width_field",
         blank=True,
@@ -91,7 +91,7 @@ class Profile(models.Model):
     background_width_field = models.IntegerField()
     background_height_field = models.IntegerField()
     background = models.ImageField(
-        upload_to = upload_location,
+        upload_to = get_upload_location,
         height_field = "background_height_field",
         width_field = "background_width_field",
         blank=True,

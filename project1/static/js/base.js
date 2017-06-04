@@ -1,9 +1,12 @@
 // Modals
 function get_modal(){
   var args = Array.prototype.slice.call(arguments);
-  var query_string = args[0];
+  var template = args[0];
   return $.ajax({
-    url: "/get_modal/?" + query_string,
+    url: "/get_modal/" ,
+    data:{
+      template:template,
+    }
   });
 }
 
@@ -42,7 +45,6 @@ function add_alert(){
   $("body").append(message);
   $(".alertbox").hide().slideDown(500).delay(3000).slideUp(500,function(){$(this).remove();});
 }
-
 ///////////////////////////////////////
 
 

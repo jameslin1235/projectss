@@ -13,9 +13,8 @@ from project1.project1.comments.models import Comment
 from .models import Profile, Follow
 from project1.project1.posts.forms import PostForm
 from project1.project1.comments.forms import CommentForm
-from .forms import ProfileForm
-from .forms import ProfileAvatarForm
-from .forms import ProfileBackgroundForm
+from .forms import ProfileForm,ProfileAvatarForm,ProfileBackgroundForm
+
 from project1.project1.config import utility
 # Create your views here.
 
@@ -104,13 +103,12 @@ def profile_edit_avatar(request):
             return JsonResponse(form.errors)
 
 def profile_edit_background(request):
-    print('x')
     if request.method == "POST" and request.is_ajax():
-        print('y')
         form = ProfileBackgroundForm(request.POST,request.FILES,instance=request.user.profile)
         if form.is_valid():
             form.save()
-            response = {}
+            url = request.user.profile.background.url
+            response = {"profile_background_url":url}
             return JsonResponse(response)
         else:
             return JsonResponse(form.errors)
