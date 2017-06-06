@@ -11,7 +11,6 @@
   <!-- Bootstrap -->
   <link href="{% static "bootstrap-3.3.7-dist/bootstrap-3.3.7-dist/css/bootstrap.min.css" %}" rel="stylesheet">
   <link href="{% static "font-awesome-4.7.0/font-awesome-4.7.0/css/font-awesome.css" %}" rel="stylesheet">
-
   <link href="{% static "css/index.css" %}" rel="stylesheet">
 
   <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -81,14 +80,15 @@
   {% endblock body %}
 </div>
 
-
   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <!-- Include all compiled plugins (below), or include individual files as needed -->
   <script src="{% static "bootstrap-3.3.7-dist/bootstrap-3.3.7-dist/js/bootstrap.min.js" %}"></script>
   <!-- <script src="{% static "js/autosize.min.js" %}"></script> -->
   <script src="{% static "js/base.js" %}"></script>
-  {% block javascript %}{% endblock %}
+  {% block javascript %}
+
+  {% endblock %}
 
 </body>
 </html>

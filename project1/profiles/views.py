@@ -18,8 +18,6 @@ from .forms import ProfileForm,ProfileAvatarForm,ProfileBackgroundForm
 from project1.project1.config import utility
 # Create your views here.
 
-
-
 def profile_activity(request,id,slug):
     if request.method == "GET":
         User = get_user_model()
@@ -54,19 +52,16 @@ def profile_activity(request,id,slug):
         context['posts_count'] = posts_count
         context['drafts_count'] = drafts_count
         context['template_name'] = template_name
-
-        if request.is_ajax() and "profile_header" in request.GET:
-            template = "profile_header.html"
-        elif request.is_ajax() and "profile_body" in request.GET:
-            template = "profile_activity.html"
+        if request.is_ajax():
+            if request.GET:
+                value = request.GET.get('template')
+                if value == "profile_header":
+                    template = "profile_header.html"
+                elif value == "profile_body":
+                    template = "profile_activity.html"
         else:
             template = "profile_base.html"
         return render(request,template,context)
-
-
-
-
-
 
 def profile_edit(request):
     if request.method == "GET" and request.is_ajax():
@@ -94,10 +89,11 @@ def profile_edit(request):
 
 def profile_edit_avatar(request):
     if request.method == "POST" and request.is_ajax():
-        form = ProfileAvatarForm(request.FILES,instance=request.user.profile)
+        form = ProfileAvatarForm(request.POST,request.FILES,instance=request.user.profile)
         if form.is_valid():
             form.save()
-            response = {}
+            url = request.user.profile.avatar.url
+            response = {"profile_avatar_url":url}
             return JsonResponse(response)
         else:
             return JsonResponse(form.errors)

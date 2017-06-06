@@ -32,7 +32,7 @@ urlpatterns = [
     url(r'^categories/', include("project1.project1.categories.urls", namespace="categories")),
     url(r'^profile/', include("project1.project1.profiles.urls", namespace="profiles")),
     url(r'^get_modal/$', utility.get_modal, name='get_modal'),
-    url(r'^getnotification/$', utility.get_notification, name='get_notification'),
+    url(r'^getalert/$', utility.get_alert, name='get_alert'),
     url(r'^getloader/$', utility.get_loader, name='get_loader'),
 
 ]

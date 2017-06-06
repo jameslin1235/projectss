@@ -222,13 +222,13 @@ def get_modal(request):
         return render(request,template)
 
 
-def get_notification(request):
+def get_alert(request):
     if request.method == "GET" and request.is_ajax():
         message = request.GET.get("message")
         context = {
             "message":message,
         }
-        template = "notification.html"
+        template = "alert.html"
         return render(request,template,context)
 
 def get_loader(request):

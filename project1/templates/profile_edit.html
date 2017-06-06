@@ -14,7 +14,7 @@
               {% csrf_token %}
               {{ profilebackgroundform.background }}
               <button type="submit" class="button js-profile-submit-edit-background-form">Save</button>
-            </form >
+            </form>
           </div>
         </div>
 
@@ -29,10 +29,10 @@
             </div>
             </div>
             <div class="card__hiddenform">
-              <form method="post" enctype="multipart/form-data" class="js-profile-avatar-form" action="/profile/editavatar/">
+              <form method="post" enctype="multipart/form-data" class="js-profile-edit-avatar-form" action="/profile/editavatar/">
                 {% csrf_token %}
                 {{ profileavatarform.avatar }}
-                <button type="submit" class="button js-submit-profile-avatar-form">Save</button>
+                <button type="submit" class="button js-profile-submit-edit-avatar-form">Save</button>
               </form >
             </div>
 
@@ -42,7 +42,7 @@
           <div class="card__content">
             <div class="card__contentheader">
               <h1>{{user.username}}</h1>
-              <button type="button" class="button button-plain js-get-profile" data-url="{{ current_user_profile_url }}">Back to Profile <span class="fa fa-angle-right Icon--right" aria-hidden="true"></span></button>
+              <button type="button" class="button button-plain js-profile-get" data-url="{{ current_user_profile_url }}">Back to Profile <span class="fa fa-angle-right Icon--right" aria-hidden="true"></span></button>
             </div>
 
             <div class="card__form">

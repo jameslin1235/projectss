@@ -1,81 +1,70 @@
-// ALERTS //
-function get_alert(){
-  var args = Array.prototype.slice.call(arguments);
-  var message = args[0];
-  return $.ajax({
-    url: "/getalert/",
-    data: {
-      message:message,
-    },
-  });
-}
-
-function add_alert(){
-  var args = Array.prototype.slice.call(arguments);
-  var message = args[0];
-  $("body").append(message);
-  $(".alertbox").hide().slideDown(500).delay(3000).slideUp(500,function(){$(this).remove();});
-}
-////
-
-// MODALS //
-function get_modal(){
-  var args = Array.prototype.slice.call(arguments);
-  var template = args[0];
-  return $.ajax({
-    url: "/get_modal/" ,
-    data:{
-      template:template,
-    }
-  });
-}
-
-$(document).on("click", ".js-modal-close", function() {
-  $(this).parents(".Modal").remove();
-});
-
-$(document).keyup(function(e) {
-  if (e.keyCode == 27) { // escape key maps to keycode `27`
-    $(".Modal").remove();
-  }
-});
-////
-
-
-
-
-// Feature 1 Close login modal
-$(document).on('click', '#login-modal-close-button', function(event) {
-  event.preventDefault();
-  $('#login-modal').modal('hide');
-});
-
-// Feature 2 Remove login modal once it is hidden
-$(document).on('hidden.bs.modal', '#login-modal', function(event) {
-  event.preventDefault();
-  var element = $(this);
-  $(element).remove();
-});
-
-///////////////////////////////////
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// // Alerts
+// function get_alert(){
+//   var args = Array.prototype.slice.call(arguments);
+//   var message = args[0];
+//   return $.ajax({
+//     url: "/getnotification/",
+//     data: {
+//       message:message,
+//     },
+//   });
+// }
+//
+// function add_alert(){
+//   var args = Array.prototype.slice.call(arguments);
+//   var message = args[0];
+//   $("body").append(message);
+//   $(".alertbox").hide().slideDown(500).delay(3000).slideUp(500,function(){$(this).remove();});
+// }
+// ///////////////////////////////////////
+//
+//
+// // Modals
+// function get_modal(){
+//   var args = Array.prototype.slice.call(arguments);
+//   var template = args[0];
+//   return $.ajax({
+//     url: "/get_modal/" ,
+//     data:{
+//       template:template,
+//     }
+//   });
+// }
+//
+//
+//
+// // Feature 1 Close login modal
+// $(document).on('click', '#login-modal-close-button', function(event) {
+//   event.preventDefault();
+//   $('#login-modal').modal('hide');
+// });
+//
+// // Feature 2 Remove login modal once it is hidden
+// $(document).on('hidden.bs.modal', '#login-modal', function(event) {
+//   event.preventDefault();
+//   var element = $(this);
+//   $(element).remove();
+// });
+//
+// ///////////////////////////////////
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 // // loader
@@ -84,8 +73,8 @@ $(document).on('hidden.bs.modal', '#login-modal', function(event) {
 //     url: "/getloader/",
 //   });
 // }
-
-
+//
+//
 // // List
 // function get_list_page(args){
 //   var list_page_url = args[0];
@@ -109,7 +98,7 @@ $(document).on('hidden.bs.modal', '#login-modal', function(event) {
 //   });
 //
 // }
-
+//
 //
 // $(document).on('click', '.btn-show', function(event) {
 //   event.preventDefault();
@@ -188,16 +177,16 @@ $(document).on('hidden.bs.modal', '#login-modal', function(event) {
 //       autosize($('textarea'));
 //   });
 // }});
-
-
-
-
-
-// user status
-function get_user_status(){
-  var user_status = $("#user-status").attr("data-user-status");
-  return user_status;
-}
+//
+//
+//
+//
+//
+// // user status
+// function get_user_status(){
+//   var user_status = $("#user-status").attr("data-user-status");
+//   return user_status;
+// }
 //
 //
 //
@@ -276,8 +265,8 @@ function get_user_status(){
 //   }
 // });
 //
-
-
+//
+//
 //
 //
 // function get_post_comments_count(args){
@@ -357,10 +346,10 @@ function get_user_status(){
 //       post_comments_add(callback,callback_args,callback_callback,args);
 //     });
 //   });
-
-
-
-
+//
+//
+//
+//
 //     $(document).on('click', '.ContentItem-comments-form-textfield', function(event) {
 //       event.preventDefault();
 //       var element = $(this);
