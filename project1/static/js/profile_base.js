@@ -120,7 +120,7 @@ function render_uploaded_image(){
 }
 
 $(document).on("click", ".js-profile-submit-edit-background-modal", function() {
-  $(".js-profile-submit-edit-background-form").click();
+  $(".js-profile-edit-background-form").submit();
 });
 
 $(".profile").on("submit", ".js-profile-edit-background-form", function(event) {
@@ -178,7 +178,7 @@ $(".profile").on("submit", ".js-profile-edit-background-form", function(event) {
   });
 
   $(document).on("click", ".js-profile-submit-edit-avatar-modal", function() {
-    $(".js-profile-submit-edit-avatar-form").click();
+    $(".js-profile-edit-avatar-form").submit();
   });
 
   $(".profile").on("submit", ".js-profile-edit-avatar-form", function(event) {

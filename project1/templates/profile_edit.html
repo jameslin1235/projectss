@@ -13,7 +13,7 @@
             <form method="post" enctype="multipart/form-data" class="js-profile-edit-background-form" action="/profile/editbackground/">
               {% csrf_token %}
               {{ profilebackgroundform.background }}
-              <button type="submit" class="button js-profile-submit-edit-background-form">Save</button>
+              <!-- <button type="submit" class="button js-profile-submit-edit-background-form">Save</button> -->
             </form>
           </div>
         </div>
@@ -32,7 +32,7 @@
               <form method="post" enctype="multipart/form-data" class="js-profile-edit-avatar-form" action="/profile/editavatar/">
                 {% csrf_token %}
                 {{ profileavatarform.avatar }}
-                <button type="submit" class="button js-profile-submit-edit-avatar-form">Save</button>
+                <!-- <button type="submit" class="button js-profile-submit-edit-avatar-form">Save</button> -->
               </form >
             </div>
 
