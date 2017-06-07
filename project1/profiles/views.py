@@ -85,6 +85,7 @@ def profile_edit(request):
             response = {}
             return JsonResponse(response)
         else:
+            print(form.errors)
             return JsonResponse(form.errors)
 
 def profile_edit_avatar(request):

@@ -17,21 +17,44 @@ class ProfileForm(ModelForm):
             "profile_major",
         ]
 
-
-
-    def clean_profile_major(self):
-        print(self.cleaned_data)
-        data = self.cleaned_data['profile_major']
-
-        # if data.isspace():
-        #     print('x')
-        #     raise forms.ValidationError("This field contains only whitespace.")
-        # if data.isdigit():
-        #     print('isdigit')
+    def clean_profile_position(self):
+        data = self.cleaned_data['profile_position']
+        if "kevin@example.com" not in data:
+            raise forms.ValidationError("You have forgotten about Kevin!")
 
         # Always return a value to use as the new cleaned data, even if
         # this method didn't change it.
         return data
+
+    def clean_profile_company(self):
+        data = self.cleaned_data['profile_company']
+        if "jack@example.com" not in data:
+            raise forms.ValidationError("You have forgotten about Jack!")
+
+        # Always return a value to use as the new cleaned data, even if
+        # this method didn't change it.
+        return data
+
+    def clean_profile_school(self):
+        data = self.cleaned_data['profile_school']
+        if "edward@example.com" not in data:
+            raise forms.ValidationError("You have forgotten about Edward!")
+
+        # Always return a value to use as the new cleaned data, even if
+        # this method didn't change it.
+        return data
+
+    def clean_profile_major(self):
+        data = self.cleaned_data['profile_major']
+        if "fred@example.com" not in data:
+            raise forms.ValidationError("You have forgotten about Fred!")
+
+        # Always return a value to use as the new cleaned data, even if
+        # this method didn't change it.
+        return data
+
+
+
 
 class ProfileAvatarForm(ModelForm):
     class Meta:

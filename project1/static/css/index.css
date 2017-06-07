@@ -209,8 +209,16 @@ input:focus {
   border: 1px solid #9fadc7;
 }
 
+.card__formfielderror{
+  padding: 0 50px 0 150px;
+  display:flex;
+  color: #c33;
+}
 
-
+.card__formfielderrorbody{
+  padding: 10px;
+  flex:1;
+}
 
 
 

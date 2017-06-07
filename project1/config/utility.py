@@ -231,6 +231,16 @@ def get_alert(request):
         template = "alert.html"
         return render(request,template,context)
 
+def get_error(request):
+    if request.method == "GET" and request.is_ajax():
+        if request.GET:
+            print('x')
+            template = request.GET.get("template")
+            error = request.GET.get("error")
+            context = {"error":error}
+            return render(request,template,context)
+
+
 def get_loader(request):
     if request.method == "GET" and request.is_ajax():
         template = "loading_gif.html"

@@ -67,13 +67,26 @@ $(".profile").on("submit", ".js-profile-form", function(event) {
   var profile_submit_url = element.attr("action");
   var data = element.serialize();
   var method = element.attr("method");
-  var parent = (element).parents(".profile");
   var message = "Profile updated";
-  $.when(submit_profile_form(profile_submit_url,data,method),get_alert(message)).done(function(a1,a2){
-    var message = a2[0];
-    $("body").animate({scrollTop:0}, function(){
-      add_alert(message);
-    });
+  var template = "profile_edit_error.html";
+  $.when(submit_profile_form(profile_submit_url,data,method)).done(function(a1){
+    if (Object.keys(a1).length === 0 && a1.constructor === Object){
+      console.log("no errors");
+      $.when(get_alert(message)).done(function(a2){
+        var message = a2;
+        $("body").animate({scrollTop:0}, function(){
+          add_alert(message);
+        });
+      });
+    }
+    else{
+      for (var property in a1) {
+        if (a1.hasOwnProperty(property)) {
+          var error = a1[property][0];
+          add_error(template,property,error);
+        }
+      }
+    }
   });
 });
 
@@ -86,6 +99,31 @@ function submit_profile_form(){
     url: profile_submit_url,
     data: data,
     method: method,
+  });
+}
+
+function get_error(){
+  var args = Array.prototype.slice.call(arguments);
+  var template = args[0];
+  var error = args[1];
+  return $.ajax({
+    url: "/geterror/",
+    data: {
+      template:template,
+      error:error,
+    }
+  });
+}
+
+function add_error(){
+  var args = Array.prototype.slice.call(arguments);
+  var template = args[0];
+  var property = args[1];
+  var error = args[2];
+  $.when(get_error(template,error)).done(function(a1){
+    var error = a1;
+    console.log(property);
+    $("input[name='" + property + "']").parents(".card__formfieldvalue").after(error);
   });
 }
 ////
