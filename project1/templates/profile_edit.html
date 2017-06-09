@@ -10,7 +10,7 @@
           <img src="{{ user.profile.background.url }}" class="img-responsive profile-background" alt="Responsive image">
 
           <div class="card__hiddenform">
-            <form method="post" enctype="multipart/form-data" class="js-profile-edit-background-form" action="/profile/editbackground/">
+            <form enctype="multipart/form-data" class="js-profile-edit-background-form">
               {% csrf_token %}
               {{ profilebackgroundform.background }}
               <!-- <button type="submit" class="button js-profile-submit-edit-background-form">Save</button> -->
@@ -42,11 +42,11 @@
           <div class="card__content">
             <div class="card__contentheader">
               <h1>{{user.username}}</h1>
-              <button type="button" class="button button-plain js-profile-get" data-url="{{ current_user_profile_url }}">Back to Profile <span class="fa fa-angle-right Icon--right" aria-hidden="true"></span></button>
+              <button type="button" class="button button-plain js-profile-get">Back to Profile <span class="fa fa-angle-right Icon--right" aria-hidden="true"></span></button>
             </div>
 
             <div class="card__form">
-              <form method="post" class="js-profile-form" action="/profile/edit/">
+              <form class="js-profile-form">
                 {% csrf_token %}
 
                 <div class="card__formfield">
@@ -160,7 +160,7 @@
                     </div>
 
                   </div>
-                
+
                 </div>
 
                 <button type="submit" class="button button--blue button--primary">Save</button>

@@ -54,11 +54,7 @@ def profile_activity(request,id,slug):
         context['template_name'] = template_name
         if request.is_ajax():
             if request.GET:
-                value = request.GET.get('template')
-                if value == "profile_header":
-                    template = "profile_header.html"
-                elif value == "profile_body":
-                    template = "profile_activity.html"
+                template = request.GET.get('template')
         else:
             template = "profile_base.html"
         return render(request,template,context)

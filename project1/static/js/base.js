@@ -1,32 +1,42 @@
 // ALERTS //
 function get_alert(){
   var args = Array.prototype.slice.call(arguments);
-  var message = args[0];
+  var data = {};
+  data["message"] = args[0];
   return $.ajax({
     url: "/getalert/",
-    data: {
-      message:message,
-    },
+    data: data
   });
 }
 
 function add_alert(){
   var args = Array.prototype.slice.call(arguments);
-  var message = args[0];
-  $("body").append(message);
+  var alert = args[0];
+  $("body").append(alert);
   $(".alertbox").hide().slideDown(500).delay(3000).slideUp(500,function(){$(this).remove();});
+}
+////
+
+// ERRORS //
+function get_error(){
+  var args = Array.prototype.slice.call(arguments);
+  var data = {};
+  data["value"] = args[0];
+  return $.ajax({
+    url: "/geterror/",
+    data: data
+  });
 }
 ////
 
 // MODALS //
 function get_modal(){
   var args = Array.prototype.slice.call(arguments);
-  var template = args[0];
+  var data = {};
+  data["template"] = args[0];
   return $.ajax({
-    url: "/get_modal/" ,
-    data:{
-      template:template,
-    }
+    url: "/getmodal/",
+    data: data
   });
 }
 

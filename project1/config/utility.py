@@ -216,28 +216,27 @@ def get_user_profile_fields(*args):
 
 def get_modal(request):
     if request.method == "GET" and request.is_ajax():
-        query_string_dict = request.GET.dict()
-        print(query_string_dict['template'])
-        template = query_string_dict['template']
-        return render(request,template)
+        if request.GET:
+            template = request.GET.get("template")
+            
+
+            return render(request,template)
 
 
 def get_alert(request):
     if request.method == "GET" and request.is_ajax():
-        message = request.GET.get("message")
-        context = {
-            "message":message,
-        }
-        template = "alert.html"
-        return render(request,template,context)
+        if request.GET:
+            template = "alert.html"
+            message = request.GET.get("message")
+            context = {"message":message}
+            return render(request,template,context)
 
 def get_error(request):
     if request.method == "GET" and request.is_ajax():
         if request.GET:
-            print('x')
-            template = request.GET.get("template")
-            error = request.GET.get("error")
-            context = {"error":error}
+            template = "form_error.html"
+            value = request.GET.get("value")
+            context = {"value":value}
             return render(request,template,context)
 
 
