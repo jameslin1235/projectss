@@ -123,8 +123,15 @@ function render_uploaded_image(){
   var file = element.files[0];
   var reader = new FileReader();
   reader.onload = function(event) {
-    var src = event.target.result;
-    $(".Modal__body").append('<img class="Modal__bodyimage" src="' + src + '" alt="Profile Image">');
+    var img = new Image();
+    img.onload = function(){
+      var aspect_ratio = img.width / img.height;
+      var width = 100;
+      var height = width / aspect_ratio;
+      document.getElementById("canvas").getContext("2d").drawImage(img, 0, 0, width, height);
+    }
+    img.src = event.target.result;
+
   };
   reader.readAsDataURL(file);
 }
@@ -136,29 +143,21 @@ $(document).on("click", ".js-profile-submit-edit-background-modal", function() {
 $(".profile").on("submit", ".js-profile-edit-background-form", function(event) {
   event.preventDefault();
   var element = this;
-  var data = new FormData(element);
+  // var data = new FormData(element);
+  var data = document.getElementById("canvas").toDataURL("image/jpeg");
   var message = "Profile background updated";
-
   submit_profile_background(data).done(function(response){
-    if (Object.keys(response).length === 0 && response.constructor === Object){
+    if (response.hasOwnProperty("profile_background_url")){
       get_alert(message).done(function(alert){
+        $("#profile_background").attr("src",response["profile_background_url"]);
+        $(".Modal").remove();
         $("body").animate({scrollTop:0}, function(){add_alert(alert);});
       });
     }
+    else{
+    }
   });
-
-
-  ,get_alert(message)).done(function(a1,a2){
-    var profile_background_url = a1[0]["profile_background_url"];
-    var message = a2[0];
-    $(".Modal").remove();
-    element.parents(".card__background").find("img").attr("src",profile_background_url);
-    $("body").animate({scrollTop:0},
-      function(){
-        add_alert(message);
-      });
-    });
-  });
+});
 
   function submit_profile_background(){
     var args = Array.prototype.slice.call(arguments);
@@ -175,7 +174,7 @@ $(".profile").on("submit", ".js-profile-edit-background-form", function(event) {
 
   // EDIT PROFILE AVATAR //
   $(".profile").on("click", ".js-profile-edit-avatar", function() {
-    $(this).find("input[type='file']").click();
+    $("#id_avatar").click();
   });
 
   $(".profile").on("click", "#id_avatar", function(event){
@@ -183,12 +182,11 @@ $(".profile").on("submit", ".js-profile-edit-background-form", function(event) {
   });
 
   $(".profile").on("change", "#id_avatar", function() {
-    var element = $(this);
+    var element = this;
     var template = "profile_edit_avatar_modal.html";
-    $.when(get_modal(template)).done(function(a1){
-      var modal = a1;
+    get_modal(template).done(function(modal){
       $("body").append(modal);
-      render_uploaded_image(element[0]);
+      render_uploaded_image(element);
       $(".Modal__content").animate({top: 0});
     });
   });
@@ -197,22 +195,34 @@ $(".profile").on("submit", ".js-profile-edit-background-form", function(event) {
     $(".js-profile-edit-avatar-form").submit();
   });
 
-  $(".profile").on("submit", ".js-profile-edit-avatar-form", function(event) {
-    event.preventDefault();
-    var element = $(this);
-    var url = element.attr("action");
-    var data = new FormData(element[0]);
-    var method = element.attr("method");
-    var message = "Profile avatar updated";
-    $.when(submit_profile_files(url,data,method),get_alert(message)).done(function(a1,a2){
-      var profile_avatar_url = a1[0]["profile_avatar_url"];
-      var message = a2[0];
-      element.parents(".card__avatar").find("img").attr("src",profile_avatar_url);
-      $(".Modal").remove();
-      $("body").animate({scrollTop:0},
-        function(){
-          add_alert(message);
-        });
+    $(".profile").on("submit", ".js-profile-edit-avatar-form", function(event) {
+      event.preventDefault();
+      var element = this;
+      $("#id_profile_avatar").val(document.getElementById("canvas").toDataURL("image/jpeg"));
+      var data = new FormData(element);
+      var message = "Profile avatar updated";
+      submit_profile_avatar(data).done(function(response){
+        if (response.hasOwnProperty("profile_avatar_url")){
+          get_alert(message).done(function(alert){
+            $("#profile_avatar").attr("src",response["profile_avatar_url"]);
+            $(".Modal").remove();
+            $("body").animate({scrollTop:0}, function(){add_alert(alert);});
+          });
+        }
+        else{
+        }
       });
     });
+
+    function submit_profile_avatar(){
+      var args = Array.prototype.slice.call(arguments);
+      var data = args[0];
+      return $.ajax({
+        url: "/profile/editavatar/",
+        data: data,
+        method: "POST",
+        processData: false,
+        contentType: false,
+      });
+    }
     ////

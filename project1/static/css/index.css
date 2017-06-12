@@ -6,7 +6,6 @@
   }
 }
 
-
 /* General */
 body {
   padding-top: 70px;
@@ -29,22 +28,70 @@ select {
   border: 0;
 }
 
-
 textarea {
   resize: none;
-  border:none;
+  border: none;
   padding: 0;
 }
+
 textarea:focus {
   outline: none;
 }
 
 input {
-  border:none;
+  border: none;
   padding: 0;
 }
+
 input:focus {
   outline:none;
+}
+
+
+
+
+/* Forms */
+.hiddenform{
+  display: none;
+}
+
+.formfield{
+  padding: 30px 0;
+}
+
+.formfield__select select{
+  border:1px solid #ccd8e1;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.formfield__text{
+  display: flex;
+  padding: 10px;
+  border:1px solid #e7eaf1;
+}
+
+.formfield__text input{
+  flex:1;
+}
+
+.formfield__text textarea{
+  flex:1;
+}
+
+.formfield__text--focus{
+  border: 1px solid #9fadc7;
+}
+
+.formfield__error{
+  padding: 0 50px 0 150px;
+  display:flex;
+  color: #c33;
+}
+
+.formfield__errorbody{
+  padding: 10px;
+  flex:1;
 }
 
 /* Header */
@@ -55,28 +102,23 @@ input:focus {
   border: 1px solid #e7eaf1;
   border-radius: 2px;
   box-shadow: 0 1px 3px rgba(0,37,55,.05);
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
-.card__background{
-  position: relative;
-  height:200px;
-  border-top-left-radius:1px;
-  border-top-right-radius:1px;
-}
 
-.card__header{
-  padding: 15px;
-}
 .card__body{
-  margin: 0 20px 25px;
+  padding:30px;
   position: relative;
 }
-
+.card__header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
 .card__avatarwrapper{
   position: absolute;
-  top:-25px;
+  top:-40px;
 }
 
 .card__avatarwrapper:hover{
@@ -109,20 +151,6 @@ input:focus {
 
 
 
-.card__content{
-  padding: 15px 0 0 180px;
-}
-
-.card__contentheader{
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.card__contentbody{
-  margin-bottom: 10px;
-}
 
 
 .card__contentitem{
@@ -155,70 +183,7 @@ input:focus {
   padding: 15px;
 }
 
-.card__hiddenform{
-  display: none;
-}
-.card__formfield{
-  position: relative;
-  padding: 30px 0;
-  border-bottom: 1px solid #ebeef5;
-}
 
-
-
-.card__formfield--last{
-  border-bottom: 0;
-}
-
-.card__formfieldlabel{
-  position: absolute;
-}
-
-.card__formfieldvalue{
-  padding: 0 50px 0 150px;
-  display:flex;
-}
-
-.card__formfieldnontextinput{
-  flex:1;
-  display: flex;
-}
-
-.card__formfieldnontextinput select{
-  border:1px solid #ccd8e1;
-  border-radius: 4px;
-  padding: 10px;
-}
-
-.card__formfieldtextinput{
-  flex:1;
-  display: flex;
-  padding: 10px;
-  border:1px solid #e7eaf1;
-}
-
-.card__formfieldtextinput input {
-  flex:1;
-}
-
-.card__formfieldtextinput textarea{
-  flex:1;
-}
-
-.card__formfieldtextinput--focus{
-  border: 1px solid #9fadc7;
-}
-
-.card__formfielderror{
-  padding: 0 50px 0 150px;
-  display:flex;
-  color: #c33;
-}
-
-.card__formfielderrorbody{
-  padding: 10px;
-  flex:1;
-}
 
 
 
@@ -435,7 +400,7 @@ input:focus {
 /* Images */
 .profile-background{
   width: 100%;
-  height: 100%;
+  height: 250px;
 }
 
 
@@ -709,22 +674,19 @@ input:focus {
 /* Avatars */
 .Avatar{
   border-radius: 2px;
-
 }
 
-.Avatar-small{
+.avatar--small{
   width:25px;
   height:25px;
 }
 
-.Avatar-medium{
+.avatar--medium{
   width: 40px;
   height: 40px;
 }
 
-.Avatar-large{
-  width: 160px;
-  height: 160px;
+.avatar--large{
   border: 4px solid #fff;
   border-radius:8px;
 }
@@ -749,7 +711,6 @@ input:focus {
 .Modal__content{
   position: relative;
   top:-500px;
-
   width:400px;
   background: #FFF;
   border-radius: 2px;
@@ -766,10 +727,10 @@ input:focus {
   text-align: center;
 }
 
-.Modal__bodyimage{
+/*.Modal__bodyimage{
   width: 200px;
   height: 200px;
-}
+}*/
 
 .Modal__footer{
   padding: 30px 30px 50px;

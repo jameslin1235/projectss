@@ -65,7 +65,7 @@ def profile_edit(request):
         current_user_profile = current_user.profile
         current_user_profile_url = current_user.profile.get_absolute_url()
         profileform = ProfileForm(instance = current_user_profile)
-        profileavatarform = ProfileAvatarForm(instance = current_user_profile)
+        profileavatarform = ProfileAvatarForm()
         profilebackgroundform = ProfileBackgroundForm(instance = current_user_profile)
         context = {
             "current_user_profile_url":current_user_profile_url,
@@ -84,19 +84,42 @@ def profile_edit(request):
             print(form.errors)
             return JsonResponse(form.errors)
 
+# def profile_edit_avatar(request):
+#     if request.method == "POST" and request.is_ajax():
+#         print(request.POST)
+#         print(request.FILES)
+#         if request.user.profile.avatar.name != "default/avatar.jpg":
+#             request.user.profile.avatar.delete(save=False)
+#         form = ProfileAvatarForm(request.POST,instance=request.user.profile)
+#         if form.is_valid():
+#             form.save()
+#             url = request.user.profile.avatar.url
+#             response = {"profile_avatar_url":url}
+#             return JsonResponse(response)
+#         else:
+#             return JsonResponse(form.errors)
+
 def profile_edit_avatar(request):
     if request.method == "POST" and request.is_ajax():
-        form = ProfileAvatarForm(request.POST,request.FILES,instance=request.user.profile)
+        print(request.POST)
+        if request.user.profile.avatar.name != "default/avatar.jpg":
+            request.user.profile.avatar.delete(save=False)
+        form = ProfileAvatarForm(request.POST)
         if form.is_valid():
-            form.save()
-            url = request.user.profile.avatar.url
-            response = {"profile_avatar_url":url}
-            return JsonResponse(response)
+            
+            print('x')
+            # form.save()
+            # url = request.user.profile.avatar.url
+            # response = {"profile_avatar_url":url}
+            # return JsonResponse(response)
         else:
             return JsonResponse(form.errors)
 
 def profile_edit_background(request):
     if request.method == "POST" and request.is_ajax():
+
+        if request.user.profile.background.name != "default/background.jpg":
+            request.user.profile.background.delete(save=False)
         form = ProfileBackgroundForm(request.POST,request.FILES,instance=request.user.profile)
         if form.is_valid():
             form.save()

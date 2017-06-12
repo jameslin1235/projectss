@@ -7,40 +7,37 @@
 
         <div class="card__background">
           <button type="button" class="button button--editbackground js-profile-edit-background"><span class="fa fa-camera Icon--left" aria-hidden="true"></span>Edit background</button>
-          <img src="{{ user.profile.background.url }}" class="img-responsive profile-background" alt="Responsive image">
+          <img id="profile_background" src="{{ user.profile.background.url }}" class="img-responsive profile-background" alt="Profile Background">
 
-          <div class="card__hiddenform">
+          <div class="hiddenform">
             <form enctype="multipart/form-data" class="js-profile-edit-background-form">
               {% csrf_token %}
-              {{ profilebackgroundform.background }}
-              <!-- <button type="submit" class="button js-profile-submit-edit-background-form">Save</button> -->
+              <input id="id_background" name="background" type="file" accept="image/jpeg">
             </form>
           </div>
         </div>
 
         <div class="card__body">
-          <div class="card__avatarwrapper js-profile-edit-avatar">
-          <div class="card__avatar">
-            <img src="{{ user.profile.avatar.url }}" class="img-responsive Avatar Avatar-large" alt="Responsive image">
+          <div class="card__avatarwrapper">
+          <div class="card__avatar js-profile-edit-avatar">
+            <img id="profile_avatar" src="{{ user.profile.avatar.url }}" class="img-responsive avatar avatar--large" alt="Profile Avatar"
+              />
             <div class="card__avatarmask">
               <div class="card__avatarmaskinner">
               <span class="fa fa-camera fa-2x Icon--avatar" aria-hidden="true"></span>
               <h4>Edit avatar</h4>
             </div>
             </div>
-            <div class="card__hiddenform">
-              <form method="post" enctype="multipart/form-data" class="js-profile-edit-avatar-form" action="/profile/editavatar/">
+            <div class="hiddenform">
+              <form enctype="multipart/form-data" class="js-profile-edit-avatar-form">
                 {% csrf_token %}
-                {{ profileavatarform.avatar }}
-                <!-- <button type="submit" class="button js-profile-submit-edit-avatar-form">Save</button> -->
+                {{ profileavatarform.profile_avatar }}
               </form >
+              <input id="id_avatar" name="avatar" type="file" accept="image/jpeg">
             </div>
-
           </div>
-          </div>
-
-          <div class="card__content">
-            <div class="card__contentheader">
+        </div>
+            <div class="card__header">
               <h1>{{user.username}}</h1>
               <button type="button" class="button button-plain js-profile-get">Back to Profile <span class="fa fa-angle-right Icon--right" aria-hidden="true"></span></button>
             </div>
@@ -49,113 +46,113 @@
               <form class="js-profile-form">
                 {% csrf_token %}
 
-                <div class="card__formfield">
+                <div class="formfield">
                   {{ profileform.profile_gender.errors }}
-                  <div class="card__formfieldlabel">
+                  <div class="formfield__label">
                     <label for="{{ profileform.profile_gender.id_for_label }}">{{ profileform.profile_gender.label }}</label>
                   </div>
-                  <div class="card__formfieldvalue">
-                    <div class="card__formfieldnontextinput">
+                  <div class="formfield__value">
+                    <div class="formfield__select">
                       {{ profileform.profile_gender }}
                     </div>
 
                   </div>
                 </div>
 
-                <div class="card__formfield">
+                <div class="formfield">
                   {{ profileform.profile_credential.errors }}
-                  <div class="card__formfieldlabel">
+                  <div class="formfield__label">
                     <label for="{{ profileform.profile_credential.id_for_label }}">{{ profileform.profile_credential.label }}</label>
                   </div>
-                  <div class="card__formfieldvalue">
-                    <div class="card__formfieldtextinput">
+                  <div class="formfield__value">
+                    <div class="formfield__text">
                       {{ profileform.profile_credential|add_class:"js-add-focus"|attr:"placeholder:Credential"  }}
                     </div>
                   </div>
                 </div>
 
-                <div class="card__formfield">
+                <div class="formfield">
                   {{ profileform.profile_description.errors }}
-                  <div class="card__formfieldlabel">
+                  <div class="formfield__label">
                     <label for="{{ profileform.profile_description.id_for_label }}">{{ profileform.profile_description.label }}</label>
                   </div>
-                  <div class="card__formfieldvalue">
-                    <div class="card__formfieldtextinput">
+                  <div class="formfield__value">
+                    <div class="formfield__text">
                       {{ profileform.profile_description|attr:"rows:3"|attr:"cols:20"|add_class:"js-add-focus"|attr:"placeholder:Description" }}
                     </div>
                   </div>
                 </div>
 
-                <div class="card__formfield">
+                <div class="formfield">
                   {{ profileform.profile_residence.errors }}
-                  <div class="card__formfieldlabel">
+                  <div class="formfield__label">
                     <label for="{{ profileform.profile_residence.id_for_label }}">{{ profileform.profile_residence.label }}</label>
                   </div>
-                  <div class="card__formfieldvalue">
-                    <div class="card__formfieldnontextinput">
+                  <div class="formfield__value">
+                    <div class="formfield__select">
                       {{ profileform.profile_residence }}
                     </div>
                   </div>
                 </div>
 
-                <div class="card__formfield">
+                <div class="formfield">
                   {{ profileform.profile_occupation.errors }}
-                  <div class="card__formfieldlabel">
+                  <div class="formfield__label">
                     <label for="{{ profileform.profile_occupation.id_for_label }}">{{ profileform.profile_occupation.label }}</label>
                   </div>
-                  <div class="card__formfieldvalue">
-                    <div class="card__formfieldnontextinput">
+                  <div class="formfield__value">
+                    <div class="formfield__select">
                       {{ profileform.profile_occupation }}
                     </div>
                   </div>
                 </div>
 
-                <div class="card__formfield">
+                <div class="formfield">
                   {{ profileform.profile_position.errors }}
-                  <div class="card__formfieldlabel">
+                  <div class="formfield__label">
                     <label for="{{ profileform.profile_position.id_for_label }}">{{ profileform.profile_position.label }}</label>
                   </div>
-                  <div class="card__formfieldvalue">
-                    <div class="card__formfieldtextinput">
+                  <div class="formfield__value">
+                    <div class="formfield__text">
                       {{ profileform.profile_position|add_class:"js-add-focus"|attr:"placeholder:Position" }}
                     </div>
                   </div>
 
                 </div>
 
-                <div class="card__formfield">
+                <div class="formfield">
                   {{ profileform.profile_company.errors }}
-                  <div class="card__formfieldlabel">
+                  <div class="formfield__label">
                     <label for="{{ profileform.profile_company.id_for_label }}">{{ profileform.profile_company.label }}</label>
                   </div>
-                  <div class="card__formfieldvalue">
-                    <div class="card__formfieldtextinput">
+                  <div class="formfield__value">
+                    <div class="formfield__text">
                       {{ profileform.profile_company|add_class:"js-add-focus"|attr:"placeholder:Company" }}
                     </div>
                   </div>
 
                 </div>
 
-                <div class="card__formfield">
+                <div class="formfield">
                   {{ profileform.profile_school.errors }}
-                  <div class="card__formfieldlabel">
+                  <div class="formfield__label">
                     <label for="{{ profileform.profile_school.id_for_label }}">{{ profileform.profile_school.label }}</label>
                   </div>
-                  <div class="card__formfieldvalue">
-                    <div class="card__formfieldtextinput">
+                  <div class="formfield__value">
+                    <div class="formfield__text">
                       {{ profileform.profile_school|add_class:"js-add-focus"|attr:"placeholder:School" }}
                     </div>
                   </div>
 
                 </div>
 
-                <div class="card__formfield card__formfield--last">
+                <div class="formfield formfield--last">
                   {{ profileform.profile_major.errors }}
-                  <div class="card__formfieldlabel">
+                  <div class="formfield__label">
                     <label for="{{ profileform.profile_major.id_for_label }}">{{ profileform.profile_major.label }}</label>
                   </div>
-                  <div class="card__formfieldvalue">
-                    <div class="card__formfieldtextinput">
+                  <div class="formfield__value">
+                    <div class="formfield__text">
                       {{ profileform.profile_major|add_class:"js-add-focus"|attr:"placeholder:Major" }}
                     </div>
 
@@ -166,7 +163,7 @@
                 <button type="submit" class="button button--blue button--primary">Save</button>
               </form>
             </div>
-          </div>
+
         </div>
       </div>
     </div>
