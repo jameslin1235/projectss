@@ -23,6 +23,10 @@ a:focus{
   outline: none;
 }
 
+a:hover{
+  text-decoration: none;
+}
+
 p {
   margin: 0;
 }
@@ -50,6 +54,10 @@ input:focus {
   outline:none;
 }
 
+.container{
+  padding: 0 20px;
+}
+
 /* State */
 .hidden{
   display: none;
@@ -70,12 +78,16 @@ input:focus {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px;
+  padding: 20px 0;
 }
 
 .navbar__logo a{
   color: inherit;
   display: block;
+}
+
+.navbar__vertical{
+  margin: 0 -20px;
 }
 
 .navbar__vertical-flex{
@@ -109,10 +121,7 @@ input:focus {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 750px;
-    margin: 0 auto;
-    padding: 20px;
-    box-sizing: border-box;
+    padding: 20px 0;
   }
 
   .navbar__horizontal ul{
@@ -130,17 +139,7 @@ input:focus {
   }
 }
 
-@media (min-width: 992px){
-  .navbar__horizontal{
-    /*display: flex;
-    align-items: center;
-    justify-content: space-between;*/
-    width: 970px;
-    /*margin: 0 auto;*/
-    /*padding: 20px;
-    box-sizing: border-box;*/
-  }
-}
+
 
 /* Forms */
 .hiddenform{
@@ -760,11 +759,11 @@ input:focus {
 
 /* Media Queries */
 
-@media (min-width: 992px) {
+/*@media (min-width: 992px) {
   .container {
     width: 850px;
   }
-}
+}*/
 
 
 
