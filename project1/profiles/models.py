@@ -78,16 +78,33 @@ class Profile(models.Model):
         max_length = 100,
         blank = True,
     )
-    avatar_width_field = models.IntegerField()
-    avatar_height_field = models.IntegerField()
-    avatar = models.ImageField(
+    avatar_small_width_field = models.IntegerField()
+    avatar_small_height_field = models.IntegerField()
+    avatar_small = models.ImageField(
         upload_to = get_upload_location,
-        height_field = "avatar_height_field",
-        width_field = "avatar_width_field",
+        height_field = "avatar_small_height_field",
+        width_field = "avatar_small_width_field",
         blank=True,
-        default="default/avatar.jpg",
+        default="default/avatar_small.jpg",
     )
-
+    avatar_medium_width_field = models.IntegerField()
+    avatar_medium_height_field = models.IntegerField()
+    avatar_medium = models.ImageField(
+        upload_to = get_upload_location,
+        height_field = "avatar_medium_height_field",
+        width_field = "avatar_medium_width_field",
+        blank=True,
+        default="default/avatar_medium.jpg",
+    )
+    avatar_large_width_field = models.IntegerField()
+    avatar_large_height_field = models.IntegerField()
+    avatar_large = models.ImageField(
+        upload_to = get_upload_location,
+        height_field = "avatar_large_height_field",
+        width_field = "avatar_large_width_field",
+        blank=True,
+        default="default/avatar_large.jpg",
+    )
     background_width_field = models.IntegerField()
     background_height_field = models.IntegerField()
     background = models.ImageField(

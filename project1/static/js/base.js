@@ -1,3 +1,13 @@
+// NAVIGATION //
+$(".js-navbar-dropdown-toggle").on("click", function() {
+  $(".navbar__vertical").toggleClass("hidden");
+});
+
+
+
+
+
+
 // ALERTS //
 function get_alert(){
   var args = Array.prototype.slice.call(arguments);

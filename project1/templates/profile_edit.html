@@ -20,8 +20,14 @@
         <div class="card__body">
           <div class="card__avatarwrapper">
           <div class="card__avatar js-profile-edit-avatar">
-            <img id="profile_avatar" src="{{ user.profile.avatar.url }}" class="img-responsive avatar avatar--large" alt="Profile Avatar"
-              />
+
+            <img id="profile_avatar" src="{{ user.profile.avatar_small.url }}" class="avatar avatar--large" alt="Profile Avatar"
+            srcset="{{ user.profile.avatar_small.url }} 100w,
+             {{ user.profile.avatar_medium.url }} 125w,
+             {{ user.profile.avatar_large.url }} 150w"
+             sizes="(min-width: 992px) 150px,
+             (min-width: 768px) 125px,
+             100px">
             <div class="card__avatarmask">
               <div class="card__avatarmaskinner">
               <span class="fa fa-camera fa-2x Icon--avatar" aria-hidden="true"></span>

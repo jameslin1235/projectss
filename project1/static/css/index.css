@@ -1,23 +1,26 @@
-/* Media Queries */
-
-@media (min-width: 992px) {
-  .container {
-    width: 850px;
-  }
-}
 
 /* General */
 body {
-  padding-top: 70px;
-  background-color: #f7f8fa;
-}
-
-h1,h2,h3,h4,a{
   margin: 0;
+  padding-top:80px;
+  background: #f7f8fa;
+
 }
 
-h1 {
-  font-size: 26px;
+ul{
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+
+
+}
+
+a{
+  text-decoration: none;
+}
+
+a:focus{
+  outline: none;
 }
 
 p {
@@ -47,8 +50,97 @@ input:focus {
   outline:none;
 }
 
+/* State */
+.hidden{
+  display: none;
+}
+
+/* Navigation */
+.navbar{
+  position: fixed;
+  top:0;
+  left:0;
+  right:0;
+  border-bottom: 1px solid rgba(30,35,42,.06);
+  box-shadow: 0 1px 3px 0 rgba(0,34,77,.05);
+  background: #fff;
+}
+
+.navbar__header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.navbar__logo a{
+  color: inherit;
+  display: block;
+}
+
+.navbar__vertical-flex{
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar__vertical-flex a{
+  display: block;
+  padding: 20px;
+  color:#787985;
+}
+
+.navbar__vertical-flex a:hover{
+  background-color: #EDF1F5;
+  color:#E82F3A;
+}
 
 
+@media (min-width: 768px){
+
+  .navbar__header{
+    display: none;
+  }
+
+  .navbar__vertical{
+    display: none;
+  }
+
+  .navbar__horizontal{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 750px;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  .navbar__horizontal ul{
+    display: flex;
+  }
+
+  .navbar__horizontal-flex a{
+    display: block;
+    padding: 0 20px;
+    color:#787985;
+  }
+
+  .navbar__horizontal-flex a:hover{
+    color:#E82F3A;
+  }
+}
+
+@media (min-width: 992px){
+  .navbar__horizontal{
+    /*display: flex;
+    align-items: center;
+    justify-content: space-between;*/
+    width: 970px;
+    /*margin: 0 auto;*/
+    /*padding: 20px;
+    box-sizing: border-box;*/
+  }
+}
 
 /* Forms */
 .hiddenform{
@@ -111,6 +203,7 @@ input:focus {
   position: relative;
 }
 .card__header{
+  padding-top: 50px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -118,7 +211,7 @@ input:focus {
 
 .card__avatarwrapper{
   position: absolute;
-  top:-40px;
+  top:-50px;
 }
 
 .card__avatarwrapper:hover{
@@ -665,6 +758,13 @@ input:focus {
   color:#8590a6;
 }
 
+/* Media Queries */
+
+@media (min-width: 992px) {
+  .container {
+    width: 850px;
+  }
+}
 
 
 
