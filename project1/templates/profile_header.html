@@ -2,12 +2,30 @@
 <div class="container profile-header">
       <div class="card">
         <div class="card__background">
-          <img src="{{ user.profile.background.url }}" class="profile-cover" alt="Profile Background">
+          <img src="{{ user.profile.background_small.url }}" class="profile-cover" alt="Profile Background"
+          srcset="{{ user.profile.background_small.url }} 720w,
+          {{ user.profile.background_medium.url }} 800w,
+          {{ user.profile.background_large.url }} 1200w"
+           sizes="(min-width: 992px) 1200px,
+           (min-width: 768px) 800px,
+           720px">
+
         </div>
         <div class="card__body">
-          <div class="card__avatar">
-            <img src="{{ user.profile.avatar.url }}" class="img-responsive Avatar Avatar-large" alt="Responsive image">
+
+
+          <div class="card__avatarwrapper">
+          <div class="avatar">
+            <img src="{{ user.profile.avatar_small.url }}" alt="Profile Avatar"
+            srcset="{{ user.profile.avatar_small.url }} 100w,
+            {{ user.profile.avatar_medium.url }} 150w,
+            {{ user.profile.avatar_large.url }} 200w"
+             sizes="(min-width: 992px) 200px,
+             (min-width: 768px) 150px,
+             100px">
           </div>
+        </div>
+
           <div class="card__content">
             <div class="card__contentheader">
               <h1>{{user.username}}</h1>

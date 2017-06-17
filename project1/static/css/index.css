@@ -11,10 +11,13 @@ ul{
   list-style-type: none;
   margin: 0;
   padding: 0;
-
-
 }
 
+img{
+  display: block;
+  width: 100%;
+
+}
 a{
   text-decoration: none;
 }
@@ -106,41 +109,6 @@ input:focus {
   color:#E82F3A;
 }
 
-
-@media (min-width: 768px){
-
-  .navbar__header{
-    display: none;
-  }
-
-  .navbar__vertical{
-    display: none;
-  }
-
-  .navbar__horizontal{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 0;
-  }
-
-  .navbar__horizontal ul{
-    display: flex;
-  }
-
-  .navbar__horizontal-flex a{
-    display: block;
-    padding: 0 20px;
-    color:#787985;
-  }
-
-  .navbar__horizontal-flex a:hover{
-    color:#E82F3A;
-  }
-}
-
-
-
 /* Forms */
 .hiddenform{
   display: none;
@@ -196,6 +164,14 @@ input:focus {
   margin-bottom: 15px;
 }
 
+.card__background{
+  height:300px;
+}
+
+.card__background img{
+  object-fit: cover;
+  height: 100%;
+}
 
 .card__body{
   padding:30px;
@@ -217,9 +193,7 @@ input:focus {
   cursor:pointer;
 }
 
-.card__avatar{
-  position: relative;
-}
+
 
 .card__avatarmask{
   position: absolute;
@@ -771,24 +745,15 @@ input:focus {
 
 
 /* Avatars */
-.Avatar{
-  border-radius: 2px;
-}
-
-.avatar--small{
-  width:25px;
-  height:25px;
-}
-
-.avatar--medium{
-  width: 40px;
-  height: 40px;
-}
-
-.avatar--large{
+.avatar{
   border: 4px solid #fff;
   border-radius:8px;
+  width:100px;
+  height:100px;
+  position: relative;
 }
+
+
 
 
 /* Modals */
@@ -839,4 +804,52 @@ input:focus {
 
 .is--hidden{
   display: none;
+}
+
+
+
+@media (min-width: 768px){
+
+  .navbar__header{
+    display: none;
+  }
+
+  .navbar__vertical{
+    display: none;
+  }
+
+  .navbar__horizontal{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0;
+  }
+
+  .navbar__horizontal ul{
+    display: flex;
+  }
+
+  .navbar__horizontal-flex a{
+    display: block;
+    padding: 0 20px;
+    color:#787985;
+  }
+
+  .navbar__horizontal-flex a:hover{
+    color:#E82F3A;
+  }
+
+  .avatar{
+    width:150px;
+    height:150px;
+  }
+}
+
+
+
+@media (min-width: 992px){
+  .avatar{
+    width:200px;
+    height:200px;
+  }
 }

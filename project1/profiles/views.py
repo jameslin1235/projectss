@@ -13,7 +13,7 @@ from project1.project1.comments.models import Comment
 from .models import Profile, Follow
 from project1.project1.posts.forms import PostForm
 from project1.project1.comments.forms import CommentForm
-from .forms import ProfileForm,ProfileAvatarForm,ProfileBackgroundForm
+from .forms import ProfileForm,ProfileAvatarForm
 
 from project1.project1.config import utility
 # Create your views here.
@@ -106,7 +106,7 @@ def profile_edit_avatar(request):
             request.user.profile.avatar.delete(save=False)
         form = ProfileAvatarForm(request.POST)
         if form.is_valid():
-            
+
             print('x')
             # form.save()
             # url = request.user.profile.avatar.url

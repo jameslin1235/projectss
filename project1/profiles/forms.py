@@ -67,12 +67,12 @@ class ProfileForm(ModelForm):
 #             "avatar",
 #         ]
 
-class ProfileBackgroundForm(ModelForm):
-    class Meta:
-        model = Profile
-        fields = [
-            "background",
-        ]
+# class ProfileBackgroundForm(ModelForm):
+#     class Meta:
+#         model = Profile
+#         fields = [
+#             "background",
+#         ]
 
 class ProfileAvatarForm(forms.Form):
     profile_avatar = forms.CharField()
