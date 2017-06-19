@@ -1,69 +1,71 @@
 
 <div class="container profile-header">
-      <div class="card">
-        <div class="card__background">
-          <img src="{{ user.profile.background_small.url }}" class="profile-cover" alt="Profile Background"
-          srcset="{{ user.profile.background_small.url }} 720w,
-          {{ user.profile.background_medium.url }} 800w,
-          {{ user.profile.background_large.url }} 1200w"
-           sizes="(min-width: 992px) 1200px,
-           (min-width: 768px) 800px,
-           720px">
+  <div class="card">
+    <div class="card__background">
+      <img src="{{ user.profile.background_small.url }}" alt="Profile Background"
+      srcset="{{ user.profile.background_small.url }} 720w,
+      {{ user.profile.background_medium.url }} 800w,
+      {{ user.profile.background_large.url }} 1200w"
+      sizes="(min-width: 992px) 1200px,
+      (min-width: 768px) 800px,
+      720px">
+    </div>
 
-        </div>
-        <div class="card__body">
-
-
-          <div class="card__avatarwrapper">
-          <div class="avatar">
-            <img src="{{ user.profile.avatar_small.url }}" alt="Profile Avatar"
-            srcset="{{ user.profile.avatar_small.url }} 100w,
-            {{ user.profile.avatar_medium.url }} 150w,
-            {{ user.profile.avatar_large.url }} 200w"
-             sizes="(min-width: 992px) 200px,
-             (min-width: 768px) 150px,
-             100px">
-          </div>
-        </div>
-
-          <div class="card__content">
-            <div class="card__contentheader">
-              <h1>{{user.username}}</h1>
-            </div>
-            <div class="card__contentbody">
-              {% if fields_values_list %}
-              {% for list in fields_values_list %}
-              <div class="card__contentitem {% if forloop.last %}card__contentitem--last{% endif %}">
-                <span class="card__contentitemlabel">{{ list.0 }}</span>
-                <span class="card__contentitemvalue">{{ list.1 }}</span>
-              </div>
-              {% endfor %}
-              {% else %}
-              <div class="card__message">
-                <span>Empty Profile</span>
-              </div>
-              {% endif %}
-            </div>
-            <div class="card__contentfooter">
-              <div class="card__contentfooterleft">
-                {% if fields_values_list %}
-                <button type="button" class="button button--plain"><span class="glyphicon glyphicon-menu-down Icon Icon-left" aria-hidden="true"></span> Show</button>
-                {% endif %}
-              </div>
-              <div class="card__contentfooterright">
-                {% if user_edit_status %}
-                <button type="button" class="button button--blue js-profile-edit">Edit</button>
-                {% endif %}
-                {% if user_follow_status %}
-                <button type="button" class="button button--follow"><span class="glyphicon glyphicon-plus Icon Icon-left" aria-hidden="true"></span>{{ user_follow_status }}</button>
-                {% endif %}
-                {% if user_message_status %}
-                <button type="button" class="button button--message">{{ user_message_status }}</button>
-                {% endif %}
-              </div>
-            </div>
-          </div>
+    <div class="card__body">
+      <div class="avatar__wrapper">
+        <div class="avatar">
+          <img src="{{ user.profile.avatar_small.url }}" alt="Profile Avatar"
+          srcset="{{ user.profile.avatar_small.url }} 100w,
+          {{ user.profile.avatar_medium.url }} 150w,
+          {{ user.profile.avatar_large.url }} 200w"
+          sizes="(min-width: 992px) 200px,
+          (min-width: 768px) 150px,
+          100px">
         </div>
       </div>
 
+      <div class="card__content">
+
+        <div class="card__contentitem">
+          <h1>{{user.username}}</h1>
+        </div>
+        <div class="card__contentitem">
+          {% if fields_values_list %}
+          {% for list in fields_values_list %}
+          <div class="card__listitem {% if forloop.last %} card__listitem--last {% endif %}">
+            <span class="card__listitemlabel">{{ list.0 }}</span>
+            <span class="card__listitemvalue">{{ list.1 }}</span>
+          </div>
+          {% endfor %}
+          {% else %}
+          <div>
+            <span>Empty Profile</span>
+          </div>
+          {% endif %}
+        </div>
+
+        {% if fields_values_list %}
+        <div class="card__contentitem">
+          <button type="button" class="button button--plain"><span class="fa fa-angle-down" aria-hidden="true"></span> Show</button>
+        </div>
+        {% endif %}
+
+        <div class="card__buttongroup">
+          {% if user_edit_status %}
+          <button type="button" class="button button--blue js-profile-edit">{{ user_edit_status }}</button>
+          {% endif %}
+          {% if user_follow_status %}
+          <div class="card__buttongroupitem">
+            <button type="button" class="button button--blue"><span class="fa fa-plus" aria-hidden="true"></span> {{ user_follow_status }}</button>
+          </div>
+          {% endif %}
+          {% if user_message_status %}
+          <div class="card__buttongroupitem--last">
+            <button type="button" class="button button--gray"><span class="fa fa-comments" aria-hidden="true"></span> {{ user_message_status }}</button>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

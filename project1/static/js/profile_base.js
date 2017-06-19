@@ -1,3 +1,12 @@
+// HIDE PROFILE
+
+$(".js-profile-wrapper-get").on("click", function() {
+  $(".profile-content").hide();
+  $(".profile-wrapper").css("left","0");
+  $("body").css("overflow","auto");
+});
+
+
 // EDIT PROFILE //
 $(".profile").on("click", ".js-profile-edit", function() {
   get_profile_form().done(function(profile_form){

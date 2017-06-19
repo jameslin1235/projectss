@@ -99,26 +99,23 @@ def pagination_last(*args):
             page_num.insert(0,-1)
         page_num.insert(0,first_page_num)
 
-def get_logged_in_status (*args):
-    current_user = args[0]
-    logged_in_status = [True if current_user.is_authenticated else False]
-    return logged_in_status[0]
-
-def get_user_status(*args):
-    user = args[0][0]
-    current_user = args[0][1]
+def get_user_status(user,current_user):
     user_status = ["self" if current_user == user else "user" if current_user.is_authenticated else "anonymous"]
     return user_status[0]
 
-def get_user_edit_status(*args):
-    user_status = args[0]
-    user_edit_status = [True if user_status == "self" else False]
+def get_logged_in_status (current_user):
+    logged_in_status = [True if current_user.is_authenticated else False]
+    return logged_in_status[0]
+
+def get_user_edit_status(user_status):
+    user_edit_status = ["Edit" if user_status == "self" else False]
     return user_edit_status[0]
 
-def get_user_follow_status(*args):
-    user = args[0][0]
-    current_user = args[0][1]
-    user_status = args[0][2]
+def get_user_message_status(user_status):
+    user_message_status = ["Message" if user_status != "self" else False]
+    return user_message_status[0]
+
+def get_user_follow_status(user,current_user,user_status):
     if user_status == "anonymous":
         user_follow_status = "Follow"
     elif user_status == "self":
@@ -130,15 +127,20 @@ def get_user_follow_status(*args):
             user_follow_status = "Follow"
     return user_follow_status
 
-def get_user_message_status(*args):
-    user_status = args[0]
-    if user_status == "anonymous":
-        user_message_status = "Message"
-    elif user_status == "self":
-        user_message_status = False
-    elif user_status == "user":
-        user_message_status = "Message"
-    return user_message_status
+def get_user_profile_status(user):
+    fields_names = [field.name for field in Profile._meta.get_fields() if field.name.startswith("profile_")]
+    fields_values = Profile.objects.filter(id=user.id).values(*fields_names)
+    fields_values_dict = fields_values[0]
+    user_profile_status  = [True if fields_values_dict else False]
+    return user_profile_status[0]
+
+def get_user_profile_fields(user):
+    fields_names = [field.name for field in Profile._meta.get_fields() if field.name.startswith("profile_")]
+    fields_values = Profile.objects.filter(id=user.id).values(*fields_names)
+    fields_values_dict = fields_values[0]
+    fields_values_list = [[field,value] for field, value in fields_values_dict.items() if value != None and value != '' ]
+    return fields_values_list
+
 
 def get_user_posts_like_status(*args):
     user_status = args[0][0]
@@ -195,30 +197,14 @@ def get_user_posts_comments_count(*args):
         comments_count.append(post.get_comments_count())
     return comments_count
 
-def get_user_profile_status(*args):
-    user = args[0]
-    print(user)
-    fields_names = [field.name for field in Profile._meta.get_fields() if field.name.startswith("profile_")]
-    fields_values = Profile.objects.filter(id=user.id).values(*fields_names)
-    print(fields_values)
-    fields_values_dict = fields_values[0]
-    user_profile_status  = [False if not fields_values_dict else True]
-    return user_profile_status[0]
 
-def get_user_profile_fields(*args):
-    user = args[0]
-    fields_names = [field.name for field in Profile._meta.get_fields() if field.name.startswith("profile_")]
-    fields_values = Profile.objects.filter(id=user.id).values(*fields_names)
-    fields_values_dict = fields_values[0]
-    fields_values_list = [[field,value] for field, value in fields_values_dict.items() if value != None and value != '' ]
-    return fields_values_list
 
 
 def get_modal(request):
     if request.method == "GET" and request.is_ajax():
         if request.GET:
             template = request.GET.get("template")
-            
+
 
             return render(request,template)
 

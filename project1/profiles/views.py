@@ -14,7 +14,6 @@ from .models import Profile, Follow
 from project1.project1.posts.forms import PostForm
 from project1.project1.comments.forms import CommentForm
 from .forms import ProfileForm,ProfileAvatarForm
-
 from project1.project1.config import utility
 # Create your views here.
 
@@ -24,36 +23,24 @@ def profile_activity(request,id,slug):
         user = get_object_or_404(User, id = id)
         current_user = request.user
         context = {}
-        users = [user,current_user]
-        user_status = utility.get_user_status(users)
-        logged_in_status = utility.get_logged_in_status(current_user)
-        user_edit_status = utility.get_user_edit_status(user_status)
-        user_message_status = utility.get_user_message_status(user_status)
-        args = [user,current_user,user_status]
-        user_follow_status = utility.get_user_follow_status(args)
+        user_status = utility.get_user_status(user,current_user)
+        context['user_status'] = user_status
+        context['logged_in_status'] = utility.get_logged_in_status(current_user)
+        context['user_edit_status'] = utility.get_user_edit_status(user_status)
+        context['user_message_status'] = utility.get_user_message_status(user_status)
+        context['user_follow_status'] = utility.get_user_follow_status(user,current_user,user_status)
         user_profile_status = utility.get_user_profile_status(user)
         if user_profile_status:
-            fields_values_list = utility.get_user_profile_fields(user)
-            context['fields_values_list'] = fields_values_list
+            context['fields_values_list'] = utility.get_user_profile_fields(user)
         else:
             context['fields_values_list'] = False
-
-        title = "Activity"
-        posts_count = user.posts.filter(is_draft = False).count()
-        drafts_count = user.posts.filter(is_draft = True).count()
-        template_name = "profile_activity.html"
         context['user'] = user
-        context['user_status'] = user_status
-        context['logged_in_status'] = logged_in_status
-        context['user_edit_status'] = user_edit_status
-        context['user_message_status'] = user_message_status
-        context['user_follow_status'] = user_follow_status
-        context['title'] = title
-        context['posts_count'] = posts_count
-        context['drafts_count'] = drafts_count
-        context['template_name'] = template_name
+        context['title'] = "Activity"
+        context['posts_count'] = user.profile.get_posts_count()
+        context['drafts_count'] = user.profile.get_drafts_count()
+        context['template_name'] = "profile_activity.html"
+
         if request.is_ajax():
-            if request.GET:
                 template = request.GET.get('template')
         else:
             template = "profile_base.html"

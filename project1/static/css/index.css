@@ -1,10 +1,42 @@
+/* Flexbox */
+.flex-row{
+  display: flex;
+  align-items:center;
+}
 
 /* General */
+html{
+  font-size: 100%;
+}
+
 body {
   margin: 0;
   padding-top:80px;
   background: #f7f8fa;
+  overflow: hidden;
+}
 
+h1,h2,h3,h4,h5,h6{
+  margin: 0
+}
+
+h1{
+  font-size: 2rem;
+}
+h2{
+  font-size: 1.5rem;
+}
+h3{
+  font-size: 1.17rem;
+}
+h4{
+  font-size: 1rem;
+}
+h5{
+  font-size: 0.83rem;
+}
+h6{
+  font-size: 0.67rem;
 }
 
 ul{
@@ -16,10 +48,11 @@ ul{
 img{
   display: block;
   width: 100%;
-
 }
+
 a{
   text-decoration: none;
+  color:#787985;
 }
 
 a:focus{
@@ -31,6 +64,10 @@ a:hover{
 }
 
 p {
+  margin: 0;
+}
+
+h1{
   margin: 0;
 }
 
@@ -57,13 +94,30 @@ input:focus {
   outline:none;
 }
 
-.container{
+/*.container{
   padding: 0 20px;
 }
+
+.row{
+  margin-left: -20px;
+  margin-right: -20px;
+}*/
 
 /* State */
 .hidden{
   display: none;
+}
+
+.relative{
+  position: relative;
+}
+
+.absolute{
+  position: absolute;
+}
+
+.fixed{
+  position: fixed;
 }
 
 /* Navigation */
@@ -75,6 +129,7 @@ input:focus {
   border-bottom: 1px solid rgba(30,35,42,.06);
   box-shadow: 0 1px 3px 0 rgba(0,34,77,.05);
   background: #fff;
+  z-index: 3000;
 }
 
 .navbar__header{
@@ -101,7 +156,6 @@ input:focus {
 .navbar__vertical-flex a{
   display: block;
   padding: 20px;
-  color:#787985;
 }
 
 .navbar__vertical-flex a:hover{
@@ -155,7 +209,7 @@ input:focus {
 
 /* Header */
 
-/* Main */
+/* Card */
 .card{
   background: #fff;
   border: 1px solid #e7eaf1;
@@ -173,29 +227,53 @@ input:focus {
   height: 100%;
 }
 
-.card__body{
-  padding:30px;
-  position: relative;
-}
 .card__header{
-  padding-top: 50px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  padding: 15px;
 }
 
-.card__avatarwrapper{
-  position: absolute;
-  top:-50px;
+.card__headerinner{
+  border-bottom: 1px solid #E0E6ED;
+  padding: 10px 0;
 }
 
-.card__avatarwrapper:hover{
-  cursor:pointer;
+.card__body{
+  position: relative;
+  padding:30px 15px;
 }
 
+.card__content{
+  text-align: center;
+}
 
+.card__contentitem{
+  margin-bottom: 15px;
+}
 
-.card__avatarmask{
+.card__contentitem--last{
+  margin-bottom: 0;
+}
+
+.card__listitem{
+  margin-bottom: 15px;
+}
+
+.card__listitem--last{
+  margin-bottom: 0;
+}
+
+.card__listitemlabel{
+  margin-right: 10px;
+}
+
+.card__buttongroupitem{
+  margin-bottom: 15px;
+}
+
+.card__buttongroupitem--last{
+  margin-bottom: 0;
+}
+
+/*.card__avatarmask{
   position: absolute;
   top: 0;
   left:0;
@@ -213,43 +291,34 @@ input:focus {
 .card__avatarmaskinner{
   text-align: center;
   color:#FFF;
+}*/
+
+.card__navitem.active{
+  background: #ececec;
 }
 
-
-
-
-
-.card__contentitem{
-  margin-bottom: 10px;
-}
-
-.card__contentitem--last{
-  margin-bottom: 0;
-}
-
-.card__contentitemlabel{
-  margin-right: 10px;
-}
-
-.card__message{
-  color:#8590a6;
-}
-
-.card__contentfooter{
-  display: flex;
-  align-items: center;
-  justify-content:space-between;
-}
-
-.card__contentfooter .button--follow{
-  margin-right: 10px;
-}
-
-.card__sidebarheader{
+.card__navitem a{
   padding: 15px;
+  display: block;
 }
 
+.card__navitem a:hover{
+  color: #2b6dad;
+}
 
+.profile-content{
+  position:fixed;
+  top:80px;
+  left:0;
+  right:0;
+  bottom: 0;
+  overflow-y: auto;
+}
+
+.profile-wrapper{
+  position: relative;
+  left:-100%;
+}
 
 
 
@@ -476,8 +545,8 @@ input:focus {
   vertical-align:text-top;
 }
 
-.Icon--left{
-  margin-right: 5px;
+.icon--left{
+  margin-right: 10px;
 }
 
 .Icon-right{
@@ -493,17 +562,19 @@ input:focus {
 .button{
   background: transparent;
   border: none;
-  border-radius: 4px;
   padding:6px 12px;
+  font:inherit;
+  cursor: pointer;
 }
 
 .button:focus{
   outline: none;
 }
 
+
+
 .button--plain{
-  border-radius: 0;
-  color:#8590a6;
+  color: #8590a6;
   padding: 0;
 }
 
@@ -519,33 +590,25 @@ input:focus {
 
 .button--blue{
   border: 1px solid #0f88eb;
-  color: #0f88eb;
-}
-
-.button--blue:hover{
-  background-color: rgba(13,121,209,.06);
-}
-
-.button--blue.button--primary{
+  border-radius: 2px;
   background: #0f88eb;
   color: #fff;
 }
 
-.button--blue.button--primary:hover{
-  background-color: #0d79d1;
+.button--blue:hover{
+  background: #0d79d1;
 }
 
-.button--editbackground{
-  position: absolute;
-  top:20px;
-  right:20px;
-  color: hsla(0,0%,100%,.7);
-  border:1px solid hsla(0,0%,100%,.24);
+.button--gray{
+  border: 1px solid #ccd8e1;
+  border-radius: 2px;
+  color: #8590a6;
 }
 
-.button--editbackground:hover{
-  background: hsla(0,0%,100%,.04);
+.button--gray:hover{
+  background:rgba(207,216,230,.1);
 }
+
 
 .button--closemodal{
   position: absolute;
@@ -557,24 +620,9 @@ input:focus {
   opacity: 0.5;
 }
 
-.button--follow{
-  background: #0f88eb;
-  border:1px solid #0f88eb;
-  color:#fff;
-}
 
-.button--follow:hover{
-  background:#0d79d1;
-}
 
-.button--message{
-  border: 1px solid #ccd8e1;
-  color: #8590a6;
-}
 
-.button--message:hover{
-  background:rgba(207,216,230,.1)
-}
 
 
 
@@ -746,12 +794,20 @@ input:focus {
 
 /* Avatars */
 .avatar{
-  border: 4px solid #fff;
-  border-radius:8px;
-  width:100px;
-  height:100px;
   position: relative;
+  border: 4px solid #fff;
+  border-radius: 8px;
+  width: 100px;
+  margin: 0 auto;
 }
+
+.avatar__wrapper{
+  position: absolute;
+  top: -70px;
+  left: 0;
+  right: 0;
+}
+
 
 
 
@@ -809,6 +865,29 @@ input:focus {
 
 
 @media (min-width: 768px){
+  body{
+    overflow: auto;
+  }
+
+  h1{
+    font-size: 2.5rem;
+  }
+  h2{
+    font-size: 2rem;
+  }
+  h3{
+    font-size: 1.67rem;
+  }
+  h4{
+    font-size: 1.5rem;
+  }
+  h5{
+    font-size: 1.33rem;
+  }
+  h6{
+    font-size: 1.17rem;
+  }
+
 
   .navbar__header{
     display: none;
@@ -841,15 +920,48 @@ input:focus {
 
   .avatar{
     width:150px;
-    height:150px;
   }
+
+  .avatar__wrapper{
+    top: -105px;
+  }
+
+  .profile-wrapper{
+    position: static;
+  }
+
+  .profile-content{
+    position:static;
+    overflow-y: auto;
+  }
+
 }
 
 
 
 @media (min-width: 992px){
+  h1{
+    font-size: 3rem;
+  }
+  h2{
+    font-size: 2.5rem;
+  }
+  h3{
+    font-size: 2.17rem;
+  }
+  h4{
+    font-size: 2rem;
+  }
+  h5{
+    font-size: 1.83rem;
+  }
+  h6{
+    font-size: 1.67rem;
+  }
   .avatar{
     width:200px;
     height:200px;
   }
+
+
 }

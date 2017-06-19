@@ -1,37 +1,116 @@
 
 <div class="container profile-body">
-
   <div class="row">
-    <div class="col-md-9">
+    <div class="col-sm-9">
+      <div class="row">
+        <div class="col-sm-3">
+          <div class="card">
+            <div class="card__header">
+              <div class="card__headerinner">
+                <h2>Feeds</h2>
+              </div>
 
-      <div class="card">
-        <div class="card__sidebarheader">
-          <h4>Feeds</h4>
+            </div>
+            <ul class="card__nav">
+              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug  %}" role="tab" class="js-profile-hide">Activity</a></li>
+              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" role="tab" >Posts <span id="profile_nav_posts_count">{{posts_count}}</span></a></li>
+              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_drafts' id=user.id slug=user.profile.slug  %}" role="tab" >Drafts <span id="profile_nav_drafts_count">{{drafts_count}}</span></a></li>
+              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_comments' id=user.id slug=user.profile.slug  %}" role="tab">Comments</a></li>
+              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_bookmarks' id=user.id slug=user.profile.slug  %}" role="tab">Bookmark</a></li>
+              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_following' id=user.id slug=user.profile.slug  %}" role="tab">Following</a></li>
+              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_followers' id=user.id slug=user.profile.slug  %}" role="tab">Followers</a></li>
+            </ul>
+          </div>
         </div>
 
-        <ul class="nav nav-pills nav-stacked">
-          <li role="presentation" class="active"><a href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug  %}" role="tab" >Activity</a></li>
-          <li role="presentation" ><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" role="tab" >Posts <span id="profile_nav_posts_count">{{posts_count}}</span></a></li>
-          <li role="presentation"><a href="{% url 'profiles:profile_drafts' id=user.id slug=user.profile.slug  %}" role="tab" >Drafts <span id="profile_nav_drafts_count">{{drafts_count}}</span></a></li>
-          <li role="presentation"><a href="{% url 'profiles:profile_comments' id=user.id slug=user.profile.slug  %}" role="tab">Comments</a></li>
-          <li role="presentation"><a href="{% url 'profiles:profile_bookmarks' id=user.id slug=user.profile.slug  %}" role="tab">Bookmark</a></li>
-          <li role="presentation"><a href="{% url 'profiles:profile_following' id=user.id slug=user.profile.slug  %}" role="tab">Following</a></li>
-          <li role="presentation"><a href="{% url 'profiles:profile_followers' id=user.id slug=user.profile.slug  %}" role="tab">Followers</a></li>
-        </ul>
+        <div class="col-sm-9 profile-content">
+          <div class="card">
+            <div class="card__header">
+              <div class="card__headerinner flex-row">
+                <button type="button" class="button button--plain js-profile-wrapper-get"><span class="fa fa-angle-left icon--left" aria-hidden="true"></span></button>
+                <h2 class="">Activity</h2>
+              </div>
+            </div>
+            <div class="card__body">
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+              <h2>Activity</h2>
+
+              <h2>Activity</h2>
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
-    <!-- <div class="col-md-7">
+
+    <div class="col-sm-3">
       <div class="card">
         <div class="card__header">
-          <h4>hhh</h4>
+          <div class="card__headerinner">
+            <h2>Header</h2>
+          </div>
         </div>
-      </div>
-    </div> -->
-    <div class="col-md-3">
-      <div class="card">
-        <h1>text</h1>
       </div>
     </div>
   </div>
-
 </div>
