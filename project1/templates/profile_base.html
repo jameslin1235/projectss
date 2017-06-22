@@ -6,8 +6,8 @@
 
 {% block body %}
   <div class="profile-wrapper">
-  {% include "profile_header.html" %}
-  {% include template_name %}
+    {% block profile %}
+    {% endblock profile %}
 </div>
 {% endblock body %}
 {% block javascript %}

@@ -1,37 +1,18 @@
-// NAVIGATION //
-$(".js-navbar-dropdown-toggle").on("click", function() {
-  $(".navbar__vertical").toggleClass("hidden");
+// FORM //
+// Formfield on focus effect//
+$("input, textarea").on("focus", function() {
+  $(this).parent().addClass("formfield__input--focus");
 });
 
+// Formfield lose focus effect//
+$("input, textarea").on("blur", function() {
+  $(this).parent().removeClass("formfield__input--focus");
+});
 
-
-
-
-
-// ALERTS //
-function get_alert(){
-  var args = Array.prototype.slice.call(arguments);
+// FORM ERROR //
+function get_error(value){
   var data = {};
-  data["message"] = args[0];
-  return $.ajax({
-    url: "/getalert/",
-    data: data
-  });
-}
-
-function add_alert(){
-  var args = Array.prototype.slice.call(arguments);
-  var alert = args[0];
-  $("body").append(alert);
-  $(".alertbox").hide().slideDown(500).delay(3000).slideUp(500,function(){$(this).remove();});
-}
-////
-
-// ERRORS //
-function get_error(){
-  var args = Array.prototype.slice.call(arguments);
-  var data = {};
-  data["value"] = args[0];
+  data["value"] = value;
   return $.ajax({
     url: "/geterror/",
     data: data
@@ -39,11 +20,34 @@ function get_error(){
 }
 ////
 
-// MODALS //
-function get_modal(){
-  var args = Array.prototype.slice.call(arguments);
+
+// NAVIGATION //
+$(".js-navbar-dropdown-toggle").on("click", function() {
+  $(".navbar__vertical").toggleClass("hidden");
+});
+
+
+// ALERTS //
+function get_alert(message){
   var data = {};
-  data["template"] = args[0];
+  data["message"] = message;
+  return $.ajax({
+    url: "/getalert/",
+    data: data
+  });
+}
+
+function add_alert(alert){
+  $("body").append(alert);
+  $(".alert").hide().slideDown(500).delay(3000).slideUp(500,function(){$(this).remove();});
+}
+////
+
+
+// MODALS //
+function get_modal(template){
+  var data = {};
+  data["template"] = template;
   return $.ajax({
     url: "/getmodal/",
     data: data
@@ -51,12 +55,12 @@ function get_modal(){
 }
 
 $(document).on("click", ".js-modal-close", function() {
-  $(this).parents(".Modal").remove();
+  $(this).parents(".modal").remove();
 });
 
 $(document).keyup(function(e) {
   if (e.keyCode == 27) { // escape key maps to keycode `27`
-    $(".Modal").remove();
+    $(".modal").remove();
   }
 });
 ////

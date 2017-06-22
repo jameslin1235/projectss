@@ -1,173 +1,163 @@
-
+{% extends "profile_base.html" %}
 {% load widget_tweaks %}
+{% block profile %}
 <div class="container profile-form">
-      <div class="card">
+  <div class="card">
+    <div class="card__background profile-background">
+      <button type="button" class="button button--gray profile-background-edit js-profile-background-edit"><span class="fa fa-camera icon--left" aria-hidden="true"></span>Edit background</button>
+      <img src="{{ user.profile.background_small.url }}" alt="Profile Background"
+      srcset="{{ user.profile.background_small.url }} 720w,
+      {{ user.profile.background_medium.url }} 800w,
+      {{ user.profile.background_large.url }} 1200w"
+      sizes="(min-width: 992px) 1200px,
+      (min-width: 768px) 800px,
+      720px">
+      <form enctype="multipart/form-data" class="hidden js-profile-edit-background-form">
+        {% csrf_token %}
+        <input id="id_background" name="background" type="file" accept="image/jpeg">
+      </form>
+    </div>
 
-        <div class="card__background">
-          <button type="button" class="button button--editbackground js-profile-edit-background"><span class="fa fa-camera Icon--left" aria-hidden="true"></span>Edit background</button>
-          <img id="profile_background" src="{{ user.profile.background.url }}" class="img-responsive profile-background" alt="Profile Background">
-
-          <div class="hiddenform">
-            <form enctype="multipart/form-data" class="js-profile-edit-background-form">
-              {% csrf_token %}
-              <input id="id_background" name="background" type="file" accept="image/jpeg">
-            </form>
-          </div>
-        </div>
-
-        <div class="card__body">
-          <div class="card__avatarwrapper">
-          <div class="card__avatar js-profile-edit-avatar">
-
-            <img id="profile_avatar" src="{{ user.profile.avatar_small.url }}" class="avatar avatar--large" alt="Profile Avatar"
-            srcset="{{ user.profile.avatar_small.url }} 100w,
-             {{ user.profile.avatar_medium.url }} 125w,
-             {{ user.profile.avatar_large.url }} 150w"
-             sizes="(min-width: 992px) 150px,
-             (min-width: 768px) 125px,
-             100px">
-            <div class="card__avatarmask">
-              <div class="card__avatarmaskinner">
-              <span class="fa fa-camera fa-2x Icon--avatar" aria-hidden="true"></span>
+    <div class="card__body">
+      <div class="avatar__wrapper">
+        <div class="avatar js-profile-avatar-edit">
+          <img src="{{ user.profile.avatar.url }}" alt="Profile Avatar">
+          <div class="avatar__mask flex-row flex-center">
+            <div class="avatar__maskinner">
+              <span class="fa fa-camera" aria-hidden="true"></span>
               <h4>Edit avatar</h4>
             </div>
-            </div>
-            <div class="hiddenform">
-              <form enctype="multipart/form-data" class="js-profile-edit-avatar-form">
-                {% csrf_token %}
-                {{ profileavatarform.profile_avatar }}
-              </form >
-              <input id="id_avatar" name="avatar" type="file" accept="image/jpeg">
-            </div>
           </div>
-        </div>
-            <div class="card__header">
-              <h1>{{user.username}}</h1>
-              <button type="button" class="button button-plain js-profile-get">Back to Profile <span class="fa fa-angle-right Icon--right" aria-hidden="true"></span></button>
-            </div>
-
-            <div class="card__form">
-              <form class="js-profile-form">
-                {% csrf_token %}
-
-                <div class="formfield">
-                  {{ profileform.profile_gender.errors }}
-                  <div class="formfield__label">
-                    <label for="{{ profileform.profile_gender.id_for_label }}">{{ profileform.profile_gender.label }}</label>
-                  </div>
-                  <div class="formfield__value">
-                    <div class="formfield__select">
-                      {{ profileform.profile_gender }}
-                    </div>
-
-                  </div>
-                </div>
-
-                <div class="formfield">
-                  {{ profileform.profile_credential.errors }}
-                  <div class="formfield__label">
-                    <label for="{{ profileform.profile_credential.id_for_label }}">{{ profileform.profile_credential.label }}</label>
-                  </div>
-                  <div class="formfield__value">
-                    <div class="formfield__text">
-                      {{ profileform.profile_credential|add_class:"js-add-focus"|attr:"placeholder:Credential"  }}
-                    </div>
-                  </div>
-                </div>
-
-                <div class="formfield">
-                  {{ profileform.profile_description.errors }}
-                  <div class="formfield__label">
-                    <label for="{{ profileform.profile_description.id_for_label }}">{{ profileform.profile_description.label }}</label>
-                  </div>
-                  <div class="formfield__value">
-                    <div class="formfield__text">
-                      {{ profileform.profile_description|attr:"rows:3"|attr:"cols:20"|add_class:"js-add-focus"|attr:"placeholder:Description" }}
-                    </div>
-                  </div>
-                </div>
-
-                <div class="formfield">
-                  {{ profileform.profile_residence.errors }}
-                  <div class="formfield__label">
-                    <label for="{{ profileform.profile_residence.id_for_label }}">{{ profileform.profile_residence.label }}</label>
-                  </div>
-                  <div class="formfield__value">
-                    <div class="formfield__select">
-                      {{ profileform.profile_residence }}
-                    </div>
-                  </div>
-                </div>
-
-                <div class="formfield">
-                  {{ profileform.profile_occupation.errors }}
-                  <div class="formfield__label">
-                    <label for="{{ profileform.profile_occupation.id_for_label }}">{{ profileform.profile_occupation.label }}</label>
-                  </div>
-                  <div class="formfield__value">
-                    <div class="formfield__select">
-                      {{ profileform.profile_occupation }}
-                    </div>
-                  </div>
-                </div>
-
-                <div class="formfield">
-                  {{ profileform.profile_position.errors }}
-                  <div class="formfield__label">
-                    <label for="{{ profileform.profile_position.id_for_label }}">{{ profileform.profile_position.label }}</label>
-                  </div>
-                  <div class="formfield__value">
-                    <div class="formfield__text">
-                      {{ profileform.profile_position|add_class:"js-add-focus"|attr:"placeholder:Position" }}
-                    </div>
-                  </div>
-
-                </div>
-
-                <div class="formfield">
-                  {{ profileform.profile_company.errors }}
-                  <div class="formfield__label">
-                    <label for="{{ profileform.profile_company.id_for_label }}">{{ profileform.profile_company.label }}</label>
-                  </div>
-                  <div class="formfield__value">
-                    <div class="formfield__text">
-                      {{ profileform.profile_company|add_class:"js-add-focus"|attr:"placeholder:Company" }}
-                    </div>
-                  </div>
-
-                </div>
-
-                <div class="formfield">
-                  {{ profileform.profile_school.errors }}
-                  <div class="formfield__label">
-                    <label for="{{ profileform.profile_school.id_for_label }}">{{ profileform.profile_school.label }}</label>
-                  </div>
-                  <div class="formfield__value">
-                    <div class="formfield__text">
-                      {{ profileform.profile_school|add_class:"js-add-focus"|attr:"placeholder:School" }}
-                    </div>
-                  </div>
-
-                </div>
-
-                <div class="formfield formfield--last">
-                  {{ profileform.profile_major.errors }}
-                  <div class="formfield__label">
-                    <label for="{{ profileform.profile_major.id_for_label }}">{{ profileform.profile_major.label }}</label>
-                  </div>
-                  <div class="formfield__value">
-                    <div class="formfield__text">
-                      {{ profileform.profile_major|add_class:"js-add-focus"|attr:"placeholder:Major" }}
-                    </div>
-
-                  </div>
-
-                </div>
-
-                <button type="submit" class="button button--blue button--primary">Save</button>
-              </form>
-            </div>
-
+          <form enctype="multipart/form-data" class="hidden js-profile-avatar-form">
+            {% csrf_token %}
+          </form >
+          <input class="hidden" id="profile_avatar" name="avatar" type="file" accept="image/jpeg">
         </div>
       </div>
+
+      <div class="card__content">
+        <div class="card__contentitem">
+          <h1>{{user.username}}</h1>
+        </div>
+
+        <div class="card__contentitem last">
+          <a href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug %}" class="link--blue">Back to Profile<span class="fa fa-angle-right icon--right" aria-hidden="true"></span></a>
+      </div>
+      </div>
+
+      <div class="form">
+        <form class="js-profile-form">
+          {% csrf_token %}
+
+          <div class="formfield">
+            {{ profileform.profile_gender.errors }}
+            <div class="formfield__label">
+              <label for="{{ profileform.profile_gender.id_for_label }}">{{ profileform.profile_gender.label|cut:"Profile "|capfirst }}</label>
+            </div>
+            <div class="formfield__noninput">
+                {{ profileform.profile_gender }}
+            </div>
+          </div>
+
+          <div class="formfield">
+            {{ profileform.profile_credential.errors }}
+            <div class="formfield__label">
+              <label for="{{ profileform.profile_credential.id_for_label }}">{{ profileform.profile_credential.label|cut:"Profile "|capfirst }}</label>
+            </div>
+            <div class="formfield__input flex-row">
+
+                {{ profileform.profile_credential|add_class:"js-add-focus"|add_class:"flexitem--full"|attr:"placeholder:Credential"  }}
+
+            </div>
+          </div>
+
+          <div class="formfield">
+            {{ profileform.profile_description.errors }}
+            <div class="formfield__label">
+              <label for="{{ profileform.profile_description.id_for_label }}">{{ profileform.profile_description.label|cut:"Profile "|capfirst }}</label>
+            </div>
+            <div class="formfield__input flex-row">
+
+                {{ profileform.profile_description|attr:"rows:3"|attr:"cols:20"|add_class:"js-add-focus"|add_class:"flexitem--full"|attr:"placeholder:Description" }}
+
+            </div>
+          </div>
+
+          <div class="formfield">
+            {{ profileform.profile_residence.errors }}
+            <div class="formfield__label">
+              <label for="{{ profileform.profile_residence.id_for_label }}">{{ profileform.profile_residence.label|cut:"Profile "|capfirst }}</label>
+            </div>
+            <div class="formfield__noninput">
+                {{ profileform.profile_residence }}
+            </div>
+          </div>
+
+          <div class="formfield">
+            {{ profileform.profile_occupation.errors }}
+            <div class="formfield__label">
+              <label for="{{ profileform.profile_occupation.id_for_label }}">{{ profileform.profile_occupation.label|cut:"Profile "|capfirst }}</label>
+            </div>
+            <div class="formfield__noninput">
+                {{ profileform.profile_occupation }}
+            </div>
+          </div>
+
+          <div class="formfield">
+            {{ profileform.profile_position.errors }}
+            <div class="formfield__label">
+              <label for="{{ profileform.profile_position.id_for_label }}">{{ profileform.profile_position.label|cut:"Profile "|capfirst }}</label>
+            </div>
+            <div class="formfield__input flex-row">
+                {{ profileform.profile_position|add_class:"js-add-focus"|add_class:"flexitem--full"|attr:"placeholder:Position" }}
+            </div>
+
+          </div>
+
+          <div class="formfield">
+            {{ profileform.profile_company.errors }}
+            <div class="formfield__label">
+              <label for="{{ profileform.profile_company.id_for_label }}">{{ profileform.profile_company.label|cut:"Profile "|capfirst }}</label>
+            </div>
+            <div class="formfield__input flex-row">
+
+                {{ profileform.profile_company|add_class:"js-add-focus"|add_class:"flexitem--full"|attr:"placeholder:Company" }}
+
+            </div>
+
+          </div>
+
+          <div class="formfield">
+            {{ profileform.profile_school.errors }}
+            <div class="formfield__label">
+              <label for="{{ profileform.profile_school.id_for_label }}">{{ profileform.profile_school.label|cut:"Profile "|capfirst }}</label>
+            </div>
+            <div class="formfield__input flex-row">
+
+                {{ profileform.profile_school|add_class:"js-add-focus"|add_class:"flexitem--full"|attr:"placeholder:School" }}
+
+            </div>
+
+          </div>
+
+          <div class="formfield formfield--last">
+            {{ profileform.profile_major.errors }}
+            <div class="formfield__label">
+              <label for="{{ profileform.profile_major.id_for_label }}">{{ profileform.profile_major.label|cut:"Profile "|capfirst }}</label>
+            </div>
+            <div class="formfield__input flex-row">
+
+                {{ profileform.profile_major|add_class:"js-add-focus"|add_class:"flexitem--full"|attr:"placeholder:Major" }}
+
+            </div>
+
+          </div>
+
+          <button type="submit" class="button button--blue button--primary">Save</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
 </div>
+{% endblock profile %}

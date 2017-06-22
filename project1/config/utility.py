@@ -202,11 +202,8 @@ def get_user_posts_comments_count(*args):
 
 def get_modal(request):
     if request.method == "GET" and request.is_ajax():
-        if request.GET:
-            template = request.GET.get("template")
-
-
-            return render(request,template)
+        template = request.GET.get("template")
+        return render(request,template)
 
 
 def get_alert(request):
@@ -219,7 +216,6 @@ def get_alert(request):
 
 def get_error(request):
     if request.method == "GET" and request.is_ajax():
-        if request.GET:
             template = "form_error.html"
             value = request.GET.get("value")
             context = {"value":value}

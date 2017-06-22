@@ -73,6 +73,3 @@ class ProfileForm(ModelForm):
 #         fields = [
 #             "background",
 #         ]
-
-class ProfileAvatarForm(forms.Form):
-    profile_avatar = forms.CharField()

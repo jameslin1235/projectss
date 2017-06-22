@@ -38,12 +38,12 @@ summary {
   display: block;
 }
 audio,
-canvas,
+/*canvas,
 progress,
 video {
   display: inline-block;
   vertical-align: baseline;
-}
+}*/
 audio:not([controls]) {
   display: none;
   height: 0;
@@ -55,10 +55,10 @@ template {
 /*a {
   background-color: transparent;
 }*/
-a:active,
+/*a:active,
 a:hover {
   outline: 0;
-}
+}*/
 abbr[title] {
   border-bottom: 1px dotted;
 }
@@ -93,9 +93,9 @@ sup {
 sub {
   bottom: -0.25em;
 }
-img {
+/*img {
   border: 0;
-}
+}*/
 svg:not(:root) {
   overflow: hidden;
 }
@@ -243,9 +243,9 @@ a:focus {
 figure {
   margin: 0;
 }
-img {
+/*img {
   vertical-align: middle;
-}
+}*/
 .img-responsive {
   display: block;
   max-width: 100%;
