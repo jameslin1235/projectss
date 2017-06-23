@@ -294,6 +294,10 @@ input:focus {
   right: 20px ;
 }
 
+.profile-avatar{
+  height:100%;
+  object-fit: cover;
+}
 
 /* Footer */
 
@@ -784,6 +788,7 @@ input:focus {
   border-radius: 8px;
   max-width: 100%;
   width: 150px;
+  height: 150px;
   margin: 0 auto;
   cursor: pointer;
 }
@@ -935,6 +940,7 @@ input:focus {
     overflow-y: auto;
   }
 
+
   .modal__wrapper{
     width: 600px;
     margin: 0;
@@ -966,7 +972,10 @@ input:focus {
     font-size: 1.67rem;
   }
 
-
+  .avatar__wrapper{
+    left: 50px;
+    right: auto;
+  }
 
 
 }

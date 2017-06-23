@@ -85,10 +85,14 @@ def profile_edit_avatar(request):
             request.user.profile.avatar.delete(save=False)
         decoded = base64.b64decode(dataurl)
         path = os.path.join(settings.BASE_DIR, "project1/media/users/%s/%s" % (request.user.username,filename))
-        with open(path, 'wb') as f:
+        with open(path, "wb") as f:
             f.write(decoded)
         request.user.profile.avatar = "users/%s/%s" % (request.user.username,filename)
         request.user.profile.save()
+        print(request.user.profile.avatar.url)
+        response = {}
+        response['profile_avatar_url'] = request.user.profile.avatar.url
+        return JsonResponse(response)
 
 
 def profile_edit_background(request):

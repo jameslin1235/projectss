@@ -12,16 +12,16 @@
       sizes="(min-width: 992px) 1200px,
       (min-width: 768px) 800px,
       720px">
-      <form enctype="multipart/form-data" class="hidden js-profile-edit-background-form">
+      <form enctype="multipart/form-data" class="hidden js-profile-background-form">
         {% csrf_token %}
-        <input id="id_background" name="background" type="file" accept="image/jpeg">
       </form>
+      <input class="js-profile-background-field hidden" name="background" type="file" accept="image/jpeg">
     </div>
 
     <div class="card__body">
       <div class="avatar__wrapper">
         <div class="avatar js-profile-avatar-edit">
-          <img src="{{ user.profile.avatar.url }}" alt="Profile Avatar">
+          <img src="{{ user.profile.avatar.url }}" class="js-profile-avatar profile-avatar" alt="Profile Avatar">
           <div class="avatar__mask flex-row flex-center">
             <div class="avatar__maskinner">
               <span class="fa fa-camera" aria-hidden="true"></span>
@@ -31,7 +31,7 @@
           <form enctype="multipart/form-data" class="hidden js-profile-avatar-form">
             {% csrf_token %}
           </form >
-          <input class="hidden" id="profile_avatar" name="avatar" type="file" accept="image/jpeg">
+          <input class="js-profile-avatar-field hidden" name="avatar" type="file" accept="image/jpeg">
         </div>
       </div>
 
