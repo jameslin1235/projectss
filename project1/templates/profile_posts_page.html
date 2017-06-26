@@ -34,13 +34,7 @@
         <div class="ContentItem-time collapse"><a href="{{ post.get_absolute_url }}">Published {{ post.date_published }}</a></div>
       </div>
       <div class="ContentItem-actions">
-        <button type="button" class="btn btn-vote btn-like {% if user_posts_like_status|index:forloop.counter0 == "Liked" %}active{% endif %}"  {% if like_dislike_buttons_status|index:forloop.counter0 == "Disabled" %}disabled="disabled"{% endif %} }><span class="glyphicon glyphicon-thumbs-up Icon" aria-hidden="true"></span> <span class="ContentItem-actions-likers-count">{{ post.likes }}</span></button>
-        <button type="button" class="btn btn-vote btn-dislike {% if user_posts_dislike_status|index:forloop.counter0 == "Disliked" %}active{% endif %}" {% if like_dislike_buttons_status|index:forloop.counter0 == "Disabled" %}disabled="disabled"{% endif %} ><span class="glyphicon glyphicon-thumbs-down Icon" aria-hidden="true"></span> <span class="ContentItem-actions-dislikers-count">{{ post.dislikes }}</span></button>
-        <button type="button" class="btn btn-plain ContentItem-action btn-comment"><span class="glyphicon glyphicon-comment Icon" aria-hidden="true"></span> <span class="ContentItem-actions-comments-count">{{ posts_comments_count|index:forloop.counter0 }}</span></button>
-        <button type="button" class="btn btn-plain ContentItem-action" ><span class="glyphicon glyphicon-share Icon" aria-hidden="true"></span> Share</button>
-        <button type="button" class="btn btn-plain ContentItem-action  bookmark-button"><span class="glyphicon glyphicon-bookmark Icon" aria-hidden="true"></span> Bookmark</button>
-        <button type="button" class="btn btn-plain btn-show">Show</button>
-        <button type="button" class="btn btn-plain btn-hide collapsed">Hide</button>
+        
       </div>
     </div>
           </div>

@@ -1,22 +1,9 @@
-/* Flexbox */
-.flex-row{
-  display: flex;
-  align-items:center;
-}
-
-.flex-center{
-  justify-content: center;
-}
-
-.flex-space-between{
-  justify-content: space-between;
-}
-
-.flexitem--full{
-  flex:1;
-}
 
 /* General */
+.space-right{
+  margin-right: 5px;
+}
+
 html{
   font-size: 100%;
 }
@@ -78,11 +65,23 @@ h1{
   margin: 0;
 }
 
+span{
+  display: inline-block;
+  max-width: 100%;
+}
+
+label{
+  display: inline-block;
+  max-width: 100%;
+}
+
 select {
   border: 0;
+  max-width: 100%;
 }
 
 textarea {
+  width: 100%;
   resize: none;
   border: none;
   padding: 0;
@@ -93,6 +92,7 @@ textarea:focus {
 }
 
 input {
+  width: 100%;
   border: none;
   padding: 0;
 }
@@ -100,17 +100,6 @@ input {
 input:focus {
   outline:none;
 }
-
-/*.container{
-  padding: 0 20px;
-}
-
-.row{
-  margin-left: -20px;
-  margin-right: -20px;
-}*/
-
-
 
 /* Navigation */
 .navbar{
@@ -199,9 +188,10 @@ input:focus {
 
 .card__background{
   height:300px;
+  position: relative;
 }
 
-.card__background img{
+.profile-background{
   object-fit: cover;
   height: 100%;
 }
@@ -212,7 +202,7 @@ input:focus {
 
 .card__headerinner{
   border-bottom: 1px solid #E0E6ED;
-  padding: 10px 0;
+  padding: 15px 0;
 }
 
 .card__body{
@@ -222,6 +212,7 @@ input:focus {
 
 .card__content{
   text-align: center;
+  padding: 0 15px;
 }
 
 .card__contentitem{
@@ -252,8 +243,6 @@ input:focus {
   margin-bottom: 0;
 }
 
-
-
 .card__navitem.active{
   background: #ececec;
 }
@@ -267,8 +256,22 @@ input:focus {
   color: #2b6dad;
 }
 
+.listitem{
+  border-bottom: 1px solid #E0E6ED;
+  padding: 15px 0;
+}
+
+.contentitem-item{
+  margin-bottom: 10px;
+}
+
 .form{
   padding: 0 15px;
+}
+
+.profile-wrapper{
+  position: relative;
+  left: -100%;
 }
 .profile-content{
   position:fixed;
@@ -279,26 +282,37 @@ input:focus {
   overflow-y: auto;
 }
 
-.profile-wrapper{
-  /*position: relative;
-  left:-100%;*/
-}
-
-.profile-background{
-  position: relative;
-}
-
-.profile-background-edit{
-  position: absolute;
-  top: 20px;
-  right: 20px ;
-}
-
 .profile-avatar{
   height:100%;
   object-fit: cover;
 }
 
+.profile-avatar--small{
+  height:100%;
+  object-fit: cover;
+}
+
+.profile-activity-header{
+  display: flex;
+  align-items: center;
+}
+
+.profile-meta{
+  display: flex;
+  align-items: center;
+}
+
+
+
+.background__wrapper{
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 /* Footer */
 
 .collapsed{
@@ -540,6 +554,15 @@ input:focus {
 }
 
 
+.link--blue.link--primary{
+  background:#0f88eb;
+  color: #fff;
+}
+
+.link--blue.link--primary:hover{
+  background:#0d79d1;
+}
+
 
 /* Buttons */
 .button{
@@ -555,7 +578,7 @@ input:focus {
 }
 
 .button--plain{
-  color: #8590a6;
+  color: #787985;
   padding: 0;
 }
 
@@ -598,11 +621,14 @@ input:focus {
   background:hsla(0,0%,100%,.04);
 }
 
-.button--close{
+.button--modalclose{
+  position: absolute;
+  top: 0;
+  right: 0;
   color: #ccd8e1;
 }
 
-.button--close:hover{
+.button--modalclose:hover{
   opacity: 0.5;
 }
 
@@ -723,30 +749,18 @@ input:focus {
 }
 /* Pagination */
 
-.Pagination{
-  padding: 16px 20px;
-  text-align: center;
-  border-top: 1px solid #f0f2f7;
+.pagination{
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.btn-pagination{
-  padding: 0 15px;
-  color: #262626;
-  transition: color .2s;
+.pagination__link{
+  padding: 10px;
 }
 
-
-.btn-pagination-disabled{
-  cursor: default;
-  opacity: .5;
-  padding: 0 15px;
-
-}
-
-.btn-pagination-more{
-  padding: 0 15px;
-  color: #262626;
-  cursor:text;
+.pagination__link--active{
+  color:#999;
 }
 
 /* Alerts */
@@ -790,6 +804,16 @@ input:focus {
   width: 150px;
   height: 150px;
   margin: 0 auto;
+}
+
+.avatar--small{
+  border-radius: 8px;
+  max-width: 100%;
+  width: 50px;
+  height: 50px;
+}
+
+.avatar--edit{
   cursor: pointer;
 }
 
@@ -809,6 +833,9 @@ input:focus {
   background: #000;
   opacity: 0.4;
   border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .avatar__maskinner{
@@ -857,10 +884,10 @@ input:focus {
   padding: 15px;
 }
 
-.modal__close{
-  position: absolute;
-  top: 0;
-  right: 0;
+.modal__buttongroup{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .modal__canvas{
@@ -977,5 +1004,9 @@ input:focus {
     right: auto;
   }
 
+  .background__wrapper{
+    left: auto;
+    right: 20px;
+  }
 
 }

@@ -1,125 +1,108 @@
+
 {% extends "profile_base.html" %}
-{% load widget_tweaks %}
+{% load static %}
+{% block profile %}
 
-{% block title %}{{ user }}'s {{ title }}{% endblock title %}
+{% include "profile_header.html" %}
+<div class="container profile-body">
+  <div class="row">
+    <div class="col-sm-9">
+      <div class="row">
+        <div class="col-sm-3">
+          <div class="card">
+            <div class="card__header">
+              <div class="card__headerinner">
+                <h2>Feeds</h2>
+              </div>
+            </div>
+            <ul class="card__nav">
+              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug  %}" role="tab" class="js-profile-hide">Activity</a></li>
+              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" role="tab" >Posts <span id="profile_nav_posts_count">{{posts_count}}</span></a></li>
+              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_drafts' id=user.id slug=user.profile.slug  %}" role="tab" >Drafts <span id="profile_nav_drafts_count">{{drafts_count}}</span></a></li>
+              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_comments' id=user.id slug=user.profile.slug  %}" role="tab">Comments</a></li>
+              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_bookmarks' id=user.id slug=user.profile.slug  %}" role="tab">Bookmark</a></li>
+              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_following' id=user.id slug=user.profile.slug  %}" role="tab">Following</a></li>
+              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_followers' id=user.id slug=user.profile.slug  %}" role="tab">Followers</a></li>
+            </ul>
+          </div>
+        </div>
 
-{% block vertical_nav %}
-<ul class="nav nav-pills nav-stacked">
-  <li role="presentation"><a href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug  %}" role="tab" >Activity</a></li>
-  <li role="presentation"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" role="tab" >Posts <span id="profile_sidebar_posts_count">{{posts_count}}</span></a></li>
-  <li role="presentation" class="active"><a href="{% url 'profiles:profile_drafts' id=user.id slug=user.profile.slug  %}" role="tab" >Drafts <span id="profile_sidebar_drafts_count">{{drafts_count}}</span></a></li>
-  <li role="presentation"><a href="{% url 'profiles:profile_comments' id=user.id slug=user.profile.slug  %}" role="tab">Comments</a></li>
-  <li role="presentation"><a href="{% url 'profiles:profile_bookmarks' id=user.id slug=user.profile.slug  %}" role="tab">Bookmark</a></li>
-  <li role="presentation"><a href="{% url 'profiles:profile_following' id=user.id slug=user.profile.slug  %}" role="tab">Following</a></li>
-  <li role="presentation"><a href="{% url 'profiles:profile_followers' id=user.id slug=user.profile.slug  %}" role="tab">Followers</a></li>
-</ul>
-{% endblock vertical_nav %}
+        <div class="col-sm-9 profile-content">
+          <div class="card">
+            <div class="card__header">
+              <div class="card__headerinner profile-activity-header">
+                <button type="button" class="button button--plain js-profile-wrapper-get"><span class="fa fa-angle-left icon--left" aria-hidden="true"></span></button>
+                <h2>{{ drafts_count }} Drafts</h2>
+              </div>
+            </div>
+            <div class="card__body">
+              <div class="listitem">
+                <a href="{% url 'posts:post_create' %}" class="link--blue"><span class="fa fa-pencil-square-o icon--left" aria-hidden="true"></span>Create</a>
+              </div>
 
+              {% if drafts_count == 0 %}
+              <div class="listitem">
+                <h3>There are 0 drafts.</h3>
+              </div>
+              {% else %}
+              {% for post in current_page %}
+              <div class="listitem">
+                <div class="contentitem" data-url="{{ post.get_absolute_url }}">
+                  <div class="contentitem-item">
+                    <a href="{{ post.get_absolute_url }}edit">{{ post.title }}</a>
+                  </div>
+                  <div class="contentitem-item">
+                    {{ post.content|truncatewords:100|linebreaks }}
+                  </div>
+                  <div class="contentitem-item last">
+                    <button type="button" class="button button--plain space-right js-draft-delete">Delete</button>
+                    <a href="{{ post.get_absolute_url }}edit">Edit</a>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
 
-{% block content %}
-{% include "login_modal.html" %}
-{% include "profile_drafts_page.html" %}
-{% endblock content %}
+              <div class="pagination">
+                {% if current_page.has_previous %}
+                <a href="?page={{ current_page.previous_page_number }}" class="pagination__link" ><span class="fa fa-angle-double-left" aria-hidden="true"></span></a>
+                {% endif %}
+                {% for i in current_page.paginator.page_range %}
+                {% if current_page.number == i %}
+                <span class="pagination__link pagination__link--active">{{ i }}</span>
+                {% else %}
+                <a href="?page={{ i }}" class="pagination__link">{{ i }}</a>
+                {% endif %}
+                {% endfor %}
+                {% if current_page.has_next %}
+                <a class="pagination__link" href="?page={{ current_page.next_page_number }}"><span class="fa fa-angle-double-right" aria-hidden="true"></span></a>
+                {% endif %}
+              </div>
+
+            {% endif %}
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="col-sm-3">
+  <div class="card">
+    <div class="card__header">
+      <div class="card__headerinner">
+        <h2>Header</h2>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+{% endblock profile %}
 
 {% block javascript %}
-<script>
-
-// Feature 1 Open delete draft modal
-$(document).on('click', '.delete_button', function(event) {
-  event.preventDefault();
-  var element = $(this);
-  var id = $(element).parents(".draft_container").attr("data-id");
-  $('#profile_drafts_delete_modal_'+id).modal();
-});
-
-
-// Feature 2 Delete draft and show current page with updated results
-$(document).on('click', '.confirm_delete_button', function(event) {
-  event.preventDefault();
-  var element = $(this);
-  var id = $(element).parents(".draft_container").attr("data-id");
-  var post_url = $(element).parents(".draft_container").attr("data-url");
-  var draft_current_page= $(element).parents("#profile_drafts_page").attr("data-current-page");
-  $('#profile_drafts_delete_modal_'+id).modal('hide');
-  $.ajax({  // ajax GET to delete draft
-    url:post_url+"delete",
-    success:function(data) {
-      var message = data.message;
-      $.ajax({
-        url: draft_current_page, // ajax GET to draft_current_page
-        success:function(data) {
-          $("#profile_drafts_page").replaceWith(data);
-          $("#profile_sidebar_drafts_count").html($("#profile_drafts_count").html());
-          $('#profile_drafts_page_header').after(make_message(message));
-        }});
-      }
-    })
-  });
-
-
-  // Feature 3 Open publish draft modal
-  $(document).on('click', '.publish_button', function(event) {
-    event.preventDefault();
-    var element = $(this);
-    var id = $(element).parents(".draft_container").attr("data-id");
-    $('#profile_drafts_publish_modal_'+id).modal();
-  });
-
-
-  // Feature 4 Publish draft and show current page with updated results
-  $(document).on('click', '.confirm_publish_button', function(event) {
-    event.preventDefault();
-    var element = $(this);
-    var id = $(element).parents(".draft_container").attr("data-id");
-    var post_url = $(element).parents(".draft_container").attr("data-url");
-    var draft_current_page= $(element).parents("#profile_drafts_page").attr("data-current-page");
-    $('#profile_drafts_publish_modal_'+id).modal('hide');
-    $.ajax({  // send GET request to delete post
-      url:post_url+"publish",
-      success:function(data) {
-        var message = data.message;
-        $.ajax({
-          url: draft_current_page, // ajax GET to draft_current_page
-          success:function(data) {
-            $("#profile_drafts_page").replaceWith(data);
-            $("#profile_sidebar_drafts_count").html($("#profile_drafts_count").html());
-            $('#profile_drafts_page_header').after(make_message(message));
-          }});
-        }
-      })
-    });
-
-  // Feature 5 Get nth page of paginated drafts
-  $(document).on('click', '.profile_drafts_page_button', function() {
-    event.preventDefault();
-    var element = $(this);
-    var url = $(element).attr("href");
-    var option = $(element).parents("#profile_drafts_page").attr("data-option-selected");
-    $.ajax({     // Ajax GET to nth page
-      url: url,
-      data: {option:option},
-      success:function(data) {
-        $("#profile_drafts_page").replaceWith(data);
-        $("#profile_drafts_select").val(option);
-      }});
-    });
-
-    // Feature 6 Filter button
-    $(document).on('change','#profile_drafts_select',function(){
-      event.preventDefault();
-      var element = $(this);
-      var option = ($(element).val());
-      var url= $(element).parents("#profile_drafts_page").attr("data-firstpage");
-
-      $.ajax({     // send get request to get nth page
-        url: url,
-        data: {option:option},
-        success:function(data) {
-          $("#profile_drafts_page").replaceWith(data);
-          $("#profile_drafts_select").val(option);
-        }});
-    });
-
-
-    </script>
-    {% endblock javascript %}
+{{ block.super }}
+<script src="{% static "js/profile_draft.js" %}"></script>
+{% endblock javascript %}

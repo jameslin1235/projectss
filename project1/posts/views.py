@@ -12,6 +12,8 @@ from .models import Post, Like, Dislike
 from .forms import PostForm
 from project1.project1.comments.forms import CommentForm
 from project1.project1.comments.models import Comment
+from project1.project1.config import utility
+
 # Create your views here.
 def post_list(request):
     if request.method == "GET":
@@ -90,89 +92,70 @@ def post_list(request):
 
 @login_required
 def post_create(request):
-    current_user = request.user
     if request.method == "GET":
-            title = "Create Post"
-            form = PostForm()
-            context = {
-                "title":title,
-                "form":form,
-            }
-            return render(request,"post_create.html",context)
+        form = PostForm()
+        context = {}
+        context['form'] = form
+        context['title'] = "Create Post"
+        return render(request,"post_create.html",context)
     elif request.method == "POST":
-        if "save_draft" in request.POST:
-            form = PostForm(request.POST)
-            if form.is_valid():
-                post = form.save(commit=False)
-                post.user = current_user
-                post.save()
-                messages.success(request, "Draft created.")
-                return redirect("profiles:profile_drafts", id=current_user.id, slug=current_user.profile.slug )
-        elif "publish" in request.POST:
-            form = PostForm(request.POST)
-            if form.is_valid():
-                post = form.save(commit=False)
-                post.user = current_user
-                post.is_draft = False
-                post.date_published = timezone.now()
-                post.save()
-                messages.success(request, "Post created.")
-                return redirect(post)
+        form = PostForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.user = current_user.profile
+            post.save()
+            messages.success(request, "Draft created.")
+            return redirect("profiles:profile_drafts", id=current_user.profile.id, slug=current_user.profile.slug)
+        else:
+            return JsonResponse(form.errors)
 
 @login_required
 def post_edit(request,id,slug):
-    post = get_object_or_404(Post, id=id)
     if request.method == "GET":
+        post = get_object_or_404(Post, id=id)
         user = post.user
         current_user = request.user
-        if current_user != user:
-            raise PermissionDenied
-        else:
-            if post.is_draft == True:
-                title = "Edit Draft"
-                button_text = "Edit Draft"
+        user_status = utility.get_user_status(user,current_user)
+        if user_status == "self":
+            context = {}
+            if post.is_draft:
+                context['title'] = "Edit Draft"
             else:
-                title = "Edit Post"
-                button_text = "Edit Post"
+                context['title'] = "Edit Post"
             form = PostForm(instance=post)
-            context = {
-                "title":title,
-                "button_text":button_text,
-                "form":form,
-            }
-            if request.is_ajax():
-                template = "post_edit_page.html"
-            else:
-                template = "post_edit.html"
+            context['form'] = form
+            template = "post_edit.html"
             return render(request,template,context)
-
+        else:
+            raise PermissionDenied
     elif request.method == "POST":
-        form = PostForm(request.POST,instance=post)
+        form = PostForm(request.POST, instance=post)
         if form.is_valid():
-            post = form.save(commit=False)
-            post.save()
-            response_data = {}
-            if post.is_draft == True:
-                response_data['message'] = "Draft edited."
+            form.save()
+            if post.is_draft:
+                messages.success(request, "Draft edited.")
             else:
-                response_data['message'] = "Post edited."
-            return JsonResponse(response_data,safe=False)
+                messages.success(request, "Post edited.")
+            return redirect(request.path)
+
 
 @login_required
 def post_delete(request,id,slug):
-    post = get_object_or_404(Post, id=id)
-    user = post.user
-    current_user = request.user
     if request.method == "GET":
-        if current_user != user:
-            raise PermissionDenied
-        post.delete()
-        response_data = {}
-        if post.is_draft == True:
-            response_data['message'] = "Draft deleted."
+        post = get_object_or_404(Post, id=id)
+        user = post.user
+        current_user = request.user
+        user_status = utility.get_user_status(user,current_user)
+        if user_status == "self":
+            post.delete()
+            if post.is_draft:
+                messages.success(request, "Draft deleted.")
+            else:
+                messages.success(request, "Post deleted.")
+            return redirect(request.path)
         else:
-            response_data['message'] = "Post deleted."
-        return JsonResponse(response_data,safe=False)
+            raise PermissionDenied
+
 
 @login_required
 def post_publish(request,id,slug):

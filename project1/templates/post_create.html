@@ -1,72 +1,57 @@
 {% extends "base.html" %}
+{% load static %}
 {% load widget_tweaks %}
 
 {% block title %}{{ title }}{% endblock title %}
 
 {% block body %}
-<section >
-  <div class='container'>
-    <div class='row'>
-      <div class='col-md-6 col-md-offset-3'>
-        <div class="section">
-        <div class="page-header">
-          <h2>{{title}}</h2>
-        </div>
-
-        <div>
-          <form method="post">
-            {% csrf_token %}
-
-            {% if form.non_field_errors %}
-            <div class="alert alert-danger" role="alert">
-              {{ form.non_field_errors }}
+<div class="container">
+  <div class="card">
+    <div class="card__body">
+      <div class="form">
+        <form method="post" action="/posts/create/">
+          <div class="formtitle">
+            <h3>Create Post</h3>
+          </div>
+          {% csrf_token %}
+          <div class="formfield">
+            {{ form.title.errors }}
+            <div class="formfield__label">
+              <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
             </div>
-            {% endif %}
-
-            <div class="form-group">
-              {{ form.title|add_class:"form-control"|attr:"autofocus"|attr:"placeholder:Title" }}
-              {% if form.title.errors %}
-              <div class="alert alert-danger" role="alert">
-                {{ form.title.errors }}
-              </div>
-              {% endif %}
-              {% if form.title.help_text %}
-              <p class="help-block">{{ form.title.help_text|safe }}</p>
-              {% endif %}
+            <div class="formfield__input ">
+              {{ form.title|add_class:"js-add-focus"|attr:"placeholder:Title"  }}
             </div>
+          </div>
 
-            <div class="form-group">
-              {{ form.content|add_class:"form-control"|attr:"placeholder:Content" }}
-              {% if form.content.errors %}
-              <div class="alert alert-danger" role="alert">
-                {{ form.content.errors }}
-              </div>
-              {% endif %}
-              {% if form.content.help_text %}
-              <p class="help-block">{{ form.content.help_text|safe }}</p>
-              {% endif %}
+          <div class="formfield">
+            {{ form.content.errors }}
+            <div class="formfield__label">
+              <label for="{{ form.content.id_for_label }}">{{ form.content.label }}</label>
             </div>
-
-            <div class="form-group">
-              {{ form.category|add_class:"form-control"|attr:"placeholder:Content" }}
-              {% if form.category.errors %}
-              <div class="alert alert-danger" role="alert">
-                {{ form.category.errors }}
-              </div>
-              {% endif %}
-              {% if form.category.help_text %}
-              <p class="help-block">{{ form.category.help_text|safe }}</p>
-              {% endif %}
+            <div class="formfield__input ">
+              {{ form.content|attr:"rows:3"|attr:"cols:20"|add_class:"js-add-focus"|attr:"placeholder:Content" }}
             </div>
+          </div>
 
-            <button type="submit" name="publish" class="btn btn-primary">Publish</button>
-            <button type="submit" name="save_draft" class="btn btn-primary">Save Draft</button>
-          </form>
-        </div>
+          <div class="formfield">
+            {{ form.category.errors }}
+            <div class="formfield__label">
+              <label for="{{ form.category.id_for_label }}">{{ form.category.label }}</label>
+            </div>
+            <div class="formfield__noninput">
+              {{ form.category }}
+            </div>
+          </div>
+
+          <button type="submit" class="button button--blue button--primary">Save</button>
+        </form>
       </div>
     </div>
-    </div>
   </div>
-</section>
-<!-- <a href="{% url 'login' %}?next=/posts/create/"><li>Test link</li></a> -->
+</div>
 {% endblock body %}
+
+{% block javascript %}
+<script src="{% static "js/post_create.js" %}"></script>
+{% endblock javascript %}

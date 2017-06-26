@@ -87,33 +87,14 @@ class Profile(models.Model):
         blank=True,
         default="default/avatar.jpg",
     )
-
-    background_small_width_field = models.IntegerField()
-    background_small_height_field = models.IntegerField()
-    background_small = models.ImageField(
+    background_width_field = models.IntegerField()
+    background_height_field = models.IntegerField()
+    background = models.ImageField(
         upload_to = get_upload_location,
-        height_field = "background_small_height_field",
-        width_field = "background_small_width_field",
+        height_field = "background_height_field",
+        width_field = "background_width_field",
         blank=True,
-        default="default/background_small.jpg",
-    )
-    background_medium_width_field = models.IntegerField()
-    background_medium_height_field = models.IntegerField()
-    background_medium = models.ImageField(
-        upload_to = get_upload_location,
-        height_field = "background_medium_height_field",
-        width_field = "background_medium_width_field",
-        blank=True,
-        default="default/background_medium.jpg",
-    )
-    background_large_width_field = models.IntegerField()
-    background_large_height_field = models.IntegerField()
-    background_large = models.ImageField(
-        upload_to = get_upload_location,
-        height_field = "background_large_height_field",
-        width_field = "background_large_width_field",
-        blank=True,
-        default="default/background_large.jpg",
+        default="default/background.jpg",
     )
 
 
@@ -144,11 +125,14 @@ class Profile(models.Model):
     def get_followers_count(self):
         return self.followers.count()
 
+    def get_posts(self):
+        return self.user.posts.filter(is_draft = False).order_by("-date_published")
+
     def get_posts_count(self):
         return self.user.posts.filter(is_draft = False).count()
 
-    def get_posts(self):
-        return self.user.posts.filter(is_draft = False).order_by("-date_published")
+    def get_drafts(self):
+        return self.user.posts.filter(is_draft = True).order_by("-date_published")
 
     def get_drafts_count(self):
         return self.user.posts.filter(is_draft = True).count()

@@ -3,26 +3,23 @@
 {% block profile %}
 <div class="container profile-form">
   <div class="card">
-    <div class="card__background profile-background">
+    <div class="card__background">
+      <div class="background__wrapper">
       <button type="button" class="button button--gray profile-background-edit js-profile-background-edit"><span class="fa fa-camera icon--left" aria-hidden="true"></span>Edit background</button>
-      <img src="{{ user.profile.background_small.url }}" alt="Profile Background"
-      srcset="{{ user.profile.background_small.url }} 720w,
-      {{ user.profile.background_medium.url }} 800w,
-      {{ user.profile.background_large.url }} 1200w"
-      sizes="(min-width: 992px) 1200px,
-      (min-width: 768px) 800px,
-      720px">
       <form enctype="multipart/form-data" class="hidden js-profile-background-form">
         {% csrf_token %}
       </form>
       <input class="js-profile-background-field hidden" name="background" type="file" accept="image/jpeg">
     </div>
+    <img src="{{ user.profile.background.url }}" class="profile-background js-profile-background" alt="Profile Background">
+
+    </div>
 
     <div class="card__body">
       <div class="avatar__wrapper">
-        <div class="avatar js-profile-avatar-edit">
-          <img src="{{ user.profile.avatar.url }}" class="js-profile-avatar profile-avatar" alt="Profile Avatar">
-          <div class="avatar__mask flex-row flex-center">
+        <div class="avatar avatar--edit js-profile-avatar-edit">
+          <img src="{{ user.profile.avatar.url }}" class="profile-avatar js-profile-avatar" alt="Profile Avatar">
+          <div class="avatar__mask">
             <div class="avatar__maskinner">
               <span class="fa fa-camera" aria-hidden="true"></span>
               <h4>Edit avatar</h4>
@@ -64,9 +61,9 @@
             <div class="formfield__label">
               <label for="{{ profileform.profile_credential.id_for_label }}">{{ profileform.profile_credential.label|cut:"Profile "|capfirst }}</label>
             </div>
-            <div class="formfield__input flex-row">
+            <div class="formfield__input ">
 
-                {{ profileform.profile_credential|add_class:"js-add-focus"|add_class:"flexitem--full"|attr:"placeholder:Credential"  }}
+                {{ profileform.profile_credential|add_class:"js-add-focus"|attr:"placeholder:Credential"  }}
 
             </div>
           </div>
@@ -76,9 +73,9 @@
             <div class="formfield__label">
               <label for="{{ profileform.profile_description.id_for_label }}">{{ profileform.profile_description.label|cut:"Profile "|capfirst }}</label>
             </div>
-            <div class="formfield__input flex-row">
+            <div class="formfield__input ">
 
-                {{ profileform.profile_description|attr:"rows:3"|attr:"cols:20"|add_class:"js-add-focus"|add_class:"flexitem--full"|attr:"placeholder:Description" }}
+                {{ profileform.profile_description|attr:"rows:3"|attr:"cols:20"|add_class:"js-add-focus"|attr:"placeholder:Description" }}
 
             </div>
           </div>
@@ -108,8 +105,8 @@
             <div class="formfield__label">
               <label for="{{ profileform.profile_position.id_for_label }}">{{ profileform.profile_position.label|cut:"Profile "|capfirst }}</label>
             </div>
-            <div class="formfield__input flex-row">
-                {{ profileform.profile_position|add_class:"js-add-focus"|add_class:"flexitem--full"|attr:"placeholder:Position" }}
+            <div class="formfield__input ">
+                {{ profileform.profile_position|add_class:"js-add-focus"|attr:"placeholder:Position" }}
             </div>
 
           </div>
@@ -119,9 +116,9 @@
             <div class="formfield__label">
               <label for="{{ profileform.profile_company.id_for_label }}">{{ profileform.profile_company.label|cut:"Profile "|capfirst }}</label>
             </div>
-            <div class="formfield__input flex-row">
+            <div class="formfield__input ">
 
-                {{ profileform.profile_company|add_class:"js-add-focus"|add_class:"flexitem--full"|attr:"placeholder:Company" }}
+                {{ profileform.profile_company|add_class:"js-add-focus"|attr:"placeholder:Company" }}
 
             </div>
 
@@ -132,22 +129,22 @@
             <div class="formfield__label">
               <label for="{{ profileform.profile_school.id_for_label }}">{{ profileform.profile_school.label|cut:"Profile "|capfirst }}</label>
             </div>
-            <div class="formfield__input flex-row">
+            <div class="formfield__input ">
 
-                {{ profileform.profile_school|add_class:"js-add-focus"|add_class:"flexitem--full"|attr:"placeholder:School" }}
+                {{ profileform.profile_school|add_class:"js-add-focus"|attr:"placeholder:School" }}
 
             </div>
 
           </div>
 
-          <div class="formfield formfield--last">
+          <div class="formfield">
             {{ profileform.profile_major.errors }}
             <div class="formfield__label">
               <label for="{{ profileform.profile_major.id_for_label }}">{{ profileform.profile_major.label|cut:"Profile "|capfirst }}</label>
             </div>
-            <div class="formfield__input flex-row">
+            <div class="formfield__input ">
 
-                {{ profileform.profile_major|add_class:"js-add-focus"|add_class:"flexitem--full"|attr:"placeholder:Major" }}
+                {{ profileform.profile_major|add_class:"js-add-focus"|attr:"placeholder:Major" }}
 
             </div>
 

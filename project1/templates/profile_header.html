@@ -2,26 +2,21 @@
 <div class="container profile-header">
   <div class="card">
     <div class="card__background">
-      <img src="{{ user.profile.background_small.url }}" alt="Profile Background"
-      srcset="{{ user.profile.background_small.url }} 720w,
-      {{ user.profile.background_medium.url }} 800w,
-      {{ user.profile.background_large.url }} 1200w"
-      sizes="(min-width: 992px) 1200px,
-      (min-width: 768px) 800px,
-      720px">
+    <img src="{{ user.profile.background.url }}" class="profile-background" alt="Profile Background">
     </div>
+
 
     <div class="card__body">
       <div class="avatar__wrapper">
         <div class="avatar">
-          <img src="{{ user.profile.avatar.url }}" id="profile-avatar" alt="Profile Avatar">
+          <img src="{{ user.profile.avatar.url }}" class="profile-avatar" alt="Profile Avatar">
         </div>
       </div>
 
       <div class="card__content">
 
         <div class="card__contentitem">
-          <h1>{{user.username}}</h1>
+          <h1>{{ user.username }}</h1>
         </div>
 
         {% if fields_values_list %}
@@ -72,7 +67,7 @@
 
         <div class="card__buttongroup">
           {% if user_edit_status %}
-          <a href="{% url 'profiles:profile_edit' %}" class="link--blue">{{ user_edit_status }}</a>
+          <a href="{% url 'profiles:profile_edit' %}" class="link--blue">Edit</a>
           {% endif %}
           {% if user_follow_status %}
           <div class="card__buttongroupitem">

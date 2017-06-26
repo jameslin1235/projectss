@@ -1,0 +1,125 @@
+{% extends "profile_base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}{{ user }}'s {{ title }}{% endblock title %}
+
+{% block vertical_nav %}
+<ul class="nav nav-pills nav-stacked">
+  <li role="presentation"><a href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug  %}" role="tab" >Activity</a></li>
+  <li role="presentation"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" role="tab" >Posts <span id="profile_sidebar_posts_count">{{posts_count}}</span></a></li>
+  <li role="presentation" class="active"><a href="{% url 'profiles:profile_drafts' id=user.id slug=user.profile.slug  %}" role="tab" >Drafts <span id="profile_sidebar_drafts_count">{{drafts_count}}</span></a></li>
+  <li role="presentation"><a href="{% url 'profiles:profile_comments' id=user.id slug=user.profile.slug  %}" role="tab">Comments</a></li>
+  <li role="presentation"><a href="{% url 'profiles:profile_bookmarks' id=user.id slug=user.profile.slug  %}" role="tab">Bookmark</a></li>
+  <li role="presentation"><a href="{% url 'profiles:profile_following' id=user.id slug=user.profile.slug  %}" role="tab">Following</a></li>
+  <li role="presentation"><a href="{% url 'profiles:profile_followers' id=user.id slug=user.profile.slug  %}" role="tab">Followers</a></li>
+</ul>
+{% endblock vertical_nav %}
+
+
+{% block content %}
+{% include "login_modal.html" %}
+{% include "profile_drafts_page.html" %}
+{% endblock content %}
+
+{% block javascript %}
+<script>
+
+// Feature 1 Open delete draft modal
+$(document).on('click', '.delete_button', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  var id = $(element).parents(".draft_container").attr("data-id");
+  $('#profile_drafts_delete_modal_'+id).modal();
+});
+
+
+// Feature 2 Delete draft and show current page with updated results
+$(document).on('click', '.confirm_delete_button', function(event) {
+  event.preventDefault();
+  var element = $(this);
+  var id = $(element).parents(".draft_container").attr("data-id");
+  var post_url = $(element).parents(".draft_container").attr("data-url");
+  var draft_current_page= $(element).parents("#profile_drafts_page").attr("data-current-page");
+  $('#profile_drafts_delete_modal_'+id).modal('hide');
+  $.ajax({  // ajax GET to delete draft
+    url:post_url+"delete",
+    success:function(data) {
+      var message = data.message;
+      $.ajax({
+        url: draft_current_page, // ajax GET to draft_current_page
+        success:function(data) {
+          $("#profile_drafts_page").replaceWith(data);
+          $("#profile_sidebar_drafts_count").html($("#profile_drafts_count").html());
+          $('#profile_drafts_page_header').after(make_message(message));
+        }});
+      }
+    })
+  });
+
+
+  // Feature 3 Open publish draft modal
+  $(document).on('click', '.publish_button', function(event) {
+    event.preventDefault();
+    var element = $(this);
+    var id = $(element).parents(".draft_container").attr("data-id");
+    $('#profile_drafts_publish_modal_'+id).modal();
+  });
+
+
+  // Feature 4 Publish draft and show current page with updated results
+  $(document).on('click', '.confirm_publish_button', function(event) {
+    event.preventDefault();
+    var element = $(this);
+    var id = $(element).parents(".draft_container").attr("data-id");
+    var post_url = $(element).parents(".draft_container").attr("data-url");
+    var draft_current_page= $(element).parents("#profile_drafts_page").attr("data-current-page");
+    $('#profile_drafts_publish_modal_'+id).modal('hide');
+    $.ajax({  // send GET request to delete post
+      url:post_url+"publish",
+      success:function(data) {
+        var message = data.message;
+        $.ajax({
+          url: draft_current_page, // ajax GET to draft_current_page
+          success:function(data) {
+            $("#profile_drafts_page").replaceWith(data);
+            $("#profile_sidebar_drafts_count").html($("#profile_drafts_count").html());
+            $('#profile_drafts_page_header').after(make_message(message));
+          }});
+        }
+      })
+    });
+
+  // Feature 5 Get nth page of paginated drafts
+  $(document).on('click', '.profile_drafts_page_button', function() {
+    event.preventDefault();
+    var element = $(this);
+    var url = $(element).attr("href");
+    var option = $(element).parents("#profile_drafts_page").attr("data-option-selected");
+    $.ajax({     // Ajax GET to nth page
+      url: url,
+      data: {option:option},
+      success:function(data) {
+        $("#profile_drafts_page").replaceWith(data);
+        $("#profile_drafts_select").val(option);
+      }});
+    });
+
+    // Feature 6 Filter button
+    $(document).on('change','#profile_drafts_select',function(){
+      event.preventDefault();
+      var element = $(this);
+      var option = ($(element).val());
+      var url= $(element).parents("#profile_drafts_page").attr("data-firstpage");
+
+      $.ajax({     // send get request to get nth page
+        url: url,
+        data: {option:option},
+        success:function(data) {
+          $("#profile_drafts_page").replaceWith(data);
+          $("#profile_drafts_select").val(option);
+        }});
+    });
+
+
+    </script>
+    {% endblock javascript %}
