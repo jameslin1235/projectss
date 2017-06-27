@@ -1,5 +1,6 @@
 
 {% extends "profile_base.html" %}
+{% load static %}
 {% block profile %}
 
 {% include "profile_header.html" %}
@@ -17,8 +18,8 @@
             </div>
             <ul class="card__nav">
               <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_activity' id=user.profile.id slug=user.profile.slug  %}" role="tab" class="js-profile-hide">Activity</a></li>
-              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_posts' id=user.profile.id slug=user.profile.slug  %}" role="tab" >Posts <span id="profile_nav_posts_count">{{posts_count}}</span></a></li>
-              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_drafts' id=user.profile.id slug=user.profile.slug  %}" role="tab" >Drafts <span id="profile_nav_drafts_count">{{drafts_count}}</span></a></li>
+              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_posts' id=user.profile.id slug=user.profile.slug  %}" role="tab" >Posts <span>{{ posts_count }}</span></a></li>
+              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_drafts' id=user.profile.id slug=user.profile.slug  %}" role="tab" >Drafts <span>{{ drafts_count }}</span></a></li>
               <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_comments' id=user.profile.id slug=user.profile.slug  %}" role="tab">Comments</a></li>
               <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_bookmarks' id=user.profile.id slug=user.profile.slug  %}" role="tab">Bookmark</a></li>
               <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_following' id=user.profile.id slug=user.profile.slug  %}" role="tab">Following</a></li>
@@ -32,13 +33,15 @@
             <div class="card__header">
               <div class="card__headerinner profile-activity-header">
                 <button type="button" class="button button--plain js-profile-wrapper-get"><span class="fa fa-angle-left icon--left" aria-hidden="true"></span></button>
-                <h2 class="">Posts</h2>
+                <h2>{{ posts_count }} Posts</h2>
               </div>
             </div>
             <div class="card__body">
-              <div class="listitem">
-              <a href="{% url 'posts:post_create' %}" class="link--blue"><span class="fa fa-pencil-square-o icon--left" aria-hidden="true"></span>Create</a>
-            </div>
+              {% if user_status == "self" %}
+                <div class="listitem">
+                  <a href="{% url 'posts:post_create' %}" class="link--blue"><span class="fa fa-pencil-square-o icon--left" aria-hidden="true"></span>Create</a>
+                </div>
+              {% endif %}
 
               {% if posts_count == 0 %}
               <div class="listitem">
@@ -47,43 +50,61 @@
               {% else %}
               {% for post in current_page %}
               <div class="listitem">
-
-                <div class="contentitem" data-url="{{post.get_absolute_url}}">
+                <div class="contentitem" data-url="{{ post.get_absolute_url }}">
                   <div class="contentitem-item">
                     <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
                   </div>
-                  <div class="contentitem-item">
-                    <div>
-                      <a href="{% url 'profiles:profile_activity' id=user.profile.id slug=user.profile.slug %}">
-                        <img class="Avatar Avatar-medium" src="{{user.profile.avatar.url}}">
-                      </a>
+                  <div class="contentitem-item contentitem-item-flex">
+                    <div class="avatar--small spaceright--large">
+                      <a class="avatar__link" href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug %}"></a>
+                      <img class="img--cover imgborder--small" src="{{ user.profile.avatar.url }}">
                     </div>
 
-                    <div >
-                      <div >
-                        <span><a href="{% url 'profiles:profile_activity' id=user.profile.id slug=user.profile.slug %}">{{user.username }}</a></span>
+                    <div>
+                      <div>
+                        <a href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug %}">{{ user.username }}</a>
                       </div>
-                      <div >
+                      <div>
                         <span >banking</span>
                       </div>
                     </div>
-
                   </div>
 
-                  <div class="contentitem-item">
+                  <!-- <div class="contentitem-item">
                     <button type="button"><span>{{post.likes}} people liked this post.</span></button>
+                  </div> -->
+                  <div class="contentitem-item">
+                    <div>{{ post.content|truncatewords:100|linebreaks }}</div>
                   </div>
                   <div class="contentitem-item">
-                    <div >{{ post.content|truncatewords:100|linebreaks }}</div>
-                    <div ><a href="{{ post.get_absolute_url }}">Published {{ post.date_published }}</a></div>
+                    <a href="{{ post.get_absolute_url }}">Published {{ post.date_published }}</a>
                   </div>
-                  <div class="contentitem-item">
 
+                  {% if user_status == "self" %}
+                  <div class="contentitem-item contentitem-item-flex last">
+                    <button type="button" class="button button--plain spaceright--small js-post-delete">Delete</button>
+                    <a href="{{ post.get_absolute_url }}edit" class="spaceright--small">Edit</a>
                   </div>
+                  {% endif %}
                 </div>
 
               </div>
               {% endfor %}
+              <div class="pagination">
+                {% if current_page.has_previous %}
+                <a href="?page={{ current_page.previous_page_number }}" class="pagination__link" ><span class="fa fa-angle-double-left" aria-hidden="true"></span></a>
+                {% endif %}
+                {% for i in current_page.paginator.page_range %}
+                {% if current_page.number == i %}
+                <span class="pagination__link pagination__link--active">{{ i }}</span>
+                {% else %}
+                <a href="?page={{ i }}" class="pagination__link">{{ i }}</a>
+                {% endif %}
+                {% endfor %}
+                {% if current_page.has_next %}
+                <a class="pagination__link" href="?page={{ current_page.next_page_number }}"><span class="fa fa-angle-double-right" aria-hidden="true"></span></a>
+                {% endif %}
+              </div>
               {% endif %}
             </div>
           </div>
@@ -105,3 +126,8 @@
 </div>
 
 {% endblock profile %}
+
+{% block javascript %}
+{{ block.super }}
+<script src="{% static "js/profile_post.js" %}"></script>
+{% endblock javascript %}

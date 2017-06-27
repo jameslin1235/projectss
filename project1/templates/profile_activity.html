@@ -16,13 +16,13 @@
 
             </div>
             <ul class="card__nav">
-              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug  %}" role="tab" class="js-profile-hide">Activity</a></li>
-              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" role="tab" >Posts <span id="profile_nav_posts_count">{{posts_count}}</span></a></li>
-              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_drafts' id=user.id slug=user.profile.slug  %}" role="tab" >Drafts <span id="profile_nav_drafts_count">{{drafts_count}}</span></a></li>
-              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_comments' id=user.id slug=user.profile.slug  %}" role="tab">Comments</a></li>
-              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_bookmarks' id=user.id slug=user.profile.slug  %}" role="tab">Bookmark</a></li>
-              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_following' id=user.id slug=user.profile.slug  %}" role="tab">Following</a></li>
-              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_followers' id=user.id slug=user.profile.slug  %}" role="tab">Followers</a></li>
+              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_activity' id=user.profile.id slug=user.profile.slug  %}" role="tab" class="js-profile-hide">Activity</a></li>
+              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_posts' id=user.profile.id slug=user.profile.slug  %}" role="tab" >Posts <span>{{ posts_count }}</span></a></li>
+              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_drafts' id=user.profile.id slug=user.profile.slug  %}" role="tab" >Drafts <span>{{ drafts_count }}</span></a></li>
+              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_comments' id=user.profile.id slug=user.profile.slug  %}" role="tab">Comments</a></li>
+              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_bookmarks' id=user.profile.id slug=user.profile.slug  %}" role="tab">Bookmark</a></li>
+              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_following' id=user.profile.id slug=user.profile.slug  %}" role="tab">Following</a></li>
+              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_followers' id=user.profile.id slug=user.profile.slug  %}" role="tab">Followers</a></li>
             </ul>
           </div>
         </div>
@@ -42,63 +42,6 @@
               <h2>Activity</h2>
               <h2>Activity</h2>
               <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-              <h2>Activity</h2>
-
               <h2>Activity</h2>
             </div>
           </div>

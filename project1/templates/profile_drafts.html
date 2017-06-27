@@ -54,9 +54,11 @@
                   <div class="contentitem-item">
                     {{ post.content|truncatewords:100|linebreaks }}
                   </div>
-                  <div class="contentitem-item last">
-                    <button type="button" class="button button--plain space-right js-draft-delete">Delete</button>
-                    <a href="{{ post.get_absolute_url }}edit">Edit</a>
+                  <div class="contentitem-item contentitem-item-flex last">
+                    <button type="button" class="button button--plain spaceright--small js-draft-publish">Publish</button>
+                    <button type="button" class="button button--plain spaceright--small js-draft-delete">Delete</button>
+                    <a href="{{ post.get_absolute_url }}edit" class="spaceright--small">Edit</a>
+                    <span>{{ post.date_edited }}</span>
                   </div>
                 </div>
               </div>

@@ -99,15 +99,14 @@ def post_create(request):
         context['title'] = "Create Post"
         return render(request,"post_create.html",context)
     elif request.method == "POST":
+        current_user = request.user
         form = PostForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
-            post.user = current_user.profile
+            post.user = current_user
             post.save()
             messages.success(request, "Draft created.")
-            return redirect("profiles:profile_drafts", id=current_user.profile.id, slug=current_user.profile.slug)
-        else:
-            return JsonResponse(form.errors)
+            return redirect("profiles:profile_drafts", id=current_user.id, slug=current_user.profile.slug)
 
 @login_required
 def post_edit(request,id,slug):
@@ -129,6 +128,7 @@ def post_edit(request,id,slug):
         else:
             raise PermissionDenied
     elif request.method == "POST":
+        post = Post.objects.get(id = id)
         form = PostForm(request.POST, instance=post)
         if form.is_valid():
             form.save()
@@ -137,7 +137,6 @@ def post_edit(request,id,slug):
             else:
                 messages.success(request, "Post edited.")
             return redirect(request.path)
-
 
 @login_required
 def post_delete(request,id,slug):
@@ -150,29 +149,32 @@ def post_delete(request,id,slug):
             post.delete()
             if post.is_draft:
                 messages.success(request, "Draft deleted.")
+                return redirect("profiles:profile_drafts", id=current_user.id, slug=current_user.profile.slug)
             else:
                 messages.success(request, "Post deleted.")
-            return redirect(request.path)
+                return redirect("profiles:profile_posts", id=current_user.id, slug=current_user.profile.slug)
         else:
             raise PermissionDenied
 
-
 @login_required
 def post_publish(request,id,slug):
-    post = get_object_or_404(Post, id=id)
-    user = post.user
-    current_user = request.user
     if request.method == "GET":
-        if post.is_draft == False:
+        post = get_object_or_404(Post, id=id)
+        user = post.user
+        current_user = request.user
+        user_status = utility.get_user_status(user,current_user)
+        if user_status == "self":
+            if post.is_draft:
+                post.is_draft = False
+                post.date_published = timezone.now()
+                post.save()
+                messages.success(request, "Draft published.")
+                return redirect("profiles:profile_posts", id=current_user.id, slug=current_user.profile.slug)
+            else:
+                raise PermissionDenied
+        else:
             raise PermissionDenied
-        if current_user != user:
-            raise PermissionDenied
-        post.is_draft = False
-        post.date_published = timezone.now()
-        post.save()
-        response_data = {}
-        response_data['message'] = "Draft published."
-        return JsonResponse(response_data,safe=False)
+
 
 @login_required
 def post_bookmark(request,id,slug):

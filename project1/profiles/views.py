@@ -10,6 +10,7 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Count
 from django.utils import timezone
 from project1.project1.posts.models import Post
+from django.contrib.auth.models import User
 from project1.project1.comments.models import Comment
 from .models import Profile, Follow
 from project1.project1.posts.forms import PostForm
@@ -23,13 +24,12 @@ import os
 # Create your views here.
 def profile_activity(request,id,slug):
     if request.method == "GET":
-        profile = get_object_or_404(Profile, id = id)
-        user = profile.user
+        user = get_object_or_404(get_user_model(), id = id)
         current_user = request.user
         context = {}
         user_status = utility.get_user_status(user,current_user)
         context['user_status'] = user_status
-        context['user_edit_status'] = utility.get_user_edit_status(user_status)
+        # context['user_edit_status'] = utility.get_user_edit_status(user_status)
         context['user_message_status'] = utility.get_user_message_status(user_status)
         context['user_follow_status'] = utility.get_user_follow_status(user,current_user,user_status)
         user_profile_status = utility.get_user_profile_status(user)
@@ -47,14 +47,13 @@ def profile_activity(request,id,slug):
 
 def profile_drafts(request,id,slug):
     if request.method == "GET":
-        profile = get_object_or_404(Profile, id = id)
-        user = profile.user
+        user = get_object_or_404(get_user_model(), id = id)
         current_user = request.user
         context = {}
         user_status = utility.get_user_status(user,current_user)
         if user_status == "self":
             context['user_status'] = user_status
-            context['user_edit_status'] = utility.get_user_edit_status(user_status)
+            # context['user_edit_status'] = utility.get_user_edit_status(user_status)
             context['user_message_status'] = utility.get_user_message_status(user_status)
             context['user_follow_status'] = utility.get_user_follow_status(user,current_user,user_status)
             if utility.get_user_profile_status(user):
@@ -81,6 +80,40 @@ def profile_drafts(request,id,slug):
             return render(request,template,context)
         else:
             raise PermissionDenied
+
+def profile_posts(request,id,slug):
+    if request.method == "GET":
+        user = get_object_or_404(get_user_model(), id = id)
+        current_user = request.user
+        context = {}
+        user_status = utility.get_user_status(user,current_user)
+        context['user_status'] = user_status
+        # context['user_edit_status'] = utility.get_user_edit_status(user_status)
+        context['user_message_status'] = utility.get_user_message_status(user_status)
+        context['user_follow_status'] = utility.get_user_follow_status(user,current_user,user_status)
+        user_profile_status = utility.get_user_profile_status(user)
+        if user_profile_status:
+            context['fields_values_list'] = utility.get_user_profile_fields(user)
+        else:
+            context['fields_values_list'] = False
+        context['user'] = user
+        context['drafts_count'] = user.profile.get_drafts_count()
+        context['posts_count'] = user.profile.get_posts_count()
+        if user.profile.get_posts_count() != 0:
+            context['posts'] = user.profile.get_posts()
+            paginator = Paginator(user.profile.get_posts(), 10) # Show 25 contacts per page
+            page = request.GET.get('page')
+            try:
+                current_page = paginator.page(page)
+            except PageNotAnInteger:
+                # If page is not an integer, deliver first page.
+                current_page = paginator.page(1)
+            except EmptyPage:
+                # If page is out of range (e.g. 9999), deliver last page of results.
+                current_page = paginator.page(paginator.num_pages)
+            context['current_page'] = current_page
+        template = "profile_posts.html"
+        return render(request,template,context)
 
 
 def profile_edit(request):
@@ -136,46 +169,6 @@ def profile_edit_background(request):
         response = {}
         response['profile_background_url'] = request.user.profile.background.url
         return JsonResponse(response)
-
-
-def profile_posts(request,id,slug):
-    if request.method == "GET":
-        User = get_user_model()
-        user = get_object_or_404(User, id = id)
-        current_user = request.user
-        context = {}
-        user_status = utility.get_user_status(user,current_user)
-        context['user_status'] = user_status
-        context['logged_in_status'] = utility.get_logged_in_status(current_user)
-        context['user_edit_status'] = utility.get_user_edit_status(user_status)
-        context['user_message_status'] = utility.get_user_message_status(user_status)
-        context['user_follow_status'] = utility.get_user_follow_status(user,current_user,user_status)
-        user_profile_status = utility.get_user_profile_status(user)
-        if user_profile_status:
-            context['fields_values_list'] = utility.get_user_profile_fields(user)
-        else:
-            context['fields_values_list'] = False
-        context['user'] = user
-        context['posts_count'] = user.profile.get_posts_count()
-        if user.profile.get_posts_count() != 0:
-            context['posts'] = user.profile.get_posts()
-        context['drafts_count'] = user.profile.get_drafts_count()
-        context['template_name'] = "profile_posts.html"
-        template = "profile_posts.html"
-
-        paginator = Paginator(user.profile.get_posts(), 10) # Show 25 contacts per page
-        page = request.GET.get('page')
-        try:
-            current_page = paginator.page(page)
-        except PageNotAnInteger:
-            # If page is not an integer, deliver first page.
-            current_page = paginator.page(1)
-        except EmptyPage:
-            # If page is out of range (e.g. 9999), deliver last page of results.
-            current_page = paginator.page(paginator.num_pages)
-        context['current_page'] = current_page
-
-        return render(request,template,context)
 
 
 

@@ -107,9 +107,9 @@ def get_user_status(user,current_user):
 #     logged_in_status = [True if current_user.is_authenticated else False]
 #     return logged_in_status[0]
 
-def get_user_edit_status(user_status):
-    user_edit_status = [True if user_status == "self" else False]
-    return user_edit_status[0]
+# def get_user_edit_status(user_status):
+#     user_edit_status = [True if user_status == "self" else False]
+#     return user_edit_status[0]
 
 def get_user_message_status(user_status):
     user_message_status = [True if user_status != "self" else False]

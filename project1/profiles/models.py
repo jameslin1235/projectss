@@ -108,6 +108,18 @@ class Profile(models.Model):
     def get_absolute_url(self):
         return reverse("profiles:profile_activity", kwargs={"id": self.id, "slug": self.slug})
 
+    def get_posts(self):
+        return self.user.posts.filter(is_draft = False).order_by("-date_published")
+
+    def get_posts_count(self):
+        return self.user.posts.filter(is_draft = False).count()
+
+    def get_drafts(self):
+        return self.user.posts.filter(is_draft = True).order_by("-date_edited")
+
+    def get_drafts_count(self):
+        return self.user.posts.filter(is_draft = True).count()
+
     def followed_user(self, user):
         return self.following.filter(user=user).exists()
 
@@ -125,17 +137,7 @@ class Profile(models.Model):
     def get_followers_count(self):
         return self.followers.count()
 
-    def get_posts(self):
-        return self.user.posts.filter(is_draft = False).order_by("-date_published")
 
-    def get_posts_count(self):
-        return self.user.posts.filter(is_draft = False).count()
-
-    def get_drafts(self):
-        return self.user.posts.filter(is_draft = True).order_by("-date_published")
-
-    def get_drafts_count(self):
-        return self.user.posts.filter(is_draft = True).count()
 
     def get_comments_count(self):
         return self.user.comments.count()

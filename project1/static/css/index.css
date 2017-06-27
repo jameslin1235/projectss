@@ -1,7 +1,11 @@
 
 /* General */
-.space-right{
+.spaceright--small{
   margin-right: 5px;
+}
+
+.spaceright--large{
+  margin-right: 10px;
 }
 
 html{
@@ -46,6 +50,19 @@ ul{
 img{
   display: block;
   width: 100%;
+}
+
+.img--cover{
+  height: 100%;
+  object-fit: cover;
+}
+
+.imgborder--small{
+  border-radius: 4px;
+}
+
+.imgborder--large{
+  border-radius: 8px;
 }
 
 a{
@@ -265,6 +282,11 @@ input:focus {
   margin-bottom: 10px;
 }
 
+.contentitem-item-flex{
+  display: flex;
+  align-items: center;
+}
+
 .form{
   padding: 0 15px;
 }
@@ -282,10 +304,7 @@ input:focus {
   overflow-y: auto;
 }
 
-.profile-avatar{
-  height:100%;
-  object-fit: cover;
-}
+
 
 .profile-avatar--small{
   height:100%;
@@ -807,10 +826,18 @@ input:focus {
 }
 
 .avatar--small{
-  border-radius: 8px;
+  position: relative;
   max-width: 100%;
   width: 50px;
   height: 50px;
+}
+
+.avatar__link{
+  position: absolute;
+  top: 0;
+  left:0;
+  right:0;
+  bottom: 0;
 }
 
 .avatar--edit{
