@@ -1,9 +1,11 @@
-{% extends "profile_base.html" %}
+{% extends "base.html" %}
+{% load static %}
 {% load widget_tweaks %}
-{% block profile %}
-<div class="container profile-form">
+
+{% block body %}
+<div class="container">
   <div class="card">
-    <div class="card__background">
+    <!-- <div class="card__background">
       <div class="background__wrapper">
       <button type="button" class="button button--gray profile-background-edit js-profile-background-edit"><span class="fa fa-camera icon--left" aria-hidden="true"></span>Edit background</button>
       <form enctype="multipart/form-data" class="hidden js-profile-background-form">
@@ -13,141 +15,183 @@
     </div>
     <img src="{{ user.profile.background.url }}" class="profile-background js-profile-background" alt="Profile Background">
 
-    </div>
+    </div> -->
 
     <div class="card__body">
       <div class="avatar__wrapper">
-        <div class="avatar avatar--edit js-profile-avatar-edit">
-          <img src="{{ user.profile.avatar.url }}" class="profile-avatar js-profile-avatar" alt="Profile Avatar">
-          <div class="avatar__mask">
-            <div class="avatar__maskinner">
-              <span class="fa fa-camera" aria-hidden="true"></span>
-              <h4>Edit avatar</h4>
-            </div>
+        <div class="avatar js-profile-avatar-edit">
+          <div class="avatar__action avatar__action--dark">
+            <span class="fa fa-camera" aria-hidden="true"></span>
+            <h4>Edit avatar</h4>
           </div>
-          <form enctype="multipart/form-data" class="hidden js-profile-avatar-form">
-            {% csrf_token %}
-          </form >
-          <input class="js-profile-avatar-field hidden" name="avatar" type="file" accept="image/jpeg">
+          <img src="{{ user.profile.avatar.url }}" class="img--cover imgborder--large" alt="Profile Avatar">
+          <div class="form hidden">
+            <form enctype="multipart/form-data" method="post">
+              {% csrf_token %}
+              {{ profile_avatar_form.avatar }}
+              <button type="submit" class="button button--blue button--primary">Save</button>
+            </form>
+          </div>
         </div>
       </div>
 
+
+
       <div class="card__content">
         <div class="card__contentitem">
-          <h1>{{user.username}}</h1>
+          <h1>{{ user.username }}</h1>
         </div>
-
         <div class="card__contentitem last">
           <a href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug %}" class="link--blue">Back to Profile<span class="fa fa-angle-right icon--right" aria-hidden="true"></span></a>
       </div>
       </div>
 
       <div class="form">
-        <form class="js-profile-form">
+        <form method="post">
           {% csrf_token %}
 
           <div class="formfield">
-            {{ profileform.profile_gender.errors }}
             <div class="formfield__label">
-              <label for="{{ profileform.profile_gender.id_for_label }}">{{ profileform.profile_gender.label|cut:"Profile "|capfirst }}</label>
+              <label for="{{ form.gender.id_for_label }}">{{ form.gender.label|capfirst }}</label>
             </div>
             <div class="formfield__noninput">
-                {{ profileform.profile_gender }}
+                {{ form.gender }}
             </div>
+            {% if form.gender.errors %}
+            <div>
+            {% for error in form.gender.errors %}
+            <li><strong>{{ error|escape }}</strong></li>
+            {% endfor %}
+            </div>
+            {% endif %}
           </div>
 
           <div class="formfield">
-            {{ profileform.profile_credential.errors }}
             <div class="formfield__label">
-              <label for="{{ profileform.profile_credential.id_for_label }}">{{ profileform.profile_credential.label|cut:"Profile "|capfirst }}</label>
+              <label for="{{ form.credential.id_for_label }}">{{ form.credential.label|capfirst }}</label>
             </div>
             <div class="formfield__input ">
-
-                {{ profileform.profile_credential|add_class:"js-add-focus"|attr:"placeholder:Credential"  }}
-
+                {{ form.credential|add_class:"js-add-focus"|attr:"placeholder:Credential"  }}
             </div>
+            {% if form.credential.errors %}
+            <div>
+            {% for error in form.credential.errors %}
+            <li><strong>{{ error|escape }}</strong></li>
+            {% endfor %}
+            </div>
+            {% endif %}
           </div>
 
           <div class="formfield">
-            {{ profileform.profile_description.errors }}
             <div class="formfield__label">
-              <label for="{{ profileform.profile_description.id_for_label }}">{{ profileform.profile_description.label|cut:"Profile "|capfirst }}</label>
+              <label for="{{ form.description.id_for_label }}">{{ form.description.label|capfirst }}</label>
             </div>
             <div class="formfield__input ">
-
-                {{ profileform.profile_description|attr:"rows:3"|attr:"cols:20"|add_class:"js-add-focus"|attr:"placeholder:Description" }}
-
+                {{ form.description|attr:"rows:3"|attr:"cols:20"|add_class:"js-add-focus"|attr:"placeholder:Description" }}
             </div>
+            {% if form.description.errors %}
+            <div>
+            {% for error in form.description.errors %}
+            <li><strong>{{ error|escape }}</strong></li>
+            {% endfor %}
+            </div>
+            {% endif %}
           </div>
 
           <div class="formfield">
-            {{ profileform.profile_residence.errors }}
             <div class="formfield__label">
-              <label for="{{ profileform.profile_residence.id_for_label }}">{{ profileform.profile_residence.label|cut:"Profile "|capfirst }}</label>
+              <label for="{{ form.residence.id_for_label }}">{{ form.residence.label|capfirst }}</label>
             </div>
             <div class="formfield__noninput">
-                {{ profileform.profile_residence }}
+                {{ form.residence }}
             </div>
+            {% if form.residence.errors %}
+            <div>
+            {% for error in form.residence.errors %}
+            <li><strong>{{ error|escape }}</strong></li>
+            {% endfor %}
+            </div>
+            {% endif %}
           </div>
 
           <div class="formfield">
-            {{ profileform.profile_occupation.errors }}
             <div class="formfield__label">
-              <label for="{{ profileform.profile_occupation.id_for_label }}">{{ profileform.profile_occupation.label|cut:"Profile "|capfirst }}</label>
+              <label for="{{ form.occupation.id_for_label }}">{{ form.occupation.label|capfirst }}</label>
             </div>
             <div class="formfield__noninput">
-                {{ profileform.profile_occupation }}
+                {{ form.occupation }}
             </div>
+            {% if form.occupation.errors %}
+            <div>
+            {% for error in form.occupation.errors %}
+            <li><strong>{{ error|escape }}</strong></li>
+            {% endfor %}
+            </div>
+            {% endif %}
           </div>
 
           <div class="formfield">
-            {{ profileform.profile_position.errors }}
             <div class="formfield__label">
-              <label for="{{ profileform.profile_position.id_for_label }}">{{ profileform.profile_position.label|cut:"Profile "|capfirst }}</label>
+              <label for="{{ form.position.id_for_label }}">{{ form.position.label|capfirst }}</label>
             </div>
             <div class="formfield__input ">
-                {{ profileform.profile_position|add_class:"js-add-focus"|attr:"placeholder:Position" }}
+                {{ form.position|add_class:"js-add-focus"|attr:"placeholder:Position" }}
             </div>
-
+            {% if form.position.errors %}
+            <div>
+            {% for error in form.position.errors %}
+            <li><strong>{{ error|escape }}</strong></li>
+            {% endfor %}
+            </div>
+            {% endif %}
           </div>
 
           <div class="formfield">
-            {{ profileform.profile_company.errors }}
             <div class="formfield__label">
-              <label for="{{ profileform.profile_company.id_for_label }}">{{ profileform.profile_company.label|cut:"Profile "|capfirst }}</label>
+              <label for="{{ form.company.id_for_label }}">{{ form.company.label|capfirst }}</label>
             </div>
             <div class="formfield__input ">
-
-                {{ profileform.profile_company|add_class:"js-add-focus"|attr:"placeholder:Company" }}
-
+                {{ form.company|add_class:"js-add-focus"|attr:"placeholder:Company" }}
             </div>
-
+            {% if form.company.errors %}
+            <div>
+            {% for error in form.company.errors %}
+            <li><strong>{{ error|escape }}</strong></li>
+            {% endfor %}
+            </div>
+            {% endif %}
           </div>
 
           <div class="formfield">
-            {{ profileform.profile_school.errors }}
             <div class="formfield__label">
-              <label for="{{ profileform.profile_school.id_for_label }}">{{ profileform.profile_school.label|cut:"Profile "|capfirst }}</label>
+              <label for="{{ form.school.id_for_label }}">{{ form.school.label|capfirst }}</label>
             </div>
             <div class="formfield__input ">
-
-                {{ profileform.profile_school|add_class:"js-add-focus"|attr:"placeholder:School" }}
-
+                {{ form.school|add_class:"js-add-focus"|attr:"placeholder:School" }}
             </div>
-
+            {% if form.school.errors %}
+            <div>
+            {% for error in form.school.errors %}
+            <li><strong>{{ error|escape }}</strong></li>
+            {% endfor %}
+            </div>
+            {% endif %}
           </div>
 
           <div class="formfield">
-            {{ profileform.profile_major.errors }}
             <div class="formfield__label">
-              <label for="{{ profileform.profile_major.id_for_label }}">{{ profileform.profile_major.label|cut:"Profile "|capfirst }}</label>
+              <label for="{{ form.major.id_for_label }}">{{ form.major.label|capfirst }}</label>
             </div>
             <div class="formfield__input ">
-
-                {{ profileform.profile_major|add_class:"js-add-focus"|attr:"placeholder:Major" }}
-
+                {{ form.major|add_class:"js-add-focus"|attr:"placeholder:Major" }}
             </div>
-
+            {% if form.major.errors %}
+            <div>
+            {% for error in form.major.errors %}
+            <li><strong>{{ error|escape }}</strong></li>
+            {% endfor %}
+            </div>
+            {% endif %}
           </div>
 
           <button type="submit" class="button button--blue button--primary">Save</button>
@@ -157,4 +201,8 @@
     </div>
   </div>
 </div>
-{% endblock profile %}
+{% endblock body %}
+
+{% block javascript %}
+<script src="{% static "js/profile_edit.js" %}"></script>
+{% endblock javascript %}

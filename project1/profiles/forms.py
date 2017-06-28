@@ -6,19 +6,19 @@ class ProfileForm(ModelForm):
     class Meta:
         model = Profile
         fields = [
-            "profile_gender",
-            "profile_credential",
-            "profile_description",
-            "profile_residence",
-            "profile_occupation",
-            "profile_position",
-            "profile_company",
-            "profile_school",
-            "profile_major",
+            "gender",
+            "credential",
+            "description",
+            "residence",
+            "occupation",
+            "position",
+            "company",
+            "school",
+            "major"
         ]
 
-    def clean_profile_position(self):
-        data = self.cleaned_data['profile_position']
+    def clean_position(self):
+        data = self.cleaned_data['position']
         if data:
             if "kevin@example.com" not in data:
                 raise forms.ValidationError("You have forgotten about Kevin!")
@@ -27,8 +27,8 @@ class ProfileForm(ModelForm):
         # this method didn't change it.
         return data
 
-    def clean_profile_company(self):
-        data = self.cleaned_data['profile_company']
+    def clean_company(self):
+        data = self.cleaned_data['company']
         if data:
             if "jack@example.com" not in data:
                 raise forms.ValidationError("You have forgotten about Jack!")
@@ -37,8 +37,8 @@ class ProfileForm(ModelForm):
         # this method didn't change it.
         return data
 
-    def clean_profile_school(self):
-        data = self.cleaned_data['profile_school']
+    def clean_school(self):
+        data = self.cleaned_data['school']
         if data:
             if "edward@example.com" not in data:
                 raise forms.ValidationError("You have forgotten about Edward!")
@@ -47,8 +47,8 @@ class ProfileForm(ModelForm):
         # this method didn't change it.
         return data
 
-    def clean_profile_major(self):
-        data = self.cleaned_data['profile_major']
+    def clean_major(self):
+        data = self.cleaned_data['major']
         if data:
             if "fred@example.com" not in data:
                 raise forms.ValidationError("You have forgotten about Fred!")
@@ -57,15 +57,12 @@ class ProfileForm(ModelForm):
         # this method didn't change it.
         return data
 
-
-
-
-# class ProfileAvatarForm(ModelForm):
-#     class Meta:
-#         model = Profile
-#         fields = [
-#             "avatar",
-#         ]
+class ProfileAvatarForm(ModelForm):
+    class Meta:
+        model = Profile
+        fields = [
+            "avatar"
+        ]
 
 # class ProfileBackgroundForm(ModelForm):
 #     class Meta:

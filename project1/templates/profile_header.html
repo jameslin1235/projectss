@@ -2,84 +2,81 @@
 <div class="container profile-header">
   <div class="card">
     <div class="card__background">
-    <img src="{{ user.profile.background.url }}" class="profile-background" alt="Profile Background">
+      <img src="{{ user.profile.background.url }}" class="img--cover" alt="Profile Background">
     </div>
-
-
     <div class="card__body">
       <div class="avatar__wrapper">
         <div class="avatar">
-          <img src="{{ user.profile.avatar.url }}" class="profile-avatar" alt="Profile Avatar">
+          <img src="{{ user.profile.avatar.url }}" class="img--cover imgborder--large" alt="Profile Avatar">
         </div>
       </div>
 
       <div class="card__content">
-
         <div class="card__contentitem">
           <h1>{{ user.username }}</h1>
         </div>
 
-        {% if fields_values_list %}
-        <div class="card__contentitem profile-briefinfo">
-          {% for list in fields_values_list %}
-          {% if list.0 == "profile_gender" %}
-          <div class="card__listitem flex-row flex-center">
-            {% if list.1 == "M" %}
-            <span class="fa fa-mars icon icon--left" aria-hidden="true"></span>
-            {% else %}
-            <span class="fa fa-venus icon icon--left" aria-hidden="true"></span>
-            {% endif %}
-            <!-- <span class="card__listitemvalue">{{ list.1 }}</span> -->
-          </div>
-          {% elif list.0 == "profile_occupation" %}
-          <div class="card__listitem flex-row flex-center">
-            <span class="fa fa-briefcase icon icon--left" aria-hidden="true"></span>
-            <span class="card__listitemvalue">{{ list.1 }}</span>
-          </div>
-          {% elif list.0 == "profile_school" %}
-          <div class="card__listitem flex-row flex-center">
-            <span class="fa fa-graduation-cap icon icon--left" aria-hidden="true"></span>
-            <span class="card__listitemvalue">{{ list.1 }}</span>
-          </div>
-          {% endif %}
-          {% endfor %}
-        </div>
-        <div class="card__contentitem profile-info hidden">
-          {% for list in fields_values_list %}
-          <div class="card__listitem {% if forloop.last %} last {% endif %}">
-            <span class="card__listitemlabel">{{ list.0|cut:"profile_"|capfirst }}</span>
-            <span class="card__listitemvalue">{{ list.1 }}</span>
-          </div>
-          {% endfor %}
-        </div>
-        {% else %}
-        <div class="card__contentitem">
+        {% if user_profile_status %}
+        <div>
           <span>Empty Profile</span>
         </div>
-        {% endif %}
+        {% else %}
 
-
-        {% if fields_values_list %}
-        <div class="card__contentitem profile-action flex-row flex-center">
-          <button type="button" class="flex-row flex-center button button--plain js-profile-info-toggle"><span class="fa fa-angle-down icon icon--left" aria-hidden="true"></span><span>Show</span></button>
+        <div class="card__contentitem contentitem profile-brief">
+          {% for field in user_profile_fields %}
+          {% if field.0 == "gender" %}
+          <div class="contentitem-item">
+            {% if field.1 == "M" %}
+            <span class="fa fa-mars" aria-hidden="true"></span>
+            {% else %}
+            <span class="fa fa-venus" aria-hidden="true"></span>
+            {% endif %}
+          </div>
+          {% elif field.0 == "occupation" %}
+          <div class="contentitem-item">
+            <span class="fa fa-briefcase icon icon--left" aria-hidden="true"></span>
+            <span>{{ field.1 }}</span>
+          </div>
+          {% elif field.0 == "school" %}
+          <div class="contentitem-item">
+            <span class="fa fa-graduation-cap icon icon--left" aria-hidden="true"></span>
+            <span>{{ field.1 }}</span>
+          </div>
+          {% endif %}
+          {% endfor %}
         </div>
+
+        <div class="card__contentitem contentitem profile-info hidden">
+          {% for field in user_profile_fields %}
+          <div class="contentitem-item {% if forloop.last %} last {% endif %}">
+            <span>{{ field.0|capfirst }}</span>
+            <span>{{ field.1 }}</span>
+          </div>
+          {% endfor %}
+        </div>
+
+
+        <div class="card__contentitem profile-action">
+          <button type="button" class="button button--plain js-profile-info-toggle"><span class="fa fa-angle-down icon icon--left js-profile-info-toggle-icon" aria-hidden="true"></span><span class="js-profile-info-toggle-text">Show</span></button>
+        </div>
+
         {% endif %}
 
+
+
+
+        {% if user_status == "self" %}
         <div class="card__buttongroup">
-          {% if user_edit_status %}
           <a href="{% url 'profiles:profile_edit' %}" class="link--blue">Edit</a>
-          {% endif %}
-          {% if user_follow_status %}
-          <div class="card__buttongroupitem">
-            <button type="button" class="button button--blue"><span class="fa fa-plus" aria-hidden="true"></span> {{ user_follow_status }}</button>
-          </div>
-          {% endif %}
-          {% if user_message_status %}
-          <div class="card__buttongroupitem--last">
-            <button type="button" class="button button--gray"><span class="fa fa-comments" aria-hidden="true"></span> {{ user_message_status }}</button>
-          </div>
-          {% endif %}
         </div>
+        {% endif %}
+
+        {% if user_status != "self" %}
+        <div class="card__buttongroupabs">
+          <button type="button" class="button button--blue"><span class="fa fa-plus" aria-hidden="true"></span> {{ user_follow_status }}</button>
+        </div>
+        {% endif %}
+
       </div>
     </div>
   </div>

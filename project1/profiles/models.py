@@ -36,45 +36,45 @@ class Profile(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_edited = models.DateTimeField(auto_now=True)
     slug = models.SlugField()
-    profile_gender = models.CharField(
+    gender = models.CharField(
         max_length = 1,
         choices = gender_choices,
         blank=True,
     )
-    profile_credential = models.CharField(
+    credential = models.CharField(
         max_length = 100,
         blank=True,
     )
 
-    profile_description = models.TextField(
+    description = models.TextField(
         blank=True,
     )
-    profile_residence = models.CharField(
+    residence = models.CharField(
         max_length = 2,
         choices = residence_choices,
         blank = True,
     )
 
-    profile_occupation = models.CharField(
+    occupation = models.CharField(
         max_length = 100,
         choices = occupation_choices,
         blank = True,
     )
 
-    profile_position = models.CharField(
+    position = models.CharField(
         max_length = 100,
         blank = True,
     )
 
-    profile_company = models.CharField(
+    company = models.CharField(
         max_length = 100,
         blank = True,
     )
-    profile_school = models.CharField(
+    school = models.CharField(
         max_length = 100,
         blank = True,
     )
-    profile_major = models.CharField(
+    major = models.CharField(
         max_length = 100,
         blank = True,
     )
@@ -119,6 +119,21 @@ class Profile(models.Model):
 
     def get_drafts_count(self):
         return self.user.posts.filter(is_draft = True).count()
+
+    def get_profile_status(self):
+        fields_dict = Profile.objects.filter(id = self.id).values("gender", "credential", "description", "residence", "occupation", "position", "company", "school", "major")[0]
+        for value in fields_dict.values():
+            if len(value) != 0:
+                return False
+        return True
+
+    def get_profile_fields(self):
+        fields_dict = Profile.objects.filter(id = self.id).values("gender", "credential", "description", "residence", "occupation", "position", "company", "school", "major")[0]
+        profile_fields = []
+        for value in fields_dict.items():
+            if len(value[1]) != 0:
+                profile_fields.append(list(value))
+        return profile_fields
 
     def followed_user(self, user):
         return self.following.filter(user=user).exists()

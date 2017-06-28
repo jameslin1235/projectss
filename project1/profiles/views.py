@@ -15,7 +15,7 @@ from project1.project1.comments.models import Comment
 from .models import Profile, Follow
 from project1.project1.posts.forms import PostForm
 from project1.project1.comments.forms import CommentForm
-from .forms import ProfileForm
+from .forms import ProfileForm, ProfileAvatarForm
 from project1.project1.config import utility
 from PIL import Image
 import base64
@@ -29,14 +29,11 @@ def profile_activity(request,id,slug):
         context = {}
         user_status = utility.get_user_status(user,current_user)
         context['user_status'] = user_status
-        # context['user_edit_status'] = utility.get_user_edit_status(user_status)
-        context['user_message_status'] = utility.get_user_message_status(user_status)
-        context['user_follow_status'] = utility.get_user_follow_status(user,current_user,user_status)
-        user_profile_status = utility.get_user_profile_status(user)
-        if utility.get_user_profile_status(user):
-            context['fields_values_list'] = utility.get_user_profile_fields(user)
-        else:
-            context['fields_values_list'] = False
+        if user_status != "self":
+            context['user_follow_status'] = utility.get_user_follow_status(user,current_user,user_status)
+        context['user_profile_status'] = user.profile.get_profile_status()
+        if not user.profile.get_profile_status():
+            context['user_profile_fields'] = user.profile.get_profile_fields()
         context['user'] = user
         context['title'] = "Activity"
         context['posts_count'] = user.profile.get_posts_count()
@@ -53,13 +50,11 @@ def profile_drafts(request,id,slug):
         user_status = utility.get_user_status(user,current_user)
         if user_status == "self":
             context['user_status'] = user_status
-            # context['user_edit_status'] = utility.get_user_edit_status(user_status)
-            context['user_message_status'] = utility.get_user_message_status(user_status)
-            context['user_follow_status'] = utility.get_user_follow_status(user,current_user,user_status)
-            if utility.get_user_profile_status(user):
-                context['fields_values_list'] = utility.get_user_profile_fields(user)
-            else:
-                context['fields_values_list'] = False
+            if user_status != "self":
+                context['user_follow_status'] = utility.get_user_follow_status(user,current_user,user_status)
+            context['user_profile_status'] = user.profile.get_profile_status()
+            if not user.profile.get_profile_status():
+                context['user_profile_fields'] = user.profile.get_profile_fields()
             context['user'] = user
             context['posts_count'] = user.profile.get_posts_count()
             context['drafts_count'] = user.profile.get_drafts_count()
@@ -88,14 +83,11 @@ def profile_posts(request,id,slug):
         context = {}
         user_status = utility.get_user_status(user,current_user)
         context['user_status'] = user_status
-        # context['user_edit_status'] = utility.get_user_edit_status(user_status)
-        context['user_message_status'] = utility.get_user_message_status(user_status)
-        context['user_follow_status'] = utility.get_user_follow_status(user,current_user,user_status)
-        user_profile_status = utility.get_user_profile_status(user)
-        if user_profile_status:
-            context['fields_values_list'] = utility.get_user_profile_fields(user)
-        else:
-            context['fields_values_list'] = False
+        if user_status != "self":
+            context['user_follow_status'] = utility.get_user_follow_status(user,current_user,user_status)
+        context['user_profile_status'] = user.profile.get_profile_status()
+        if not user.profile.get_profile_status():
+            context['user_profile_fields'] = user.profile.get_profile_fields()
         context['user'] = user
         context['drafts_count'] = user.profile.get_drafts_count()
         context['posts_count'] = user.profile.get_posts_count()
@@ -115,27 +107,26 @@ def profile_posts(request,id,slug):
         template = "profile_posts.html"
         return render(request,template,context)
 
-
+@login_required
 def profile_edit(request):
     if request.method == "GET":
         current_user = request.user
-        current_user_profile = current_user.profile
-        current_user_profile_url = current_user.profile.get_absolute_url()
-        profileform = ProfileForm(instance = current_user_profile)
-        context = {
-            "current_user_profile_url":current_user_profile_url,
-            "profileform":profileform
-        }
+        context = {}
+        profile = current_user.profile
+        context['form'] = ProfileForm(instance = profile)
+        context['profile_avatar_form'] = ProfileAvatarForm(instance = profile)
+        context['user'] = current_user
         return render(request,"profile_edit.html",context)
-    elif request.method == "POST" and request.is_ajax():
+    elif request.method == "POST":
         form = ProfileForm(request.POST,instance=request.user.profile)
         if form.is_valid():
             form.save()
-            response = {}
-            return JsonResponse(response)
+            messages.success(request, "Profile edited.")
+            return redirect(request.path)
         else:
-            print(form.errors)
-            return JsonResponse(form.errors)
+            context = {}
+            context['form'] = form
+            return render(request,"profile_edit.html",context)
 
 
 def profile_edit_avatar(request):

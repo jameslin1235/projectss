@@ -111,35 +111,33 @@ def get_user_status(user,current_user):
 #     user_edit_status = [True if user_status == "self" else False]
 #     return user_edit_status[0]
 
-def get_user_message_status(user_status):
-    user_message_status = [True if user_status != "self" else False]
-    return user_message_status[0]
+# def get_user_message_status(user_status):
+#     user_message_status = [True if user_status != "self" else False]
+#     return user_message_status[0]
 
 def get_user_follow_status(user,current_user,user_status):
     if user_status == "anonymous":
         user_follow_status = "Follow"
-    elif user_status == "self":
-        user_follow_status = False
-    elif user_status == "user":
+    else:
         if current_user.profile.followed_user(user):
             user_follow_status = "Followed"
         else:
             user_follow_status = "Follow"
     return user_follow_status
 
-def get_user_profile_status(user):
-    fields_names = [field.name for field in Profile._meta.get_fields() if field.name.startswith("profile_")]
-    fields_values = Profile.objects.filter(id=user.id).values(*fields_names)
-    fields_values_dict = fields_values[0]
-    user_profile_status  = [True if fields_values_dict else False]
-    return user_profile_status[0]
-
-def get_user_profile_fields(user):
-    fields_names = [field.name for field in Profile._meta.get_fields() if field.name.startswith("profile_")]
-    fields_values = Profile.objects.filter(id=user.id).values(*fields_names)
-    fields_values_dict = fields_values[0]
-    fields_values_list = [[field,value] for field, value in fields_values_dict.items() if value != None and value != '' ]
-    return fields_values_list
+# def get_user_profile_status(user):
+#     fields_names = [field.name for field in Profile._meta.get_fields() if field.name.startswith("profile_")]
+#     fields_values = Profile.objects.filter(id=user.id).values(*fields_names)
+#     fields_values_dict = fields_values[0]
+#     user_profile_status  = [True if fields_values_dict else False]
+#     return user_profile_status[0]
+# 
+# def get_user_profile_fields(user):
+#     fields_names = [field.name for field in Profile._meta.get_fields() if field.name.startswith("profile_")]
+#     fields_values = Profile.objects.filter(id=user.id).values(*fields_names)
+#     fields_values_dict = fields_values[0]
+#     fields_values_list = [[field,value] for field, value in fields_values_dict.items() if value != None and value != '' ]
+#     return fields_values_list
 
 
 def get_user_posts_like_status(*args):

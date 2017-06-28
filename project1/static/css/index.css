@@ -63,6 +63,7 @@ img{
 
 .imgborder--large{
   border-radius: 8px;
+  border: 4px solid #fff;
 }
 
 a{
@@ -229,7 +230,6 @@ input:focus {
 
 .card__content{
   text-align: center;
-  padding: 0 15px;
 }
 
 .card__contentitem{
@@ -815,10 +815,15 @@ input:focus {
 
 
 /* Avatars */
+.avatar__wrapper{
+  position: absolute;
+  top: -120px;
+  left: 0;
+  right: 0;
+}
+
 .avatar{
   position: relative;
-  border: 4px solid #fff;
-  border-radius: 8px;
   max-width: 100%;
   width: 150px;
   height: 150px;
@@ -832,26 +837,28 @@ input:focus {
   height: 50px;
 }
 
-.avatar__link{
+.avatar__action{
   position: absolute;
   top: 0;
   left:0;
   right:0;
   bottom: 0;
-}
-
-.avatar--edit{
   cursor: pointer;
 }
 
-.avatar__wrapper{
-  position: absolute;
-  top: -120px;
-  left: 0;
-  right: 0;
+.avatar__action--dark{
+  color: #fff;
+  background: #000;
+  opacity: 0.2;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-.avatar__mask{
+
+/*.avatar__mask{
   position: absolute;
   top: 0;
   left:0;
@@ -863,12 +870,12 @@ input:focus {
   display: flex;
   align-items: center;
   justify-content: center;
-}
+}*/
 
-.avatar__maskinner{
+/*.avatar__maskinner{
   text-align: center;
   color: #fff;
-}
+}*/
 
 
 

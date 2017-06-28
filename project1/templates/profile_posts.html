@@ -3,7 +3,7 @@
 {% load static %}
 {% block profile %}
 
-{% include "profile_header.html" %}
+
 <div class="container profile-body">
   <div class="row">
     <div class="col-sm-9">
@@ -56,7 +56,7 @@
                   </div>
                   <div class="contentitem-item contentitem-item-flex">
                     <div class="avatar--small spaceright--large">
-                      <a class="avatar__link" href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug %}"></a>
+                      <a class="avatar__action" href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug %}"></a>
                       <img class="img--cover imgborder--small" src="{{ user.profile.avatar.url }}">
                     </div>
 
