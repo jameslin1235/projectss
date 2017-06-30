@@ -1,6 +1,6 @@
-from django.forms import ModelForm, RadioSelect
-from .models import Profile
+from django.forms import ModelForm
 from django import forms
+from .models import Profile
 
 class ProfileForm(ModelForm):
     class Meta:
@@ -57,16 +57,11 @@ class ProfileForm(ModelForm):
         # this method didn't change it.
         return data
 
-class ProfileAvatarForm(ModelForm):
-    class Meta:
-        model = Profile
-        fields = [
-            "avatar"
-        ]
+class ProfileAvatarForm(forms.Form):
+     avatar_dataurl = forms.CharField()
+     avatar_filename = forms.CharField()
 
-# class ProfileBackgroundForm(ModelForm):
-#     class Meta:
-#         model = Profile
-#         fields = [
-#             "background",
-#         ]
+
+class ProfileBackgroundForm(forms.Form):
+    background_dataurl = forms.CharField()
+    background_filename = forms.CharField()

@@ -7,11 +7,11 @@ $(".js-profile-wrapper-get").on("click", function() {
 ////
 
 // SHOW PROFILE INFO //
-$(".js-profile-info-toggle").on("click", function() {
-  $(".profile-brief").toggleClass("hidden");
-  $(".profile-info").toggleClass("hidden");
-  $(".js-profile-info-toggle-icon").toggleClass("fa-angle-down").toggleClass("fa-angle-up");
-  $(".js-profile-info-toggle-text").text(function(i,text){
+$("#js-profile-info-toggle").on("click", function() {
+  $("#profile-brief").toggleClass("hidden");
+  $("#profile-info").toggleClass("hidden");
+  $("#js-profile-info-toggle-icon").toggleClass("fa-angle-down").toggleClass("fa-angle-up");
+  $("#js-profile-info-toggle-text").text(function(i,text){
     return text === "Show" ? "Hide" : "Show";
   });
 });

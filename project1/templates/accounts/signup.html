@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}{{ title }}{% endblock title %}
+
+{% block body %}
+<div class="container">
+  <div class="card">
+    <div class="card__body">
+      <div class="form">
+        <form method="post">
+          <div class="formtitle">
+            <h2>Join Viz today.</h2>
+          </div>
+          {% csrf_token %}
+          <div class="formfield">
+            <div class="formfield__label">
+              <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+            </div>
+            <div class="formfield__input ">
+              {{ form.username|add_class:"js-add-focus"|attr:"placeholder:Username"  }}
+            </div>
+          </div>
+
+          <div class="formfield">
+            <div class="formfield__label">
+              <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+            </div>
+            <div class="formfield__input ">
+              {{ form.email|add_class:"js-add-focus"|attr:"placeholder:Email" }}
+            </div>
+          </div>
+
+          <div class="formfield">
+            <div class="formfield__label">
+              <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+            </div>
+            <div class="formfield__input">
+              {{ form.password|add_class:"js-add-focus"|attr:"placeholder:Password"|attr:"type:password" }}
+            </div>
+          </div>
+
+          <button type="submit" class="button button--blue button--primary">Sign up</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock body %}

@@ -5,33 +5,38 @@
 {% block body %}
 <div class="container">
   <div class="card">
-    <!-- <div class="card__background">
+    <div class="card__background">
+      <div class="form hidden">
+        <form id="js-profile-background-form" enctype="multipart/form-data" method="post" action="/profile/editbackground/">
+          {% csrf_token %}
+          {{ profile_background_form.background_dataurl }}
+          {{ profile_background_form.background_filename }}
+        </form>
+      </div>
+      <input id="js-profile-background-filefield" class="hidden" name="profile-background" type="file" accept="image/jpeg">
       <div class="background__wrapper">
-      <button type="button" class="button button--gray profile-background-edit js-profile-background-edit"><span class="fa fa-camera icon--left" aria-hidden="true"></span>Edit background</button>
-      <form enctype="multipart/form-data" class="hidden js-profile-background-form">
-        {% csrf_token %}
-      </form>
-      <input class="js-profile-background-field hidden" name="background" type="file" accept="image/jpeg">
+        <button type="button" id="js-profile-background-edit" class="button button--gray"><span class="fa fa-camera icon--left" aria-hidden="true"></span>Edit background</button>
+      </div>
+      <img src="{{ request.user.profile.background.url }}" class="img--cover" alt="Profile Background">
     </div>
-    <img src="{{ user.profile.background.url }}" class="profile-background js-profile-background" alt="Profile Background">
-
-    </div> -->
 
     <div class="card__body">
+      <div class="form hidden">
+        <form id="js-profile-avatar-form" enctype="multipart/form-data" method="post" action="/profile/editavatar/">
+          {% csrf_token %}
+          {{ profile_avatar_form.avatar_dataurl }}
+          {{ profile_avatar_form.avatar_filename }}
+        </form>
+      </div>
+      <input id="js-profile-avatar-filefield" class="hidden" name="profile-avatar" type="file" accept="image/jpeg">
+
       <div class="avatar__wrapper">
-        <div class="avatar js-profile-avatar-edit">
+        <div id="js-profile-avatar-edit" class="avatar">
           <div class="avatar__action avatar__action--dark">
             <span class="fa fa-camera" aria-hidden="true"></span>
             <h4>Edit avatar</h4>
           </div>
-          <img src="{{ user.profile.avatar.url }}" class="img--cover imgborder--large" alt="Profile Avatar">
-          <div class="form hidden">
-            <form enctype="multipart/form-data" method="post">
-              {% csrf_token %}
-              {{ profile_avatar_form.avatar }}
-              <button type="submit" class="button button--blue button--primary">Save</button>
-            </form>
-          </div>
+          <img src="{{ request.user.profile.avatar.url }}" class="img--cover imgborder--large" alt="Profile Avatar">
         </div>
       </div>
 
@@ -39,10 +44,10 @@
 
       <div class="card__content">
         <div class="card__contentitem">
-          <h1>{{ user.username }}</h1>
+          <h1>{{ request.user.username }}</h1>
         </div>
         <div class="card__contentitem last">
-          <a href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug %}" class="link--blue">Back to Profile<span class="fa fa-angle-right icon--right" aria-hidden="true"></span></a>
+          <a href="{% url 'profiles:profile_activity' id=request.user.id slug=request.user.profile.slug %}" class="link--blue">Back to Profile<span class="fa fa-angle-right icon--right" aria-hidden="true"></span></a>
       </div>
       </div>
 

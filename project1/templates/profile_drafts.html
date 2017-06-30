@@ -1,110 +1,68 @@
-
-{% extends "profile_base.html" %}
+{% extends "base.html" %}
 {% load static %}
-{% block profile %}
+{% block body %}
 
-{% include "profile_header.html" %}
-<div class="container profile-body">
-  <div class="row">
-    <div class="col-sm-9">
-      <div class="row">
-        <div class="col-sm-3">
-          <div class="card">
-            <div class="card__header">
-              <div class="card__headerinner">
-                <h2>Feeds</h2>
-              </div>
-            </div>
-            <ul class="card__nav">
-              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug  %}" role="tab" class="js-profile-hide">Activity</a></li>
-              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" role="tab" >Posts <span id="profile_nav_posts_count">{{posts_count}}</span></a></li>
-              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_drafts' id=user.id slug=user.profile.slug  %}" role="tab" >Drafts <span id="profile_nav_drafts_count">{{drafts_count}}</span></a></li>
-              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_comments' id=user.id slug=user.profile.slug  %}" role="tab">Comments</a></li>
-              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_bookmarks' id=user.id slug=user.profile.slug  %}" role="tab">Bookmark</a></li>
-              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_following' id=user.id slug=user.profile.slug  %}" role="tab">Following</a></li>
-              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_followers' id=user.id slug=user.profile.slug  %}" role="tab">Followers</a></li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="col-sm-9 profile-content">
-          <div class="card">
-            <div class="card__header">
-              <div class="card__headerinner profile-activity-header">
-                <button type="button" class="button button--plain js-profile-wrapper-get"><span class="fa fa-angle-left icon--left" aria-hidden="true"></span></button>
-                <h2>{{ drafts_count }} Drafts</h2>
-              </div>
-            </div>
-            <div class="card__body">
-              <div class="listitem">
-                <a href="{% url 'posts:post_create' %}" class="link--blue"><span class="fa fa-pencil-square-o icon--left" aria-hidden="true"></span>Create</a>
-              </div>
-
-              {% if drafts_count == 0 %}
-              <div class="listitem">
-                <h3>There are 0 drafts.</h3>
-              </div>
-              {% else %}
-              {% for post in current_page %}
-              <div class="listitem">
-                <div class="contentitem" data-url="{{ post.get_absolute_url }}">
-                  <div class="contentitem-item">
-                    <a href="{{ post.get_absolute_url }}edit">{{ post.title }}</a>
-                  </div>
-                  <div class="contentitem-item">
-                    {{ post.content|truncatewords:100|linebreaks }}
-                  </div>
-                  <div class="contentitem-item contentitem-item-flex last">
-                    <button type="button" class="button button--plain spaceright--small js-draft-publish">Publish</button>
-                    <button type="button" class="button button--plain spaceright--small js-draft-delete">Delete</button>
-                    <a href="{{ post.get_absolute_url }}edit" class="spaceright--small">Edit</a>
-                    <span>{{ post.date_edited }}</span>
-                  </div>
-                </div>
-              </div>
-              {% endfor %}
-
-              <div class="pagination">
-                {% if current_page.has_previous %}
-                <a href="?page={{ current_page.previous_page_number }}" class="pagination__link" ><span class="fa fa-angle-double-left" aria-hidden="true"></span></a>
-                {% endif %}
-                {% for i in current_page.paginator.page_range %}
-                {% if current_page.number == i %}
-                <span class="pagination__link pagination__link--active">{{ i }}</span>
-                {% else %}
-                <a href="?page={{ i }}" class="pagination__link">{{ i }}</a>
-                {% endif %}
-                {% endfor %}
-                {% if current_page.has_next %}
-                <a class="pagination__link" href="?page={{ current_page.next_page_number }}"><span class="fa fa-angle-double-right" aria-hidden="true"></span></a>
-                {% endif %}
-              </div>
-
-            {% endif %}
-          </div>
-
-        </div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<div class="col-sm-3">
+<div class="container">
   <div class="card">
-    <div class="card__header">
-      <div class="card__headerinner">
-        <h2>Header</h2>
+      <div class="card__header">
+        <div class="card__headerinner card__headerflex">
+          <button type="button" class="button button--plain js-profile-wrapper-get"><span class="fa fa-angle-left icon--left" aria-hidden="true"></span></button>
+          <h2>{{ drafts_count }} Drafts</h2>
+        </div>
+      </div>
+
+      <div class="card__body">
+        <div class="listitem">
+          <a href="{% url 'posts:post_create' %}" class="link--blue"><span class="fa fa-pencil-square-o icon--left" aria-hidden="true"></span>Create</a>
+        </div>
+
+        {% if drafts_count == 0 %}
+        <div class="listitem">
+          <h3>There are 0 drafts.</h3>
+        </div>
+        {% else %}
+        {% for post in current_page %}
+        <div class="listitem">
+          <div class="contentitem" data-url="{{ post.get_absolute_url }}">
+            <div class="contentitem-item">
+              <a href="{{ post.get_absolute_url }}edit">{{ post.title }}</a>
+            </div>
+            <div class="contentitem-item">
+              {{ post.content|truncatewords:100|linebreaks }}
+            </div>
+            <div class="contentitem-item contentitem-item-flex last">
+              <button type="button" class="button button--plain spaceright--small js-draft-publish">Publish</button>
+              <button type="button" class="button button--plain spaceright--small js-draft-delete">Delete</button>
+              <a href="{{ post.get_absolute_url }}edit" class="spaceright--small">Edit</a>
+              <span>{{ post.date_edited }}</span>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+
+        <div class="pagination">
+          {% if current_page.has_previous %}
+          <a href="?page={{ current_page.previous_page_number }}" class="pagination__link" ><span class="fa fa-angle-double-left" aria-hidden="true"></span></a>
+          {% endif %}
+          {% for i in current_page.paginator.page_range %}
+          {% if current_page.number == i %}
+          <span class="pagination__link pagination__link--active">{{ i }}</span>
+          {% else %}
+          <a href="?page={{ i }}" class="pagination__link">{{ i }}</a>
+          {% endif %}
+          {% endfor %}
+          {% if current_page.has_next %}
+          <a class="pagination__link" href="?page={{ current_page.next_page_number }}"><span class="fa fa-angle-double-right" aria-hidden="true"></span></a>
+          {% endif %}
+        </div>
+
+      {% endif %}
       </div>
     </div>
   </div>
 </div>
-</div>
-</div>
-
-{% endblock profile %}
+{% endblock body %}
 
 {% block javascript %}
-{{ block.super }}
 <script src="{% static "js/profile_draft.js" %}"></script>
 {% endblock javascript %}

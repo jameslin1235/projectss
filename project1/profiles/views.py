@@ -1,95 +1,67 @@
+import base64
+import os
 from django.contrib import messages
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import get_user_model
-from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count
 from django.utils import timezone
-from project1.project1.posts.models import Post
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
-from project1.project1.comments.models import Comment
+from project1.project1.posts.models import Post
 from .models import Profile, Follow
 from project1.project1.posts.forms import PostForm
-from project1.project1.comments.forms import CommentForm
-from .forms import ProfileForm, ProfileAvatarForm
+from .forms import ProfileForm, ProfileAvatarForm, ProfileBackgroundForm
 from project1.project1.config import utility
 from PIL import Image
-import base64
-import os
+
 
 # Create your views here.
 def profile_activity(request,id,slug):
     if request.method == "GET":
         user = get_object_or_404(get_user_model(), id = id)
-        current_user = request.user
         context = {}
-        user_status = utility.get_user_status(user,current_user)
-        context['user_status'] = user_status
-        if user_status != "self":
-            context['user_follow_status'] = utility.get_user_follow_status(user,current_user,user_status)
         context['user_profile_status'] = user.profile.get_profile_status()
         if not user.profile.get_profile_status():
             context['user_profile_fields'] = user.profile.get_profile_fields()
         context['user'] = user
         context['title'] = "Activity"
         context['posts_count'] = user.profile.get_posts_count()
-        context['drafts_count'] = user.profile.get_drafts_count()
         template = "profile_activity.html"
         return render(request,template,context)
 
-
-def profile_drafts(request,id,slug):
+@login_required
+def profile_drafts(request):
     if request.method == "GET":
-        user = get_object_or_404(get_user_model(), id = id)
-        current_user = request.user
         context = {}
-        user_status = utility.get_user_status(user,current_user)
-        if user_status == "self":
-            context['user_status'] = user_status
-            if user_status != "self":
-                context['user_follow_status'] = utility.get_user_follow_status(user,current_user,user_status)
-            context['user_profile_status'] = user.profile.get_profile_status()
-            if not user.profile.get_profile_status():
-                context['user_profile_fields'] = user.profile.get_profile_fields()
-            context['user'] = user
-            context['posts_count'] = user.profile.get_posts_count()
-            context['drafts_count'] = user.profile.get_drafts_count()
-            if user.profile.get_drafts_count() != 0:
-                context['drafts'] = user.profile.get_drafts()
-                paginator = Paginator(user.profile.get_drafts(), 10) # Show 25 contacts per page
-                page = request.GET.get('page')
-                try:
-                    current_page = paginator.page(page)
-                except PageNotAnInteger:
-                    # If page is not an integer, deliver first page.
-                    current_page = paginator.page(1)
-                except EmptyPage:
-                    # If page is out of range (e.g. 9999), deliver last page of results.
-                    current_page = paginator.page(paginator.num_pages)
-                context['current_page'] = current_page
-            template = "profile_drafts.html"
-            return render(request,template,context)
-        else:
-            raise PermissionDenied
+        context['drafts_count'] = request.user.profile.get_drafts_count()
+        if request.user.profile.get_drafts_count() != 0:
+            context['drafts'] = request.user.profile.get_drafts()
+            paginator = Paginator(request.user.profile.get_drafts(), 10) # Show 25 contacts per page
+            page = request.GET.get('page')
+            try:
+                current_page = paginator.page(page)
+            except PageNotAnInteger:
+                # If page is not an integer, deliver first page.
+                current_page = paginator.page(1)
+            except EmptyPage:
+                # If page is out of range (e.g. 9999), deliver last page of results.
+                current_page = paginator.page(paginator.num_pages)
+            context['current_page'] = current_page
+        template = "profile_drafts.html"
+        return render(request,template,context)
 
 def profile_posts(request,id,slug):
     if request.method == "GET":
         user = get_object_or_404(get_user_model(), id = id)
-        current_user = request.user
         context = {}
-        user_status = utility.get_user_status(user,current_user)
-        context['user_status'] = user_status
-        if user_status != "self":
-            context['user_follow_status'] = utility.get_user_follow_status(user,current_user,user_status)
         context['user_profile_status'] = user.profile.get_profile_status()
         if not user.profile.get_profile_status():
             context['user_profile_fields'] = user.profile.get_profile_fields()
         context['user'] = user
-        context['drafts_count'] = user.profile.get_drafts_count()
         context['posts_count'] = user.profile.get_posts_count()
         if user.profile.get_posts_count() != 0:
             context['posts'] = user.profile.get_posts()
@@ -110,12 +82,10 @@ def profile_posts(request,id,slug):
 @login_required
 def profile_edit(request):
     if request.method == "GET":
-        current_user = request.user
         context = {}
-        profile = current_user.profile
-        context['form'] = ProfileForm(instance = profile)
-        context['profile_avatar_form'] = ProfileAvatarForm(instance = profile)
-        context['user'] = current_user
+        context['form'] = ProfileForm(instance = request.user.profile)
+        context['profile_avatar_form'] = ProfileAvatarForm()
+        context['profile_background_form'] = ProfileBackgroundForm()
         return render(request,"profile_edit.html",context)
     elif request.method == "POST":
         form = ProfileForm(request.POST,instance=request.user.profile)
@@ -128,44 +98,46 @@ def profile_edit(request):
             context['form'] = form
             return render(request,"profile_edit.html",context)
 
-
+@login_required
 def profile_edit_avatar(request):
-    if request.method == "POST" and request.is_ajax():
-        dataurl = request.POST['dataurl']
-        filename = request.POST['filename']
-        if request.user.profile.avatar.name != "default/avatar.jpg":
-            request.user.profile.avatar.delete(save=False)
-        decoded = base64.b64decode(dataurl)
-        path = os.path.join(settings.MEDIA_ROOT, "users/%s/%s" % (request.user.username,filename))
-        with open(path, "wb") as f:
-            f.write(decoded)
-        request.user.profile.avatar = "users/%s/%s" % (request.user.username,filename)
-        request.user.profile.save()
-        response = {}
-        response['profile_avatar_url'] = request.user.profile.avatar.url
-        return JsonResponse(response)
+    if request.method == "GET":
+        raise PermissionDenied
+    elif request.method == "POST":
+        form = ProfileAvatarForm(request.POST)
+        if form.is_valid():
+            dataurl = form.cleaned_data.get("avatar_dataurl")
+            filename = form.cleaned_data.get("avatar_filename")
+            if request.user.profile.avatar.name != "default/avatar.jpg":
+                request.user.profile.avatar.delete(save=False)
+            decoded = base64.b64decode(dataurl)
+            path = os.path.join(settings.MEDIA_ROOT, "users/%s/%s" % (request.user.username,filename))
+            with open(path, "wb") as f:
+                f.write(decoded)
+            request.user.profile.avatar = "users/%s/%s" % (request.user.username,filename)
+            request.user.profile.save()
+            return redirect("profiles:profile_edit")
 
+@login_required
 def profile_edit_background(request):
-    if request.method == "POST" and request.is_ajax():
-        dataurl = request.POST['dataurl']
-        filename = request.POST['filename']
-        if request.user.profile.background.name != "default/background.jpg":
-            request.user.profile.background.delete(save=False)
-        decoded = base64.b64decode(dataurl)
-        path = os.path.join(settings.MEDIA_ROOT, "users\%s\%s" % (request.user.username,filename))
-        with open(path, "wb") as f:
-            f.write(decoded)
-        request.user.profile.background = "users\%s\%s" % (request.user.username,filename)
-        request.user.profile.save()
-        response = {}
-        response['profile_background_url'] = request.user.profile.background.url
-        return JsonResponse(response)
+    if request.method == "GET":
+        raise PermissionDenied
+    elif request.method == "POST":
+        form = ProfileBackgroundForm(request.POST)
+        if form.is_valid():
+            dataurl = form.cleaned_data.get("background_dataurl")
+            filename = form.cleaned_data.get("background_filename")
+            if request.user.profile.background.name != "default/background.jpg":
+                request.user.profile.background.delete(save=False)
+            decoded = base64.b64decode(dataurl)
+            path = os.path.join(settings.MEDIA_ROOT, "users/%s/%s" % (request.user.username,filename))
+            with open(path, "wb") as f:
+                f.write(decoded)
+            request.user.profile.background = "users/%s/%s" % (request.user.username,filename)
+            request.user.profile.save()
+            return redirect("profiles:profile_edit")
 
 
 
-
-def demo(request):
-        return render(request,"demo.html")
 
 
 

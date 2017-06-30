@@ -1,30 +1,59 @@
-from django.contrib import messages
-from django.shortcuts import render, redirect
-from .forms import RegisterForm
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth import authenticate, login, logout
+from .forms import UserForm, LoginForm
+
 # Create your views here.
-
-def register(request):
-    title = "Register"
-    button_text = "Register"
-    if request.method == "POST":
-        form = RegisterForm(request.POST)
-
+def signup_view(request):
+    if request.method == "GET":
+        if request.user.is_authenticated():
+            return redirect("home")
+        else:
+            context = {}
+            form = UserForm()
+            context['form'] = form
+            context['title'] = "Sign up for Viz"
+            return render(request,"accounts/signup.html",context)
+    elif request.method == "POST":
+        form = UserForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
+            username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             user.set_password(password)
             user.save()
-            messages.success(request, 'User created.')
-            return redirect('login')
-        # else:
+            user = authenticate(username=username,password=password)
+            if user is not None:
+                login(request, user)
+                return redirect("home")
 
-    else:
-        form = RegisterForm()
+def login_view(request):
+    if request.method == "GET":
+        if request.user.is_authenticated():
+            return redirect("home")
+        else:
+            context = {}
+            form = LoginForm()
+            context['form'] = form
+            context['title'] = "Log in To Viz"
+            return render(request,"accounts/login.html",context)
+    elif request.method == "POST":
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username,password=password)
+            if user is not None:
+                login(request, user)
+                if request.GET.get('next'):
+                    return redirect(request.GET.get('next'))
+                else:
+                    return redirect("home")
 
-    context = {
-        "title":title,
-        "button_text":button_text,
-        "form":form,
-    }
 
-    return render(request,"registration/register.html",context)
+def logout_view(request):
+    if request.method == "GET":
+        if request.user.is_authenticated():
+            logout(request)
+            return redirect("login")
+        else:
+            return redirect("home")

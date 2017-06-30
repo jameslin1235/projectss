@@ -1,7 +1,6 @@
 <div class="modal">
   <div class="modal__wrapper">
-    <button type="button" class="button button--close modal__close js-modal-close"><span class="fa fa-times" aria-hidden="true"></span></button>
-
+    <button type="button" class="button button--modalclose js-modal-close"><span class="fa fa-times" aria-hidden="true"></span></button>
     <div class="modal__header">
       <h3>Edit Avatar</h3>
     </div>
@@ -9,7 +8,10 @@
       <canvas class="modal__canvas" id="modal__canvas" width="150" height="150"></canvas>
     </div>
     <div class="modal__footer">
-      <button type="button" class="button button--blue button--primary js-profile-avatar-submit">Save</button>
+      <div class="modal__buttongroup">
+      <button type="button" class="button button--plain js-modal-close spaceright--small">Cancel</button>
+      <button type="button" id="js-profile-avatar-submit" class="button button--blue button--primary">Save</button>
+    </div>
     </div>
   </div>
 </div>

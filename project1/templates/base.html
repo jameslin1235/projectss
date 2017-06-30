@@ -26,45 +26,38 @@
     <nav class="navbar">
       <div class="container">
       <div class="navbar__header">
-        <div class="navbar__logo"><a href="{% url 'post_list' %}"><span class="fa fa-vimeo fa-2x" aria-hidden="true"></span></a></div>
+        <div class="navbar__logo"><a href="{% url 'home' %}"><span class="fa fa-vimeo fa-2x" aria-hidden="true"></span></a></div>
         <div class="navbar__dropdown-toggle js-navbar-dropdown-toggle"><span class="fa fa-bars fa-2x" aria-hidden="true"></span></div>
       </div>
 
       <div class="navbar__vertical hidden">
         <ul class="navbar__vertical-flex">
           {% if request.user.is_authenticated %}
-          <li><a id="profile_get_url" href="{% url 'profiles:profile_activity' id=request.user.id slug=request.user.profile.slug %}">Profile</a></li>
-          <li><a href="{% url 'logout' %}">Settings</a></li>
+          <li><a href="{% url 'profiles:profile_activity' id=request.user.id slug=request.user.profile.slug %}">Profile</a></li>
+
           <li><a href="{% url 'logout' %}">Log out</a></li>
           {% else %}
           <li><a href="{% url 'login' %}">Log in</a></li>
-          <li><a href="{% url 'accounts:register' %}">Register</a></li>
+          <li><a href="{% url 'signup' %}">Sign up</a></li>
           {% endif %}
         </ul>
       </div>
 
       <div class="navbar__horizontal hidden">
-        <div class="navbar__logo"><a href="{% url 'post_list' %}"><span class="fa fa-vimeo fa-2x" aria-hidden="true"></span></a></div>
+        <div class="navbar__logo"><a href="{% url 'home' %}"><span class="fa fa-vimeo fa-2x" aria-hidden="true"></span></a></div>
         <ul class="navbar__horizontal-flex">
           {% if request.user.is_authenticated %}
-          <li><a id="profile_get_url" href="{% url 'profiles:profile_activity' id=request.user.id slug=request.user.profile.slug %}">Profile</a></li>
-          <li><a href="{% url 'logout' %}">Settings</a></li>
+          <li><a href="{% url 'profiles:profile_activity' id=request.user.id slug=request.user.profile.slug %}">Profile</a></li>
+
           <li><a href="{% url 'logout' %}">Log out</a></li>
           {% else %}
           <li><a href="{% url 'login' %}">Log in</a></li>
-          <li><a href="{% url 'accounts:register' %}">Register</a></li>
+          <li><a href="{% url 'signup' %}">Sign up</a></li>
           {% endif %}
         </ul>
       </div>
     </div>
     </nav>
-
-
-
-  <div id="logged-in" {% if logged_in %}data-logged-in="true"{% else %}data-logged-in="false"{% endif %} style="display: none;">
-  </div>
-  <div id="user-status" data-user-status="{{user_status}}"></div>
-
   {% block body %}
 
   {% endblock body %}
@@ -78,7 +71,6 @@
   <script src="{% static "js/base.js" %}"></script>
   {% block javascript %}
 
-  {% endblock %}
-
+  {% endblock javascript %}
 </body>
 </html>

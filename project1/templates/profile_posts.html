@@ -1,10 +1,8 @@
-
 {% extends "profile_base.html" %}
 {% load static %}
+
 {% block profile %}
-
-
-<div class="container profile-body">
+<div class="container">
   <div class="row">
     <div class="col-sm-9">
       <div class="row">
@@ -14,33 +12,30 @@
               <div class="card__headerinner">
                 <h2>Feeds</h2>
               </div>
-
             </div>
             <ul class="card__nav">
-              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_activity' id=user.profile.id slug=user.profile.slug  %}" role="tab" class="js-profile-hide">Activity</a></li>
-              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_posts' id=user.profile.id slug=user.profile.slug  %}" role="tab" >Posts <span>{{ posts_count }}</span></a></li>
-              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_drafts' id=user.profile.id slug=user.profile.slug  %}" role="tab" >Drafts <span>{{ drafts_count }}</span></a></li>
-              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_comments' id=user.profile.id slug=user.profile.slug  %}" role="tab">Comments</a></li>
-              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_bookmarks' id=user.profile.id slug=user.profile.slug  %}" role="tab">Bookmark</a></li>
-              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_following' id=user.profile.id slug=user.profile.slug  %}" role="tab">Following</a></li>
-              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_followers' id=user.profile.id slug=user.profile.slug  %}" role="tab">Followers</a></li>
+              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug  %}" role="tab">Activity</a></li>
+              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" role="tab" >Posts <span>{{ posts_count }}</span></a></li>
+              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_comments' id=user.id slug=user.profile.slug  %}" role="tab">Comments</a></li>
+              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_bookmarks' id=user.id slug=user.profile.slug  %}" role="tab">Bookmark</a></li>
+              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_following' id=user.id slug=user.profile.slug  %}" role="tab">Following</a></li>
+              <li role="presentation" class="card__navitem"><a href="{% url 'profiles:profile_followers' id=user.id slug=user.profile.slug  %}" role="tab">Followers</a></li>
             </ul>
           </div>
         </div>
-
-        <div class="col-sm-9 profile-content">
+        <div class="col-sm-9">
           <div class="card">
             <div class="card__header">
-              <div class="card__headerinner profile-activity-header">
+              <div class="card__headerinner card__headerflex">
                 <button type="button" class="button button--plain js-profile-wrapper-get"><span class="fa fa-angle-left icon--left" aria-hidden="true"></span></button>
                 <h2>{{ posts_count }} Posts</h2>
               </div>
             </div>
             <div class="card__body">
-              {% if user_status == "self" %}
-                <div class="listitem">
-                  <a href="{% url 'posts:post_create' %}" class="link--blue"><span class="fa fa-pencil-square-o icon--left" aria-hidden="true"></span>Create</a>
-                </div>
+              {% if request.user == user %}
+              <div class="listitem">
+                <a href="{% url 'posts:post_create' %}" class="link--blue"><span class="fa fa-pencil-square-o icon--left" aria-hidden="true"></span>Create</a>
+              </div>
               {% endif %}
 
               {% if posts_count == 0 %}
@@ -56,38 +51,31 @@
                   </div>
                   <div class="contentitem-item contentitem-item-flex">
                     <div class="avatar--small spaceright--large">
-                      <a class="avatar__action" href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug %}"></a>
-                      <img class="img--cover imgborder--small" src="{{ user.profile.avatar.url }}">
+                      <a class="avatar__action" href="{% url 'profiles:profile_activity' id=post.user.id slug=post.user.profile.slug %}"></a>
+                      <img class="img--cover imgborder--small" src="{{ post.user.profile.avatar.url }}">
                     </div>
-
                     <div>
                       <div>
-                        <a href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug %}">{{ user.username }}</a>
+                        <a href="{% url 'profiles:profile_activity' id=post.user.id slug=post.user.profile.slug %}">{{ post.user.username }}</a>
                       </div>
                       <div>
-                        <span >banking</span>
+                        {% if post.user.profile.credential %}<span>{{ post.user.profile.credential }}</span>{% endif %}
                       </div>
                     </div>
                   </div>
-
-                  <!-- <div class="contentitem-item">
-                    <button type="button"><span>{{post.likes}} people liked this post.</span></button>
-                  </div> -->
                   <div class="contentitem-item">
-                    <div>{{ post.content|truncatewords:100|linebreaks }}</div>
+                    <div>{{ post.content }}</div>
                   </div>
                   <div class="contentitem-item">
                     <a href="{{ post.get_absolute_url }}">Published {{ post.date_published }}</a>
                   </div>
-
-                  {% if user_status == "self" %}
+                  {% if request.user == user %}
                   <div class="contentitem-item contentitem-item-flex last">
                     <button type="button" class="button button--plain spaceright--small js-post-delete">Delete</button>
                     <a href="{{ post.get_absolute_url }}edit" class="spaceright--small">Edit</a>
                   </div>
                   {% endif %}
                 </div>
-
               </div>
               {% endfor %}
               <div class="pagination">
@@ -108,11 +96,9 @@
               {% endif %}
             </div>
           </div>
-
         </div>
       </div>
     </div>
-
     <div class="col-sm-3">
       <div class="card">
         <div class="card__header">
@@ -124,7 +110,6 @@
     </div>
   </div>
 </div>
-
 {% endblock profile %}
 
 {% block javascript %}

@@ -1,5 +1,6 @@
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from project1.project1.profiles.models import Profile
+from project1.project1.accounts.forms import UserForm
 from django.shortcuts import render
 
 def paginate(*args):
@@ -103,6 +104,8 @@ def get_user_status(user,current_user):
     user_status = ["self" if current_user == user else "user" if current_user.is_authenticated else "anonymous"]
     return user_status[0]
 
+
+
 # def get_logged_in_status (current_user):
 #     logged_in_status = [True if current_user.is_authenticated else False]
 #     return logged_in_status[0]
@@ -131,7 +134,7 @@ def get_user_follow_status(user,current_user,user_status):
 #     fields_values_dict = fields_values[0]
 #     user_profile_status  = [True if fields_values_dict else False]
 #     return user_profile_status[0]
-# 
+#
 # def get_user_profile_fields(user):
 #     fields_names = [field.name for field in Profile._meta.get_fields() if field.name.startswith("profile_")]
 #     fields_values = Profile.objects.filter(id=user.id).values(*fields_names)
@@ -203,6 +206,13 @@ def get_modal(request):
         template = request.GET.get("template")
         return render(request,template)
 
+def get_login_modal(request):
+    if request.method == "GET" and request.is_ajax():
+        form = UserForm()
+        context = {}
+        context['form'] = form
+        template = "login_modal.html"
+        return render(request,template,context)
 
 def get_alert(request):
     if request.method == "GET" and request.is_ajax():

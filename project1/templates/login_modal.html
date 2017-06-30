@@ -14,3 +14,62 @@
     </div>
   </div>
 </div>
+
+<div class="modal">
+  <div class="modal__wrapper">
+    <button type="button" class="button button--modalclose js-modal-close"><span class="fa fa-times" aria-hidden="true"></span></button>
+    <div class="modal__header">
+      <h3>Join Vimeo today.</h3>
+    </div>
+    <div class="modal__body">
+      <div class="form">
+        <form method="post" action="">
+          {% csrf_token %}
+          <div class="formfield">
+            {{ form.title.errors }}
+            <div class="formfield__label">
+              <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+            </div>
+            <div class="formfield__input ">
+              {{ form.title|add_class:"js-add-focus"|attr:"placeholder:Title"  }}
+            </div>
+          </div>
+
+          <div class="formfield">
+            {{ form.content.errors }}
+            <div class="formfield__label">
+              <label for="{{ form.content.id_for_label }}">{{ form.content.label }}</label>
+            </div>
+            <div class="formfield__input ">
+              {{ form.content|attr:"rows:3"|attr:"cols:20"|add_class:"js-add-focus"|attr:"placeholder:Content" }}
+            </div>
+          </div>
+
+          <div class="formfield">
+            {{ form.topic.errors }}
+            <div class="formfield__label">
+              <label for="{{ form.topic.id_for_label }}">{{ form.topic.label }}</label>
+            </div>
+            <div class="formfield__noninput">
+              {{ form.topic }}
+            </div>
+          </div>
+
+          <button type="submit" class="button button--blue button--primary">Save</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal__body">
+
+    </div>
+
+
+    <div class="modal__footer">
+      <div class="modal__buttongroup">
+        <button type="button" class="button button--plain js-modal-close spaceright--small">Cancel</button>
+        <a href="#" class="link--blue link--primary" id="js-post-delete-link">Delete</a>
+      </div>
+    </div>
+  </div>
+</div>

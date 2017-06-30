@@ -223,6 +223,11 @@ input:focus {
   padding: 15px 0;
 }
 
+.card__headerflex{
+  display: flex;
+  align-items: center;
+}
+
 .card__body{
   position: relative;
   padding:30px 15px;

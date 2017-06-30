@@ -1,5 +1,4 @@
-
-<div class="container profile-header">
+<div class="container">
   <div class="card">
     <div class="card__background">
       <img src="{{ user.profile.background.url }}" class="img--cover" alt="Profile Background">
@@ -22,7 +21,7 @@
         </div>
         {% else %}
 
-        <div class="card__contentitem contentitem profile-brief">
+        <div id="profile-brief" class="card__contentitem contentitem">
           {% for field in user_profile_fields %}
           {% if field.0 == "gender" %}
           <div class="contentitem-item">
@@ -46,7 +45,7 @@
           {% endfor %}
         </div>
 
-        <div class="card__contentitem contentitem profile-info hidden">
+        <div id="profile-info" class="card__contentitem contentitem hidden">
           {% for field in user_profile_fields %}
           <div class="contentitem-item {% if forloop.last %} last {% endif %}">
             <span>{{ field.0|capfirst }}</span>
@@ -57,26 +56,21 @@
 
 
         <div class="card__contentitem profile-action">
-          <button type="button" class="button button--plain js-profile-info-toggle"><span class="fa fa-angle-down icon icon--left js-profile-info-toggle-icon" aria-hidden="true"></span><span class="js-profile-info-toggle-text">Show</span></button>
+          <button type="button" id="js-profile-info-toggle" class="button button--plain"><span id="js-profile-info-toggle-icon" class="fa fa-angle-down icon icon--left" aria-hidden="true"></span><span id="js-profile-info-toggle-text">Show</span></button>
         </div>
-
         {% endif %}
 
-
-
-
-        {% if user_status == "self" %}
+        {% if request.user == user %}
         <div class="card__buttongroup">
           <a href="{% url 'profiles:profile_edit' %}" class="link--blue">Edit</a>
         </div>
         {% endif %}
 
-        {% if user_status != "self" %}
+        <!-- {% if user_status != "self" %}
         <div class="card__buttongroupabs">
           <button type="button" class="button button--blue"><span class="fa fa-plus" aria-hidden="true"></span> {{ user_follow_status }}</button>
         </div>
-        {% endif %}
-
+        {% endif %} -->
       </div>
     </div>
   </div>

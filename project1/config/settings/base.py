@@ -32,11 +32,11 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'widget_tweaks',
+
     'project1.project1.accounts.apps.AccountsConfig',
-    'project1.project1.categories.apps.CategoriesConfig',
     'project1.project1.posts.apps.PostsConfig',
     'project1.project1.profiles.apps.ProfilesConfig',
-    'project1.project1.comments.apps.CommentsConfig',
+    'project1.project1.topics.apps.TopicsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -134,8 +134,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'project1/static_root')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'project1\media')
 
-LOGIN_REDIRECT_URL = '/posts/'
 
 LOGIN_URL = '/login/'
-
-LOGOUT_REDIRECT_URL = LOGIN_URL

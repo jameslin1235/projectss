@@ -2,273 +2,44 @@
 {% load static %}
 {% load widget_tweaks %}
 
-{% block title %}{{ post.title }}{% endblock title %}
-
 {% block body %}
-<section >
-  <div class='container'>
-    <div class="row">
-      <div class="col-md-12">
-        <div class="section">
-          <div class="thumbnail post_container" data-url={{post.get_absolute_url}}>
-            <div class="caption">
-              <div class="post_category_container"><a href="{{ post.category.get_absolute_url }}">{{ post.category }}</a></div>
-              <div class="post_title_container"><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></div>
-              <div class="post_author_container">
-                <div class="media">
-                  <div class="media-left">
-                    <a href="{% url 'profiles:profile_activity' id=post.user.id slug=post.user.profile.slug %}">
-                      <img class="media-object profile_avatar" src="{{post.user.profile.avatar.url}}" >
-                    </a>
-                  </div>
-                  <div class="media-body">
-                    <h4 class="media-heading"><a href="{% url 'profiles:profile_activity' id=post.user.id slug=post.user.profile.slug %}">{{ post.user.username }}</a></h4>
-                  </div>
-                </div>
-              </div>
-              <div class="post_likers_container">
-                <button type="button" class="btn btn-link post_likers_button">{{post.likes}} people liked this post.</button>
-              </div>
-              <div class="post_content_container">{{ post.content }}</div>
-              <div class="post_date_container"><a href="{{ post.get_absolute_url }}" data-toggle="tooltip" data-placement="top" title="{{post.date_published}}">Edited {{ post.date_edited }}</a></div>
-              <div class="post_buttons_container">
-                <button type="button" class="btn {% if liked == True %}btn-primary{%else%}btn-link{%endif%} post_like_button" {% if user_status == "self" %}disabled="disabled"{% endif %}><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> <span class="post_likes_count">{{ post.likes }}</span></button>
-                <button type="button" class="btn {% if disliked == True %}btn-primary{%else%}btn-link{%endif%} post_dislike_button" {% if user_status == "self" %}disabled="disabled"{% endif %}><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> <span class="post_dislikes_count">{{ post.dislikes }}</span></button>
-                <button type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
-                sagittis lacus vel augue laoreet rutrum faucibus."><span class="glyphicon glyphicon-share" aria-hidden="true"></span> Share</button>
-              </div>
+<div class="container">
+  <div class="card">
+    <div class="card__body">
+      <div class="contentitem" data-url="{{ post.get_absolute_url }}">
+        <div class="contentitem-item">
+          <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+        </div>
+        <div class="contentitem-item contentitem-item-flex">
+          <div class="avatar--small spaceright--large">
+            <a class="avatar__action" href="{% url 'profiles:profile_activity' id=post.user.id slug=post.user.profile.slug %}"></a>
+            <img class="img--cover imgborder--small" src="{{ post.user.profile.avatar.url }}">
+          </div>
+          <div>
+            <div>
+              <a href="{% url 'profiles:profile_activity' id=post.user.id slug=post.user.profile.slug %}">{{ post.user.username }}</a>
+            </div>
+            <div>
+              {% if post.user.profile.credential %}<span>{{ post.user.profile.credential }}</span>{% endif %}
             </div>
           </div>
         </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12">
-        <div class="section">
-          {% include "post_detail_page.html" %}
+        <div class="contentitem-item">
+          <div>{{ post.content }}</div>
+        </div>
+        <div class="contentitem-item">
+          <a href="{{ post.topic.get_absolute_url }}">{{ post.topic }}</a>
+        </div>
+        <div class="contentitem-item">
+          <a href="{{ post.get_absolute_url }}">Published {{ post.date_published }}</a>
+        </div>
+        <div class="contentitem-item">
+
+          <button type="button" class="button button--plain"><span class="fa fa-thumbs-o-up spaceright--small" aria-hidden="true"></span>{{ post.likes }}</button>
+
         </div>
       </div>
     </div>
   </div>
-</section>
-
+</div>
 {% endblock body %}
-
-{% block javascript %}
-<script>
-
-
-  // Feature 1 Close login modal
-  $(document).on('click', '#login_modal_close_button', function(event) {
-    event.preventDefault();
-    $('#login_modal').modal('hide');
-  });
-
-  // Feature 2 Remove login modal once it is hidden
-  $(document).on('hidden.bs.modal', '#login_modal', function(event) {
-    event.preventDefault();
-    var element = $(this);
-    $(element).remove();
-  });
-
-  // Feature 3 Get and open post likers modal
-  $(document).on('click', '.post_likers_button', function(event) {
-    event.preventDefault();
-    var element = $(this);
-    var url = $(element).parents(".post_container").attr("data-url");
-    $.ajax({     // ajax GET to get and open post likers modal
-      url: url + "likers",
-      success:function(data) {
-        $("body").append(data);
-        $("#post_likers_modal").modal();
-      }});
-    });
-
-    // Feature 4 Close post likers modal
-    $(document).on('click', '#post_likers_modal_close_button', function(event) {
-      event.preventDefault();
-      $('#post_likers_modal').modal('hide');
-    });
-
-    // Feature 5 Remove post likers modal once it is hidden
-    $(document).on('hidden.bs.modal', '#post_likers_modal', function(event) {
-      event.preventDefault();
-      var element = $(this);
-      $(element).remove();
-    });
-
-    // Feature 6 Get more post likers
-    $(document).on('click', '#post_likers_more_button', function() {
-      event.preventDefault();
-      var element = $(this);
-      var url = $(".post_container").attr("data-url");
-      var nextpage = $("#post_likers_more_container").attr("data-nextpage");
-
-      $.ajax({     // ajax GET to get next page of post likers
-        url: url + "likers/?page=" + nextpage,
-        success:function(data) {
-          $("#post_likers_more_container").remove();
-          $("#post_likers_modal_body").append(data);
-        }});
-      });
-
-      // Feature 7 Post likers modal follow buttons
-      $(document).on('click','.post_likers_modal_follow_button',function(){
-        event.preventDefault();
-        var element = $(this);
-        var url= $(element).parents(".post_likers_modal_profile_container").attr("data-url");
-        if ($("#logged_in").data("logged-in")== true) {
-          $.ajax({
-            url: url + "follow",  // ajax GET to follow/unfollow a profile
-            success:function(data) {
-              $(element).html(data.message);
-              $.ajax({  // ajax GET to get profile followers count
-                url: url + "followerscount",
-                success:function(data) {
-                  $(element).parents(".post_likers_modal_profile_container").find(".post_likers_modal_followers_count").html(data.profile_followers_count + " Followers");
-                }});
-              }});
-            }
-            else{
-              get_login_modal();
-            }
-          });
-
-          // Feature 8 Post likers modal follow buttons mouseenter effect
-          $(document).on('mouseenter','.post_likers_modal_follow_button',function(){
-            event.preventDefault();
-            var element = $(this);
-            if ($("#logged_in").data("logged-in")== true){
-              if ($(element).html() == "Followed") {
-                $(element).html("Unfollow");
-              }
-            }
-            else{
-              event.preventDefault();
-            }
-          });
-
-          // Feature 9 Post likers modal follow buttons mouseleave effect
-          $(document).on('mouseleave','.post_likers_modal_follow_button',function(){
-            event.preventDefault();
-            var element = $(this);
-            if ($("#logged_in").data("logged-in")== true){
-              if ($(element).html() == "Unfollow") {
-                $(element).html("Followed");
-              }
-            }
-            else{
-              event.preventDefault();
-            }
-          });
-
-          // Feature 10 Like post
-          $(document).on('click', '.post_like_button', function(event) {
-            event.preventDefault();
-            var element = $(this);
-            var url = $(element).parents(".post_container").attr("data-url");
-            if ($("#logged_in").data("logged-in")== true) {
-              $.ajax({  // ajax GET to like post
-                url:url + "like",
-                success:function(data) {
-                  status = data.status;
-                  if (status == "unliked") {
-                    $(element).attr("class","btn btn-link");
-                  }
-                  else{
-                    $(element).attr("class","btn btn-primary");
-                  }
-                  $(".post_likes_count").html(data.likes_count);
-                  $(".post_likers_button").html(data.likes_count+" people liked this post.");
-
-                }
-              })
-            }
-            else{
-              get_login_modal();
-            }
-          });
-
-          // Feature 11 Dislike post
-          $(document).on('click', '.post_dislike_button', function(event) {
-            event.preventDefault();
-            var element = $(this);
-            var url = $(element).parents(".post_container").attr("data-url");
-            if ($("#logged_in").data("logged-in")== true) {
-              $.ajax({  // ajax GET to dislike post
-                url:url + "dislike",
-                success:function(data) {
-                  status = data.status;
-                  if (status == "undisliked") {
-                    $(element).attr("class","btn btn-link");
-                  }
-                  else{
-                    $(element).attr("class","btn btn-primary");
-                  }
-                  $(".post_likes_count").html(data.dislikes_count);
-                }
-              })
-            }
-            else{
-              get_login_modal();
-            }
-          });
-
-          // Feature 12 Open comment form buttons or modal
-          $(document).on('click', '.comment_form_textfield', function(event) {
-            event.preventDefault();
-            if ($("#logged_in").data("logged-in")== true) {
-              $(".comment_form_collapse").collapse("show");
-            }
-            else{
-              get_login_modal();
-            }
-          });
-
-          // Feature 13 Close comment form buttons
-          $(document).on('click', '.comment_form_close_button', function(event) {
-            event.preventDefault();
-            $(".comment_form_collapse").collapse("hide");
-          });
-
-          // Feature 14 Comment form
-          $(document).on('submit', '.comment_form', function(event) {
-            event.preventDefault();
-            var element = $(this);
-            var method = $(element).attr('method');
-            var url = $(element).attr('action');
-
-            $.ajax({  // ajax POST to save comment
-              method: method,
-              url: url,
-              data: {
-                content: $(".comment_form_textfield").val(),
-                csrfmiddlewaretoken:'{{ csrf_token }}',
-              },
-              success:function(data) {
-                var message = data.message;
-
-                $.ajax({     // ajax GET to get first page
-                  url: url,
-                  success:function(data) {
-                    $(".post_detail_page").replaceWith(data);
-                    $('.post_detail_page_header').after(make_message(message));
-                  }});
-                },
-              });
-            });
-
-            // Feature 15 Go to nth page
-            $(document).on('click', '.page_button', function() {
-              event.preventDefault();
-              var element = $(this);
-              var url = $(element).attr("href");
-              $.ajax({     // ajax GET to get nth page
-                url: url,
-                success:function(data) {
-                  $(".post_detail_page").replaceWith(data);
-                }});
-              });
-
-              </script>
-              {% endblock %}
