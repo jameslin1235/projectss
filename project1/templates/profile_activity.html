@@ -1,4 +1,6 @@
 {% extends "profile_base.html" %}
+{% load static %}
+{% block title %}{{ user.username }} - Activity{% endblock title %}
 {% block profile %}
 <div class="container">
   <div class="row">
@@ -56,5 +58,4 @@
     </div>
   </div>
 </div>
-
 {% endblock profile %}

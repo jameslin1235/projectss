@@ -54,6 +54,15 @@ function get_modal(template){
   });
 }
 
+function get_login_modal(url){
+  var data = {};
+  data["url"] = url;
+  return $.ajax({
+    url: "/getloginmodal/",
+    data: data
+  });
+}
+
 $(document).on("click", ".js-modal-close", function() {
   $(this).parents(".modal").remove();
 });
@@ -65,23 +74,25 @@ $(document).keyup(function(e) {
 });
 ////
 
-
-
-
-// Feature 1 Close login modal
-$(document).on('click', '#login-modal-close-button', function(event) {
-  event.preventDefault();
-  $('#login-modal').modal('hide');
+// LOGIN MODAL //
+$(".js-get-login-modal").on("click", function(){
+  var url = window.location.href;
+  get_login_modal(url).done(function(modal){
+    $("body").append(modal);
+    $(".modal__wrapper").animate({top: 0});
+  });
 });
 
-// Feature 2 Remove login modal once it is hidden
-$(document).on('hidden.bs.modal', '#login-modal', function(event) {
-  event.preventDefault();
-  var element = $(this);
-  $(element).remove();
+$(document).on("click", "#js-loginform-toggle", function(){
+  $("#js-signupform").toggleClass("hidden");
+  $("#js-loginform").toggleClass("hidden");
 });
 
-///////////////////////////////////
+$(document).on("click", "#js-signupform-toggle", function(){
+  $("#js-loginform").toggleClass("hidden");
+  $("#js-signupform").toggleClass("hidden");
+});
+////
 
 
 

@@ -1,7 +1,9 @@
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from project1.project1.profiles.models import Profile
-from project1.project1.accounts.forms import UserForm
+from project1.project1.accounts.forms import UserForm, LoginForm
 from django.shortcuts import render
+from django.core.exceptions import PermissionDenied
+
 
 def paginate(*args):
     comments = args[0][0]
@@ -100,9 +102,9 @@ def pagination_last(*args):
             page_num.insert(0,-1)
         page_num.insert(0,first_page_num)
 
-def get_user_status(user,current_user):
-    user_status = ["self" if current_user == user else "user" if current_user.is_authenticated else "anonymous"]
-    return user_status[0]
+# def get_user_status(user,current_user):
+#     user_status = ["self" if current_user == user else "user" if current_user.is_authenticated else "anonymous"]
+#     return user_status[0]
 
 
 
@@ -205,14 +207,21 @@ def get_modal(request):
     if request.method == "GET" and request.is_ajax():
         template = request.GET.get("template")
         return render(request,template)
+    else:
+        raise PermissionDenied
 
 def get_login_modal(request):
     if request.method == "GET" and request.is_ajax():
-        form = UserForm()
+        userform = UserForm()
+        loginform = LoginForm()
         context = {}
-        context['form'] = form
+        context['userform'] = userform
+        context['loginform'] = loginform
+        context['url'] = request.GET.get("url")
         template = "login_modal.html"
         return render(request,template,context)
+    else:
+        raise PermissionDenied
 
 def get_alert(request):
     if request.method == "GET" and request.is_ajax():

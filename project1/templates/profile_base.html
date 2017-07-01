@@ -2,14 +2,10 @@
 {% load static %}
 {% load widget_tweaks %}
 
-{% block title %}{{ user }}'s {{ title }}{% endblock title %}
-
 {% block body %}
-  <div class="profile-wrapper">
-    {% include "profile_header.html" %}
-    {% block profile %}
-    {% endblock profile %}
-</div>
+{% include "profile_header.html" %}
+{% block profile %}
+{% endblock profile %}
 {% endblock body %}
 
 {% block javascript %}

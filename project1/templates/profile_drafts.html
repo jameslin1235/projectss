@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
+{% block title %}{{ request.user.username }} - Drafts{% endblock title %}
 {% block body %}
-
 <div class="container">
   <div class="card">
       <div class="card__header">
@@ -28,7 +28,7 @@
               <a href="{{ post.get_absolute_url }}edit">{{ post.title }}</a>
             </div>
             <div class="contentitem-item">
-              {{ post.content|truncatewords:100|linebreaks }}
+              {{ post.content }}
             </div>
             <div class="contentitem-item contentitem-item-flex last">
               <button type="button" class="button button--plain spaceright--small js-draft-publish">Publish</button>

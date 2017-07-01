@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.http import HttpResponse,JsonResponse, QueryDict
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils import timezone
-from .models import Post, Like, Dislike
+from .models import Post, Like
 from .forms import PostForm
 from project1.project1.config import utility
 
@@ -21,6 +21,9 @@ def post_detail(request,id,slug):
         else:
             context = {}
             context['post'] = post
+            context['user'] = post.user
+            if request.user.is_authenticated and request.user != post.user:
+                context['liked_post'] = request.user.profile.liked_post(post)
             return render(request,"post_detail.html",context)
 
 def post_list(request):
@@ -48,7 +51,6 @@ def post_create(request):
         form = PostForm()
         context = {}
         context['form'] = form
-        context['title'] = "Create Post"
         return render(request,"post_create.html",context)
     elif request.method == "POST":
         form = PostForm(request.POST)
@@ -171,30 +173,21 @@ def post_comments(request,id,slug):
 
 
 @login_required
-def post_like(request,id,slug):
-    post = get_object_or_404(Post, id=id)
-    user = post.user
-    current_user = request.user
-    if request.method == "GET":
-        if post.is_draft == True:
-            raise PermissionDenied
-        if current_user == user:
-            raise PermissionDenied
-        response_data = {}
-        if post.likers.filter(user=current_user).exists():
-            # post.likes -= 1
-            post.like_set.filter(profile=current_user.profile).delete()
-            post.likes = post.likers.count()
-            # response_data['status'] = "unliked"
+def post_like(request):
+    if request.method == "GET" and request.is_ajax():
+        id = request.GET.get("id")
+        liked = request.GET.get("liked")
+        post = Post.objects.get(id=id)
+        if liked == "liked":
+            post.likes -= 1
+            Like.objects.filter(post=post, user=request.user).delete()
         else:
-            # post.likes += 1
-            Like.objects.create(post=post, profile=current_user.profile, date_liked=timezone.now())
-            post.likes = post.likers.count()
-            # response_data['status'] = "liked"
-
+            post.likes += 1
+            Like.objects.create(post=post, user=request.user, date_liked=timezone.now())
         post.save()
-        response_data['likes_count'] = post.likes
-        return JsonResponse(response_data,safe=False)
+        response = {}
+        response['likes'] = post.likes
+        return JsonResponse(response)
 
 @login_required
 def post_dislike(request,id,slug):

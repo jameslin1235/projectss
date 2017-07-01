@@ -135,6 +135,9 @@ class Profile(models.Model):
                 profile_fields.append(list(value))
         return profile_fields
 
+    def liked_post(self,post):
+        return self.user.liked_posts.filter(id=post.id).exists()
+
     def followed_user(self, user):
         return self.following.filter(user=user).exists()
 
@@ -157,8 +160,7 @@ class Profile(models.Model):
     def get_comments_count(self):
         return self.user.comments.count()
 
-    def liked_post(self,post):
-        return self.liked_posts.filter(id=post.id).exists()
+
 
     def disliked_post(self,post):
         return self.disliked_posts.filter(id=post.id).exists()

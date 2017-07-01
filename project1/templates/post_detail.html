@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% load static %}
 {% load widget_tweaks %}
-
+{% block title %}{{ post.title }}{% endblock title %}
 {% block body %}
 <div class="container">
   <div class="card">
     <div class="card__body">
-      <div class="contentitem" data-url="{{ post.get_absolute_url }}">
+      <div class="contentitem" data-url="{{ post.get_absolute_url }}" data-id="{{ post.id }}">
         <div class="contentitem-item">
           <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
         </div>
@@ -34,12 +34,14 @@
           <a href="{{ post.get_absolute_url }}">Published {{ post.date_published }}</a>
         </div>
         <div class="contentitem-item">
-
-          <button type="button" class="button button--plain"><span class="fa fa-thumbs-o-up spaceright--small" aria-hidden="true"></span>{{ post.likes }}</button>
-
+          <button type="button" class="button button--blue {% if liked_post %}button--active{% endif %} {% if not request.user.is_authenticated %}js-get-login-modal{% endif %} {% if request.user.is_authenticated and request.user != user %}js-post-like{% endif %}" {% if request.user == user %}disabled{% endif %}><span class="fa fa-thumbs-o-up spaceright--small" aria-hidden="true"></span><span>{{ post.likes }}<span></button>
         </div>
       </div>
     </div>
   </div>
 </div>
 {% endblock body %}
+
+{% block javascript %}
+<script src="{% static "js/post_detail.js" %}"></script>
+{% endblock javascript %}

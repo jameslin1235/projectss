@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% load widget_tweaks %}
-
+{% block title %}{{ request.user.username }} - Edit Profile{% endblock title %}
 {% block body %}
 <div class="container">
   <div class="card">

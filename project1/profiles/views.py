@@ -18,7 +18,6 @@ from .forms import ProfileForm, ProfileAvatarForm, ProfileBackgroundForm
 from project1.project1.config import utility
 from PIL import Image
 
-
 # Create your views here.
 def profile_activity(request,id,slug):
     if request.method == "GET":
@@ -28,7 +27,6 @@ def profile_activity(request,id,slug):
         if not user.profile.get_profile_status():
             context['user_profile_fields'] = user.profile.get_profile_fields()
         context['user'] = user
-        context['title'] = "Activity"
         context['posts_count'] = user.profile.get_posts_count()
         template = "profile_activity.html"
         return render(request,template,context)

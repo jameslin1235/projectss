@@ -1,75 +1,68 @@
-<div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" id="login-modal-close-button" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Login</h4>
-      </div>
-      <div class="modal-body">
-        <a class="btn btn-default" href="{% url 'login' %}?next={{request.path}}">Login</a>
-      </div>
-      <div class="modal-footer">
-        <p>Don't have an account? <a href="{% url 'accounts:register' %}">Register</a></p>
-      </div>
-    </div>
-  </div>
-</div>
-
+{% load widget_tweaks %}
 <div class="modal">
   <div class="modal__wrapper">
     <button type="button" class="button button--modalclose js-modal-close"><span class="fa fa-times" aria-hidden="true"></span></button>
-    <div class="modal__header">
-      <h3>Join Vimeo today.</h3>
-    </div>
-    <div class="modal__body">
+
+    <div class="modal__body" id="js-signupform">
       <div class="form">
-        <form method="post" action="">
+        <form method="post" action="/signup/?next={{ url }}">
+          <div class="formtitle">
+            <h2>Join Viz today.</h2>
+          </div>
           {% csrf_token %}
           <div class="formfield">
-            {{ form.title.errors }}
-            <div class="formfield__label">
-              <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
-            </div>
             <div class="formfield__input ">
-              {{ form.title|add_class:"js-add-focus"|attr:"placeholder:Title"  }}
+              {{ userform.username|add_class:"js-add-focus"|attr:"placeholder:Username" }}
             </div>
           </div>
 
           <div class="formfield">
-            {{ form.content.errors }}
-            <div class="formfield__label">
-              <label for="{{ form.content.id_for_label }}">{{ form.content.label }}</label>
-            </div>
             <div class="formfield__input ">
-              {{ form.content|attr:"rows:3"|attr:"cols:20"|add_class:"js-add-focus"|attr:"placeholder:Content" }}
+              {{ userform.email|add_class:"js-add-focus"|attr:"placeholder:Email" }}
             </div>
           </div>
 
           <div class="formfield">
-            {{ form.topic.errors }}
-            <div class="formfield__label">
-              <label for="{{ form.topic.id_for_label }}">{{ form.topic.label }}</label>
-            </div>
-            <div class="formfield__noninput">
-              {{ form.topic }}
+            <div class="formfield__input">
+              {{ userform.password|add_class:"js-add-focus"|attr:"placeholder:Password"|attr:"type:password" }}
             </div>
           </div>
 
-          <button type="submit" class="button button--blue button--primary">Save</button>
+          <button type="submit" class="button button--blue button--primary">Sign up</button>
         </form>
       </div>
+      <div class="modal__text"><span class="spaceright--small">Have an account?</span><button type="button" class="button button--plain button--underlined" id="js-loginform-toggle">Log in</button></div>
     </div>
 
-    <div class="modal__body">
+    <div class="modal__body hidden" id="js-loginform">
+      <div class="form">
+        <form method="post" action="/login/?next={{ url }}">
+          <div class="formtitle">
+            <h2>Log in To Viz</h2>
+          </div>
+          {% csrf_token %}
 
-    </div>
+          <div class="formfield">
 
+            <div class="formfield__input ">
+              {{ loginform.username|add_class:"js-add-focus"|attr:"placeholder:Username" }}
+            </div>
+          </div>
 
-    <div class="modal__footer">
-      <div class="modal__buttongroup">
-        <button type="button" class="button button--plain js-modal-close spaceright--small">Cancel</button>
-        <a href="#" class="link--blue link--primary" id="js-post-delete-link">Delete</a>
+          <div class="formfield">
+
+            <div class="formfield__input">
+              {{ loginform.password|add_class:"js-add-focus"|attr:"placeholder:Password"|attr:"type:password" }}
+            </div>
+          </div>
+
+          <button type="submit" class="button button--blue button--primary">Log in</button>
+        </form>
       </div>
+      <div class="modal__text"><span class="spaceright--small">New to Viz?</span><button type="button" class="button button--plain button--underlined" id="js-signupform-toggle">Sign up</button></div>
     </div>
+
+
+
   </div>
 </div>
