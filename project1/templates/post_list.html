@@ -4,8 +4,22 @@
 {% block title %}Home - Viz{% endblock title %}
 {% block body %}
 <div class="container">
+
+
+  <div class="card">
+    <ul class="card__nav">
+      <li role="presentation"><a href="{% url 'home' %}" role="tab" class="link--nav link--active">Featured</a></li>
+      {% for topic in topics %}
+      <li role="presentation"><a href="{{ topic.get_absolute_url }}" role="tab" class="link--nav">{{ topic.topic }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+
+
+  
   <div class="card">
     <div class="card__body">
+
       {% if posts_count == 0 %}
       <div class="listitem">
         <h3>There are 0 posts.</h3>
@@ -33,6 +47,9 @@
           </div>
           <div class="contentitem-item">
             <div>{{ post.content }}</div>
+          </div>
+          <div class="contentitem-item">
+            <a href="{{ post.topic.get_absolute_url }}">{{ post.topic }}</a>
           </div>
           <div class="contentitem-item">
             <a href="{{ post.get_absolute_url }}">Published {{ post.date_published }}</a>

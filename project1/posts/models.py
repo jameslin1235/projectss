@@ -8,7 +8,7 @@ from project1.project1.profiles.models import Profile
 # Create your models here.
 class Post(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name="posts")
-    topic = models.ForeignKey(Topic, on_delete=models.CASCADE,related_name="posts")
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE, related_name="posts")
     likers = models.ManyToManyField(settings.AUTH_USER_MODEL,null=True,through='Like',related_name="liked_posts")
     title = models.CharField(max_length=100)
     content = models.TextField()

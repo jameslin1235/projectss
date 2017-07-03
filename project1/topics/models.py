@@ -3,10 +3,16 @@ from django.utils.text import slugify
 from django.core.urlresolvers import reverse
 
 # Create your models here.
-class Topic(models.Model):
-    topic = models.CharField(max_length=100)
-    slug = models.SlugField()
+def get_upload_location(instance, filename):
+    return "topic"
 
+class Topic(models.Model):
+    name = models.CharField(max_length=100)
+    slug = models.SlugField()
+    image = models.ImageField(
+        upload_to = get_upload_location,
+        blank=True
+    )
     def __str__(self):
         return self.topic
 

@@ -1,10 +1,10 @@
 
 /* General */
-.spaceright--small{
+.margin-right--s{
   margin-right: 5px;
 }
 
-.spaceright--large{
+.margin-right--l{
   margin-right: 10px;
 }
 
@@ -52,16 +52,34 @@ img{
   width: 100%;
 }
 
+.img-wrapper--xs{
+  width: 50px;
+  height: 50px;
+  max-width: 100%;
+  position: relative;
+}
+
+.img-wrapper--s{
+  width: 100px;
+  height: 100px;
+  max-width: 100%;
+  position: relative;
+}
+
 .img--cover{
   height: 100%;
   object-fit: cover;
 }
 
-.imgborder--small{
+.img--opacity{
+  opacity: 0.5;
+}
+
+.img-border--s{
   border-radius: 4px;
 }
 
-.imgborder--large{
+.img-border--l{
   border-radius: 8px;
   border: 4px solid #fff;
 }
@@ -117,6 +135,13 @@ input {
 
 input:focus {
   outline:none;
+}
+
+
+/* Topic */
+.topic-flex{
+  display: flex;
+  align-items: center;
 }
 
 /* Navigation */
@@ -192,7 +217,45 @@ input:focus {
 }
 
 
+.wrapper{
+  padding: 15px 0;
+}
 
+.wrapper__header{
+  padding: 15px 0;
+}
+/* Gallery */
+
+
+.gallery-item{
+  width: 200px;
+  height: 200px;
+  max-width: 100%;
+  margin: 0 auto 15px;
+  position: relative;
+}
+.gallery-action{
+  position: absolute;
+  top: 0;
+  left:0;
+  right:0;
+  bottom: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gallery-caption{
+  color: #fff;
+}
+/*
+.gallery-img{
+  opacity: 0.7;
+}
+.gallery-img:hover{
+  opacity: 1;
+}*/
 /* Header */
 
 /* Card */
@@ -269,14 +332,7 @@ input:focus {
   background: #ececec;
 }
 
-.card__navitem a{
-  padding: 15px;
-  display: block;
-}
 
-.card__navitem a:hover{
-  color: #2b6dad;
-}
 
 .listitem{
   border-bottom: 1px solid #E0E6ED;
@@ -566,6 +622,15 @@ input:focus {
 
 
 /* Links */
+.link--nav{
+  padding: 15px;
+  display: block;
+}
+
+.link--nav:hover{
+  background-color: #EDF1F5;
+}
+
 .link--blue{
   padding:6px 12px;
   border: 1px solid #0f88eb;
@@ -588,6 +653,22 @@ input:focus {
   background:#0d79d1;
 }
 
+.link--active{
+  background-color: #EDF1F5;
+}
+
+.link--absolute{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.navbar__vertical-flex a:hover{
+  background-color: #EDF1F5;
+  color:#E82F3A;
+}
 
 /* Buttons */
 .button{
@@ -860,12 +941,7 @@ input:focus {
   margin: 0 auto;
 }
 
-.avatar--small{
-  position: relative;
-  max-width: 100%;
-  width: 50px;
-  height: 50px;
-}
+
 
 .avatar__action{
   position: absolute;
@@ -1043,9 +1119,20 @@ input:focus {
   }
 
 
+
 }
 
+@media (min-width: 300px){
+  .gallery{
+    display:flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
 
+  .gallery-item{
+    margin: 0 0 15px;
+  }
+}
 
 @media (min-width: 992px){
   h1{

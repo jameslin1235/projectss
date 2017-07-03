@@ -12,8 +12,6 @@ $(".js-post-like").on("click", function() {
   });
 
   });
-////
-
 
 function post_like(id,liked){
   var data = {};
@@ -24,3 +22,4 @@ function post_like(id,liked){
     data: data
   });
 }
+////

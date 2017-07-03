@@ -9,6 +9,7 @@ from django.http import HttpResponse,JsonResponse, QueryDict
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils import timezone
 from .models import Post, Like
+from project1.project1.topics.models import Topic
 from .forms import PostForm
 from project1.project1.config import utility
 
@@ -27,23 +28,29 @@ def post_detail(request,id,slug):
             return render(request,"post_detail.html",context)
 
 def post_list(request):
-    posts_count = Post.objects.filter(is_draft=False).count()
-    context = {}
-    context['posts_count'] = posts_count
-    if posts_count != 0:
-        posts = Post.objects.filter(is_draft=False).order_by("-date_published")
-        paginator = Paginator(posts, 10) # Show 25 contacts per page
-        page = request.GET.get('page')
-        try:
-            current_page = paginator.page(page)
-        except PageNotAnInteger:
-            # If page is not an integer, deliver first page.
-            current_page = paginator.page(1)
-        except EmptyPage:
-            # If page is out of range (e.g. 9999), deliver last page of results.
-            current_page = paginator.page(paginator.num_pages)
-        context['current_page'] = current_page
-    return render(request,"post_list.html",context)
+    if request.method == "GET":
+        if request.user.is_authenticated: # see personalized content
+            raise PermissionDenied
+
+        else: # see content from all topics
+            context = {}
+            context['topics'] = Topic.objects.all()
+            posts_count = Post.objects.filter(is_draft=False).count()
+            context['posts_count'] = posts_count
+            if posts_count != 0:
+                posts = Post.objects.filter(is_draft=False).order_by("-date_published")
+                paginator = Paginator(posts, 10) # Show 25 contacts per page
+                page = request.GET.get('page')
+                try:
+                    current_page = paginator.page(page)
+                except PageNotAnInteger:
+                    # If page is not an integer, deliver first page.
+                    current_page = paginator.page(1)
+                except EmptyPage:
+                    # If page is out of range (e.g. 9999), deliver last page of results.
+                    current_page = paginator.page(paginator.num_pages)
+                context['current_page'] = current_page
+        return render(request,"post_list.html",context)
 
 @login_required
 def post_create(request):
@@ -188,6 +195,8 @@ def post_like(request):
         response = {}
         response['likes'] = post.likes
         return JsonResponse(response)
+    else:
+        raise PermissionDenied
 
 @login_required
 def post_dislike(request,id,slug):
