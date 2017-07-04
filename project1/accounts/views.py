@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout
 from .forms import UserForm, LoginForm
+from project1.project1.topics.models import Topic
 
 # Create your views here.
 def signup_view(request):
@@ -26,7 +27,7 @@ def signup_view(request):
                 login(request, user)
                 if request.GET.get('next'):
                     return redirect(request.GET.get('next'))
-                return redirect("home")
+                return redirect("topics:topic_follow")
 
 def login_view(request):
     if request.method == "GET":

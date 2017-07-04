@@ -29,7 +29,16 @@ def topic_detail(request,id,slug):
                         value.append(True)
                     else:
                         value.append(False)
-            print(value)
             context['value'] = value
-
+        else:
+            context['anonymous'] = True
         return render(request,"topic_detail.html",context)
+
+def topic_follow(request):
+    if request.method == "GET":
+        if request.user.is_authenticated:
+            context = {}
+            context['topics'] = Topic.objects.all()
+            return render(request,"topic_follow.html",context)
+        else:
+            raise PermissionDenied

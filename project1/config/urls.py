@@ -23,7 +23,7 @@ from project1.project1.accounts import views as accounts
 
 urlpatterns = [
 
-    url(r'^$', posts.post_list, name="home"),
+    url(r'^$', posts.home, name="home"),
     url(r'^signup/', accounts.signup_view, name="signup"),
     url(r'^login/', accounts.login_view, name="login"),
     url(r'^logout/', accounts.logout_view, name="logout"),

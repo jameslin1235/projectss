@@ -11,6 +11,7 @@ from django.utils import timezone
 from .models import Post, Like
 from project1.project1.topics.models import Topic
 from .forms import PostForm
+from project1.project1.accounts.forms import UserForm, LoginForm
 from project1.project1.config import utility
 
 # Create your views here.
@@ -27,30 +28,34 @@ def post_detail(request,id,slug):
                 context['liked_post'] = request.user.profile.liked_post(post)
             return render(request,"post_detail.html",context)
 
-def post_list(request):
+def home(request):
     if request.method == "GET":
         if request.user.is_authenticated: # see personalized content
             raise PermissionDenied
 
-        else: # see content from all topics
+        else: # see login/signup page
             context = {}
-            context['topics'] = Topic.objects.all()
-            posts_count = Post.objects.filter(is_draft=False).count()
-            context['posts_count'] = posts_count
-            if posts_count != 0:
-                posts = Post.objects.filter(is_draft=False).order_by("-date_published")
-                paginator = Paginator(posts, 10) # Show 25 contacts per page
-                page = request.GET.get('page')
-                try:
-                    current_page = paginator.page(page)
-                except PageNotAnInteger:
-                    # If page is not an integer, deliver first page.
-                    current_page = paginator.page(1)
-                except EmptyPage:
-                    # If page is out of range (e.g. 9999), deliver last page of results.
-                    current_page = paginator.page(paginator.num_pages)
-                context['current_page'] = current_page
-        return render(request,"post_list.html",context)
+            context['userform'] = UserForm()
+            context['loginform'] = LoginForm()
+            return render(request,"home.html",context)
+            # context = {}
+            # context['topics'] = Topic.objects.all()
+            # posts_count = Post.objects.filter(is_draft=False).count()
+            # context['posts_count'] = posts_count
+            # if posts_count != 0:
+            #     posts = Post.objects.filter(is_draft=False).order_by("-date_published")
+            #     paginator = Paginator(posts, 10) # Show 25 contacts per page
+            #     page = request.GET.get('page')
+            #     try:
+            #         current_page = paginator.page(page)
+            #     except PageNotAnInteger:
+            #         # If page is not an integer, deliver first page.
+            #         current_page = paginator.page(1)
+            #     except EmptyPage:
+            #         # If page is out of range (e.g. 9999), deliver last page of results.
+            #         current_page = paginator.page(paginator.num_pages)
+            #     context['current_page'] = current_page
+        # return render(request,"post_list.html",context)
 
 @login_required
 def post_create(request):

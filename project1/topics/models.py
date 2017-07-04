@@ -13,11 +13,12 @@ class Topic(models.Model):
         upload_to = get_upload_location,
         blank=True
     )
+    description = models.TextField()
     def __str__(self):
-        return self.topic
+        return self.name
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.topic)
+        self.slug = slugify(self.name)
         super(Topic, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
@@ -25,3 +26,6 @@ class Topic(models.Model):
 
     def get_posts(self):
         return self.posts.filter(is_draft = False).order_by("-date_published")
+
+    def get_posts_count(self):
+        return self.posts.filter(is_draft = False).count()
