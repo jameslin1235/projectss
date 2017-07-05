@@ -22,8 +22,8 @@ function get_error(value){
 
 
 // NAVIGATION //
-$(".js-navbar-dropdown-toggle").on("click", function() {
-  $(".navbar__vertical").toggleClass("hidden");
+$("#js-nav-vertical-toggle").on("click", function() {
+  $("#js-nav-vertical-body").toggleClass("hidden");
 });
 
 

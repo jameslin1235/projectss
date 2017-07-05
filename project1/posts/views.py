@@ -31,8 +31,13 @@ def post_detail(request,id,slug):
 def home(request):
     if request.method == "GET":
         if request.user.is_authenticated: # see personalized content
-            raise PermissionDenied
-
+            if request.user.profile.first_login:
+                context = {}
+                context['topics'] = Topic.objects.all()
+                return render(request,"topic_follow.html",context)
+            else:
+                return render(request,"dashboard.html")
+                # show personalized dashboard
         else: # see login/signup page
             context = {}
             context['userform'] = UserForm()

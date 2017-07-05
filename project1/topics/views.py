@@ -3,7 +3,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
-from .models import Topic
+from django.utils import timezone
+from .models import Topic, TopicUser
 from project1.project1.posts.models import Post
 
 # Create your views here.
@@ -37,8 +38,13 @@ def topic_detail(request,id,slug):
 def topic_follow(request):
     if request.method == "GET":
         if request.user.is_authenticated:
-            context = {}
-            context['topics'] = Topic.objects.all()
-            return render(request,"topic_follow.html",context)
+            if request.user.profile.first_login:
+                id_list = request.GET.get("id").split(",")
+                if id_list:
+                    for x in id_list:
+                        TopicUser.objects.create(user=request.user, topic=Topic.objects.get(id=int(x)), date_followed=timezone.now())
+                request.user.profile.first_login = False
+                request.user.profile.save()
+                return redirect("home")
         else:
             raise PermissionDenied

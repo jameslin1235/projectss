@@ -27,7 +27,8 @@ def signup_view(request):
                 login(request, user)
                 if request.GET.get('next'):
                     return redirect(request.GET.get('next'))
-                return redirect("topics:topic_follow")
+                return redirect("home")
+
 
 def login_view(request):
     if request.method == "GET":

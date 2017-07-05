@@ -23,15 +23,18 @@
   <![endif]-->
 </head>
 <body >
+    <div class="home-gallery-manager">
+      <div class="home-gallery-manager-heading"><h1>What are you interested in?</h1></div>
+      <button type="button" id="js-topic-submit" class="button button--gray">Continue</button>
+    </div>
         <div class="home-gallery">
           {% for topic in topics %}
-
-          <div class="img-wrapper--m">
-            <div class="home-gallery-caption"><h3>{{ topic.name }}</h3></div>
-            <button type="button" class="button button--abs"></button>
+          <div class="img-wrapper--m item">
+            <div class="home-gallery-caption"><h6>{{ topic.name|capfirst }}</h6></div>
+            <div class="home-gallery-mark"><span id="item-icon-{{ topic.id }}" class="fa fa-4x icon--white js-item-icon" aria-hidden="true"></span></div>
+            <button type="button" id="{{ topic.id }}" class="button button--abs js-topic-follow"></button>
             <img src="{{ topic.image.url }}" class="img--cover" alt="{{ topic.name }}">
           </div>
-
           {% endfor %}
         </div>
 </div>
@@ -41,9 +44,7 @@
   <!-- Include all compiled plugins (below), or include individual files as needed -->
   <script src="{% static "bootstrap-3.3.7-dist/bootstrap-3.3.7-dist/js/bootstrap.min.js" %}"></script>
   <!-- <script src="{% static "js/autosize.min.js" %}"></script> -->
-  <script src="{% static "js/base.js" %}"></script>
-  {% block javascript %}
-  <script src="{% static "js/home.js" %}"></script>
-  {% endblock javascript %}
+  <script src="{% static "js/topic_follow.js" %}"></script>
+
 </body>
 </html>

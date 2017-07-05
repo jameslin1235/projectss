@@ -33,6 +33,7 @@ class Profile(models.Model):
     )
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     following = models.ManyToManyField("self",null=True,symmetrical=False, through='Follow', related_name="followers")
+    first_login = models.BooleanField(default=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_edited = models.DateTimeField(auto_now=True)
     slug = models.SlugField()
