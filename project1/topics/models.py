@@ -8,7 +8,6 @@ def get_upload_location(instance, filename):
     return "topic"
 
 class Topic(models.Model):
-
     name = models.CharField(max_length=100)
     slug = models.SlugField()
     image = models.ImageField(

@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-  <title>{% block title %}Bootstrap 101 Template{% endblock title %}</title>
+  <title>{% block title %}Viz{% endblock title %}</title>
 
   <!-- Bootstrap -->
   <!-- <link href="{% static "bootstrap-3.3.7-dist/bootstrap-3.3.7-dist/css/bootstrap.min.css" %}" rel="stylesheet"> -->
@@ -22,43 +22,46 @@
   <![endif]-->
 </head>
 <body>
-  <div>
-  
-    <!-- <nav class="navbar">
-      <div class="container">
-      <div class="navbar__header">
-        <div class="navbar__logo"><a href="{% url 'home' %}"><span class="fa fa-vimeo fa-2x" aria-hidden="true"></span></a></div>
-        <div class="navbar__dropdown-toggle js-navbar-dropdown-toggle"><span class="fa fa-bars fa-2x" aria-hidden="true"></span></div>
+  <div class="nav-vertical">
+    <div class="nav-vertical-header">
+      <div class="img-wrapper--xs">
+        <a class="link--absolute" href="{% url 'home' %}"></a>
+        <img src="{% static "png/png/badoo.png" %}" class="img--cover" alt="Logo">
       </div>
+      <button type="button" id="js-nav-vertical-toggle" class="button button--plain"><span class="fa fa-bars fa-2x" aria-hidden="true"></span></button>
+    </div>
+    <div id="js-nav-vertical-body" class="nav-vertical-body hidden">
+      <a href="#" class="link--vertical">Home</a>
+      <a href="#" class="link--vertical">Explore</a>
+      <a href="#" class="link--vertical">Inbox</a>
+      <a href="#" class="link--vertical">Terms</a>
+      <a href="#" class="link--vertical">Terms</a>
+      <a href="#" class="link--vertical">Terms</a>
+      <a href="#" class="link--vertical">Post</a>
+    </div>
+  </div>
 
-      <div class="navbar__vertical hidden">
-        <ul class="navbar__vertical-flex">
-          {% if request.user.is_authenticated %}
-          <li><a href="{% url 'profiles:profile_activity' id=request.user.id slug=request.user.profile.slug %}">Profile</a></li>
-
-          <li><a href="{% url 'logout' %}">Log out</a></li>
-          {% else %}
-          <li><a href="{% url 'login' %}">Log in</a></li>
-          <li><a href="{% url 'signup' %}">Sign up</a></li>
-          {% endif %}
-        </ul>
+  <div class="nav hidden">
+    <div class="nav-left">
+      <div class="img-wrapper--xs margin--right">
+        <a class="link--absolute" href="{% url 'home' %}"></a>
+        <img src="{% static "png/png/badoo.png" %}" class="img--cover" alt="Logo">
       </div>
-
-      <div class="navbar__horizontal hidden">
-        <div class="navbar__logo"><a href="{% url 'home' %}"><span class="fa fa-vimeo fa-2x" aria-hidden="true"></span></a></div>
-        <ul class="navbar__horizontal-flex">
-          {% if request.user.is_authenticated %}
-          <li><a href="{% url 'profiles:profile_activity' id=request.user.id slug=request.user.profile.slug %}">Profile</a></li>
-
-          <li><a href="{% url 'logout' %}">Log out</a></li>
-          {% else %}
-          <li><a href="{% url 'login' %}">Log in</a></li>
-          <li><a href="{% url 'signup' %}">Sign up</a></li>
-          {% endif %}
-        </ul>
+      <div class="nav-search">
+        <input type="text" placeholder="Search Viz">
       </div>
     </div>
-    </nav> -->
+    <div class="nav-right">
+      <a href="#" class="link--nav"><span class="fa fa-home fa-2x" aria-hidden="true"></span></a>
+      <a href="#" class="link--nav"><span class="fa fa-compass fa-2x" aria-hidden="true"></span></a>
+      <a href="#" class="link--nav"><span class="fa fa-inbox fa-2x" aria-hidden="true"></span></a>
+      <a href="#" class="link--nav"><span class="fa fa-comment fa-2x" aria-hidden="true"></span></a>
+      <a href="#" class="link--nav"><span class="fa fa-bolt fa-2x" aria-hidden="true"></span></a>
+      <a href="#" class="link--nav"><span class="fa fa-user-o fa-2x" aria-hidden="true"></span></a>
+      <a href="#" class="link--nav"><span class="fa fa-pencil-square-o fa-2x" aria-hidden="true"></span></a>
+    </div>
+  </div>
+
   {% block body %}
 
   {% endblock body %}

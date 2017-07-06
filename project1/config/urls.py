@@ -31,7 +31,6 @@ urlpatterns = [
     url(r'^posts/', include("project1.project1.posts.urls", namespace="posts")),
     url(r'^topics/', include("project1.project1.topics.urls", namespace="topics")),
     url(r'^profile/', include("project1.project1.profiles.urls", namespace="profiles")),
-    url(r'^getmodal/$', utility.get_modal, name='get_modal'),
     url(r'^getloginmodal/$', utility.get_login_modal, name='get_login_modal'),
     url(r'^getalert/$', utility.get_alert, name='get_alert'),
     url(r'^geterror/$', utility.get_error, name='get_error'),

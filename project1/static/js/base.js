@@ -43,16 +43,27 @@ function add_alert(alert){
 }
 ////
 
+// Pop menu //
+$(document).on("click", ".js-pop-menu-toggle", function() {
+  $(this).next().toggleClass("hidden");
+});
+
+$(document).on("click", ".js-select-option", function() {
+  var action = $(this).attr("data-action");
+  $("#js-post-create-action").text(action);
+});
 
 // MODALS //
-function get_modal(template){
-  var data = {};
-  data["template"] = template;
-  return $.ajax({
-    url: "/getmodal/",
-    data: data
-  });
-}
+
+
+// function get_modal(template){
+//   var data = {};
+//   data["template"] = template;
+//   return $.ajax({
+//     url: "/getmodal/",
+//     data: data
+//   });
+// }
 
 function get_login_modal(url){
   var data = {};
@@ -60,6 +71,12 @@ function get_login_modal(url){
   return $.ajax({
     url: "/getloginmodal/",
     data: data
+  });
+}
+
+function get_post_modal(){
+  return $.ajax({
+    url: "/posts/modal/"
   });
 }
 
@@ -71,6 +88,14 @@ $(document).keyup(function(e) {
   if (e.keyCode == 27) { // escape key maps to keycode `27`
     $(".modal").remove();
   }
+});
+
+$(".js-modal-post").on("click", function(){
+  get_post_modal().done(function(modal){
+    $("body").append(modal);
+    // $("#js-draft-publish-link").attr("href", url + "publish/");
+    $(".modal-wrapper").animate({top: 0});
+  });
 });
 ////
 

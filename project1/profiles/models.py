@@ -139,32 +139,32 @@ class Profile(models.Model):
     def liked_post(self,post):
         return self.user.liked_posts.filter(id=post.id).exists()
 
-    def followed_user(self, user):
-        return self.following.filter(user=user).exists()
-
-    def follow_user(self,profile):
-        Follow.objects.create(source=self,dest=profile,date_followed=timezone.now())
-        return None
-
-    def unfollow_user(self,profile):
-        Follow.objects.get(source=self, dest=profile).delete()
-        return None
-
-    def get_following_count(self):
-        return self.following.count()
-
-    def get_followers_count(self):
-        return self.followers.count()
-
-
-
-    def get_comments_count(self):
-        return self.user.comments.count()
+    def get_followed_topics(self):
+        return self.user.followed_topics.all()
+    # def followed_user(self, user):
+    #     return self.following.filter(user=user).exists()
+    #
+    # def follow_user(self,profile):
+    #     Follow.objects.create(source=self,dest=profile,date_followed=timezone.now())
+    #     return None
+    #
+    # def unfollow_user(self,profile):
+    #     Follow.objects.get(source=self, dest=profile).delete()
+    #     return None
+    #
+    # def get_following_count(self):
+    #     return self.following.count()
+    #
+    # def get_followers_count(self):
+    #     return self.followers.count()
 
 
+    #
+    # def get_comments_count(self):
+    #     return self.user.comments.count()
+    #
 
-    def disliked_post(self,post):
-        return self.disliked_posts.filter(id=post.id).exists()
+
 
     class Meta:
         ordering = ["-date_created"]

@@ -1,6 +1,7 @@
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from project1.project1.profiles.models import Profile
 from project1.project1.accounts.forms import UserForm, LoginForm
+from project1.project1.posts.forms import PostForm
 from django.shortcuts import render
 from django.core.exceptions import PermissionDenied
 
@@ -203,12 +204,15 @@ def get_user_posts_comments_count(*args):
 
 
 
-def get_modal(request):
-    if request.method == "GET" and request.is_ajax():
-        template = request.GET.get("template")
-        return render(request,template)
-    else:
-        raise PermissionDenied
+# def get_modal(request):
+#     if request.method == "GET" and request.is_ajax():
+#         template = request.GET.get("template")
+#         if template = "post_create_modal.html":
+#             context = {}
+#             context['form'] = PostForm()
+#         return render(request,template)
+#     else:
+#         raise PermissionDenied
 
 def get_login_modal(request):
     if request.method == "GET" and request.is_ajax():

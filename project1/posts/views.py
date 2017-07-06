@@ -13,8 +13,18 @@ from project1.project1.topics.models import Topic
 from .forms import PostForm
 from project1.project1.accounts.forms import UserForm, LoginForm
 from project1.project1.config import utility
+from project1.project1.posts.forms import PostForm
 
 # Create your views here.
+def post_create_modal(request):
+    if request.method == "GET" and request.is_ajax():
+        context = {}
+        context['form'] = PostForm()
+        template = "post_create_modal.html"
+        return render(request,template,context)
+    else:
+        raise PermissionDenied
+
 def post_detail(request,id,slug):
     if request.method == "GET":
         post = get_object_or_404(Post, id=id)
@@ -30,37 +40,23 @@ def post_detail(request,id,slug):
 
 def home(request):
     if request.method == "GET":
-        if request.user.is_authenticated: # see personalized content
-            if request.user.profile.first_login:
+        if request.user.is_authenticated:
+            if request.user.profile.first_login: # see first-time login topic follow page
                 context = {}
                 context['topics'] = Topic.objects.all()
                 return render(request,"topic_follow.html",context)
-            else:
-                return render(request,"dashboard.html")
-                # show personalized dashboard
+            else: # see personalized content
+                followed_topics = request.user.profile.get_followed_topics()
+                context = {}
+                context['followed_topics'] = followed_topics
+                context['form'] = PostForm()
+                return render(request,"dashboard.html",context)
+
         else: # see login/signup page
             context = {}
             context['userform'] = UserForm()
             context['loginform'] = LoginForm()
             return render(request,"home.html",context)
-            # context = {}
-            # context['topics'] = Topic.objects.all()
-            # posts_count = Post.objects.filter(is_draft=False).count()
-            # context['posts_count'] = posts_count
-            # if posts_count != 0:
-            #     posts = Post.objects.filter(is_draft=False).order_by("-date_published")
-            #     paginator = Paginator(posts, 10) # Show 25 contacts per page
-            #     page = request.GET.get('page')
-            #     try:
-            #         current_page = paginator.page(page)
-            #     except PageNotAnInteger:
-            #         # If page is not an integer, deliver first page.
-            #         current_page = paginator.page(1)
-            #     except EmptyPage:
-            #         # If page is out of range (e.g. 9999), deliver last page of results.
-            #         current_page = paginator.page(paginator.num_pages)
-            #     context['current_page'] = current_page
-        # return render(request,"post_list.html",context)
 
 @login_required
 def post_create(request):
