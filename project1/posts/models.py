@@ -16,7 +16,7 @@ class Post(models.Model):
     date_edited = models.DateTimeField(auto_now=True)
     date_published = models.DateTimeField(null=True)
     likes = models.IntegerField(default=0)
-    is_draft = models.BooleanField(default=True)
+    is_draft = models.BooleanField()
     slug = models.SlugField()
 
     def __str__(self):

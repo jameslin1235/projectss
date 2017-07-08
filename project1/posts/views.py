@@ -66,13 +66,30 @@ def post_create(request):
         context['form'] = form
         return render(request,"post_create.html",context)
     elif request.method == "POST":
-        form = PostForm(request.POST)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.user = request.user
-            post.save()
-            messages.success(request, "Draft created.")
-            return redirect("profiles:profile_drafts")
+        if request.GET.get("action") == "Post":
+            form = PostForm(request.POST)
+            if form.is_valid():
+                post = form.save(commit=False)
+                post.user = request.user
+                post.date_published = timezone.now()
+                post.is_draft = False
+                post.save()
+                messages.success(request, "Post created.")
+                return redirect("home")
+            else:
+                print('wrong')
+        else:
+            form = PostForm(request.POST)
+            if form.is_valid():
+                post = form.save(commit=False)
+                post.user = request.user
+                post.is_draft = True
+                post.save()
+                messages.success(request, "Draft created.")
+                return redirect("home")
+            else:
+                print('wrong')
+
 
 @login_required
 def post_edit(request,id,slug):
@@ -118,24 +135,24 @@ def post_delete(request,id,slug):
         else:
             raise PermissionDenied
 
-@login_required
-def post_publish(request,id,slug):
-    if request.method == "GET":
-        post = get_object_or_404(Post, id=id)
-        user = post.user
-        if request.user == user:
-            if post.is_draft:
-                post.is_draft = False
-                post.date_published = timezone.now()
-                post.save()
-                messages.success(request, "Draft published.")
-                return redirect("profiles:profile_posts", id=request.user.id, slug=request.user.profile.slug)
-            else:
-                raise PermissionDenied
-        else:
-            raise PermissionDenied
-
-
+# @login_required
+# def post_publish(request,id,slug):
+#     if request.method == "GET":
+#         post = get_object_or_404(Post, id=id)
+#         user = post.user
+#         if request.user == user:
+#             if post.is_draft:
+#                 post.is_draft = False
+#                 post.date_published = timezone.now()
+#                 post.save()
+#                 messages.success(request, "Draft published.")
+#                 return redirect("profiles:profile_posts", id=request.user.id, slug=request.user.profile.slug)
+#             else:
+#                 raise PermissionDenied
+#         else:
+#             raise PermissionDenied
+#
+#
 
 def post_comments_count(request,id,slug):
     post = get_object_or_404(Post, id=id)

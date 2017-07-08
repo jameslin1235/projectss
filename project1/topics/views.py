@@ -8,11 +8,24 @@ from .models import Topic, TopicUser
 from project1.project1.posts.models import Post
 
 # Create your views here.
-def topic_list(request):
+# def topic_list(request):
+#     if request.method == "GET":
+#         context = {}
+#         context['topics'] = Topic.objects.all()
+#         return render(request,"topic_list.html",context)
+
+def to_topic_trending(request):
+    if request.method == "GET":
+        return redirect("topics:topic_trending")
+
+def topic_trending(request):
     if request.method == "GET":
         context = {}
         context['topics'] = Topic.objects.all()
-        return render(request,"topic_list.html",context)
+        context['first_topics'] = Topic.objects.all()[:8]
+        context['last_topics'] = Topic.objects.all()[8:14]
+        return render(request,"topic_trending.html",context)
+
 
 def topic_detail(request,id,slug):
     if request.method == "GET":

@@ -22,51 +22,59 @@
   <![endif]-->
 </head>
 <body>
-  <div class="nav-vertical">
-    <div class="nav-vertical-header">
-      <div class="img-wrapper--xs">
-        <a class="link--absolute" href="{% url 'home' %}"></a>
-        <img src="{% static "png/png/badoo.png" %}" class="img--cover" alt="Logo">
-      </div>
-      <button type="button" id="js-nav-vertical-toggle" class="button button--plain"><span class="fa fa-bars fa-2x" aria-hidden="true"></span></button>
+  <div id="js-nav-v-body" class="nav-v-body hidden">
+    <div class="nav-v-body-header">
+      <button type="button" class="button button--nav-v-body-toggle js-nav-v-body-toggle"><span class="fa fa-times fa-2x" aria-hidden="true"></span></button>
     </div>
-    <div id="js-nav-vertical-body" class="nav-vertical-body hidden">
-      <a href="#" class="link--vertical">Home</a>
-      <a href="#" class="link--vertical">Explore</a>
-      <a href="#" class="link--vertical">Inbox</a>
-      <a href="#" class="link--vertical">Terms</a>
-      <a href="#" class="link--vertical">Terms</a>
-      <a href="#" class="link--vertical">Terms</a>
-      <a href="#" class="link--vertical">Post</a>
+    <div class="nav-v-body-body">
+      <a href="{% url 'home' %}" class="link--nav-v">Home</a>
+      {% block nav-v-topics %}
+      {% endblock nav-v-topics %}
+      <div class="nav-v-button-links-group">
+        <button class="button button--block button--nav-v js-nav-v-links-group-toggle"><span>Account</span><span class="fa fa-angle-right fa-lg" aria-hidden="true"></span></button>
+        <div class="nav-v-links-group hidden">
+          <a href="#" class="link--nav-v">Profile</a>
+          <a href="#" class="link--nav-v">Settings</a>
+          <a href="#" class="link--nav-v">Log out</a>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="nav hidden">
-    <div class="nav-left">
-      <div class="img-wrapper--xs margin--right">
-        <a class="link--absolute" href="{% url 'home' %}"></a>
-        <img src="{% static "png/png/badoo.png" %}" class="img--cover" alt="Logo">
-      </div>
-      <div class="nav-search">
-        <input type="text" placeholder="Search Viz">
+  <div class="nav-wrapper">
+    <div class="nav-v">
+      <div class="nav-v-header">
+        <div class="img-wrapper--xs">
+          <a class="link--absolute" href="{% url 'home' %}"></a>
+          <img src="{% static "png/png/badoo.png" %}" class="img--cover" alt="Logo">
+        </div>
+        <button type="button" class="button button--nav-v-body-toggle js-nav-v-body-toggle"><span class="fa fa-bars fa-2x" aria-hidden="true"></span></button>
       </div>
     </div>
-    <div class="nav-right">
-      <a href="#" class="link--nav"><span class="fa fa-home fa-2x" aria-hidden="true"></span></a>
-      <a href="#" class="link--nav"><span class="fa fa-compass fa-2x" aria-hidden="true"></span></a>
-      <a href="#" class="link--nav"><span class="fa fa-inbox fa-2x" aria-hidden="true"></span></a>
-      <a href="#" class="link--nav"><span class="fa fa-comment fa-2x" aria-hidden="true"></span></a>
-      <a href="#" class="link--nav"><span class="fa fa-bolt fa-2x" aria-hidden="true"></span></a>
-      <a href="#" class="link--nav"><span class="fa fa-user-o fa-2x" aria-hidden="true"></span></a>
-      <a href="#" class="link--nav"><span class="fa fa-pencil-square-o fa-2x" aria-hidden="true"></span></a>
+
+    <div class="nav hidden">
+      <div class="nav-main">
+        <div class="nav-left">
+          <div class="img-wrapper--xs margin--right">
+            <a class="link--absolute" href="{% url 'home' %}"></a>
+            <img src="{% static "png/png/badoo.png" %}" class="img--cover" alt="Logo">
+          </div>
+          <div class="nav-search">
+            <input type="text" placeholder="Search Viz">
+          </div>
+        </div>
+        <div class="nav-right">
+          <a href="{% url 'home' %}" class="link--nav"><span class="fa fa-home fa-2x" aria-hidden="true"></span></a>
+          <a href="{% url 'topics:to_topic_trending' %}" class="link--nav"><span class="fa fa-compass fa-2x" aria-hidden="true"></span></a>
+          <button type="button"  class="button button--nav"><span class="fa fa-user fa-2x" aria-hidden="true"></span></button>
+        </div>
+      </div>
+      {% block nav-topics %}
+      {% endblock nav-topics %}
     </div>
   </div>
-
   {% block body %}
-
   {% endblock body %}
-
-
   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <!-- Include all compiled plugins (below), or include individual files as needed -->
@@ -74,7 +82,6 @@
   <!-- <script src="{% static "js/autosize.min.js" %}"></script> -->
   <script src="{% static "js/base.js" %}"></script>
   {% block javascript %}
-
   {% endblock javascript %}
 </body>
 </html>

@@ -22,9 +22,17 @@ function get_error(value){
 
 
 // NAVIGATION //
-$("#js-nav-vertical-toggle").on("click", function() {
-  $("#js-nav-vertical-body").toggleClass("hidden");
+// VERTICAL NAVIGATION //
+$(".js-nav-v-body-toggle").on("click", function() {
+  $("#js-nav-v-body").toggleClass("hidden");
+  $("body").toggleClass("no-scrollbar");
 });
+
+$(".js-nav-v-links-group-toggle").on("click", function() {
+  $(this).children(".fa").toggleClass("fa-angle-right").toggleClass("fa-angle-down");
+  $(this).next().toggleClass("hidden");
+});
+
 
 
 // ALERTS //
@@ -44,15 +52,21 @@ function add_alert(alert){
 ////
 
 // Pop menu //
-$(document).on("click", ".js-pop-menu-toggle", function() {
-  $(this).next().toggleClass("hidden");
+$(document).on("click", "#js-pop-menu-toggle", function() {
+  $("#js-pop-menu").toggleClass("hidden");
 });
 
 $(document).on("click", ".js-select-option", function() {
   var action = $(this).attr("data-action");
   $("#js-post-create-action").text(action);
+  $("#js-pop-menu").toggleClass("hidden");
 });
 
+$(document).on("click", "#js-post-create", function(){
+  var action = $("#js-post-create-action").text();
+  $("#js-post-create-form").attr("action", "/posts/create/?action=" + action);
+  $("#js-submit-button").click();
+})
 // MODALS //
 
 

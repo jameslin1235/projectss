@@ -1,7 +1,8 @@
 from django import forms
 from .models import Post
-
+from project1.project1.topics.models import Topic
 class PostForm(forms.ModelForm):
+    topic = forms.ModelChoiceField(queryset=Topic.objects.all(), empty_label="Select a topic")
     class Meta:
         model = Post
         fields = [
@@ -9,6 +10,7 @@ class PostForm(forms.ModelForm):
             "content",
             "topic"
         ]
+
 
     # def clean(self, *args, **kwargs):
     #     error_list = []
