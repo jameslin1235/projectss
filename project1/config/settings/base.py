@@ -32,11 +32,11 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'widget_tweaks',
-
     'project1.project1.accounts.apps.AccountsConfig',
     'project1.project1.posts.apps.PostsConfig',
     'project1.project1.profiles.apps.ProfilesConfig',
     'project1.project1.topics.apps.TopicsConfig',
+    'project1.project1.tags.apps.TagsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

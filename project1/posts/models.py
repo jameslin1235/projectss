@@ -3,13 +3,11 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils.text import slugify
 from django.core.urlresolvers import reverse
-from project1.project1.topics.models import Topic
 from project1.project1.profiles.models import Profile
 # Create your models here.
 class Post(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name="posts")
-    topic = models.ForeignKey(Topic, on_delete=models.CASCADE, related_name="posts")
-    likers = models.ManyToManyField(settings.AUTH_USER_MODEL,null=True,through='Like',related_name="liked_posts")
+    likers = models.ManyToManyField(settings.AUTH_USER_MODEL,through='PostUser',related_name="liked_posts")
     title = models.CharField(max_length=100)
     content = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)
@@ -17,7 +15,7 @@ class Post(models.Model):
     date_published = models.DateTimeField(null=True)
     likes = models.IntegerField(default=0)
     is_draft = models.BooleanField()
-    slug = models.SlugField()
+    slug = models.SlugField(blank=True)
 
     def __str__(self):
         return self.title
@@ -30,20 +28,19 @@ class Post(models.Model):
     def get_absolute_url(self):
         return reverse("posts:post_detail", kwargs={"id": self.id, "slug": self.slug})
 
-    def get_comments_count(self):
-        return self.comments.count()
+    # def get_comments_count(self):
+    #     return self.comments.count()
+    #
+    # def get_comments(self):
+    #     return self.comments.all()
+    #
+    # def get_likers_count(self):
+    #     return self.likes
+    #
+    # def get_likers(self):
+    #     return self.likers.order_by("like")
 
-    def get_comments(self):
-        return self.comments.all()
-
-    def get_likers_count(self):
-        return self.likes
-
-    def get_likers(self):
-        return self.likers.order_by("like")
-
-
-class Like(models.Model):
+class PostUser(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     date_liked = models.DateTimeField()

@@ -28,11 +28,21 @@ $(".js-nav-v-body-toggle").on("click", function() {
   $("body").toggleClass("no-scrollbar");
 });
 
-$(".js-nav-v-links-group-toggle").on("click", function() {
-  $(this).children(".fa").toggleClass("fa-angle-right").toggleClass("fa-angle-down");
-  $(this).next().toggleClass("hidden");
+$(".js-nav-links-group-toggle").on("click", function() {
+  var element = $(this);
+  if (element.hasClass("js-account")) {
+    element.toggleClass("button--nav-active");
+  }
+  else{
+    element.children(".fa").toggleClass("fa-angle-right").toggleClass("fa-angle-down");
+  }
+  element.next().toggleClass("hidden");
 });
 
+$("#js-nav-search-toggle").on("click", function(){
+  $("#js-nav-search").toggleClass("hidden");
+  $("#js-nav-search-field").focus();
+})
 
 
 // ALERTS //

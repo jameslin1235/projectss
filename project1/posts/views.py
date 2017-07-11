@@ -8,8 +8,8 @@ from django.urls import reverse
 from django.http import HttpResponse,JsonResponse, QueryDict
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils import timezone
-from .models import Post, Like
-from project1.project1.topics.models import Topic
+from .models import Post, PostUser
+from project1.project1.tags.models import Tag
 from .forms import PostForm
 from project1.project1.accounts.forms import UserForm, LoginForm
 from project1.project1.config import utility
@@ -39,23 +39,41 @@ def post_detail(request,id,slug):
             return render(request,"post_detail.html",context)
 
 def home(request):
+    # if request.method == "GET":
+    #     if request.user.is_authenticated:
+    #         if request.user.profile.first_login: # see first-time login topic follow page
+    #             context = {}
+    #             context['topics'] = Topic.objects.all()
+    #             return render(request,"topic_follow.html",context)
+    #         else: # see personalized content
+    #             followed_topics = request.user.profile.get_followed_topics()
+    #             context = {}
+    #             context['followed_topics'] = followed_topics
+    #             context['form'] = PostForm()
+    #             return render(request,"dashboard.html",context)
+    #
+    #     else: # see login/signup page
+    #         context = {}
+    #         context['userform'] = UserForm()
+    #         context['loginform'] = LoginForm()
+    #         return render(request,"home.html",context)
+
     if request.method == "GET":
         if request.user.is_authenticated:
-            if request.user.profile.first_login: # see first-time login topic follow page
-                context = {}
-                context['topics'] = Topic.objects.all()
-                return render(request,"topic_follow.html",context)
-            else: # see personalized content
-                followed_topics = request.user.profile.get_followed_topics()
-                context = {}
-                context['followed_topics'] = followed_topics
-                context['form'] = PostForm()
-                return render(request,"dashboard.html",context)
+            # if request.user.profile.first_login: # see first-time login topic follow page
+            #     context = {}
+            #     context['topics'] = Topic.objects.all()
+            #     return render(request,"topic_follow.html",context)
+            # else: # see personalized content
+            #     followed_topics = request.user.profile.get_followed_topics()
+            #     context = {}
+            #     context['followed_topics'] = followed_topics
+            #     context['form'] = PostForm()
+                return render(request,"dashboard.html")
 
-        else: # see login/signup page
+        else: # see content directly
             context = {}
-            context['userform'] = UserForm()
-            context['loginform'] = LoginForm()
+            context['nav_tags'] = Tag.objects.filter(nav = True)
             return render(request,"home.html",context)
 
 @login_required

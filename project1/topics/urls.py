@@ -6,5 +6,6 @@ urlpatterns = [
     url(r'^trending/$', views.topic_trending, name='topic_trending'),
     # url(r'^recommended-for-you/$', views.topic_recommended, name='topic_recommended'),
     # url(r'^follow/$', views.topic_follow, name='topic_follow'),
-    url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/$', views.topic_detail, name='topic_detail')
+    # url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/$', views.topic_detail, name='topic_detail')
+    url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/$', views.topic_explore, name='topic_explore')
 ]
