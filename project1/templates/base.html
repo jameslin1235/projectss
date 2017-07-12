@@ -37,53 +37,91 @@
           <a href="#" class="link--nav-v">Log out</a>
         </div>
       </div>
+      <div class="nav-bl-group">
+        <button class="button button--block button--nav-v js-nav-links-group-toggle"><span>Tags</span><span class="fa fa-angle-right fa-lg" aria-hidden="true"></span></button>
+        <div class="nav-links-group hidden">
+          {% for tag in nav_tags %}
+          <a href="{{ tag.get_absolute_url }}" class="link--nav-v">{{ tag.name|capfirst }}</a>
+          {% endfor %}
+        </div>
+      </div>
+      <button class="button button--block button--nav-v">Sign in / Sign up</button>
+      <button  type="button" class="button button--block button--nav-v"><span class="fa fa-search" aria-hidden="true"></span></button>
     </div>
   </div>
 
   <div class="nav-wrapper">
-    <div class="nav-v">
-      <div class="nav-v-header">
-        <div class="img-wrapper--xs">
-          <a class="link--absolute" href="{% url 'home' %}"></a>
-          <img src="{% static "png/png/badoo.png" %}" class="img--cover" alt="Logo">
-        </div>
-        <button type="button" class="button button--nav-v-body-toggle js-nav-v-body-toggle"><span class="fa fa-bars fa-2x" aria-hidden="true"></span></button>
-      </div>
-    </div>
-
-    <div class="nav hidden">
-      <div class="nav-main">
-        <div class="nav-left">
-          <div class="img-wrapper--xs margin--right">
-            <a class="link--absolute" href="{% url 'home' %}"></a>
-            <img src="{% static "png/png/badoo.png" %}" class="img--cover" alt="Logo">
+    <div class="container">
+      <div class="nav-v">
+        <div class="nav-v-header">
+          <div class="nav-logo">
+            <a href="{% url 'home' %}"><img src="{% static "png/png/badoo.png" %}" class="logo" alt="Logo"></a>
           </div>
-
+          <button type="button" class="button button--nav-v-body-toggle js-nav-v-body-toggle"><span class="fa fa-bars fa-2x" aria-hidden="true"></span></button>
         </div>
-        <div class="nav-right">
-          <button class="button button--nav button--nav-signup">Sign in / Sign up</button>
-          <button id="js-nav-search-toggle" type="button" class="button button--nav"><span class="fa fa-search" aria-hidden="true"></span></button>
-          <div id="js-nav-search" class="nav-search hidden">
-            <input id="js-nav-search-field" type="text" placeholder="Search Viz">
+      </div>
+      <div class="nav hidden">
+        <div class="nav-main">
+            <div class="nav-logo">
+              <a href="{% url 'home' %}"><img src="{% static "png/png/badoo.png" %}" class="logo" alt="Logo"></a>
+            </div>
+          <div class="nav-right">
+            <button class="button button--nav button--nav-signup">Sign in / Sign up</button>
+            <button id="js-nav-search-toggle" type="button" class="button button--nav"><span class="fa fa-search" aria-hidden="true"></span></button>
+            <div id="js-nav-search" class="nav-search hidden">
+              <input id="js-nav-search-field" type="text" placeholder="Search Viz">
+            </div>
           </div>
         </div>
+        <div class="nav-topics-wrapper">
+          <ul class="nav-topics">
+          <li class="nav-topic"><a href="{% url 'home' %}" class="link--nav {% block nav-home %}{% endblock nav-home%}">Home</a></li>
+          <li class="nav-topic"><a href="#" class="link--nav">Recommended</a></li>
+          <li class="nav-topic"><a href="#" class="link--nav">Trending</a></li>
+          {% for tag in nav_tags %}
+          <li class="nav-topic"><a href="{{ tag.get_absolute_url }}" class="link--nav">{{ tag.name|capfirst }}</a></li>
+          {% endfor %}
+          </ul>
+        </div>
       </div>
-
-      <div class="nav-topics-wrapper">
-        <ul class="nav-topics">
-        <li class="nav-topics-item"><a href="{% url 'home' %}" class="link--nav {% block nav-home %}{% endblock nav-home%}">Home</a></li>
-        <li class="nav-topics-item"><a href="#" class="link--nav">Recommended</a></li>
-        <li class="nav-topics-item"><a href="#" class="link--nav">Trending</a></li>
-        {% for tag in nav_tags %}
-        <li class="nav-topics-item"><a href="{{ tag.get_absolute_url }}" class="link--nav">{{ tag.name|capfirst }}</a></li>
-        {% endfor %}
-        </ul>
-      </div>
-
     </div>
   </div>
   {% block body %}
   {% endblock body %}
+
+
+<div class="footer-wrapper">
+  <div class="container">
+    <div class="footer-v">
+      <div class="footer-v-body">
+      <a href="#" class="link--nav-v">Getting started</a>
+      <a href="#" class="link--nav-v">Help</a>
+      <a href="#" class="link--nav-v">Status</a>
+      <a href="#" class="link--nav-v">Blog</a>
+      <a href="#" class="link--nav-v">Careers</a>
+      <a href="#" class="link--nav-v">Privacy</a>
+      <a href="#" class="link--nav-v">Terms</a>
+      <a href="#" class="link--nav-v">About</a>
+    </div>
+  </div>
+
+  <div class="footer hidden">
+    <div class="footer-links-wrapper">
+      <ul class="footer-links">
+        <li class="footer-link"><a href="#" class="link--nav">Getting started</a></li>
+        <li class="footer-link"><a href="#" class="link--nav">Help</a></li>
+        <li class="footer-link"><a href="#" class="link--nav">Status</a></li>
+        <li class="footer-link"><a href="#" class="link--nav">Blog</a></li>
+        <li class="footer-link"><a href="#" class="link--nav">Careers</a></li>
+        <li class="footer-link"><a href="#" class="link--nav">Privacy</a></li>
+        <li class="footer-link"><a href="#" class="link--nav">Terms</a></li>
+        <li class="footer-link"><a href="#" class="link--nav">About</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+</div>
+
   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <!-- Include all compiled plugins (below), or include individual files as needed -->

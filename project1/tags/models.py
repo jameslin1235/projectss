@@ -32,6 +32,9 @@ class Tag(models.Model):
     def get_posts(self):
         return self.posts.filter(is_draft = False).order_by("-date_published")
 
+    def get_latest_posts(self):
+        return self.posts.filter(is_draft = False).order_by("-date_published")[:4]
+
     # def get_explore_url(self):
     #     return reverse("topics:topic_explore", kwargs={"id": self.id, "slug": self.slug})
     #
