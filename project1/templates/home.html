@@ -2,9 +2,28 @@
 {% load static %}
 {% load widget_tweaks %}
 
-{% block nav-home %}
-link--nav-active
-{% endblock nav-home%}
+{% block nav-v-tags %}
+<div class="nav-bl-group">
+  <button class="button button--block button--nav-v js-nav-links-group-toggle"><span>Tags</span><span class="fa fa-angle-right fa-lg" aria-hidden="true"></span></button>
+  <div class="nav-links-group hidden">
+    {% for tag in nav_tags %}
+    <a href="{{ tag.get_absolute_url }}" class="link--nav-v">{{ tag.name|capfirst }}</a>
+    {% endfor %}
+  </div>
+</div>
+{% endblock nav-v-tags %}
+
+{% block nav-tags %}
+<div class="nav-topics-wrapper">
+  <ul class="nav-topics">
+  <li class="nav-topic"><a href="{% url 'home' %}" class="link--nav link--nav-active">Home</a></li>
+  <li class="nav-topic"><a href="#" class="link--nav">Trending</a></li>
+  {% for tag in nav_tags %}
+  <li class="nav-topic"><a href="{{ tag.get_absolute_url }}" class="link--nav">{{ tag.name|capfirst }}</a></li>
+  {% endfor %}
+  </ul>
+</div>
+{% endblock nav-tags %}
 
 {% block body %}
 <div class="container">

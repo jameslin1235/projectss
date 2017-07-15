@@ -60,17 +60,17 @@ def home(request):
 
     if request.method == "GET":
         if request.user.is_authenticated:
-            # if request.user.profile.first_login: # see first-time login topic follow page
-            #     context = {}
-            #     context['topics'] = Topic.objects.all()
-            #     return render(request,"topic_follow.html",context)
+            if request.user.profile.first_login: # see first-time login topic follow page
+                context = {}
+                context['general_tags'] = Tag.objects.filter(general = True)
+                return render(request,"tag_follow.html",context)
+            else:
             # else: # see personalized content
             #     followed_topics = request.user.profile.get_followed_topics()
             #     context = {}
             #     context['followed_topics'] = followed_topics
             #     context['form'] = PostForm()
                 return render(request,"dashboard.html")
-
         else: # see content directly
             context = {}
             context['nav_tags'] = Tag.objects.filter(nav = True)

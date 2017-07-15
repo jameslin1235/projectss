@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+  <title>{% block title %}Viz{% endblock title %}</title>
+  <!-- Bootstrap -->
+  <!-- <link href="{% static "bootstrap-3.3.7-dist/bootstrap-3.3.7-dist/css/bootstrap.min.css" %}" rel="stylesheet"> -->
+  <link href="{% static "bootstrap/css/bootstrap.css" %}" rel="stylesheet">
+  <link href="{% static "font-awesome-4.7.0/font-awesome-4.7.0/css/font-awesome.css" %}" rel="stylesheet">
+  <link href="{% static "css/index.css" %}" rel="stylesheet">
+
+  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</head>
+<body class="body--tags-follow">
+  <div class="tags-follow-wrapper">
+    <div class="container">
+      <div class="tags-follow-header">
+        <h1 class="heading">Welcome to Viz</h1>
+        <button type="button" id="js-follow-tags" class="button button--primary">Continue</button>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="tags-follow-body">
+      <div class="headings">
+        <h1 class="heading">Pick some topics you are interested in</h1>
+        <h2 class="subheading">We will use them to customize your reading list based on your interests.</h2>
+      </div>
+      <div class="list">
+        {% for tag in general_tags %}
+        <div class="tag-wrapper" >
+          <div class="tag js-tag" style="background-image: url({{ tag.image }})" data-id="{{ tag.id }}">
+            <div class="layer js-layer hidden">
+            </div>
+            <span class="tag-name">{{ tag.name|capfirst }}</span>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="{% static "bootstrap-3.3.7-dist/bootstrap-3.3.7-dist/js/bootstrap.min.js" %}"></script>
+  <!-- <script src="{% static "js/autosize.min.js" %}"></script> -->
+  <script src="{% static "js/tag_follow.js" %}"></script>
+</body>
+</html>

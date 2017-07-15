@@ -221,7 +221,7 @@ def get_login_modal(request):
         context = {}
         context['userform'] = userform
         context['loginform'] = loginform
-        context['url'] = request.GET.get("url")
+        # context['url'] = request.GET.get("url")
         template = "login_modal.html"
         return render(request,template,context)
     else:

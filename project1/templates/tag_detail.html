@@ -1,1 +1,76 @@
-{{ posts }}
+{% extends "tag_base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block body %}
+<div class="container">
+  <div class="tag">
+    <div class="tag-header">
+      <div class="tag-name">
+        <h1>{{ tag.name|capfirst }}</h1>
+      </div>
+      <div class="tag-follow">
+        <button class="button button--primary"><span>Follow</span></button>
+      </div>
+    </div>
+
+    <div class="tag-body row">
+      <div class="tag-content col-md-8">
+        {% block tag-content-nav %}
+        {{ block.super }}
+        {% block latest-active %}active{% endblock latest-active %}
+        {% block latest-link-active %}active{% endblock latest-link-active %}
+        {% endblock tag-content-nav %}
+        <div class="tag-content-list">
+          {% for post in latest_posts %}
+          <div class="tag-post">
+            <div class="card">
+              <div class="tag-post-header">
+                <div class="tag-post-avatar margin--right-m"><a href="{{ post.user.profile.get_absolute_url }}"><img src="{{ post.user.profile.avatar.url}}" class="avatar--s"></a></div>
+                <div class="tag-post-user"><a href="{{ post.user.profile.get_absolute_url }}">{{ post.user.username }}</a></div>
+              </div>
+              <div class="tag-post-body">
+                <div class="tag-post-title">
+                  <h5><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h5>
+                </div>
+                <div class="tag-post-content">
+                  <a href="{{ post.get_absolute_url }}">{{ post.content|truncatechars:100 }} More</a>
+                </div>
+
+              </div>
+              <div class="tag-post-footer">
+                <div class="tag-post-date">
+                  <span>{{ post.date_published }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="tag-pagination">
+          <ul class="pagination">
+            {% if latest_posts.has_previous %}
+            <li><a href="?page={{ latest_posts.previous_page_number }}"><span class="fa fa-angle-double-left" aria-hidden="true"></span></a></li>
+            {% endif %}
+            {% for i in latest_posts.paginator.page_range %}
+            {% if latest_posts.number == i %}
+            <li><span class="active">{{ i }}</span></li>
+            {% else %}
+            <li><a href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+            {% endfor %}
+            {% if latest_posts.has_next %}
+            <li><a href="?page={{ latest_posts.next_page_number }}"><span class="fa fa-angle-double-right" aria-hidden="true"></span></a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+
+      {% block tag-meta %}
+      {{ block.super }}
+      {% endblock tag-meta %}
+    </div>
+{% endblock body %}
+
+{% block javascript %}
+{% endblock javascript %}

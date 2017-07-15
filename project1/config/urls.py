@@ -22,7 +22,6 @@ from project1.project1.posts import views as posts
 from project1.project1.accounts import views as accounts
 
 urlpatterns = [
-
     url(r'^$', posts.home, name="home"),
     url(r'^signup/', accounts.signup_view, name="signup"),
     url(r'^login/', accounts.login_view, name="login"),
@@ -31,7 +30,7 @@ urlpatterns = [
     url(r'^posts/', include("project1.project1.posts.urls", namespace="posts")),
     url(r'^tags/', include("project1.project1.tags.urls", namespace="tags")),
     url(r'^profile/', include("project1.project1.profiles.urls", namespace="profiles")),
-    # url(r'^getloginmodal/$', utility.get_login_modal, name='get_login_modal'),
+    url(r'^getloginmodal/$', utility.get_login_modal, name='get_login_modal'),
     # url(r'^getalert/$', utility.get_alert, name='get_alert'),
     # url(r'^geterror/$', utility.get_error, name='get_error'),
     # url(r'^getloader/$', utility.get_loader, name='get_loader'),

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block body-background %}body--gray{% endblock body-background %}
+
+{% block tag-content-nav %}
+<div class="tag-content-nav">
+  <ul class="tag-content-types">
+    <li class="{% block latest-active %}{% endblock latest-active %}"><a href="#" class="{% block latest-link-active %}{% endblock latest-link-active %}">Latest stories</a></li>
+    <li class="{% block top-active %}{% endblock top-active %}"><a href="#" class="{% block top-link-active %}{% endblock top-link-active %}">Top stories</a></li>
+    <li class="{% block archive-active %}{% endblock archive-active %}"><a href="#" class="{% block archive-link-active %}{% endblock archive-link-active %}">Archive</a></li>
+  </ul>
+</div>
+{% endblock tag-content-nav %}
+
+{% block tag-meta %}
+<div class="tag-meta col-md-4">
+  <div class="tag-related">
+    <div class="tag-related-header">
+      <h3>Related tags</h3>
+    </div>
+    <div class="tag-related-body">
+      <ul class="tag-related-tags">
+        {% for tag in related_tags %}
+        <li><a href="{{ tag.get_absolute_url }}" class="link--tag">{{ tag.name|capfirst }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="tag-about">
+    <div class="tag-about-header">
+      <h3>About</h3>
+    </div>
+  </div>
+</div>
+{% endblock tag-meta %}
+
+{% block body %}
+{% endblock body %}

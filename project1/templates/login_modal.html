@@ -1,39 +1,58 @@
 {% load widget_tweaks %}
 <div class="modal">
-  <div class="modal__wrapper">
-    <button type="button" class="button button--modalclose js-modal-close"><span class="fa fa-times" aria-hidden="true"></span></button>
+  <div class="modal-wrapper">
+    <button type="button" id="js-modal-close" class="button button--modalclose"><span class="fa fa-times" aria-hidden="true"></span></button>
 
-    <div class="modal__body" id="js-signupform">
-      <div class="form">
-        <form method="post" action="/signup/?next={{ url }}">
-          <div class="formtitle">
-            <h2>Join Viz today.</h2>
-          </div>
+    <div class="modal-tab" id="js-signup-tab">
+      <div class="modal-header">
+        <h2>Join Viz today.</h2>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="/signup/">
           {% csrf_token %}
-          <div class="formfield">
-            <div class="formfield__input ">
-              {{ userform.username|add_class:"js-add-focus"|attr:"placeholder:Username" }}
-            </div>
+          <div class="form-field">
+              {{ userform.username|attr:"placeholder:Username" }}
           </div>
-
-          <div class="formfield">
-            <div class="formfield__input ">
-              {{ userform.email|add_class:"js-add-focus"|attr:"placeholder:Email" }}
-            </div>
+          <div class="form-field">
+              {{ userform.email|attr:"placeholder:Email" }}
           </div>
-
-          <div class="formfield">
-            <div class="formfield__input">
-              {{ userform.password|add_class:"js-add-focus"|attr:"placeholder:Password"|attr:"type:password" }}
-            </div>
+          <div class="form-field">
+              {{ userform.password|attr:"placeholder:Password"|attr:"type:password" }}
           </div>
+          <button type="submit" class="button button--block button--primary">Sign up</button>
+          <p>By signing up, you agree to the <a href="#" class="link--terms">Terms of Service</a> and <a href="#" class="link--terms">Privacy Policy</a>, including <a href="#" class="link--terms">Cookie Use</a>. </p>
 
-          <button type="submit" class="button button--blue button--primary">Sign up</button>
         </form>
       </div>
-      <div class="modal__text"><span class="spaceright--small">Have an account?</span><button type="button" class="button button--plain button--underlined" id="js-loginform-toggle">Log in</button></div>
+      <div class="modal-footer">
+        <span>Have an account?</span>
+        <button type="button" id="js-login-tab-toggle" class="button button--plain">Log in</button>
+      </div>
     </div>
 
+    <div class="modal-tab hidden" id="js-login-tab">
+      <div class="modal-header">
+        <h2>Log in To Viz</h2>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="/login/?next={{ url }}">
+          {% csrf_token %}
+          <div class="form-field">
+              {{ loginform.username|attr:"placeholder:Username" }}
+          </div>
+          <div class="form-field">
+              {{ loginform.password|attr:"placeholder:Password"|attr:"type:password" }}
+          </div>
+          <button type="submit" class="button button--block button--primary">Log in</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <span>New to Viz?</span>
+        <button type="button" id="js-signup-tab-toggle" class="button button--plain">Sign up</button>
+      </div>
+    </div>
+
+<!--
     <div class="modal__body hidden" id="js-loginform">
       <div class="form">
         <form method="post" action="/login/?next={{ url }}">
@@ -60,7 +79,7 @@
         </form>
       </div>
       <div class="modal__text"><span class="spaceright--small">New to Viz?</span><button type="button" class="button button--plain button--underlined" id="js-signupform-toggle">Sign up</button></div>
-    </div>
+    </div> -->
 
 
 
