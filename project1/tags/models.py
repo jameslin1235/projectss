@@ -14,7 +14,7 @@ class Tag(models.Model):
     followers = models.ManyToManyField(settings.AUTH_USER_MODEL,symmetrical=False,blank=True,through='TagUser',related_name="followed_tags")
     posts = models.ManyToManyField(Post,symmetrical=False,blank=True,through='TagPost',related_name="tags")
     general = models.BooleanField(default = False)
-    nav = models.BooleanField(default = False)
+    main = models.BooleanField(default = False)
     def __str__(self):
         return self.name
 

@@ -26,14 +26,13 @@ def tag_detail(request,id,slug):
 def tag_follow(request):
     if request.method == "GET":
         if request.user.is_authenticated:
-            if request.GET.get("id") is not None:
-                id_list = request.GET.get("id").split(",")
-                for id in id_list:
-                    TagUser.objects.create(tag=Tag.objects.get(id=int(id)), user=request.user, date_followed=timezone.now())
+            if request.user.profile.first_login:
+                if request.GET.get("id") is not None:
+                    id_list = request.GET.get("id").split(",")
+                    for id in id_list:
+                        TagUser.objects.create(tag=Tag.objects.get(id=int(id)), user=request.user, date_followed=timezone.now())
                 request.user.profile.first_login = False
                 request.user.profile.save()
                 return redirect("home")
-            else:
-                raise PermissionDenied
         else:
             raise PermissionDenied

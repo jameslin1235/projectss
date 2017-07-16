@@ -1,68 +1,84 @@
 {% extends "base.html" %}
 {% load static %}
 {% load widget_tweaks %}
-
-{% block nav-v-tags %}
-<div class="nav-bl-group">
-  <button class="button button--block button--nav-v js-nav-links-group-toggle"><span>Tags</span><span class="fa fa-angle-right fa-lg" aria-hidden="true"></span></button>
-  <div class="nav-links-group hidden">
-    {% for tag in nav_tags %}
-    <a href="{{ tag.get_absolute_url }}" class="link--nav-v">{{ tag.name|capfirst }}</a>
-    {% endfor %}
-  </div>
-</div>
-{% endblock nav-v-tags %}
-
-{% block nav-tags %}
-<div class="nav-topics-wrapper">
-  <ul class="nav-topics">
-  <li class="nav-topic"><a href="{% url 'home' %}" class="link--nav link--nav-active">Home</a></li>
-  <li class="nav-topic"><a href="#" class="link--nav">Trending</a></li>
-  {% for tag in nav_tags %}
-  <li class="nav-topic"><a href="{{ tag.get_absolute_url }}" class="link--nav">{{ tag.name|capfirst }}</a></li>
-  {% endfor %}
-  </ul>
-</div>
-{% endblock nav-tags %}
+{% block active %}active{% endblock active %}
 
 {% block body %}
 <div class="container">
-{% for tag in nav_tags %}
+{% if show_main %}
+{% for tag in main_tags %}
 <div class="tag">
-  <div class="tag-header">
-    <div class="tag-name">
+  <div class="header">
+    <div class="heading">
       <h3><a href="{{ tag.get_absolute_url }}">{{ tag.name|capfirst }}</a></h3>
     </div>
-    <div class="tag-more">
-      <a href="{{ tag.get_absolute_url }}"><span class="margin--right-s">MORE</span><span class="fa fa-angle-right" aria-hidden="true"></span></a>
+    <div class="action">
+      <a href="{{ tag.get_absolute_url }}"><span class="action-text">MORE</span><span class="fa fa-angle-right" aria-hidden="true"></span></a>
     </div>
   </div>
-  <div class="tag-body row">
+  <div class="body row">
     {% for post in tag.get_latest_posts %}
-    <div class="tag-post col-md-6">
+    <div class="post col-md-6">
       <div class="card">
-      <div class="tag-post-header">
-        <div class="tag-post-avatar margin--right-m"><a href="{{ post.user.profile.get_absolute_url }}"><img src="{{ post.user.profile.avatar.url}}" class="avatar--s"></a></div>
-        <div class="tag-post-user"><a href="{{ post.user.profile.get_absolute_url }}">{{ post.user.username }}</a></div>
+      <div class="header">
+        <div class="avatar"><a href="{{ post.user.profile.get_absolute_url }}"><img src="{{ post.user.profile.avatar.url}}" class="avatar--s"></a></div>
+        <div class="user"><a href="{{ post.user.profile.get_absolute_url }}">{{ post.user.username }}</a></div>
       </div>
-      <div class="tag-post-body">
-        <div class="tag-post-title">
+      <div class="body">
+        <div class="title">
           <h5><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h5>
         </div>
-        <div class="tag-post-content">
+        <div class="content">
           <a href="{{ post.get_absolute_url }}">{{ post.content|truncatechars:100 }} More</a>
         </div>
-
       </div>
-      <div class="tag-post-footer">
-        <div class="tag-post-date">
+      <div class="footer">
+        <div class="date">
           <span>{{ post.date_published }}</span>
         </div>
       </div>
     </div>
     </div>
     {% endfor %}
+  </div>
+</div>
+{% endfor %}
+{% endif %}
 
+{% for tag in tags %}
+<div class="tag">
+  <div class="header">
+    <div class="heading">
+      <h3><a href="{{ tag.get_absolute_url }}">{{ tag.name|capfirst }}</a></h3>
+    </div>
+    <div class="action">
+      <a href="{{ tag.get_absolute_url }}"><span class="action-text">MORE</span><span class="fa fa-angle-right" aria-hidden="true"></span></a>
+    </div>
+  </div>
+  <div class="body row">
+    {% for post in tag.get_latest_posts %}
+    <div class="post col-md-6">
+      <div class="card">
+      <div class="header">
+        <div class="avatar"><a href="{{ post.user.profile.get_absolute_url }}"><img src="{{ post.user.profile.avatar.url}}" class="avatar--s"></a></div>
+        <div class="user"><a href="{{ post.user.profile.get_absolute_url }}">{{ post.user.username }}</a></div>
+      </div>
+      <div class="body">
+        <div class="title">
+          <h5><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h5>
+        </div>
+        <div class="content">
+          <a href="{{ post.get_absolute_url }}">{{ post.content|truncatechars:100 }} More</a>
+        </div>
+      </div>
+      <div class="footer">
+        <div class="date">
+          <span>{{ post.date_published }}</span>
+        </div>
+      </div>
+    </div>
+    </div>
+    {% endfor %}
   </div>
 </div>
 {% endfor %}

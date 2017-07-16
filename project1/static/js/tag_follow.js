@@ -6,11 +6,16 @@ $(".js-tag").on("click", function(){
 // Check for selected tags and build relationships (user follows tags)
 $("#js-follow-tags").on("click", function(){
   var id = [];
-  var url = "/tags/follow/?id=";
+  var url = "/tags/follow/";
   $(".js-tag").each(function(){
     if (!$(this).children(".js-layer").hasClass("hidden")) {
       id.push(Number($(this).attr("data-id")));
     }
   });
-  window.location.href = url + id
+  if (id.length === 0) {
+    window.location.href = url;
+  }
+  else{
+    window.location.href = url + "?id=" + id;
+  }
 });

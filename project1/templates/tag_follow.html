@@ -39,8 +39,7 @@
         {% for tag in general_tags %}
         <div class="tag-wrapper" >
           <div class="tag js-tag" style="background-image: url({{ tag.image }})" data-id="{{ tag.id }}">
-            <div class="layer js-layer hidden">
-            </div>
+            <div class="layer js-layer hidden"></div>
             <span class="tag-name">{{ tag.name|capfirst }}</span>
           </div>
         </div>

@@ -5,16 +5,7 @@ from project1.project1.topics.models import Topic
 
 # Create your views here.
 def signup_view(request):
-    if request.method == "GET":
-        if request.user.is_authenticated():
-            return redirect("home")
-        else:
-            context = {}
-            form = UserForm()
-            context['form'] = form
-            context['title'] = "Sign up for Viz"
-            return render(request,"accounts/signup.html",context)
-    elif request.method == "POST":
+    if request.method == "POST":
         form = UserForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
@@ -25,8 +16,8 @@ def signup_view(request):
             user = authenticate(username=username,password=password)
             if user is not None:
                 login(request, user)
-                if request.GET.get('next'):
-                    return redirect(request.GET.get('next'))
+                # if request.GET.get('next'):
+                #     return redirect(request.GET.get('next'))
                 return redirect("home")
 
 

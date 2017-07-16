@@ -39,41 +39,25 @@ def post_detail(request,id,slug):
             return render(request,"post_detail.html",context)
 
 def home(request):
-    # if request.method == "GET":
-    #     if request.user.is_authenticated:
-    #         if request.user.profile.first_login: # see first-time login topic follow page
-    #             context = {}
-    #             context['topics'] = Topic.objects.all()
-    #             return render(request,"topic_follow.html",context)
-    #         else: # see personalized content
-    #             followed_topics = request.user.profile.get_followed_topics()
-    #             context = {}
-    #             context['followed_topics'] = followed_topics
-    #             context['form'] = PostForm()
-    #             return render(request,"dashboard.html",context)
-    #
-    #     else: # see login/signup page
-    #         context = {}
-    #         context['userform'] = UserForm()
-    #         context['loginform'] = LoginForm()
-    #         return render(request,"home.html",context)
-
     if request.method == "GET":
         if request.user.is_authenticated:
             if request.user.profile.first_login: # see first-time login topic follow page
                 context = {}
                 context['general_tags'] = Tag.objects.filter(general = True)
                 return render(request,"tag_follow.html",context)
-            else:
-            # else: # see personalized content
-            #     followed_topics = request.user.profile.get_followed_topics()
-            #     context = {}
-            #     context['followed_topics'] = followed_topics
-            #     context['form'] = PostForm()
-                return render(request,"dashboard.html")
+            else: # view personalized home
+                context = {}
+                context['main_tags'] = Tag.objects.filter(main = True)
+                if request.user.followed_tags.count() == 0: # display general tags
+                    context['show_main'] = True
+                    return render(request,"home.html",context)
+                else:
+                    context['tags'] = request.user.followed_tags.all() # display followed tags
+                    return render(request,"home.html",context)
         else: # see content directly
             context = {}
-            context['nav_tags'] = Tag.objects.filter(nav = True)
+            context['main_tags'] = Tag.objects.filter(main = True)
+            context['show_main'] = True
             return render(request,"home.html",context)
 
 @login_required

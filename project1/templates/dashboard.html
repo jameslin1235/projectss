@@ -2,44 +2,46 @@
 {% load static %}
 {% load widget_tweaks %}
 
-{% block nav-home %}
-link--nav-active
-{% endblock nav-home %}
-
 {% block body %}
-<div class="container dashboard">
-  <div class="row">
-    <div class="col-md-8">
+<div class="container">
+{% for tag in tags %}
+<div class="tag">
+  <div class="tag-header">
+    <div class="tag-name">
+      <h3><a href="{{ tag.get_absolute_url }}">{{ tag.name|capfirst }}</a></h3>
+    </div>
+    <div class="tag-more">
+      <a href="{{ tag.get_absolute_url }}"><span class="margin--right-s">MORE</span><span class="fa fa-angle-right" aria-hidden="true"></span></a>
+    </div>
+  </div>
+  <div class="tag-body row">
+    {% for post in tag.get_latest_posts %}
+    <div class="tag-post col-md-6">
       <div class="card">
-        <div class="item margin--bottom">
-          <div class="item-header">
-            <div class="img-wrapper--xs margin--right">
-              <a class="link--absolute" href="{% url 'profiles:profile_activity' id=request.user.id slug=request.user.profile.slug %}"></a>
-              <img src="{{ request.user.profile.avatar.url}}" class="img--cover" alt="User Avatar">
-            </div>
-            <div>
-              <a class="link--card" href="{% url 'profiles:profile_activity' id=request.user.id slug=request.user.profile.slug %}">{{ request.user.username}}</a>
-            </div>
-          </div>
+      <div class="tag-post-header">
+        <div class="tag-post-avatar margin--right-m"><a href="{{ post.user.profile.get_absolute_url }}"><img src="{{ post.user.profile.avatar.url}}" class="avatar--s"></a></div>
+        <div class="tag-post-user"><a href="{{ post.user.profile.get_absolute_url }}">{{ post.user.username }}</a></div>
+      </div>
+      <div class="tag-post-body">
+        <div class="tag-post-title">
+          <h5><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h5>
         </div>
-        <div class="content-type-list">
-          <button type="button" class="button button--flexitem js-modal-post"><span class="fa fa-font fa-2x margin--bottom icon--black" aria-hidden="true"></span><span class="span--block">Text</span></button>
-          <button type="button" id="js-nav-vertical-toggle" class="button button--flexitem"><span class="fa fa-picture-o fa-2x margin--bottom icon--red" aria-hidden="true"></span><span class="span--block">Photo</span></button>
-          <button type="button" id="js-nav-vertical-toggle" class="button button--flexitem"><span class="fa fa-quote-left fa-2x margin--bottom icon--orange" aria-hidden="true"></span><span class="span--block">Quote</span></button>
-          <button type="button" id="js-nav-vertical-toggle" class="button button--flexitem"><span class="fa fa-link fa-2x margin--bottom icon--green" aria-hidden="true"></span><span class="span--block">Link</span></button>
-          <button type="button" id="js-nav-vertical-toggle" class="button button--flexitem"><span class="fa fa-comment fa-2x margin--bottom icon--blue" aria-hidden="true"></span><span class="span--block">Chat</span></button>
-          <button type="button" id="js-nav-vertical-toggle" class="button button--flexitem"><span class="fa fa-headphones fa-2x margin--bottom icon--purple" aria-hidden="true"></span><span class="span--block">Audio</span></button>
-          <button type="button" id="js-nav-vertical-toggle" class="button button--flexitem"><span class="fa fa-video-camera fa-2x margin--bottom icon--gray" aria-hidden="true"></span><span class="span--block">Video</span></button>
+        <div class="tag-post-content">
+          <a href="{{ post.get_absolute_url }}">{{ post.content|truncatechars:100 }} More</a>
         </div>
 
       </div>
+      <div class="tag-post-footer">
+        <div class="tag-post-date">
+          <span>{{ post.date_published }}</span>
+        </div>
+      </div>
     </div>
-    <div class="col-md-4">
-      {% for topic in followed_topics %}
-      {{ topic.name }}
-      {% endfor %}
     </div>
+    {% endfor %}
   </div>
+</div>
+{% endfor %}
 </div>
 {% endblock body %}
 {% block javascript %}
