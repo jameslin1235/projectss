@@ -21,26 +21,32 @@
   <![endif]-->
 </head>
 <body class="body--tags-follow">
+
   <div class="tags-follow-wrapper">
     <div class="container">
-      <div class="tags-follow-header">
-        <h1 class="heading">Welcome to Viz</h1>
-        <button type="button" id="js-follow-tags" class="button button--primary">Continue</button>
+      <div class="header">
+        <div class="heading">
+          <h1 class="heading">Welcome to Viz</h1>
+        </div>
+        <div class="action">
+          <button type="button" id="js-follow-tags" class="button button--primary">Continue</button>
+        </div>
       </div>
     </div>
   </div>
+
   <div class="container">
     <div class="tags-follow-body">
-      <div class="headings">
+      <div class="header">
         <h1 class="heading">Pick some topics you are interested in</h1>
         <h2 class="subheading">We will use them to customize your reading list based on your interests.</h2>
       </div>
-      <div class="list">
+      <div class="body">
         {% for tag in general_tags %}
         <div class="tag-wrapper" >
           <div class="tag js-tag" style="background-image: url({{ tag.image }})" data-id="{{ tag.id }}">
             <div class="layer js-layer hidden"></div>
-            <span class="tag-name">{{ tag.name|capfirst }}</span>
+            <span class="name">{{ tag.name|capfirst }}</span>
           </div>
         </div>
         {% endfor %}

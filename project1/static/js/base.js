@@ -24,7 +24,7 @@ $(document).on("click", "#js-signup-tab-toggle", function(){
 
 // Sign in / Sign up modal close //
 $(document).on("click", "#js-modal-close", function(){
-  $(this).parents(".modal").remove();
+  $(this).parents(".modal-wrapper").remove();
 });
 
 // Form //

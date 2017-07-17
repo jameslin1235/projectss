@@ -56,7 +56,7 @@ img{
   border-radius: 100%;
 }
 
-.logo{
+.img--logo{
   width: 50px;
   height: 50px;
 }
@@ -81,7 +81,25 @@ img{
 
 a{
   text-decoration: none;
-  color: #000;
+  color: rgba(0,0,0,1);
+}
+
+.a--block{
+  display: block;
+}
+
+.a--nav-v{
+  padding: 15px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.15);
+}
+
+.a--transparent{
+  opacity: 0.5;
+}
+
+
+.a--transparent:hover{
+  opacity: 1;
 }
 
 a:focus{
@@ -197,34 +215,26 @@ input:focus {
   margin-bottom: 30px;
 }
 
-.tag .action-text{
+.tag > .header span:first-child{
   margin-right: 5px;
 }
 
-.tag .body .header{
+.tag > .body .header{
   display: flex;
   align-items: center;
   margin-bottom: 15px;
 }
 
-.tag .body .post .avatar{
+.tag > .body .header .avatar{
   margin-right: 5px;
 }
 
-.tag .body .body{
+.tag > .body .body{
   margin-bottom: 15px;
 }
 
-.tag .body .body .title{
+.tag > .body .body .title{
   margin-bottom: 5px;
-}
-
-.tag-post-body{
-  margin-bottom: 15px;
-}
-
-.tag-post-title{
-  margin-bottom: 15px;
 }
 
 .card{
@@ -313,28 +323,28 @@ input:focus {
   border-bottom: 1px solid rgba(0, 0, 0, 0.15);
 }
 
-.tags-follow-header{
+.tags-follow-wrapper .header{
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 15px 0;
 }
 
-.tags-follow-body .headings{
+.tags-follow-body > .header{
   margin-bottom: 30px;
 }
 
-.tags-follow-body .heading{
+.tags-follow-body > .header > .heading{
   margin-bottom: 5px;
   font-size: 1.5rem;
 }
 
-.tags-follow-body .subheading{
+.tags-follow-body > .header > .subheading{
   font-size: 1.125rem;
   font-weight: normal;
 }
 
-.tags-follow-body .list{
+.tags-follow-body > .body{
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -421,7 +431,14 @@ input:focus {
   z-index: 100;
 }
 
-.nav-v-body{
+.nav-v__header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 0;
+}
+
+.nav-v__body{
   position: fixed;
   top: 0;
   left: 0;
@@ -433,56 +450,35 @@ input:focus {
   padding: 0 15px;
 }
 
-.nav-v-body .header{
-  padding: 15px 0;
+.nav-v__body-header{
   display: flex;
   align-items: center;
   justify-content: flex-end;
-}
-
-.nav-v-body .header button{
-  opacity: 0.5;
-}
-
-.nav-v-body a{
-  display: block;
   padding: 15px 0;
-  opacity: 0.5;
-  border-bottom: 1px solid rgba(0,0,0,0.15);
 }
 
-.nav-v-body a:hover{
-  opacity: 1;
-}
-
-.nav-v-body .body{
+.nav-v__body-body{
   margin-bottom: 30px;
 }
 
-.nav-v-body .body button{
+.nav-v-body > .body button{
   padding: 15px 0;
   border-bottom: 1px solid rgba(0,0,0,0.2);
   text-align: left;
-}
-
-.nav-bl button{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.nav-v .header{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 15px 0;
-}
-
-.nav-v button{
   opacity: 0.5;
 }
 
-.nav-main{
+.nav-v-body > .body button:hover{
+  opacity: 1;
+}
+
+.nav-v-body > .body .nav-bl button{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav > .header{
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -490,41 +486,49 @@ input:focus {
   padding: 15px 0;
 }
 
-.nav-action{
+.nav > .header .action{
   display: flex;
   align-items: center;
 }
 
-.nav-action > button{
+.nav > .header .action button:first-child{
   margin-right: 10px;
-}
-
-.nav-search{
-  margin-right: 10px;
-}
-
-.nav-tags{
-  display: flex;
-  align-items: center;
-}
-
-.nav-tags li{
-  padding: 15px 15px 15px 0;
-}
-
-.nav-tags a{
   opacity: 0.5;
 }
 
-.nav-tags a:hover{
+.nav > .header .action button:first-child:hover{
   opacity: 1;
 }
 
-.nav-tags .active{
+.nav > .header .action div{
+  margin-right: 10px;
+}
+
+.nav > .header .action button:last-child{
+  border: none;
+  padding: 10px;
+}
+
+.nav > .body .tags{
+  display: flex;
+  align-items: center;
+}
+
+.nav > .body li{
+  padding: 15px 15px 15px 0;
+}
+
+.nav > .body a{
+  opacity: 0.5;
+}
+
+.nav > .body a:hover{
   opacity: 1;
 }
 
-
+.nav > .body .active{
+  opacity: 1;
+}
 
 /* Footer */
 .footer-wrapper{
@@ -580,24 +584,32 @@ input:focus {
 
 .button--block{
   width: 100%;
-  border-radius: 3px;
+}
+
+.button--nav-v{
+  padding: 15px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.15);
+}
+
+.button--transparent-hover-disabled{
   opacity: 0.5;
 }
 
-.button--block:hover{
+.button--transparent{
+  opacity: 0.5;
+}
+
+.button--transparent:hover{
   opacity: 1;
 }
 
-.button--plain{
-  padding: 0;
-}
 
-.button--modalclose{
+/*.button--modalclose{
   position: absolute;
   top: 0;
   right: 0;
   color: rgba(0,0,0,0.15);
-}
+}*/
 /* icons */
 
 .icon{
@@ -660,9 +672,8 @@ input:focus {
   color: #8590a6;
 }
 
-
 /* Modals */
-.modal{
+.modal-wrapper{
   position: fixed;
   top: 0;
   left: 0;
@@ -675,7 +686,7 @@ input:focus {
   background: rgba(0,0,0,0.6);
 }
 
-.modal-wrapper{
+.modal{
   max-width: 400px;
   /*overflow: hidden;*/
   flex-grow: 1;
@@ -686,51 +697,48 @@ input:focus {
   padding: 30px;
 }
 
-.modal-header{
+.modal > button{
+  position: absolute;
+  top: 0;
+  right: 0;
+  opacity: 0.5;
+}
+
+.modal > .tab > .header {
   margin-bottom: 15px;
   text-align: center;
 }
 
-.modal-body{
+.modal > .tab > .body{
   margin-bottom: 15px;
 }
 
-/*.modal-body .form-field{
-  margin-bottom: 15px;
-}*/
-
-
-.modal-body button{
+.modal > .tab > .body button{
+  border-radius: 3px;
+  opacity: 0.5;
   margin-bottom: 15px;
 }
 
-.modal-footer span{
-  margin-right: 5px;
+.modal > .tab > .body button:hover{
+  opacity: 1
 }
 
-.modal-footer button{
+.modal > .tab > .body a{
+  color: #00ab6b;
+}
+
+.modal > .tab > .body a:hover{
+  text-decoration: underline;
+}
+
+.modal > .tab > .footer button{
+  padding: 0;
   color: #00ab6b;
   opacity: 0.5;
 }
 
-.modal-footer button:hover{
+.modal > .tab > .footer button:hover{
   opacity: 1;
-}
-
-
-.modal-pop-menu{
-  position: absolute;
-  top: 40px;
-}
-.modal__text{
-  padding: 15px 0;
-}
-
-.modal__canvas{
-  display: block;
-  max-width: 100%;
-
-  margin: 0 auto;
 }
 
 @media (min-width: 768px){

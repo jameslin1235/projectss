@@ -1,4 +1,4 @@
-{% load static %}
+ {% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,66 +22,68 @@
   <![endif]-->
 </head>
 <body class="{% block body-background %}{% endblock body-background %}">
-  <div id="js-nav-v-body" class="nav-v-body hidden">
-    <div class="header">
-      <button type="button" class="button button--plain js-nav-v-body-toggle"><span class="fa fa-times fa-2x" aria-hidden="true"></span></button>
+  <div id="js-nav-v-body" class="nav-v__body hidden">
+    <div class="nav-v__body-header">
+      <button type="button" class="button button--transparent-hover-disabled js-nav-v-body-toggle"><span class="fa fa-times fa-2x" aria-hidden="true"></span></button>
     </div>
-    <div class="body">
-      <a href="{% url 'home' %}">Home</a>
-      <div class="nav-bl">
-        <button class="button button--block js-nav-links-group-toggle"><span>Account</span><span class="fa fa-angle-right fa-lg" aria-hidden="true"></span></button>
-        <div class="nav-links hidden">
-          <a href="#">Profile</a>
-          <a href="#">Settings</a>
-          <a href="#">Log out</a>
+    <div class="nav-v__body-body">
+      <a href="{% url 'home' %}" class="a--block a--nav-v a--transparent">Home</a>
+      <div class="nav-v__bl">
+        <button class="button button--block button--nav-v button--transparent js-nav-links-group-toggle"><span>Account</span><span class="fa fa-angle-right fa-lg" aria-hidden="true"></span></button>
+        <div class="nav-v__links hidden">
+          <a href="#" class="a--block a--nav-v a--transparent">Profile</a>
+          <a href="#" class="a--block a--nav-v a--transparent">Settings</a>
+          <a href="#" class="a--block a--nav-v a--transparent">Log out</a>
         </div>
       </div>
       {% block nav-v-tags %}
-      <div class="nav-bl">
-        <button class="button button--block js-nav-links-group-toggle"><span>Tags</span><span class="fa fa-angle-right fa-lg" aria-hidden="true"></span></button>
-        <div class="nav-links hidden">
+      <div class="nav-v__bl">
+        <button class="button button--block button--nav-v button--transparent js-nav-links-group-toggle"><span>Tags</span><span class="fa fa-angle-right fa-lg" aria-hidden="true"></span></button>
+        <div class="nav-v__links hidden">
           {% for tag in main_tags %}
-          <a href="{{ tag.get_absolute_url }}">{{ tag.name|capfirst }}</a>
+          <a href="{{ tag.get_absolute_url }}" class="a--block a--nav-v a--transparent">{{ tag.name|capfirst }}</a>
           {% endfor %}
         </div>
       </div>
       {% endblock nav-v-tags %}
-      <button class="button button--block">Sign in / Sign up</button>
-      <button  type="button" class="button button--block"><span class="fa fa-search" aria-hidden="true"></span></button>
+      <button type="button" class="button button--block button--nav-v button--transparent">Sign in / Sign up</button>
+      <button type="button" class="button button--block button--nav-v button--transparent"><span class="fa fa-search" aria-hidden="true"></span></button>
     </div>
   </div>
+
   <div class="nav-wrapper">
     <div class="container">
       <div class="nav-v">
-        <div class="header">
-          <div class="logo">
-            <a href="{% url 'home' %}"><img src="{% static "png/png/badoo.png" %}" class="logo" alt="Logo"></a>
+        <div class="nav-v__header">
+          <div class="nav-v__logo">
+            <a href="{% url 'home' %}"><img src="{% static "png/png/badoo.png" %}" class="img--logo" alt="Logo"></a>
           </div>
-          <button type="button" class="button button--plain js-nav-v-body-toggle"><span class="fa fa-bars fa-2x" aria-hidden="true"></span></button>
+          <div class="nav-v__action">
+            <button type="button" class="button button--transparent-hover-disabled js-nav-v-body-toggle"><span class="fa fa-bars fa-2x" aria-hidden="true"></span></button>
+          </div>
         </div>
       </div>
 
       <div class="nav hidden">
-        <div class="nav-main">
-          <div class="nav-logo">
-            <a href="{% url 'home' %}"><img src="{% static "png/png/badoo.png" %}" class="logo" alt="Logo"></a>
+        <div class="header">
+          <div class="logo">
+            <a href="{% url 'home' %}"><img src="{% static "png/png/badoo.png" %}" class="img--logo" alt="Logo"></a>
           </div>
-          <div class="nav-action">
-            <button id="js-nav-search-toggle" type="button" class="button "><span class="fa fa-search" aria-hidden="true"></span></button>
-            <div id="js-nav-search" class="nav-search hidden">
+          <div class="action">
+            <button id="js-nav-search-toggle" type="button" class="button"><span class="fa fa-search" aria-hidden="true"></span></button>
+            <div id="js-nav-search" class="search hidden">
               <input id="js-nav-search-field" type="text" placeholder="Search Viz">
             </div>
             {% if request.user.is_authenticated %}
             <button id="js-nav-dropdown-toggle" class="button"><img src="{{ request.user.profile.avatar.url}}" class="avatar--s"></button>
             {% else %}
-            <button id="js-get-login-modal" class="button button--nav-signup">Sign in / Sign up</button>
+            <button id="js-get-login-modal" class="button button--primary">Sign in / Sign up</button>
             {% endif %}
-
           </div>
         </div>
         {% block nav-tags %}
-        <div class="nav-tags-wrapper">
-          <ul class="nav-tags">
+        <div class="body">
+          <ul class="tags">
             <li><a href="{% url 'home' %}" class="{% block active %}{% endblock active %}">Home</a></li>
             <li><a href="#">Trending</a></li>
             {% for tag in main_tags %}

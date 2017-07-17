@@ -1,13 +1,13 @@
 {% load widget_tweaks %}
-<div class="modal">
-  <div class="modal-wrapper">
-    <button type="button" id="js-modal-close" class="button button--modalclose"><span class="fa fa-times" aria-hidden="true"></span></button>
+<div class="modal-wrapper">
+  <div class="modal">
+    <button type="button" id="js-modal-close" class="button"><span class="fa fa-times" aria-hidden="true"></span></button>
 
-    <div class="modal-tab" id="js-signup-tab">
-      <div class="modal-header">
+    <div class="tab" id="js-signup-tab">
+      <div class="header">
         <h2>Join Viz today.</h2>
       </div>
-      <div class="modal-body">
+      <div class="body">
         <form method="post" action="/signup/">
           {% csrf_token %}
           <div class="form-field">
@@ -20,21 +20,21 @@
               {{ userform.password|attr:"placeholder:Password"|attr:"type:password" }}
           </div>
           <button type="submit" class="button button--block button--primary">Sign up</button>
-          <p>By signing up, you agree to the <a href="#" class="link--terms">Terms of Service</a> and <a href="#" class="link--terms">Privacy Policy</a>, including <a href="#" class="link--terms">Cookie Use</a>. </p>
+          <p>By signing up, you agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>, including <a href="#">Cookie Use</a>. </p>
 
         </form>
       </div>
-      <div class="modal-footer">
+      <div class="footer">
         <span>Have an account?</span>
-        <button type="button" id="js-login-tab-toggle" class="button button--plain">Log in</button>
+        <button type="button" id="js-login-tab-toggle" class="button">Log in</button>
       </div>
     </div>
 
-    <div class="modal-tab hidden" id="js-login-tab">
-      <div class="modal-header">
+    <div class="tab hidden" id="js-login-tab">
+      <div class="header">
         <h2>Log in To Viz</h2>
       </div>
-      <div class="modal-body">
+      <div class="body">
         <form method="post" action="/login/?next={{ url }}">
           {% csrf_token %}
           <div class="form-field">
@@ -46,42 +46,10 @@
           <button type="submit" class="button button--block button--primary">Log in</button>
         </form>
       </div>
-      <div class="modal-footer">
+      <div class="footer">
         <span>New to Viz?</span>
         <button type="button" id="js-signup-tab-toggle" class="button button--plain">Sign up</button>
       </div>
     </div>
-
-<!--
-    <div class="modal__body hidden" id="js-loginform">
-      <div class="form">
-        <form method="post" action="/login/?next={{ url }}">
-          <div class="formtitle">
-            <h2>Log in To Viz</h2>
-          </div>
-          {% csrf_token %}
-
-          <div class="formfield">
-
-            <div class="formfield__input ">
-              {{ loginform.username|add_class:"js-add-focus"|attr:"placeholder:Username" }}
-            </div>
-          </div>
-
-          <div class="formfield">
-
-            <div class="formfield__input">
-              {{ loginform.password|add_class:"js-add-focus"|attr:"placeholder:Password"|attr:"type:password" }}
-            </div>
-          </div>
-
-          <button type="submit" class="button button--blue button--primary">Log in</button>
-        </form>
-      </div>
-      <div class="modal__text"><span class="spaceright--small">New to Viz?</span><button type="button" class="button button--plain button--underlined" id="js-signupform-toggle">Sign up</button></div>
-    </div> -->
-
-
-
   </div>
 </div>
