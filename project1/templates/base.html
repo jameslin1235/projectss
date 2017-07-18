@@ -23,29 +23,29 @@
 </head>
 <body class="{% block body-background %}{% endblock body-background %}">
 
-  <div id="js-nav-v-body" class="nav-v__body hidden">
+  <div id="js-nav-v-body" class="nav-v__content hidden">
     <div class="header header--flex header--flex-end pt--m pb--m">
       <button type="button" class="button button--transparent js-nav-v-body-toggle"><span class="fa fa-times fa-2x" aria-hidden="true"></span></button>
     </div>
     <div class="content mb--l">
       <ul class="list">
-        <li class="list__item"><a href="{% url 'home' %}" class="a--block a--nav-v a--transparent">Home</a></li>
-        <li class="list__item"><button class="button button--block button--nav-v button--transparent button--transparent-hover button--flex js-nav-links-group-toggle"><span>Account</span><span class="fa fa-angle-right fa-lg" aria-hidden="true"></span></button></li>
+        <li class="list__item"><a href="{% url 'home' %}" class="a--block a--transparent pt--m pb--m bb">Home</a></li>
+        <li class="list__item"><button class="button button--block button--transparent button--transparent-hover button--flex pt--m pb--m bb plr-zero js-nav-links-group-toggle"><span>Account</span><span class="fa fa-angle-right fa-lg" aria-hidden="true"></span></button></li>
         <ul class="list hidden">
-          <li class="list__item"><a href="#" class="a--block a--nav-v a--transparent">Profile</a></li>
-          <li class="list__item"><a href="#" class="a--block a--nav-v a--transparent">Settings</a></li>
-          <li class="list__item"><a href="#" class="a--block a--nav-v a--transparent">Log out</a></li>
+          <li class="list__item"><a href="#" class="a--block a--transparent pt--m pb--m bb">Profile</a></li>
+          <li class="list__item"><a href="#" class="a--block a--transparent pt--m pb--m bb">Settings</a></li>
+          <li class="list__item"><a href="#" class="a--block a--transparent pt--m pb--m bb">Log out</a></li>
         </ul>
-        <li class="list__item"><button class="button button--block button--nav-v button--transparent button--transparent-hover button--flex js-nav-links-group-toggle"><span>Tags</span><span class="fa fa-angle-right fa-lg" aria-hidden="true"></span></button></li>
+        <li class="list__item"><button class="button button--block button--transparent button--transparent-hover button--flex pt--m pb--m bb plr-zero js-nav-links-group-toggle"><span>Tags</span><span class="fa fa-angle-right fa-lg" aria-hidden="true"></span></button></li>
         {% block nav-v-tags %}
         <ul class="list hidden">
           {% for tag in main_tags %}
-          <li class="list__item"><a href="{{ tag.get_absolute_url }}" class="a--block a--nav-v a--transparent">{{ tag.name|capfirst }}</a></li>
+          <li class="list__item"><a href="{{ tag.get_absolute_url }}" class="a--block a--transparent pt--m pb--m bb">{{ tag.name|capfirst }}</a></li>
           {% endfor %}
         </ul>
         {% endblock nav-v-tags %}
-        <li class="list__item"><button type="button" class="button button--block button--nav-v button--transparent button--transparent-hover button--text-left">Sign in / Sign up</button></li>
-        <li class="list__item"><button type="button" class="button button--block button--nav-v button--transparent button--transparent-hover button--text-left"><span class="fa fa-search" aria-hidden="true"></span></button></li>
+        <li class="list__item"><button type="button" class="button button--block button--transparent button--transparent-hover button--text-left pt--m pb--m bb plr-zero">Sign in / Sign up</button></li>
+        <li class="list__item"><button type="button" class="button button--block button--transparent button--transparent-hover button--text-left pt--m pb--m bb plr-zero"><span class="fa fa-search" aria-hidden="true"></span></button></li>
       </ul>
           </div>
     </div>
@@ -64,14 +64,14 @@
       </div>
 
       <div class="nav hidden">
-        <div class="header header--flex header--flex-space-between header--padding header--border-b-light">
+        <div class="header header--flex header--flex-space-between pt--m pb--m bb--light">
           <div class="logo">
             <a href="{% url 'home' %}"><img src="{% static "png/png/badoo.png" %}" class="img--logo" alt="Logo"></a>
           </div>
           <div class="action">
             <ul class="list list--flex">
-              <li class="list__item list__item--margin-r"><button id="js-nav-search-toggle" type="button" class="button button--transparent button--transparent-hover"><span class="fa fa-search" aria-hidden="true"></span></button></li>
-              <li class="list__item list__item--margin-r hidden">
+              <li class="list__item mr--s"><button id="js-nav-search-toggle" type="button" class="button button--transparent button--transparent-hover"><span class="fa fa-search" aria-hidden="true"></span></button></li>
+              <li class="list__item mr--s hidden">
                 <div id="js-nav-search" class="input-wrapper">
                   <input id="js-nav-search-field" class="input" type="text" placeholder="Search Viz">
                 </div>
@@ -80,19 +80,19 @@
                 {% if request.user.is_authenticated %}
                 <button id="js-nav-dropdown-toggle" class="button"><img src="{{ request.user.profile.avatar.url}}" class="avatar--s"></button>
                 {% else %}
-                <button id="js-get-login-modal" class="button button--primary button--borderless">Sign in / Sign up</button>
+                <button id="js-get-login-modal" class="button button--primary borderless">Sign in / Sign up</button>
                 {% endif %}
               </li>
             </ul>
           </div>
         </div>
         {% block nav-tags %}
-        <div class="nav__body">
+        <div class="content">
           <ul class="list list--flex">
-            <li class="list__item list__item--padding list__item--margin-r"><a href="{% url 'home' %}" class="a--transparent {% block active %}{% endblock active %}">Home</a></li>
-            <li class="list__item list__item--padding list__item--margin-r"><a href="#" class="a--transparent">Trending</a></li>
+            <li class="list__item pt--m pb--m mr--s"><a href="{% url 'home' %}" class="a--transparent {% block active %}{% endblock active %}">Home</a></li>
+            <li class="list__item pt--m pb--m mr--s"><a href="#" class="a--transparent">Trending</a></li>
             {% for tag in main_tags %}
-            <li class="list__item list__item--padding list__item--margin-r"><a href="{{ tag.get_absolute_url }}" class="a--transparent">{{ tag.name|capfirst }}</a></li>
+            <li class="list__item pt--m pb--m mr--s"><a href="{{ tag.get_absolute_url }}" class="a--transparent">{{ tag.name|capfirst }}</a></li>
             {% endfor %}
           </ul>
         </div>

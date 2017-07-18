@@ -205,6 +205,70 @@ textarea:focus {
   overflow-y: hidden;
 }
 
+
+/* Buttons */
+.button{
+  background: transparent;
+  border: none;
+  padding: 10px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.button:focus{
+  outline: none;
+}
+
+.button--primary{
+  color: #00ab6b;
+  border: 1px solid #02b875;
+  border-radius: 20px;
+  padding: 10px 15px;
+}
+
+.button--block{
+  width: 100%;
+}
+
+.button--nav-v{
+  padding: 15px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.15);
+}
+
+.button--transparent{
+  opacity: 0.5;
+}
+
+.button--transparent-hover:hover{
+  opacity: 1;
+}
+
+.button--text-left{
+  text-align: left;
+}
+
+.button--flex{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.button--margin-right{
+  margin-right: 10px;
+}
+
+.button--borderless{
+  border: none;
+}
+/*.button--modalclose{
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: rgba(0,0,0,0.15);
+}*/
+/* icons */
+
+
 /* Margin */
 .mb--xs{
   margin-bottom: 5px;
@@ -289,6 +353,24 @@ textarea:focus {
 
 .pb--l{
   padding-bottom: 30px;
+}
+
+.plr-zero{
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Border */
+.bb{
+  border-bottom: 1px solid rgba(0,0,0,0.15);
+}
+
+.bb--light{
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.borderless{
+  border: none;
 }
 
 /* Span */
@@ -497,13 +579,13 @@ textarea:focus {
   justify-content: flex-end;
 }
 
-.header--padding{
+/*.header--padding{
   padding: 15px 0;
 }
 
 .header--margin-b{
   margin-bottom: 30px;
-}
+}*/
 
 .header--border-b-light{
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
@@ -532,7 +614,7 @@ textarea:focus {
   z-index: 100;
 }
 
-.nav-v__body{
+.nav-v__content{
   position: fixed;
   top: 0;
   left: 0;
@@ -599,68 +681,6 @@ textarea:focus {
   color: #fff;
 }
 
-
-/* Buttons */
-.button{
-  background: transparent;
-  border: none;
-  padding: 10px;
-  font: inherit;
-  cursor: pointer;
-}
-
-.button:focus{
-  outline: none;
-}
-
-.button--primary{
-  color: #00ab6b;
-  border: 1px solid #02b875;
-  border-radius: 20px;
-  padding: 10px 15px;
-}
-
-.button--block{
-  width: 100%;
-}
-
-.button--nav-v{
-  padding: 15px 0;
-  border-bottom: 1px solid rgba(0,0,0,0.15);
-}
-
-.button--transparent{
-  opacity: 0.5;
-}
-
-.button--transparent-hover:hover{
-  opacity: 1;
-}
-
-.button--text-left{
-  text-align: left;
-}
-
-.button--flex{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.button--margin-right{
-  margin-right: 10px;
-}
-
-.button--borderless{
-  border: none;
-}
-/*.button--modalclose{
-  position: absolute;
-  top: 0;
-  right: 0;
-  color: rgba(0,0,0,0.15);
-}*/
-/* icons */
 
 .icon{
   color: #9fadc7;
