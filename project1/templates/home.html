@@ -1,34 +1,34 @@
 {% extends "base.html" %}
 {% load static %}
 {% load widget_tweaks %}
-{% block active %}active{% endblock active %}
+{% block active %}a--active{% endblock active %}
 
 {% block body %}
 <div class="container">
 {% if show_main %}
 {% for tag in main_tags %}
 <div class="tag">
-  <div class="header">
+  <div class="header header--flex header--flex-space-between header--border-b mb--l pt--m pb--m">
     <div class="heading">
       <h3><a href="{{ tag.get_absolute_url }}">{{ tag.name|capfirst }}</a></h3>
     </div>
     <div class="action">
-      <a href="{{ tag.get_absolute_url }}"><span>MORE</span><span class="fa fa-angle-right" aria-hidden="true"></span></a>
+      <a href="{{ tag.get_absolute_url }}"><span class="span mr--xs">MORE</span><span class="fa fa-angle-right" aria-hidden="true"></span></a>
     </div>
   </div>
-  <div class="body row">
+  <div class="content row">
     {% for post in tag.get_latest_posts %}
     <div class="post col-md-6">
       <div class="card">
-      <div class="header">
-        <div class="avatar"><a href="{{ post.user.profile.get_absolute_url }}"><img src="{{ post.user.profile.avatar.url}}" class="avatar--s"></a></div>
+      <div class="header header--flex mb--m">
+        <div class="avatar mr--s"><a href="{{ post.user.profile.get_absolute_url }}"><img src="{{ post.user.profile.avatar.url}}" class="avatar--s"></a></div>
         <div class="user"><a href="{{ post.user.profile.get_absolute_url }}">{{ post.user.username }}</a></div>
       </div>
-      <div class="body">
-        <div class="title">
-          <h5><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h5>
+      <div class="content mb--m">
+        <div class="title mb--s">
+          <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
         </div>
-        <div class="content">
+        <div class="post-content">
           <a href="{{ post.get_absolute_url }}">{{ post.content|truncatechars:100 }} More</a>
         </div>
       </div>
