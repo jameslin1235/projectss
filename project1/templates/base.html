@@ -25,27 +25,27 @@
 
   <div id="js-nav-v-body" class="nav-v__content hidden">
     <div class="header header--flex header--flex-end pt--m pb--m">
-      <button type="button" class="button button--transparent js-nav-v-body-toggle"><span class="fa fa-times fa-2x" aria-hidden="true"></span></button>
+      <button type="button" class="button transparent--hover-disabled js-nav-v-body-toggle"><span class="fa fa-times fa-2x" aria-hidden="true"></span></button>
     </div>
     <div class="content mb--l">
       <ul class="list">
-        <li class="list__item"><a href="{% url 'home' %}" class="a--block a--transparent pt--m pb--m bb">Home</a></li>
-        <li class="list__item"><button class="button button--block button--transparent button--transparent-hover button--flex pt--m pb--m bb plr-zero js-nav-links-group-toggle"><span>Account</span><span class="fa fa-angle-right fa-lg" aria-hidden="true"></span></button></li>
+        <li class="list__item"><a href="{% url 'home' %}" class="a--block transparent pt--m pb--m bb">Home</a></li>
+        <li class="list__item"><button class="button button--block button--flex transparent pt--m pb--m plr-zero bb js-nav-links-group-toggle"><span>Account</span><span class="fa fa-angle-right fa-lg" aria-hidden="true"></span></button></li>
         <ul class="list hidden">
-          <li class="list__item"><a href="#" class="a--block a--transparent pt--m pb--m bb">Profile</a></li>
-          <li class="list__item"><a href="#" class="a--block a--transparent pt--m pb--m bb">Settings</a></li>
-          <li class="list__item"><a href="#" class="a--block a--transparent pt--m pb--m bb">Log out</a></li>
+          <li class="list__item"><a href="#" class="a--block transparent pt--m pb--m bb">Profile</a></li>
+          <li class="list__item"><a href="#" class="a--block transparent pt--m pb--m bb">Settings</a></li>
+          <li class="list__item"><a href="#" class="a--block transparent pt--m pb--m bb">Log out</a></li>
         </ul>
-        <li class="list__item"><button class="button button--block button--transparent button--transparent-hover button--flex pt--m pb--m bb plr-zero js-nav-links-group-toggle"><span>Tags</span><span class="fa fa-angle-right fa-lg" aria-hidden="true"></span></button></li>
+        <li class="list__item"><button class="button button--block button--flex transparent pt--m pb--m plr-zero bb js-nav-links-group-toggle"><span>Tags</span><span class="fa fa-angle-right fa-lg" aria-hidden="true"></span></button></li>
         {% block nav-v-tags %}
         <ul class="list hidden">
           {% for tag in main_tags %}
-          <li class="list__item"><a href="{{ tag.get_absolute_url }}" class="a--block a--transparent pt--m pb--m bb">{{ tag.name|capfirst }}</a></li>
+          <li class="list__item"><a href="{{ tag.get_absolute_url }}" class="a--block transparent pt--m pb--m bb">{{ tag.name|capfirst }}</a></li>
           {% endfor %}
         </ul>
         {% endblock nav-v-tags %}
-        <li class="list__item"><button type="button" class="button button--block button--transparent button--transparent-hover button--text-left pt--m pb--m bb plr-zero">Sign in / Sign up</button></li>
-        <li class="list__item"><button type="button" class="button button--block button--transparent button--transparent-hover button--text-left pt--m pb--m bb plr-zero"><span class="fa fa-search" aria-hidden="true"></span></button></li>
+        <li class="list__item"><button type="button" class="button button--block transparent pt--m pb--m plr-zero bb text-left">Sign in / Sign up</button></li>
+        <li class="list__item"><button type="button" class="button button--block transparent pt--m pb--m plr-zero bb text-left"><span class="fa fa-search" aria-hidden="true"></span></button></li>
       </ul>
           </div>
     </div>
@@ -58,7 +58,7 @@
             <a href="{% url 'home' %}"><img src="{% static "png/png/badoo.png" %}" class="img--logo" alt="Logo"></a>
           </div>
           <div class="action">
-            <button type="button" class="button button--transparent js-nav-v-body-toggle"><span class="fa fa-bars fa-2x" aria-hidden="true"></span></button>
+            <button type="button" class="button transparent--hover-disabled js-nav-v-body-toggle"><span class="fa fa-bars fa-2x" aria-hidden="true"></span></button>
           </div>
         </div>
       </div>
@@ -70,7 +70,7 @@
           </div>
           <div class="action">
             <ul class="list list--flex">
-              <li class="list__item mr--s"><button id="js-nav-search-toggle" type="button" class="button button--transparent button--transparent-hover"><span class="fa fa-search" aria-hidden="true"></span></button></li>
+              <li class="list__item mr--s"><button id="js-nav-search-toggle" type="button" class="button transparent"><span class="fa fa-search" aria-hidden="true"></span></button></li>
               <li class="list__item mr--s hidden">
                 <div id="js-nav-search" class="input-wrapper">
                   <input id="js-nav-search-field" class="input" type="text" placeholder="Search Viz">
@@ -89,10 +89,10 @@
         {% block nav-tags %}
         <div class="content">
           <ul class="list list--flex">
-            <li class="list__item pt--m pb--m mr--s"><a href="{% url 'home' %}" class="a--transparent {% block active %}{% endblock active %}">Home</a></li>
-            <li class="list__item pt--m pb--m mr--s"><a href="#" class="a--transparent">Trending</a></li>
+            <li class="list__item pt--m pb--m mr--s"><a href="{% url 'home' %}" class="transparent {% block active %}{% endblock active %}">Home</a></li>
+            <li class="list__item pt--m pb--m mr--s"><a href="#" class="transparent">Trending</a></li>
             {% for tag in main_tags %}
-            <li class="list__item pt--m pb--m mr--s"><a href="{{ tag.get_absolute_url }}" class="a--transparent">{{ tag.name|capfirst }}</a></li>
+            <li class="list__item pt--m pb--m mr--s"><a href="{{ tag.get_absolute_url }}" class="transparent">{{ tag.name|capfirst }}</a></li>
             {% endfor %}
           </ul>
         </div>

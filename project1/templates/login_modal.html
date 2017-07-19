@@ -1,54 +1,57 @@
 {% load widget_tweaks %}
 <div class="modal-wrapper">
   <div class="modal">
-    <button type="button" id="js-modal-close" class="button"><span class="fa fa-times" aria-hidden="true"></span></button>
+    <button type="button" id="js-modal-close" class="button transparent--hover-disabled ab--tr"><span class="fa fa-times" aria-hidden="true"></span></button>
 
     <div class="tab" id="js-signup-tab">
-      <div class="header">
-        <h2>Join Viz today.</h2>
+      <div class="header mb--m">
+        <div class="heading">
+          <h2 class="text-center">Join Viz today.</h2>
+        </div>
       </div>
-      <div class="body">
+      <div class="content mb--m">
         <form method="post" action="/signup/">
           {% csrf_token %}
-          <div class="form-field">
-              {{ userform.username|attr:"placeholder:Username" }}
+          <div class="input-wrapper mb--s">
+              {{ userform.username|attr:"placeholder:Username"|add_class:"input" }}
           </div>
-          <div class="form-field">
-              {{ userform.email|attr:"placeholder:Email" }}
+          <div class="input-wrapper mb--s">
+              {{ userform.email|attr:"placeholder:Email"|add_class:"input" }}
           </div>
-          <div class="form-field">
-              {{ userform.password|attr:"placeholder:Password"|attr:"type:password" }}
+          <div class="input-wrapper mb--s">
+              {{ userform.password|attr:"placeholder:Password"|attr:"type:password"|add_class:"input" }}
           </div>
-          <button type="submit" class="button button--block button--primary">Sign up</button>
-          <p>By signing up, you agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>, including <a href="#">Cookie Use</a>. </p>
-
+          <button type="submit" class="button button--block button--primary transparent mb--s">Sign up</button>
+          <p>By signing up, you agree to the <a href="#" class="transparent clr--primary">Terms of Service</a> and <a href="#" class="transparent clr--primary">Privacy Policy</a>, including <a href="#" class="transparent clr--primary">Cookie Use</a>. </p>
         </form>
       </div>
-      <div class="footer">
-        <span>Have an account?</span>
-        <button type="button" id="js-login-tab-toggle" class="button">Log in</button>
+      <div class="footer footer--flex">
+        <span class="mr--xs">Have an account?</span>
+        <button type="button" id="js-login-tab-toggle" class="button transparent pd-zero clr--primary">Log in</button>
       </div>
     </div>
 
     <div class="tab hidden" id="js-login-tab">
-      <div class="header">
-        <h2>Log in To Viz</h2>
+      <div class="header mb--m">
+        <div class="heading">
+          <h2 class="text-center">Log in To Viz</h2>
+        </div>
       </div>
-      <div class="body">
+      <div class="content mb--m">
         <form method="post" action="/login/?next={{ url }}">
           {% csrf_token %}
-          <div class="form-field">
-              {{ loginform.username|attr:"placeholder:Username" }}
+          <div class="input-wrapper mb--s">
+              {{ loginform.username|attr:"placeholder:Username"|add_class:"input" }}
           </div>
-          <div class="form-field">
-              {{ loginform.password|attr:"placeholder:Password"|attr:"type:password" }}
+          <div class="input-wrapper mb--s">
+              {{ loginform.password|attr:"placeholder:Password"|attr:"type:password"|add_class:"input" }}
           </div>
-          <button type="submit" class="button button--block button--primary">Log in</button>
+          <button type="submit" class="button button--block button--primary transparent">Log in</button>
         </form>
       </div>
-      <div class="footer">
-        <span>New to Viz?</span>
-        <button type="button" id="js-signup-tab-toggle" class="button button--plain">Sign up</button>
+      <div class="footer footer--flex">
+        <span class="mr--xs">New to Viz?</span>
+        <button type="button" id="js-signup-tab-toggle" class="button transparent pd-zero clr--primary">Sign up</button>
       </div>
     </div>
   </div>

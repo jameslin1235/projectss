@@ -8,17 +8,17 @@
 {% if show_main %}
 {% for tag in main_tags %}
 <div class="tag">
-  <div class="header header--flex header--flex-space-between header--border-b mb--l pt--m pb--m">
+  <div class="header header--flex header--flex-space-between mb--l pt--m pb--m bb">
     <div class="heading">
       <h3><a href="{{ tag.get_absolute_url }}">{{ tag.name|capfirst }}</a></h3>
     </div>
     <div class="action">
-      <a href="{{ tag.get_absolute_url }}"><span class="span mr--xs">MORE</span><span class="fa fa-angle-right" aria-hidden="true"></span></a>
+      <a href="{{ tag.get_absolute_url }}"><span class="mr--xs">MORE</span><span class="fa fa-angle-right" aria-hidden="true"></span></a>
     </div>
   </div>
   <div class="content row">
     {% for post in tag.get_latest_posts %}
-    <div class="post col-md-6">
+    <div class="post col-md-6 mb--l">
       <div class="card">
       <div class="header header--flex mb--m">
         <div class="avatar mr--s"><a href="{{ post.user.profile.get_absolute_url }}"><img src="{{ post.user.profile.avatar.url}}" class="avatar--s"></a></div>

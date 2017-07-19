@@ -1,5 +1,5 @@
 // Sign in / Sign up modal //
-$("#js-get-login-modal").on("click",function(){
+$("#js-get-login-modal").on("click", function(){
   get_login_modal().done(function(modal){
     $("body").append(modal);
     });
