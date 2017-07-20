@@ -45,8 +45,8 @@
         <div class="content mb--l">
           <ul class="list flex flex--wrap">
             {% for tag in general_tags %}
-            <li class="list__item flex__item--fb-50 pt--xs pl--xs pr--xs pb--xs tags-follow__content-tag-wrapper">
-              <div class="flex flex--center tags-follow__content-tag" style="background-image: url({{ tag.image }})" data-id="{{ tag.id }}">
+            <li class="list__item flex__item--fb-50 pd--xs tags-follow__content-tag-wrapper">
+              <div class="flex flex--center tags-follow__content-tag js-tag" style="background-image: url({{ tag.image }})" data-id="{{ tag.id }}">
                 <div class="tags-follow__content-tag-layer js-layer hidden"></div>
                 <span class="tags-follow__content-tag-name">{{ tag.name|capfirst }}</span>
               </div>

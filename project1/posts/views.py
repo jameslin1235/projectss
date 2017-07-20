@@ -47,17 +47,16 @@ def home(request):
                 return render(request,"tag_follow.html",context)
             else: # view personalized home
                 context = {}
-                context['main_tags'] = Tag.objects.filter(main = True)
-                if request.user.followed_tags.count() == 0: # display general tags
-                    context['show_main'] = True
+                if request.user.followed_tags.count() == 0: # view main tags
+                    context['main_tags'] = Tag.objects.filter(main = True)
                     return render(request,"home.html",context)
                 else:
+                    context['main_tags'] = Tag.objects.filter(main = True)
                     context['tags'] = request.user.followed_tags.all() # display followed tags
-                    return render(request,"home.html",context)
-        else: # see content directly
+                    return render(request,"dashboard.html",context)
+        else: # view main tags
             context = {}
             context['main_tags'] = Tag.objects.filter(main = True)
-            context['show_main'] = True
             return render(request,"home.html",context)
 
 @login_required
