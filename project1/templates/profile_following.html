@@ -1,65 +1,23 @@
 {% extends "profile_base.html" %}
+{% load static %}
+{% load widget_tweaks %}
 
-{% block title %}{{ user }}'s Following{% endblock title %}
-
-{% block vertical_nav %}
-<ul class="nav nav-pills nav-stacked">
-  <li role="presentation"><a id="follow_url" href="{% url 'profiles:profile_activity' id=user.id slug=user.profile.slug  %}" role="tab" >Activity</a></li>
-  <li role="presentation"><a href="{% url 'profiles:profile_posts' id=user.id slug=user.profile.slug  %}" role="tab" >Posts <span class="profile_sidebar_posts_count">{{posts_count}}</span></a></li>
-  {% if user_status == "self" %}<li role="presentation"><a href="{% url 'profiles:profile_drafts' id=user.id slug=user.profile.slug  %}" role="tab" >Drafts <span class="profile_sidebar_drafts_count">{{drafts_count}}</span></a></li>{% endif %}
-  <li role="presentation"><a href="{% url 'profiles:profile_comments' id=user.id slug=user.profile.slug  %}" role="tab">Comments</a></li>
-  <li role="presentation"><a href="{% url 'profiles:profile_bookmarks' id=user.id slug=user.profile.slug  %}" role="tab">Bookmarks</a></li>
-  <li role="presentation" class="active"><a href="{% url 'profiles:profile_following' id=user.id slug=user.profile.slug  %}" role="tab">Following <span class="profile_sidebar_following_count">{{following_count}}</span></a></li>
-  <li role="presentation"><a href="{% url 'profiles:profile_followers' id=user.id slug=user.profile.slug  %}" role="tab">Followers <span class="profile_sidebar_followers_count">{{followers_count}}</span></a></li>
-</ul>
-{% endblock vertical_nav %}
-
-{% block content %}
-{% include "profile_following_page.html" %}
-{% endblock content %}
-
-{% block javascript %}
+{% block body %}
 {{ block.super }}
-<script>
-// Feature 1 list_item_follow_buttons
-$(document).on('click','.list_item_follow_button',function(){
-  event.preventDefault();
-  var element = $(this);
-  var url= $(element).parents(".list_item").attr("data-url");
-  var user_profile_url = $(element).parents("#profile_base").attr("data-user-profile-url");
-  var user_status = $("#user_status").attr("data-user-status");
-  if (user_status == "anonymous") {
-    get_login_modal();
-  }
-  else if (user_status == "self"){
-    $.ajax({
-      url: url + "follow",  // ajax GET to follow or unfollow
-      success:function(data) {
-        $(element).html(data.message);
-        $.ajax({  // ajax GET to get list item profile followers count
-          url: url + "followerscount",
-          success:function(data) {
-            $(element).parents(".list_item").find(".list_item_followers_count").html(data.profile_followers_count + " Followers");
-            $.ajax({  // ajax GET to get profile following count
-              url: user_profile_url + "followingcount",
-              success:function(data) {
-                $(element).parents("#profile_base").find(".list_page_header").html(data.profile_following_count);
-                $(element).parents("#profile_base").find(".profile_sidebar_following_count").html(data.profile_following_count);
-              }});
-            }});
-          }});
-        }
-        else{
-          $.ajax({
-            url: url + "follow",  // ajax GET to follow or unfollow
-            success:function(data) {
-              $(element).html(data.message);
-              $.ajax({  // ajax GET to get list item profile followers count
-                url: url + "followerscount",
-                success:function(data) {
-                  $(element).parents(".list_item").find(".list_item_followers_count").html(data.profile_followers_count + " Followers");
-                }});}});
-              }
-            });
-            </script>
-            {% endblock javascript %}
+{% endblock body %}
+
+{% block profile-following-active %}
+a--active
+{% endblock profile-following-active %}
+
+{% block profile-content__content %}
+  <div class="header mb--s pd--m bb">
+    <div class="heading">
+      <h3>Following</h3>
+    </div>
+  </div>
+  <div class="content">
+    content
+  </div>
+
+{% endblock profile-content__content %}

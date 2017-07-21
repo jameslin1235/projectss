@@ -37,26 +37,30 @@ $(document).on("blur", "input", function(){
 });
 
 // NAVIGATION //
-// VERTICAL NAVIGATION //
-$(".js-nav-v-body-toggle").on("click", function() {
-  $("#js-nav-v-body").toggleClass("hidden");
-  $("body").toggleClass("no-scrollbar");
-});
+// // VERTICAL NAVIGATION //
 
-$(".js-nav-links-group-toggle").on("click", function() {
-  var element = $(this);
-  if (element.hasClass("js-account")) {
-    element.toggleClass("button--nav-active");
-  }
-  else{
-    element.children(".fa").toggleClass("fa-angle-right").toggleClass("fa-angle-down");
-  }
-  element.next().toggleClass("hidden");
+$("#js-nav-popover-toggle").on("click", function(){
+  $("#js-nav-popover").toggleClass("hidden");
 });
-
+// $(".js-nav-v-body-toggle").on("click", function() {
+//   $("#js-nav-v-body").toggleClass("hidden");
+//   $("body").toggleClass("no-scrollbar");
+// });
+//
+// $(".js-nav-links-group-toggle").on("click", function() {
+//   var element = $(this);
+//   if (element.hasClass("js-account")) {
+//     element.toggleClass("button--nav-active");
+//   }
+//   else{
+//     element.children(".fa").toggleClass("fa-angle-right").toggleClass("fa-angle-down");
+//   }
+//   element.next().toggleClass("hidden");
+// });
+//
 $("#js-nav-search-toggle").on("click", function(){
   $("#js-nav-search").toggleClass("hidden");
-  $("#js-nav-search-field").focus();
+  $("#js-nav-search-input").focus();
 })
 
 // // FORM //

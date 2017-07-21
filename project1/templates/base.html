@@ -71,31 +71,31 @@
           <div class="action">
             <ul class="list flex">
               <li class="list__item mr--s"><button id="js-nav-search-toggle" type="button" class="button transparent"><span class="fa fa-search" aria-hidden="true"></span></button></li>
-              <li class="list__item mr--s hidden">
-                <div id="js-nav-search" class="input-wrapper">
-                  <input id="js-nav-search-field" class="input" type="text" placeholder="Search Viz">
+              <li id="js-nav-search" class="list__item mr--s hidden">
+                <div class="input-wrapper">
+                  <input id="js-nav-search-input" class="input" type="text" placeholder="Search Viz">
                 </div>
               </li>
-              <li class="list__item">
+              <li class="list__item rel">
                 {% if request.user.is_authenticated %}
-                <button id="js-nav-dropdown-toggle" class="button rel" style="border:1px solid blue">
+                <button id="js-nav-popover-toggle" class="button rel" >
                   <img src="{{ request.user.profile.avatar.url }}" class="avatar--s">
-                  <div class="popover nav__popover-user abs">
-                    <div class="nav__popover-user-inner rel">
-                      <div class="nav__popover-user-arrow abs">
-                      </div>
-                      <ul class="list pt--s pb--s">
-                        <li class="list__item"><a href="#" class="a--block transparent text-left pt--s pb--s pl--m pr--m">Profile</a></li>
-                        <li class="list__item"><a href="#" class="a--block transparent text-left pt--s pb--s pl--m pr--m">Settings</a></li>
-                        <li class="list__item"><a href="#" class="a--block transparent text-left pt--s pb--s pl--m pr--m">Sign out</a></li>
-                      </ul>
-                    </div>
-                    <!-- <div class="nav__popover-user-arrow">
-                    </div> -->
-
-
-                  </div>
                 </button>
+                <div id="js-nav-popover" class="popover nav__popover-user abs hidden">
+                  <div class="w--zero h--zero rel">
+                    <div class="nav__popover-user-arrow abs">
+                    </div>
+                  </div>
+
+
+                    <ul class="list pt--s pb--s">
+                      <li class="list__item"><a href="{% url 'posts:post_create' %}" class="a--block transparent text-left pt--s pb--s pl--m pr--m">New post</a></li>
+                      <li class="list__item"><a href="{% url 'profiles:profile_activity' id=request.user.id slug=request.user.profile.slug %}" class="a--block transparent text-left pt--s pb--s pl--m pr--m">Profile</a></li>
+                      <li class="list__item"><a href="#" class="a--block transparent text-left pt--s pb--s pl--m pr--m">Settings</a></li>
+                      <li class="list__item"><a href="#" class="a--block transparent text-left pt--s pb--s pl--m pr--m">Sign out</a></li>
+                    </ul>
+                  </div>
+
                 {% else %}
                 <button id="js-get-login-modal" class="button button--primary borderless">Sign in / Sign up</button>
                 {% endif %}
