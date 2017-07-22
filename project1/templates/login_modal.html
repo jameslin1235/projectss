@@ -4,12 +4,10 @@
     <button type="button" id="js-modal-close" class="button transparent--hover-disabled ab--tr"><span class="fa fa-times" aria-hidden="true"></span></button>
 
     <div class="tab" id="js-signup-tab">
-      <div class="header mb--m">
-        <div class="heading">
+      <div class="mb--m">
           <h2 class="text-center">Join Viz today.</h2>
-        </div>
       </div>
-      <div class="content mb--m">
+      <div class="mb--m">
         <form method="post" action="/signup/">
           {% csrf_token %}
           <div class="input-wrapper mb--s">
@@ -25,19 +23,17 @@
           <p>By signing up, you agree to the <a href="#" class="transparent clr--primary">Terms of Service</a> and <a href="#" class="transparent clr--primary">Privacy Policy</a>, including <a href="#" class="transparent clr--primary">Cookie Use</a>. </p>
         </form>
       </div>
-      <div class="footer flex">
+      <div class="flex">
         <span class="mr--xs">Have an account?</span>
         <button type="button" id="js-login-tab-toggle" class="button transparent pd-zero clr--primary">Log in</button>
       </div>
     </div>
 
     <div class="tab hidden" id="js-login-tab">
-      <div class="header mb--m">
-        <div class="heading">
+      <div class="mb--m">
           <h2 class="text-center">Log in To Viz</h2>
-        </div>
       </div>
-      <div class="content mb--m">
+      <div class="mb--m">
         <form method="post" action="/login/?next={{ url }}">
           {% csrf_token %}
           <div class="input-wrapper mb--s">
@@ -49,7 +45,7 @@
           <button type="submit" class="button button--block button--primary transparent">Log in</button>
         </form>
       </div>
-      <div class="footer flex">
+      <div class="flex">
         <span class="mr--xs">New to Viz?</span>
         <button type="button" id="js-signup-tab-toggle" class="button transparent pd-zero clr--primary">Sign up</button>
       </div>

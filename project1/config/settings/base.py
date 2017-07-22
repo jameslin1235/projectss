@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'tinymce',
     'widget_tweaks',
     'project1.project1.accounts.apps.AccountsConfig',
     'project1.project1.posts.apps.PostsConfig',
