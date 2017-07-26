@@ -40,6 +40,10 @@ h6{
   font-size: 0.67rem;
 }
 
+/* font size */
+.ft--32{
+  font-size: 32px;
+}
 /*ul{
   list-style-type: none;
   margin: 0;
@@ -170,16 +174,19 @@ textarea:focus {
 
 .input {
   width: 100%;
-  border: 1px solid rgba(0,0,0,0.15);
-  border-radius: 3px;
-  padding: 10px;
 }
 
-.input:focus {
-  outline:none;
+
+/* Focus */
+.focus--disabled:focus{
+  outline: none;
 }
 
-.input--focus{
+
+
+
+
+/*.input--focus{
   border: 1px solid rgba(0,0,0,1);
 }
 
@@ -190,7 +197,7 @@ textarea:focus {
 
 
 .input--card{
-  padding: 10px 0;
+  padding: 10px 0;*/
 }
 
 .form-field{
@@ -311,6 +318,10 @@ textarea:focus {
   margin-right: 30px;
 }
 
+.mg--center{
+  margin: 0 auto;
+}
+
 /* Padding */
 .pt--xs{
   padding-top: 5px;
@@ -397,6 +408,9 @@ textarea:focus {
   padding-top: 80px;
 }
 
+#post-create{
+  max-width: 720px;
+}
 /* Text align */
 .text-left{
   text-align: left;

@@ -61,7 +61,11 @@
 
       <div class="nav hidden">
         <div class="flex flex--space-between pt--m pb--m">
-            <a href="{% url 'home' %}"><img src="{% static "png/png/badoo.png" %}" class="img--logo" alt="Logo"></a>
+          <div class="flex">
+            <a href="{% url 'home' %}" class="mr--s"><img src="{% static "png/png/badoo.png" %}" class="img--logo" alt="Logo"></a>
+            {% block post-status %}
+            {% endblock post-status %}
+          </div>
 
               <ul class="list flex">
                 <li class="mr--s"><button id="js-nav-search-toggle" type="button" class="button transparent"><span class="fa fa-search" aria-hidden="true"></span></button></li>
@@ -82,6 +86,7 @@
                     </div>
                     <ul class="list pt--s pb--s">
                       <li><a href="{% url 'posts:post_create' %}" class="a--block transparent text-left pt--s pb--s pl--m pr--m">New post</a></li>
+                      <li><a href="{% url 'posts:post_drafts' %}" class="a--block transparent text-left pt--s pb--s pl--m pr--m">Drafts</a></li>
                       <li><a href="{% url 'profiles:profile_activity' id=request.user.id slug=request.user.profile.slug %}" class="a--block transparent text-left pt--s pb--s pl--m pr--m">Profile</a></li>
                       <li><a href="#" class="a--block transparent text-left pt--s pb--s pl--m pr--m">Settings</a></li>
                       <li><a href="#" class="a--block transparent text-left pt--s pb--s pl--m pr--m">Sign out</a></li>

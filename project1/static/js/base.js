@@ -28,11 +28,11 @@ $(document).on("click", "#js-modal-close", function(){
 });
 
 // Form //
-$(document).on("focus", "input", function(){
+$(document).on("focus", ".input", function(){
   $(this).toggleClass("input--focus");
 });
 
-$(document).on("blur", "input", function(){
+$(document).on("blur", ".input", function(){
   $(this).toggleClass("input--focus");
 });
 

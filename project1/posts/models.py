@@ -8,25 +8,25 @@ from project1.project1.profiles.models import Profile
 class Post(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name="posts")
     likers = models.ManyToManyField(settings.AUTH_USER_MODEL,through='PostUser',related_name="liked_posts")
-    title = models.CharField(max_length=100)
-    content = models.TextField()
+    title = models.CharField(max_length=100,blank=True)
+    content = models.TextField(blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_edited = models.DateTimeField(auto_now=True)
     date_published = models.DateTimeField(null=True)
     likes = models.IntegerField(default=0)
-    is_draft = models.BooleanField()
-    slug = models.SlugField(blank=True)
+    is_draft = models.BooleanField(default = True)
 
     def __str__(self):
         return self.title
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.title)
-        self.title = self.title.title()
         super(Post, self).save(*args, **kwargs) # Call the "real" save() method.
 
     def get_absolute_url(self):
-        return reverse("posts:post_detail", kwargs={"id": self.id, "slug": self.slug})
+        return reverse("posts:post_detail", kwargs={"id": self.id})
+
+    def get_edit_url(self):
+        return reverse("posts:post_edit", kwargs={"id": self.id})
 
     # def get_comments_count(self):
     #     return self.comments.count()

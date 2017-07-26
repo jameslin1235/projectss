@@ -2,6 +2,13 @@
 {% load static %}
 {% load widget_tweaks %}
 
+{% block post-status %}
+<div>
+  <span class="mr--xs">Draft</span>
+  <span id="save-status"></span>
+</div>
+{% endblock post-status %}
+
 {% block nav-v-tags %}
 {% endblock nav-v-tags %}
 {% block nav-tags %}
@@ -9,54 +16,28 @@
 
 ddd
 
-<!-- {% block body %}
-<div class="container">
-  <div class="card">
-    <div class="card__body">
-      <div class="form">
-        <form method="post" action="/posts/create/">
-          <div class="formtitle">
-            <h3>Create Post</h3>
+{% block body %}
+<div class="section">
+  <div class="container">
+    <div id="post-create" class="mg--center">
+      <form id="form">
+        {% csrf_token %}
+          <div class="input-wrapper mb--m">
+            {{ form.title|attr:"placeholder:Title"|add_class:"input focus--disabled borderless ft--32"  }}
           </div>
-          {% csrf_token %}
-          <div class="formfield">
-            {{ form.title.errors }}
-            <div class="formfield__label">
-              <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
-            </div>
-            <div class="formfield__input ">
-              {{ form.title|add_class:"js-add-focus"|attr:"placeholder:Title"  }}
-            </div>
+          <div class="input-wrapper mb--m">
+            {{ form.content}}
           </div>
-
-          <div class="formfield">
-            {{ form.content.errors }}
-            <div class="formfield__label">
-              <label for="{{ form.content.id_for_label }}">{{ form.content.label }}</label>
-            </div>
-            <div class="formfield__input ">
-              {{ form.content|attr:"rows:3"|attr:"cols:20"|add_class:"js-add-focus"|attr:"placeholder:Content" }}
-            </div>
-          </div>
-
-          <div class="formfield">
-            {{ form.topic.errors }}
-            <div class="formfield__label">
-              <label for="{{ form.topic.id_for_label }}">{{ form.topic.label }}</label>
-            </div>
-            <div class="formfield__noninput">
-              {{ form.topic }}
-            </div>
-          </div>
-
-          <button type="submit" class="button button--blue button--primary">Save</button>
-        </form>
-      </div>
+      </form>
     </div>
   </div>
 </div>
+
 {% endblock body %}
 
 {% block javascript %}
+<script src='https://cloud.tinymce.com/stable/tinymce.min.js'></script>
 <script src="{% static "js/post_create.js" %}"></script>
-{% endblock javascript %} -->
+<script src="{% static "js/tinymce.js" %}"></script>
+
+{% endblock javascript %}
