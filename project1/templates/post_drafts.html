@@ -12,42 +12,42 @@
   <div class="container">
     <div id="post-drafts">
       <h3 class="mb--l pb--m bb--light">{{ drafts_count }} Drafts</h3>
-
+      {% if drafts %}
       <div class="mb--l">
-      {% for post in drafts %}
-      <div class="post mb--m pb--m bb--light">
-        <h3><a href="{{ post.get_absolute_url}}">{{ post.title }}</h3></a>
-        <ul class="list flex">
-          <li class="mr--s"><span>{{ post.date_edited }}</span></li>
-          <li class="mr--s"><a href="{{ post.get_edit_url }}" class="transparent">Edit</a></li>
-          <li><button type="button" class="button transparent pd-zero">Delete</button></li>
-        </ul>
-      </div>
-      {% endfor %}
+        {% for post in drafts %}
+        <div class="post mb--m pb--m bb--light">
+          <h3 class="mb--s"><a href="{{ post.get_edit_url }}">{{ post.title }}</a></h3>
+          <ul class="list flex">
+            <li class="mr--s"><span>{{ post.date_updated }}</span></li>
+            <li class="mr--s"><a href="{{ post.get_edit_url }}" class="transparent">Edit</a></li>
+            <li class="mr--s"><button type="button" class="button transparent pd-zero">Delete</button></li>
+            <li><button type="button" class="button transparent pd-zero">Publish</button></li>
+          </ul>
+        </div>
+        {% endfor %}
       </div>
 
-
-      <div class="tag-pagination">
-        <ul class="pagination">
-          {% if latest_posts.has_previous %}
-          <li><a href="?page={{ latest_posts.previous_page_number }}"><span class="fa fa-angle-double-left" aria-hidden="true"></span></a></li>
-          {% endif %}
-          {% for i in latest_posts.paginator.page_range %}
-          {% if latest_posts.number == i %}
-          <li><span class="active">{{ i }}</span></li>
-          {% else %}
-          <li><a href="?page={{ i }}">{{ i }}</a></li>
-          {% endif %}
-          {% endfor %}
-          {% if latest_posts.has_next %}
-          <li><a href="?page={{ latest_posts.next_page_number }}"><span class="fa fa-angle-double-right" aria-hidden="true"></span></a></li>
-          {% endif %}
-        </ul>
-      </div>
+      <ul class="pagination list flex flex--center">
+        {% if drafts.has_previous %}
+        <li class="mr--s pd--s"><a href="?page={{ drafts.previous_page_number }}" class="transparent"><span class="fa fa-angle-double-left" aria-hidden="true"></span></a></li>
+        {% endif %}
+        {% for i in drafts.paginator.page_range %}
+        {% if drafts.number == i %}
+        <li class="mr--s pd--s"><span >{{ i }}</span></li>
+        {% else %}
+        <li class="mr--s pd--s"><a href="?page={{ i }}" class="transparent">{{ i }}</a></li>
+        {% endif %}
+        {% endfor %}
+        {% if drafts.has_next %}
+        <li class="pd--s"><a href="?page={{ drafts.next_page_number }}" class="transparent"><span class="fa fa-angle-double-right" aria-hidden="true"></span></a></li>
+        {% endif %}
+      </ul>
+      {% else %}
+      <h3>You have zero drafts.</h3>
+      {% endif %}
     </div>
   </div>
 </div>
-
 {% endblock body %}
 
 {% block javascript %}

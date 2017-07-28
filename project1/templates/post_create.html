@@ -2,31 +2,26 @@
 {% load static %}
 {% load widget_tweaks %}
 
-{% block post-status %}
-<div>
-  <span class="mr--xs">Draft</span>
-  <span id="save-status"></span>
-</div>
-{% endblock post-status %}
-
 {% block nav-v-tags %}
 {% endblock nav-v-tags %}
 {% block nav-tags %}
 {% endblock nav-tags %}
 
-ddd
-
 {% block body %}
 <div class="section">
   <div class="container">
     <div id="post-create" class="mg--center">
-      <form id="form">
+      <form method="POST">
         {% csrf_token %}
           <div class="input-wrapper mb--m">
             {{ form.title|attr:"placeholder:Title"|add_class:"input focus--disabled borderless ft--32"  }}
           </div>
           <div class="input-wrapper mb--m">
-            {{ form.content}}
+            {{ form.content }}
+          </div>
+          <div class="flex">
+            <button type="submit" name="draft" class="button button--primary mr--s">Save draft</button>
+            <button type="submit" class="button button--primary">Publish</button>
           </div>
       </form>
     </div>
@@ -38,6 +33,5 @@ ddd
 {% block javascript %}
 <script src='https://cloud.tinymce.com/stable/tinymce.min.js'></script>
 <script src="{% static "js/post_create.js" %}"></script>
-<script src="{% static "js/tinymce.js" %}"></script>
 
 {% endblock javascript %}

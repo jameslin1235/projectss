@@ -116,10 +116,10 @@ class Profile(models.Model):
         return self.user.posts.filter(is_draft = False).count()
 
     def get_drafts(self):
-        return self.user.posts.filter(is_draft = True).order_by("-date_edited")
+        return self.user.posts.filter(date_published__isnull = True).order_by("-date_updated")
 
     def get_drafts_count(self):
-        return self.user.posts.filter(is_draft = True).count()
+        return self.user.posts.filter(date_published__isnull = True).count()
 
     def get_profile_status(self):
         fields_dict = Profile.objects.filter(id = self.id).values("gender", "credential", "description", "residence", "occupation", "position", "company", "school", "major")[0]

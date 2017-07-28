@@ -25,17 +25,17 @@ def post_create_modal(request):
     else:
         raise PermissionDenied
 
-def post_detail(request,id,slug):
+def post_detail(request,id):
     if request.method == "GET":
         post = get_object_or_404(Post, id=id)
-        if post.is_draft:
+        if post.date_published is None:
             raise PermissionDenied
         else:
             context = {}
             context['post'] = post
             context['user'] = post.user
-            if request.user.is_authenticated and request.user != post.user:
-                context['liked_post'] = request.user.profile.liked_post(post)
+            # if request.user.is_authenticated and request.user != post.user:
+            #     context['liked_post'] = request.user.profile.liked_post(post)
             return render(request,"post_detail.html",context)
 
 def home(request):
@@ -62,152 +62,71 @@ def home(request):
 @login_required
 def post_create(request):
     if request.method == "GET":
-        form = PostForm()
         context = {}
-        context['form'] = form
+        context['form'] = PostForm()
         return render(request,"post_create.html",context)
-    elif request.method == "POST" and request.is_ajax():
+    elif request.method == "POST":
+        print(request.POST)
         form = PostForm(request.POST)
         if form.is_valid():
-            post = form.save(commit=False)
-            if not post.title:
-                post.title = "Untitled"
-            post.user = request.user
-            post.save()
-            response = {}
-            response['url'] = post.get_edit_url()
-            return JsonResponse(response)
+            if "draft" in request.POST:
+                p = form.save(commit=False)
+                p.user = request.user
+                p.save()
+                return redirect("posts:post_drafts")
+            else:
+                p = form.save(commit=False)
+                p.user = request.user
+                p.date_published = timezone.now()
+                p.save()
+                return redirect("posts:post_detail", id=p.id)
         else:
-            print('w')
+            print('error')
 
 @login_required
 def post_edit(request,id):
     if request.method == "GET":
-        print('w')
+        post = get_object_or_404(Post, id=id)
+        if post.user == request.user:
+            context = {}
+            context['form'] = PostForm(instance=post)
+            context['post'] = post
+
+            template = "post_edit.html"
+            return render(request,template,context)
+        else:
+            raise PermissionDenied
     elif request.method == "POST" and request.is_ajax():
         post = Post.objects.get(id = id)
         form = PostForm(request.POST, instance=post)
         if form.is_valid():
-            form.save()
+            post = form.save(commit=False)
+            post.save()
             response = {}
+            if post.title and post.content:
+                response['publish'] = True
             return JsonResponse(response)
 
 @login_required
 def post_drafts(request):
     if request.method == "GET":
+        drafts_count = request.user.profile.get_drafts_count()
         context = {}
-        # context['drafts'] = request.user.profile.get_drafts()
-        context['drafts_count'] = request.user.profile.get_drafts_count()
-        paginator = Paginator(request.user.profile.get_drafts(), 25) # Show 25 contacts per page
-        page = request.GET.get('page')
-        try:
-            drafts = paginator.page(page)
-        except PageNotAnInteger:
-            # If page is not an integer, deliver first page.
-            drafts = paginator.page(1)
-        except EmptyPage:
-            # If page is out of range (e.g. 9999), deliver last page of results.
-            drafts = paginator.page(paginator.num_pages)
-        context['drafts'] = drafts
+        context['drafts_count'] = drafts_count
+        if drafts_count != 0:
+            paginator = Paginator(request.user.profile.get_drafts(), 25) # Show 25 contacts per page
+            page = request.GET.get('page')
+            try:
+                drafts = paginator.page(page)
+            except PageNotAnInteger:
+                # If page is not an integer, deliver first page.
+                drafts = paginator.page(1)
+            except EmptyPage:
+                # If page is out of range (e.g. 9999), deliver last page of results.
+                drafts = paginator.page(paginator.num_pages)
+            context['drafts'] = drafts
         return render(request,"post_drafts.html",context)
 
-    #     # if request.POST.get('field') == "title":
-    #
-    #     #     print(Post.objects.create(user=request.user, title=request.POST.get('value')))
-    #     #
-    #     # else:
-    #     #     Post.objects.create(user=request.user, content=request.POST.get('value'))
-    #
-    #
-    #
-    #
-    # # elif request.method == "POST":
-    # #     if request.GET.get("action") == "Post":
-    # #         form = PostForm(request.POST)
-    # #         if form.is_valid():
-    # #             post = form.save(commit=False)
-    # #             post.user = request.user
-    # #             post.date_published = timezone.now()
-    # #             post.is_draft = False
-    # #             post.save()
-    # #             messages.success(request, "Post created.")
-    # #             return redirect("home")
-    # #         else:
-    # #             print('wrong')
-    # #     else:
-    # #         form = PostForm(request.POST)
-    # #         if form.is_valid():
-    # #             post = form.save(commit=False)
-    # #             post.user = request.user
-    # #             post.is_draft = True
-    # #             post.save()
-    # #             messages.success(request, "Draft created.")
-    # #             return redirect("home")
-    # #         else:
-    # #             print('wrong')
-    #
-    #
-    #
-    # if request.method == "GET":
-    #     post = get_object_or_404(Post, id=id)
-    #     user = post.user
-    #     if request.user == user:
-    #         context = {}
-    #         if post.is_draft:
-    #             context['title'] = "Edit Draft"
-    #         else:
-    #             context['title'] = "Edit Post"
-    #         form = PostForm(instance=post)
-    #         context['form'] = form
-    #         template = "post_edit.html"
-    #         return render(request,template,context)
-    #     else:
-    #         raise PermissionDenied
-    # elif request.method == "POST":
-    #     post = Post.objects.get(id = id)
-    #     form = PostForm(request.POST, instance=post)
-    #     if form.is_valid():
-    #         form.save()
-    #         if post.is_draft:
-    #             messages.success(request, "Draft edited.")
-    #         else:
-    #             messages.success(request, "Post edited.")
-    #         return redirect(request.path)
-
-@login_required
-def post_delete(request,id,slug):
-    if request.method == "GET":
-        post = get_object_or_404(Post, id=id)
-        user = post.user
-        if request.user == user:
-            post.delete()
-            if post.is_draft:
-                messages.success(request, "Draft deleted.")
-                return redirect("profiles:profile_drafts")
-            else:
-                messages.success(request, "Post deleted.")
-                return redirect("profiles:profile_posts", id=request.user.id, slug=request.user.profile.slug)
-        else:
-            raise PermissionDenied
-
-# @login_required
-# def post_publish(request,id,slug):
-#     if request.method == "GET":
-#         post = get_object_or_404(Post, id=id)
-#         user = post.user
-#         if request.user == user:
-#             if post.is_draft:
-#                 post.is_draft = False
-#                 post.date_published = timezone.now()
-#                 post.save()
-#                 messages.success(request, "Draft published.")
-#                 return redirect("profiles:profile_posts", id=request.user.id, slug=request.user.profile.slug)
-#             else:
-#                 raise PermissionDenied
-#         else:
-#             raise PermissionDenied
-#
-#
 
 def post_comments_count(request,id,slug):
     post = get_object_or_404(Post, id=id)

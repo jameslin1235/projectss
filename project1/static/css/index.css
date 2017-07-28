@@ -606,7 +606,7 @@ textarea:focus {
 
 
 /* Pagination */
-.pagination{
+/*.pagination{
   display: flex;
   align-items: center;
   justify-content: center;
@@ -635,7 +635,7 @@ textarea:focus {
   padding: 10px 15px;
   color: #00ab6b;
   background: #fff;
-}
+}*/
 
 /* Section */
 .section{

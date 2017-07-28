@@ -8,13 +8,12 @@ from project1.project1.profiles.models import Profile
 class Post(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name="posts")
     likers = models.ManyToManyField(settings.AUTH_USER_MODEL,through='PostUser',related_name="liked_posts")
-    title = models.CharField(max_length=100,blank=True)
-    content = models.TextField(blank=True)
+    title = models.CharField(max_length=100)
+    content = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)
-    date_edited = models.DateTimeField(auto_now=True)
+    date_updated = models.DateTimeField(auto_now=True)
     date_published = models.DateTimeField(null=True)
     likes = models.IntegerField(default=0)
-    is_draft = models.BooleanField(default = True)
 
     def __str__(self):
         return self.title
