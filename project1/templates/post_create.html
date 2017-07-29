@@ -11,27 +11,27 @@
 <div class="section">
   <div class="container">
     <div id="post-create" class="mg--center">
-      <form method="POST">
+      <form method="POST" class="js-form">
         {% csrf_token %}
           <div class="input-wrapper mb--m">
             {{ form.title|attr:"placeholder:Title"|add_class:"input focus--disabled borderless ft--32"  }}
           </div>
           <div class="input-wrapper mb--m">
-            {{ form.content }}
+            <span id="js-required" class="hidden">This field is required.</span>
+            {{ form.content|add_class:"js-textarea"|attr:"id:textarea" }}
+
           </div>
           <div class="flex">
-            <button type="submit" name="draft" class="button button--primary mr--s">Save draft</button>
-            <button type="submit" class="button button--primary">Publish</button>
+            <button type="submit" name="draft" class="button button--primary mr--s js-submit">Save draft</button>
+            <button type="submit" class="button button--primary js-submit">Publish</button>
           </div>
       </form>
     </div>
   </div>
 </div>
-
 {% endblock body %}
 
 {% block javascript %}
 <script src='https://cloud.tinymce.com/stable/tinymce.min.js'></script>
 <script src="{% static "js/post_create.js" %}"></script>
-
 {% endblock javascript %}
