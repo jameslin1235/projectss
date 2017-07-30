@@ -14,19 +14,18 @@ tinymce.init({
 });
 
 
-// $(".js-submit").on("click", function(){
-//
-//   // if (tinyMCE.get("textarea").getContent() == "") {
-//   //   console.log('w');
-//   //   $("#js-required").removeClass("hidden");
-//   //   $(".js-form").submit(function(e){
-//   //     e.preventDefault();
-//   //   });
-//   // }
-//
-// });
+$("#input").on("invalid", function(e){
+  e.preventDefault();
+  $(this).after("<span class='js-error--required'>Title can't be blank.</span>");
+});
 
 $("#textarea").on("invalid", function(e){
   e.preventDefault();
-  $("#js-required").removeClass("hidden");
+  $("#mceu_24").after("<span class='js-error--required'>Content can't be blank.</span>");
 });
+
+$(".js-submit").on("click", function(){
+  if ($(".js-error--required").length){
+    $(".js-error--required").remove();
+  }
+})

@@ -11,13 +11,14 @@
 <div class="section">
   <div class="container">
     <div id="post-create" class="mg--center">
-      <form method="POST" class="js-form">
+      <form method="POST">
         {% csrf_token %}
           <div class="input-wrapper mb--m">
-            {{ form.title|attr:"placeholder:Title"|add_class:"input focus--disabled borderless ft--32"  }}
+            {{ form.title|attr:"placeholder:Title"|attr:"id:input"|add_class:"input focus--disabled ft--32 pd--s bd"  }}
+            <!-- <span id="js-alert-title" class="hidden">Title can't be blank.</span> -->
           </div>
           <div class="input-wrapper mb--m">
-            <span id="js-required" class="hidden">This field is required.</span>
+            <!-- <span class="hidden">Content can't be blank.</span> -->
             {{ form.content|add_class:"js-textarea"|attr:"id:textarea" }}
 
           </div>
