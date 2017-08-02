@@ -6,7 +6,7 @@
 {% block body %}
 <div class="section">
   <div class="container">
-
+    {% include "alert.html" %}
     <div class="flex">
         <a href="{{ post.user.profile.get_absolute_url }}" class="mr--s"><img src="{{ post.user.profile.avatar.url}}" class="avatar--s"></a>
         <a href="{{ post.user.profile.get_absolute_url }}">{{ post.user.username }}</a>

@@ -1,1 +1,10 @@
-<div class="alert alert--success" role="alert">{{message}}</div>
+{% if messages %}
+  <ul class="messages list mb--l">
+      {% for message in messages %}
+      <li class="bg--success pd--m alert flex flex--space-between {% if not forloop.last %}mb--m{% endif %}">
+        <span>{{ message }}</span>
+        <button type="button" class="button transparent js-alert-close"><span class="fa fa-times" aria-hidden="true"></span></button>
+      </li>
+      {% endfor %}
+  </ul>
+{% endif %}

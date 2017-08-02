@@ -2,42 +2,31 @@
 {% load static %}
 {% load widget_tweaks %}
 
-{% block post-status %}
-<div>
-  {% if post.is_draft %}<span class="mr--xs">Draft</span>{% endif %}
-  <span id="save-status"></span>
-</div>
-{% endblock post-status %}
-
 {% block nav-v-tags %}
 {% endblock nav-v-tags %}
 {% block nav-tags %}
 {% endblock nav-tags %}
 
-ddd
-
 {% block body %}
 <div class="section">
   <div class="container">
     <div id="post-edit" class="mg--center">
-      <form id="form">
+      <form method="POST">
         {% csrf_token %}
           <div class="input-wrapper mb--m">
-            {{ form.title|attr:"placeholder:Title"|add_class:"input focus--disabled borderless ft--32"  }}
+            {{ form.title|attr:"placeholder:Title"|attr:"id:js-input"|add_class:"input focus--disabled ft--32 pd--s bd"  }}
           </div>
           <div class="input-wrapper mb--m">
-            {{ form.content}}
+            {{ form.content|attr:"id:js-textarea" }}
           </div>
+            <button type="submit" class="button button--primary js-submit">Update</button>
       </form>
     </div>
   </div>
 </div>
-
 {% endblock body %}
 
 {% block javascript %}
 <script src='https://cloud.tinymce.com/stable/tinymce.min.js'></script>
-<script src="{% static "js/post_edit.js" %}"></script>
-
-
+<script src="{% static "js/post_create.js" %}"></script>
 {% endblock javascript %}

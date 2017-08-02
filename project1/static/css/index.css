@@ -186,25 +186,6 @@ textarea:focus {
 
 
 
-
-/*.input--focus{
-  border: 1px solid rgba(0,0,0,1);
-}
-
-.input-wrapper--margin-right{
-  margin-right: 10px;
-}
-
-
-
-.input--card{
-  padding: 10px 0;*/
-}
-
-.form-field{
-  margin-bottom: 15px;
-}
-
 /* state */
 .hidden{
   display: none;
@@ -259,6 +240,10 @@ textarea:focus {
 
 .bg--gray{
   background: #fafafa;
+}
+
+.bg--success{
+  background: #00ab6b;
 }
 /* Width */
 .w--zero{
@@ -446,6 +431,10 @@ textarea:focus {
   border: none;
 }
 
+/* alert */
+.alert{
+  border-radius: 3px;
+}
 /* Display */
 .flex{
   display: flex;
@@ -743,10 +732,18 @@ textarea:focus {
   color: #748089;
 }
 
+/*  Form validation errors */
+.error{
+  color: #c33;
+  display: block;
+  margin-top: 10px;
+}
+
 
 
 /* Alerts */
-.alert{
+
+/*.alert{
   position: fixed;
   width: 33%;
   top: 80px;
@@ -761,7 +758,7 @@ textarea:focus {
   border: 1px solid #e7eaf1;
   box-shadow: 0 1px 3px rgba(0,37,55,.05);
   color: #8590a6;
-}
+}*/
 
 /* Modals */
 .modal-wrapper{

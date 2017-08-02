@@ -1,3 +1,11 @@
+// Alerts
+$(".js-alert-close").on("click", function(){
+  $(this).parent().remove();
+});
+
+
+
+
 // Sign in / Sign up modal //
 $("#js-get-login-modal").on("click", function(){
   get_login_modal().done(function(modal){

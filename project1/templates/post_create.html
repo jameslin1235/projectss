@@ -14,13 +14,10 @@
       <form method="POST">
         {% csrf_token %}
           <div class="input-wrapper mb--m">
-            {{ form.title|attr:"placeholder:Title"|attr:"id:input"|add_class:"input focus--disabled ft--32 pd--s bd"  }}
-            <!-- <span id="js-alert-title" class="hidden">Title can't be blank.</span> -->
+            {{ form.title|attr:"placeholder:Title"|attr:"id:js-input"|add_class:"input focus--disabled ft--32 pd--s bd"  }}
           </div>
           <div class="input-wrapper mb--m">
-            <!-- <span class="hidden">Content can't be blank.</span> -->
-            {{ form.content|add_class:"js-textarea"|attr:"id:textarea" }}
-
+            {{ form.content|attr:"id:js-textarea" }}
           </div>
           <div class="flex">
             <button type="submit" name="draft" class="button button--primary mr--s js-submit">Save draft</button>
@@ -32,7 +29,7 @@
 </div>
 {% endblock body %}
 
-{% block javascript %}
+{% block js %}
 <script src='https://cloud.tinymce.com/stable/tinymce.min.js'></script>
 <script src="{% static "js/post_create.js" %}"></script>
-{% endblock javascript %}
+{% endblock js %}

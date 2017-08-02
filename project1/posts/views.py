@@ -8,6 +8,7 @@ from django.urls import reverse
 from django.http import HttpResponse,JsonResponse, QueryDict
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils import timezone
+from django.contrib import messages
 from .models import Post, PostUser
 from project1.project1.tags.models import Tag
 from .forms import PostForm
@@ -66,19 +67,20 @@ def post_create(request):
         context['form'] = PostForm()
         return render(request,"post_create.html",context)
     elif request.method == "POST":
-        print(request.POST)
         form = PostForm(request.POST)
         if form.is_valid():
             if "draft" in request.POST:
                 p = form.save(commit=False)
                 p.user = request.user
                 p.save()
+                messages.success(request, "Draft created.")
                 return redirect("posts:post_drafts")
             else:
                 p = form.save(commit=False)
                 p.user = request.user
                 p.date_published = timezone.now()
                 p.save()
+                messages.success(request, 'Post published.')
                 return redirect("posts:post_detail", id=p.id)
         else:
             print('error')
@@ -91,21 +93,29 @@ def post_edit(request,id):
             context = {}
             context['form'] = PostForm(instance=post)
             context['post'] = post
-
             template = "post_edit.html"
             return render(request,template,context)
         else:
             raise PermissionDenied
-    elif request.method == "POST" and request.is_ajax():
+    elif request.method == "POST":
         post = Post.objects.get(id = id)
         form = PostForm(request.POST, instance=post)
         if form.is_valid():
-            post = form.save(commit=False)
-            post.save()
-            response = {}
-            if post.title and post.content:
-                response['publish'] = True
-            return JsonResponse(response)
+            form.save()
+            messages.success(request, "Post updated.")
+            return redirect()
+        else:
+            print('error')
+    # elif request.method == "POST" and request.is_ajax():
+        # post = Post.objects.get(id = id)
+    #     form = PostForm(request.POST, instance=post)
+    #     if form.is_valid():
+    #         post = form.save(commit=False)
+    #         post.save()
+    #         response = {}
+    #         if post.title and post.content:
+    #             response['publish'] = True
+    #         return JsonResponse(response)
 
 @login_required
 def post_drafts(request):

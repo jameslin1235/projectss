@@ -11,11 +11,12 @@
 <div class="section">
   <div class="container">
     <div id="post-drafts">
+      {% include "alert.html" %}
       <h3 class="mb--l pb--m bb--light">{{ drafts_count }} Drafts</h3>
       {% if drafts %}
       <div class="mb--l">
         {% for post in drafts %}
-        <div class="post mb--m pb--m bb--light">
+        <div class="post {% if not forloop.last %}mb--m{% endif %} pb--m bb--light">
           <h3 class="mb--s"><a href="{{ post.get_edit_url }}">{{ post.title }}</a></h3>
           <ul class="list flex">
             <li class="mr--s"><span>{{ post.date_updated }}</span></li>
@@ -50,5 +51,5 @@
 </div>
 {% endblock body %}
 
-{% block javascript %}
-{% endblock javascript %}
+{% block js %}
+{% endblock js %}
