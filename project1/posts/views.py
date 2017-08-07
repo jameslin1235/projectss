@@ -17,18 +17,71 @@ from project1.project1.config import utility
 from project1.project1.posts.forms import PostForm
 
 # Create your views here.
-def post_create_modal(request):
-    if request.method == "GET" and request.is_ajax():
-        context = {}
-        context['form'] = PostForm()
-        template = "post_create_modal.html"
-        return render(request,template,context)
-    else:
-        raise PermissionDenied
+# def post_create_modal(request):
+#     if request.method == "GET" and request.is_ajax():
+#         context = {}
+#         context['form'] = PostForm()
+#         template = "post_create_modal.html"
+#         return render(request,template,context)
+#     else:
+#         raise PermissionDenied
 
-def post_detail(request,id):
+@login_required
+def post_drafts(request):
     if request.method == "GET":
-        post = get_object_or_404(Post, id=id)
+        drafts_count = request.user.profile.get_drafts_count()
+        context = {}
+        context['drafts_count'] = drafts_count
+        if drafts_count != 0:
+            paginator = Paginator(request.user.profile.get_drafts(), 25) # Show 25 contacts per page
+            page = request.GET.get('page')
+            try:
+                drafts = paginator.page(page)
+            except PageNotAnInteger:
+                # If page is not an integer, deliver first page.
+                drafts = paginator.page(1)
+            except EmptyPage:
+                # If page is out of range (e.g. 9999), deliver last page of results.
+                drafts = paginator.page(paginator.num_pages)
+            context['drafts'] = drafts
+        return render(request,"post_drafts.html",context)
+
+
+def post_list(request):
+    if request.method == "GET":
+        posts = Post.objects.all()
+    elif request.method == "POST":
+        form = PostForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.user = request.user
+            if "draft" in request.POST:
+                post.save()
+                messages.success(request, "Draft created.")
+                return redirect("posts:post_drafts")
+            else:
+                post.date_published = timezone.now()
+                post.save()
+                messages.success(request, 'Post published.')
+                return redirect(post)
+        else:
+            print('error')
+    # if request.method == "GET":
+    #     post = get_object_or_404(Post, id=id)
+    #     if post.date_published is None:
+    #         raise PermissionDenied
+    #     else:
+    #         context = {}
+    #         context['post'] = post
+    #         context['user'] = post.user
+    #         # if request.user.is_authenticated and request.user != post.user:
+    #         #     context['liked_post'] = request.user.profile.liked_post(post)
+    #         return render(request,"post_detail.html",context)
+
+
+def post_detail(request, pk):
+    if request.method == "GET":  #post detail
+        post = get_object_or_404(Post, pk=pk)
         if post.date_published is None:
             raise PermissionDenied
         else:
@@ -38,6 +91,28 @@ def post_detail(request,id):
             # if request.user.is_authenticated and request.user != post.user:
             #     context['liked_post'] = request.user.profile.liked_post(post)
             return render(request,"post_detail.html",context)
+    # elif request.method == "POST":  #post create
+    #     print('w')
+    elif request.method == "PUT" and request.is_ajax():  #post update
+        post = Post.objects.get(pk = pk)
+        form = PostForm(request.POST, instance=post)
+        if form.is_valid():
+            form.save()
+            if "draft" in request.POST:
+                print(request.POST)
+                print(request.body)
+            #     messages.success(request, "Draft updated.")
+            #     return redirect("posts:post_drafts")
+            # else:
+            #     messages.success(request, "Post updated.")
+            #     return redirect(post)
+        else:
+            print('error')
+        print('w')
+    elif request.method == "DELETE":  # post delete
+        print('w')
+    # if request.method == "GET":
+
 
 def home(request):
     if request.method == "GET":
@@ -66,76 +141,21 @@ def post_create(request):
         context = {}
         context['form'] = PostForm()
         return render(request,"post_create.html",context)
-    elif request.method == "POST":
-        form = PostForm(request.POST)
-        if form.is_valid():
-            if "draft" in request.POST:
-                p = form.save(commit=False)
-                p.user = request.user
-                p.save()
-                messages.success(request, "Draft created.")
-                return redirect("posts:post_drafts")
-            else:
-                p = form.save(commit=False)
-                p.user = request.user
-                p.date_published = timezone.now()
-                p.save()
-                messages.success(request, 'Post published.')
-                return redirect("posts:post_detail", id=p.id)
-        else:
-            print('error')
+
 
 @login_required
-def post_edit(request,id):
+def post_edit(request, pk):
     if request.method == "GET":
-        post = get_object_or_404(Post, id=id)
+        post = get_object_or_404(Post, pk=pk)
         if post.user == request.user:
             context = {}
             context['form'] = PostForm(instance=post)
             context['post'] = post
-            template = "post_edit.html"
-            return render(request,template,context)
+            if post.date_published is None:
+                context['draft'] = True
+            return render(request,"post_edit.html",context)
         else:
             raise PermissionDenied
-    elif request.method == "POST":
-        post = Post.objects.get(id = id)
-        form = PostForm(request.POST, instance=post)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Post updated.")
-            return redirect()
-        else:
-            print('error')
-    # elif request.method == "POST" and request.is_ajax():
-        # post = Post.objects.get(id = id)
-    #     form = PostForm(request.POST, instance=post)
-    #     if form.is_valid():
-    #         post = form.save(commit=False)
-    #         post.save()
-    #         response = {}
-    #         if post.title and post.content:
-    #             response['publish'] = True
-    #         return JsonResponse(response)
-
-@login_required
-def post_drafts(request):
-    if request.method == "GET":
-        drafts_count = request.user.profile.get_drafts_count()
-        context = {}
-        context['drafts_count'] = drafts_count
-        if drafts_count != 0:
-            paginator = Paginator(request.user.profile.get_drafts(), 25) # Show 25 contacts per page
-            page = request.GET.get('page')
-            try:
-                drafts = paginator.page(page)
-            except PageNotAnInteger:
-                # If page is not an integer, deliver first page.
-                drafts = paginator.page(1)
-            except EmptyPage:
-                # If page is out of range (e.g. 9999), deliver last page of results.
-                drafts = paginator.page(paginator.num_pages)
-            context['drafts'] = drafts
-        return render(request,"post_drafts.html",context)
 
 
 def post_comments_count(request,id,slug):

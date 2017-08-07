@@ -11,22 +11,26 @@
 <div class="section">
   <div class="container">
     <div id="post-edit" class="mg--center">
-      <form method="POST">
+      <form id="js-form" data-url="{{ post.get_absolute_url }}">
         {% csrf_token %}
-          <div class="input-wrapper mb--m">
-            {{ form.title|attr:"placeholder:Title"|attr:"id:js-input"|add_class:"input focus--disabled ft--32 pd--s bd"  }}
-          </div>
-          <div class="input-wrapper mb--m">
-            {{ form.content|attr:"id:js-textarea" }}
-          </div>
-            <button type="submit" class="button button--primary js-submit">Update</button>
+        <div class="input-wrapper mb--m">
+          {{ form.title|attr:"placeholder:Title"|attr:"id:js-input"|add_class:"input focus--disabled ft--32 pd--s bd"  }}
+        </div>
+        <div class="input-wrapper mb--m">
+          {{ form.content|attr:"id:js-textarea" }}
+        </div>
+        {% if draft %}
+        <input type="hidden" name="draft">
+        {% endif %}
+        <button type="submit" id="js-submit" class="button button--primary">Update</button>
       </form>
     </div>
   </div>
 </div>
 {% endblock body %}
 
-{% block javascript %}
+{% block js %}
 <script src='https://cloud.tinymce.com/stable/tinymce.min.js'></script>
 <script src="{% static "js/post_create.js" %}"></script>
-{% endblock javascript %}
+<script src="{% static "js/post_edit.js" %}"></script>
+{% endblock js %}

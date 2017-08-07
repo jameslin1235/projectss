@@ -27,7 +27,7 @@ urlpatterns = [
     url(r'^login/', accounts.login_view, name="login"),
     url(r'^logout/', accounts.logout_view, name="logout"),
     url(r'^admin/', admin.site.urls),
-    url(r'^p/', include("project1.project1.posts.urls", namespace="posts")),
+    url(r'^posts/', include("project1.project1.posts.urls", namespace="posts")),
     url(r'^tags/', include("project1.project1.tags.urls", namespace="tags")),
     url(r'^profile/', include("project1.project1.profiles.urls", namespace="profiles")),
     url(r'^getloginmodal/$', utility.get_login_modal, name='get_login_modal'),

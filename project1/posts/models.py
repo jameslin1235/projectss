@@ -22,10 +22,10 @@ class Post(models.Model):
         super(Post, self).save(*args, **kwargs) # Call the "real" save() method.
 
     def get_absolute_url(self):
-        return reverse("posts:post_detail", kwargs={"id": self.id})
-
+        return reverse("posts:post_detail", kwargs={"pk": self.pk})
+        
     def get_edit_url(self):
-        return reverse("posts:post_edit", kwargs={"id": self.id})
+        return reverse("posts:post_edit", kwargs={"pk": self.pk})
 
     # def get_comments_count(self):
     #     return self.comments.count()
