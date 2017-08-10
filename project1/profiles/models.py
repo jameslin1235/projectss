@@ -1,31 +1,31 @@
 import os
-import csv
 from django.db import models
-from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.utils.text import slugify
-from django.core.urlresolvers import reverse
 from django.utils import timezone
+from django.core.urlresolvers import reverse
 
 def get_upload_location(instance, filename):
     return "users/%s/%s" % (instance.user.username,filename)
 
-path1 = os.path.join(settings.BASE_DIR, "project1/static/data/countries.txt")
-path2 = os.path.join(settings.BASE_DIR, "project1/static/data/occupations.txt")
-with open(path1) as f1:
-    countries_tuple = tuple(tuple(line.rstrip('\n').split(':')) for line in f1)
-    print(countries_tuple)
-
-with open(path2) as f2:
-    occupations_tuple = tuple(('',line[1].rstrip('\n')) if line[0] == 1 else (line[1].rstrip('\n'),)*2 for line in enumerate(f2, 1))
-    print(occupations_tuple)
-
+# import os
+# import csv
+# path1 = os.path.join(settings.BASE_DIR, "project1/static/data/countries.txt")
+# path2 = os.path.join(settings.BASE_DIR, "project1/static/data/occupations.txt")
+# with open(path1) as f1:
+#     countries_tuple = tuple(tuple(line.rstrip('\n').split(':')) for line in f1)
+#     print(countries_tuple)
+#
+# with open(path2) as f2:
+#     occupations_tuple = tuple(('',line[1].rstrip('\n')) if line[0] == 1 else (line[1].rstrip('\n'),)*2 for line in enumerate(f2, 1))
+#     print(occupations_tuple)
+    # residence_choices = countries_tuple
+    # occupation_choices = occupations_tuple
 # Create your models here.
 class Profile(models.Model):
-    residence_choices = countries_tuple
-    occupation_choices = occupations_tuple
     gender_choices = (
         ('','Select a Gender'),
         ('M', 'Male'),
@@ -36,48 +36,41 @@ class Profile(models.Model):
     first_login = models.BooleanField(default=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_edited = models.DateTimeField(auto_now=True)
-    slug = models.SlugField()
     gender = models.CharField(
-        max_length = 1,
-        choices = gender_choices,
-        blank=True,
+        max_length=1,
+        choices=gender_choices,
+        blank=True
     )
-    credential = models.CharField(
-        max_length = 100,
-        blank=True,
+    industry = models.CharField(
+        max_length=100,
+        blank=True
     )
-
-    description = models.TextField(
-        blank=True,
-    )
-    residence = models.CharField(
-        max_length = 2,
-        choices = residence_choices,
-        blank = True,
-    )
-
-    occupation = models.CharField(
-        max_length = 100,
-        choices = occupation_choices,
-        blank = True,
-    )
-
     position = models.CharField(
-        max_length = 100,
-        blank = True,
+        max_length=100,
+        blank=True
     )
-
     company = models.CharField(
-        max_length = 100,
-        blank = True,
+        max_length=100,
+        blank=True
     )
     school = models.CharField(
-        max_length = 100,
-        blank = True,
+        max_length=100,
+        blank=True
     )
-    major = models.CharField(
-        max_length = 100,
-        blank = True,
+    concentration = models.CharField(
+        max_length=100,
+        blank=True
+    )
+    location = models.CharField(
+        max_length=100,
+        blank=True
+    )
+    credential = models.CharField(
+        max_length=100,
+        blank=True
+    )
+    description = models.TextField(
+        blank=True,
     )
     avatar_width_field = models.IntegerField()
     avatar_height_field = models.IntegerField()
@@ -86,7 +79,7 @@ class Profile(models.Model):
         height_field = "avatar_height_field",
         width_field = "avatar_width_field",
         blank=True,
-        default="default/avatar.jpg",
+        default= "default/avatar.jpg"
     )
     background_width_field = models.IntegerField()
     background_height_field = models.IntegerField()
@@ -95,9 +88,8 @@ class Profile(models.Model):
         height_field = "background_height_field",
         width_field = "background_width_field",
         blank=True,
-        default="default/background.jpg",
+        default= "default/background.jpg"
     )
-
 
     def __str__(self):
         return self.user.username
@@ -169,10 +161,10 @@ class Profile(models.Model):
     class Meta:
         ordering = ["-date_created"]
 
-    @receiver(post_save, sender=User)
-    def create_user_profile(sender, instance, created, **kwargs):
-        if created:
-            Profile.objects.create(user=instance)
+@receiver(post_save, sender=User)
+def create_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
 
 
 

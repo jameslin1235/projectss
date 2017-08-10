@@ -14,20 +14,27 @@ from django.contrib.auth.models import User
 from project1.project1.posts.models import Post
 from .models import Profile, Follow
 from project1.project1.posts.forms import PostForm
-from .forms import ProfileForm, ProfileAvatarForm, ProfileBackgroundForm
+from .forms import ProfileForm
 from project1.project1.config import utility
-from PIL import Image
+# from PIL import Image
 
 # Create your views here.
-def profile_activity(request,id,slug):
+def profile_detail(request, pk):
     if request.method == "GET":
-        user = get_object_or_404(get_user_model(), id = id)
-        if request.user.is_authenticated:
-            context = {}
-            template = "profile_activity.html"
-            return render(request,template,context)
-        else:
-            pass
+        profile = get_object_or_404(Profile, pk = pk)
+        context = {}
+        context['profile'] = profile
+        return render(request,"profile_detail.html",context)
+
+# def profile_activity(request,id,slug):
+#     if request.method == "GET":
+#         user = get_object_or_404(get_user_model(), id = id)
+#         if request.user.is_authenticated:
+#             context = {}
+#             template = "profile_activity.html"
+#             return render(request,template,context)
+#         else:
+#             pass
 
 
         ## pull up activity page by default

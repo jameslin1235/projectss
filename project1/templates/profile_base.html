@@ -11,12 +11,13 @@
 <div class="section">
   <div class="container">
     <div class="profile-info row">
-      <div class="col-md-8">
-        profile
+      
+      <!-- <div class="col-md-8">
+        {{ profile.credential }}
       </div>
       <div class="col-md-4">
-        avatar
-      </div>
+
+      </div> -->
     </div>
   </div>
 </div>
@@ -28,11 +29,9 @@
         <div class="card pb--m">
           <h3 class="mb--s pd--m bb">Feeds</h3>
             <ul class="list ">
-              <li><a href="{% url 'profiles:profile_activity' id=request.user.id slug=request.user.profile.slug %}" class="a--block pd--m transparent {% block profile-activity-active %}{% endblock profile-activity-active %}">Activity</a></li>
-              <li><a href="{% url 'profiles:profile_posts' id=request.user.id slug=request.user.profile.slug %}" class="a--block pd--m transparent {% block profile-posts-active %}{% endblock profile-posts-active %}">Posts</a></li>
-              <li><a href="{% url 'profiles:profile_followers' id=request.user.id slug=request.user.profile.slug %}" class="a--block pd--m transparent {% block profile-followers-active %}{% endblock profile-followers-active %}">Followers</a></li>
-              <li><a href="{% url 'profiles:profile_following' id=request.user.id slug=request.user.profile.slug %}" class="a--block pd--m transparent {% block profile-following-active %}{% endblock profile-following-active %}">Following</a></li>
-              <li><a href="{% url 'profiles:profile_topics' id=request.user.id slug=request.user.profile.slug %}" class="a--block pd--m transparent {% block profile-topics-active %}{% endblock profile-topics-active %}">Topics</a></li>
+              <li><a href="{% url 'profiles:profile_posts' id=request.user.id %}" class="a--block pd--m transparent {% block profile-posts-active %}{% endblock profile-posts-active %}">Posts</a></li>
+              <li><a href="{% url 'profiles:profile_followers' id=request.user.id %}" class="a--block pd--m transparent {% block profile-followers-active %}{% endblock profile-followers-active %}">Followers</a></li>
+              <li><a href="{% url 'profiles:profile_following' id=request.user.id %}" class="a--block pd--m transparent {% block profile-following-active %}{% endblock profile-following-active %}">Following</a></li>
             </ul>
         </div>
       </div>
@@ -45,8 +44,6 @@
     </div>
   </div>
 </div>
-
-
 {% endblock body %}
 
 {% block javascript %}

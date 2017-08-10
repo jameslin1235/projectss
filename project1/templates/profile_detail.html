@@ -1,0 +1,16 @@
+{% extends "profile_base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block body %}
+{{ block.super }}
+{% endblock body %}
+
+{% block profile-activity-active %}
+a--active
+{% endblock profile-activity-active %}
+
+{% block profile-content %}
+  <h3 class="mb--s pd--m bb">Activity</h3>
+
+{% endblock profile-content %}

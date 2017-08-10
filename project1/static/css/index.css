@@ -183,13 +183,34 @@ textarea:focus {
   outline: none;
 }
 
+/* Modals */
+.modal-wrapper{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 120;
+  background: rgba(0,0,0,0.6);
+}
 
+.modal{
+  margin: 0 10px;
+  background: #fff;
+  border-radius: 3px;
+  position: relative;
+  width: 400px;
+}
 
 
 /* state */
 .hidden{
   display: none;
 }
+
 
 .no-scrollbar{
   overflow-y: hidden;
@@ -224,15 +245,11 @@ textarea:focus {
   width: 100%;
 }
 
-
-/*.button--modalclose{
+.button--modal{
   position: absolute;
   top: 0;
   right: 0;
-  color: rgba(0,0,0,0.15);
-}*/
-/* icons */
-
+}
 /* Background */
 .bg{
   background: #fff;
@@ -760,30 +777,7 @@ textarea:focus {
   color: #8590a6;
 }*/
 
-/* Modals */
-.modal-wrapper{
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 120;
-  background: rgba(0,0,0,0.6);
-}
 
-.modal{
-  max-width: 400px;
-  /*overflow: hidden;*/
-  flex-grow: 1;
-  margin: 0 10px;
-  background: #fff;
-  border-radius: 3px;
-  position: relative;
-  padding: 30px;
-}
 @media (min-width: 768px){
   body{
     overflow: auto;

@@ -16,13 +16,13 @@
       {% if drafts %}
       <div class="mb--l">
         {% for post in drafts %}
-        <div class="post {% if not forloop.last %}mb--m{% endif %} pb--m bb--light">
+        <div class="post {% if not forloop.last %}mb--m{% endif %} pb--m bb--light" data-url="{{ post.get_absolute_url }}">
           <h3 class="mb--s"><a href="{{ post.get_edit_url }}">{{ post.title }}</a></h3>
           <ul class="list flex">
             <li class="mr--s"><span>{{ post.date_updated }}</span></li>
             <li class="mr--s"><a href="{{ post.get_edit_url }}" class="transparent">Edit</a></li>
-            <li class="mr--s"><button type="button" class="button transparent pd-zero">Delete</button></li>
-            <li><button type="button" class="button transparent pd-zero">Publish</button></li>
+            <li class="mr--s"><button type="button" class="button transparent pd-zero js-delete">Delete</button></li>
+            <li><button type="button" class="button transparent pd-zero js-publish">Publish</button></li>
           </ul>
         </div>
         {% endfor %}
@@ -52,4 +52,7 @@
 {% endblock body %}
 
 {% block js %}
+{% include "post_delete_modal.html" %}
+{% include "post_publish_modal.html" %}
+<script src="{% static "js/post_draft.js" %}"></script>
 {% endblock js %}

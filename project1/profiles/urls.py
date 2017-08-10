@@ -2,11 +2,17 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/$', views.profile_activity, name='profile_activity'),
-    url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/posts/$', views.profile_posts, name='profile_posts'),
-    url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/following/$', views.profile_following, name='profile_following'),
-    url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/followers/$', views.profile_followers, name='profile_followers'),
-    url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/topics/$', views.profile_topics, name='profile_topics'),
+    url(r'^(?P<pk>\d+)/$', views.profile_detail, name='profile_detail'),
+    url(r'^(?P<id>\d+)/following/$', views.profile_following, name='profile_following'),
+    url(r'^(?P<id>\d+)/followers/$', views.profile_followers, name='profile_followers'),
+    url(r'^(?P<id>\d+)/posts/$', views.profile_posts, name='profile_posts'),
+    # url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/topics/$', views.profile_topics, name='profile_topics'),
+
+    # url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/$', views.profile_activity, name='profile_activity'),
+    # url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/posts/$', views.profile_posts, name='profile_posts'),
+    # url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/following/$', views.profile_following, name='profile_following'),
+    # url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/followers/$', views.profile_followers, name='profile_followers'),
+    # url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/topics/$', views.profile_topics, name='profile_topics'),
 
     # url(r'^drafts/$', views.profile_drafts, name='profile_drafts'),
     #
