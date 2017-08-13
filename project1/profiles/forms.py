@@ -17,6 +17,12 @@ class ProfileForm(ModelForm):
             "description"
         ]
 
+class ProfileAvatarForm(ModelForm):
+    class Meta:
+        model = Profile
+        fields = [
+            "avatar"
+        ]
     # def clean_position(self):
     #     data = self.cleaned_data['position']
     #     if data:
@@ -57,10 +63,7 @@ class ProfileForm(ModelForm):
     #     # this method didn't change it.
     #     return data
 
-# class ProfileAvatarForm(forms.Form):
-#      avatar_dataurl = forms.CharField()
-#      avatar_filename = forms.CharField()
-#
+
 #
 # class ProfileBackgroundForm(forms.Form):
 #     background_dataurl = forms.CharField()

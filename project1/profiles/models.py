@@ -28,8 +28,8 @@ def get_upload_location(instance, filename):
 class Profile(models.Model):
     gender_choices = (
         ('','Select a Gender'),
-        ('M', 'Male'),
-        ('F', 'Female'),
+        ('Male', 'Male'),
+        ('Female', 'Female'),
     )
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     following = models.ManyToManyField("self",null=True,symmetrical=False, through='Follow', related_name="followers")
@@ -37,7 +37,7 @@ class Profile(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_edited = models.DateTimeField(auto_now=True)
     gender = models.CharField(
-        max_length=1,
+        max_length=10,
         choices=gender_choices,
         blank=True
     )
@@ -99,7 +99,10 @@ class Profile(models.Model):
         super(Profile, self).save(*args, **kwargs) # Call the "real" save() method.
 
     def get_absolute_url(self):
-        return reverse("profiles:profile_activity", kwargs={"id": self.id, "slug": self.slug})
+        return reverse("profiles:profile_detail", kwargs={"pk": self.pk})
+
+    def get_edit_url(self):
+        return reverse("profiles:profile_edit", kwargs={"pk": self.pk})
 
     def get_posts(self):
         return self.user.posts.filter(is_draft = False).order_by("-date_published")

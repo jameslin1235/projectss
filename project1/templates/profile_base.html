@@ -8,18 +8,84 @@
 {% endblock nav-tags %}
 
 {% block body %}
+{% include "alert.html" %}
 <div class="section">
   <div class="container">
-    <div class="profile-info row">
-      
-      <!-- <div class="col-md-8">
-        {{ profile.credential }}
+    <div class="profile card">
+      <div id="profile-bg" style="background:url({{ profile.background.url }}) no-repeat center;background-size:cover">
       </div>
-      <div class="col-md-4">
+      <div id="profile-info" class="pl--l pr--l pb--l rel">
+        <div id="avatar-wrapper">
+          <img id="avatar" src="{{ profile.avatar.url }}">
+        </div>
+        <div>
+          <h1 id="profile-username" class="text-center mb--s">{{ profile.user.username }}</h1>
+          {% if profile.credential %}
+          <div id="profile-credential" class="text-center mb--s">
+            <span>{{ profile.credential }}</span>
+          </div>
+          {% endif %}
+          {% if profile.description %}
+          <div id="profile-description" class="text-center mb--s">
+            <span>{{ profile.description }}</span>
+          </div>
+          {% endif %}
+          {% if profile.gender %}
+          <div class="flex mb--s">
+            <span class="mr--s bold w--100">Gender</span>
+            <span>{{ profile.gender }}</span>
+          </div>
+          {% endif %}
+          {% if profile.industry %}
+          <div class="flex mb--s">
+            <span class="mr--s bold w--100">Industry</span>
+            <span>{{ profile.industry }}</span>
+          </div>
+          {% endif %}
+          {% if profile.position %}
+          <div class="flex mb--s">
+            <span class="mr--s bold w--100">Position</span>
+            <span>{{ profile.position }}</span>
+          </div>
+          {% endif %}
+          {% if profile.company %}
+          <div class="flex mb--s">
+            <span class="mr--s bold w--100">Company</span>
+            <span>{{ profile.company }}</span>
+          </div>
+          {% endif %}
+          {% if profile.school %}
+          <div class="flex mb--s">
+            <span class="mr--s bold w--100">School</span>
+            <span>{{ profile.school }}</span>
+          </div>
+          {% endif %}
+          {% if profile.concentration %}
+          <div class="flex mb--s">
+            <span class="mr--s bold w--100">Concentration</span>
+            <span>{{ profile.concentration }}</span>
+          </div>
+          {% endif %}
+          {% if profile.location %}
+          <div class="flex">
+            <span class="mr--s bold w--100">Location</span>
+            <span>{{ profile.location }}</span>
+          </div>
+          {% endif %}
 
-      </div> -->
+          {% if profile.user == request.user %}
+          <a href="{{ profile.get_edit_url }}" class="a--primary transparent abs abs-r--l abs-b--l">Edit</a>
+          {% endif %}
+        </div>
+      </div>
+      <!-- <div class="col-md-8">
+      {{ profile.credential }}
     </div>
-  </div>
+    <div class="col-md-4">
+
+  </div> -->
+</div>
+</div>
 </div>
 
 <div class="section bg--gray">
@@ -28,11 +94,11 @@
       <div class="col-md-2">
         <div class="card pb--m">
           <h3 class="mb--s pd--m bb">Feeds</h3>
-            <ul class="list ">
-              <li><a href="{% url 'profiles:profile_posts' id=request.user.id %}" class="a--block pd--m transparent {% block profile-posts-active %}{% endblock profile-posts-active %}">Posts</a></li>
-              <li><a href="{% url 'profiles:profile_followers' id=request.user.id %}" class="a--block pd--m transparent {% block profile-followers-active %}{% endblock profile-followers-active %}">Followers</a></li>
-              <li><a href="{% url 'profiles:profile_following' id=request.user.id %}" class="a--block pd--m transparent {% block profile-following-active %}{% endblock profile-following-active %}">Following</a></li>
-            </ul>
+          <ul class="list ">
+            <li><a href="{% url 'profiles:profile_posts' id=profile.user.id %}" class="a--block pd--m transparent {% block profile-posts-active %}{% endblock profile-posts-active %}">Posts</a></li>
+            <li><a href="{% url 'profiles:profile_followers' id=profile.user.id %}" class="a--block pd--m transparent {% block profile-followers-active %}{% endblock profile-followers-active %}">Followers</a></li>
+            <li><a href="{% url 'profiles:profile_following' id=profile.user.id %}" class="a--block pd--m transparent {% block profile-following-active %}{% endblock profile-following-active %}">Following</a></li>
+          </ul>
         </div>
       </div>
       <div class="col-md-10 ">
@@ -46,6 +112,6 @@
 </div>
 {% endblock body %}
 
-{% block javascript %}
+{% block js %}
 <script src="{% static "js/profile_base.js" %}"></script>
-{% endblock javascript %}
+{% endblock js %}

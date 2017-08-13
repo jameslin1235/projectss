@@ -1,213 +1,99 @@
 {% extends "base.html" %}
 {% load static %}
 {% load widget_tweaks %}
-{% block title %}{{ request.user.username }} - Edit Profile{% endblock title %}
+
+{% block nav-v-tags %}
+{% endblock nav-v-tags %}
+{% block nav-tags %}
+{% endblock nav-tags %}
+
 {% block body %}
-<div class="container">
-  <div class="card">
-    <div class="card__background">
-      <div class="form hidden">
-        <form id="js-profile-background-form" enctype="multipart/form-data" method="post" action="/profile/editbackground/">
-          {% csrf_token %}
-          {{ profile_background_form.background_dataurl }}
-          {{ profile_background_form.background_filename }}
-        </form>
-      </div>
-      <input id="js-profile-background-filefield" class="hidden" name="profile-background" type="file" accept="image/jpeg">
-      <div class="background__wrapper">
-        <button type="button" id="js-profile-background-edit" class="button button--gray"><span class="fa fa-camera icon--left" aria-hidden="true"></span>Edit background</button>
-      </div>
-      <img src="{{ request.user.profile.background.url }}" class="img--cover" alt="Profile Background">
-    </div>
+<div class="section">
+  <div class="container">
+    <div id="profile-edit" class="card" data-url="{{ profile.get_absolute_url }}">
+      <input id="js-background-field" type="file" name="background" accept=".jpg, .jpeg, .png">
 
-    <div class="card__body">
-      <div class="form hidden">
-        <form id="js-profile-avatar-form" enctype="multipart/form-data" method="post" action="/profile/editavatar/">
-          {% csrf_token %}
-          {{ profile_avatar_form.avatar_dataurl }}
-          {{ profile_avatar_form.avatar_filename }}
-        </form>
+      <form id="js-avatar-form">
+        <input id="js-avatar-field" type="file" name="avatar" accept=".jpg, .jpeg, .png">
+      </form>
+      <div id="profile-bg" style="background:url({{ profile.background.url }}) no-repeat center;background-size:cover">
       </div>
-      <input id="js-profile-avatar-filefield" class="hidden" name="profile-avatar" type="file" accept="image/jpeg">
 
-      <div class="avatar__wrapper">
-        <div id="js-profile-avatar-edit" class="avatar">
-          <div class="avatar__action avatar__action--dark">
-            <span class="fa fa-camera" aria-hidden="true"></span>
-            <h4>Edit avatar</h4>
+      <div id="profile-info" class="pl--l pr--l pb--l rel">
+
+        <div id="avatar-wrapper">
+          <img id="avatar" src="{{ profile.avatar.url }}">
+          <div id="js-avatar-mask" class="flex flex--center abs abs--zero cursor--p bd-radius--50p">
+            <span class="fa fa-camera fa-2x" aria-hidden="true"></span>
           </div>
-          <img src="{{ request.user.profile.avatar.url }}" class="img--cover imgborder--large" alt="Profile Avatar">
         </div>
-      </div>
-
-
-
-      <div class="card__content">
-        <div class="card__contentitem">
-          <h1>{{ request.user.username }}</h1>
-        </div>
-        <div class="card__contentitem last">
-          <a href="{% url 'profiles:profile_activity' id=request.user.id slug=request.user.profile.slug %}" class="link--blue">Back to Profile<span class="fa fa-angle-right icon--right" aria-hidden="true"></span></a>
-      </div>
-      </div>
-
-      <div class="form">
-        <form method="post">
+        <form id="js-form">
           {% csrf_token %}
-
-          <div class="formfield">
-            <div class="formfield__label">
-              <label for="{{ form.gender.id_for_label }}">{{ form.gender.label|capfirst }}</label>
-            </div>
-            <div class="formfield__noninput">
-                {{ form.gender }}
-            </div>
-            {% if form.gender.errors %}
-            <div>
-            {% for error in form.gender.errors %}
-            <li><strong>{{ error|escape }}</strong></li>
-            {% endfor %}
-            </div>
-            {% endif %}
+          <div class="input-wrapper mb--m">
+            <label for="{{ form.credential.id_for_label }}" class="mb--s bold">{{ form.credential.label }}</label>
+            {{ form.credential|add_class:"w--100p focus--disabled pd--s bd"|attr:"placeholder:Credential" }}
           </div>
-
-          <div class="formfield">
-            <div class="formfield__label">
-              <label for="{{ form.credential.id_for_label }}">{{ form.credential.label|capfirst }}</label>
-            </div>
-            <div class="formfield__input ">
-                {{ form.credential|add_class:"js-add-focus"|attr:"placeholder:Credential"  }}
-            </div>
-            {% if form.credential.errors %}
-            <div>
-            {% for error in form.credential.errors %}
-            <li><strong>{{ error|escape }}</strong></li>
-            {% endfor %}
-            </div>
-            {% endif %}
+          <div class="input-wrapper mb--m">
+            <label for="{{ form.description.id_for_label }}" class="mb--s bold">{{ form.description.label }}</label>
+            {{ form.description|attr:"id:js-textarea"|attr:"placeholder:Description"|add_class:"w--100p focus--disabled pd--s bd" }}
           </div>
-
-          <div class="formfield">
-            <div class="formfield__label">
-              <label for="{{ form.description.id_for_label }}">{{ form.description.label|capfirst }}</label>
-            </div>
-            <div class="formfield__input ">
-                {{ form.description|attr:"rows:3"|attr:"cols:20"|add_class:"js-add-focus"|attr:"placeholder:Description" }}
-            </div>
-            {% if form.description.errors %}
-            <div>
-            {% for error in form.description.errors %}
-            <li><strong>{{ error|escape }}</strong></li>
-            {% endfor %}
-            </div>
-            {% endif %}
+          <div class="input-wrapper mb--m">
+            <label for="{{ form.gender.id_for_label }}" class="mb--s bold">{{ form.gender.label }}</label>
+            {{ form.gender|add_class:"w--100p focus--disabled pd--s bd"  }}
           </div>
-
-          <div class="formfield">
-            <div class="formfield__label">
-              <label for="{{ form.residence.id_for_label }}">{{ form.residence.label|capfirst }}</label>
-            </div>
-            <div class="formfield__noninput">
-                {{ form.residence }}
-            </div>
-            {% if form.residence.errors %}
-            <div>
-            {% for error in form.residence.errors %}
-            <li><strong>{{ error|escape }}</strong></li>
-            {% endfor %}
-            </div>
-            {% endif %}
+          <div class="input-wrapper mb--m">
+            <label for="{{ form.industry.id_for_label }}" class="mb--s bold">{{ form.industry.label }}</label>
+            {{ form.industry|add_class:"w--100p focus--disabled pd--s bd"|attr:"placeholder:Industry" }}
           </div>
-
-          <div class="formfield">
-            <div class="formfield__label">
-              <label for="{{ form.occupation.id_for_label }}">{{ form.occupation.label|capfirst }}</label>
-            </div>
-            <div class="formfield__noninput">
-                {{ form.occupation }}
-            </div>
-            {% if form.occupation.errors %}
-            <div>
-            {% for error in form.occupation.errors %}
-            <li><strong>{{ error|escape }}</strong></li>
-            {% endfor %}
-            </div>
-            {% endif %}
+          <div class="input-wrapper mb--m">
+            <label for="{{ form.position.id_for_label }}" class="mb--s bold">{{ form.position.label }}</label>
+            {{ form.position|add_class:"w--100p focus--disabled pd--s bd"|attr:"placeholder:Position" }}
           </div>
-
-          <div class="formfield">
-            <div class="formfield__label">
-              <label for="{{ form.position.id_for_label }}">{{ form.position.label|capfirst }}</label>
-            </div>
-            <div class="formfield__input ">
-                {{ form.position|add_class:"js-add-focus"|attr:"placeholder:Position" }}
-            </div>
-            {% if form.position.errors %}
-            <div>
-            {% for error in form.position.errors %}
-            <li><strong>{{ error|escape }}</strong></li>
-            {% endfor %}
-            </div>
-            {% endif %}
+          <div class="input-wrapper mb--m">
+            <label for="{{ form.company.id_for_label }}" class="mb--s bold">{{ form.company.label }}</label>
+            {{ form.company|add_class:"w--100p focus--disabled pd--s bd"|attr:"placeholder:Company" }}
           </div>
-
-          <div class="formfield">
-            <div class="formfield__label">
-              <label for="{{ form.company.id_for_label }}">{{ form.company.label|capfirst }}</label>
-            </div>
-            <div class="formfield__input ">
-                {{ form.company|add_class:"js-add-focus"|attr:"placeholder:Company" }}
-            </div>
-            {% if form.company.errors %}
-            <div>
-            {% for error in form.company.errors %}
-            <li><strong>{{ error|escape }}</strong></li>
-            {% endfor %}
-            </div>
-            {% endif %}
+          <div class="input-wrapper mb--m">
+            <label for="{{ form.school.id_for_label }}" class="mb--s bold">{{ form.school.label }}</label>
+            {{ form.school|add_class:"w--100p focus--disabled pd--s bd"|attr:"placeholder:School" }}
           </div>
-
-          <div class="formfield">
-            <div class="formfield__label">
-              <label for="{{ form.school.id_for_label }}">{{ form.school.label|capfirst }}</label>
-            </div>
-            <div class="formfield__input ">
-                {{ form.school|add_class:"js-add-focus"|attr:"placeholder:School" }}
-            </div>
-            {% if form.school.errors %}
-            <div>
-            {% for error in form.school.errors %}
-            <li><strong>{{ error|escape }}</strong></li>
-            {% endfor %}
-            </div>
-            {% endif %}
+          <div class="input-wrapper mb--m">
+            <label for="{{ form.concentration.id_for_label }}" class="mb--s bold">{{ form.concentration.label }}</label>
+            {{ form.concentration|add_class:"w--100p focus--disabled pd--s bd"|attr:"placeholder:Concentration"  }}
           </div>
-
-          <div class="formfield">
-            <div class="formfield__label">
-              <label for="{{ form.major.id_for_label }}">{{ form.major.label|capfirst }}</label>
-            </div>
-            <div class="formfield__input ">
-                {{ form.major|add_class:"js-add-focus"|attr:"placeholder:Major" }}
-            </div>
-            {% if form.major.errors %}
-            <div>
-            {% for error in form.major.errors %}
-            <li><strong>{{ error|escape }}</strong></li>
-            {% endfor %}
-            </div>
-            {% endif %}
+          <div class="input-wrapper mb--m">
+            <label for="{{ form.location.id_for_label }}" class="mb--s bold">{{ form.location.label }}</label>
+            {{ form.location|add_class:"w--100p focus--disabled pd--s bd"|attr:"placeholder:Location" }}
           </div>
-
-          <button type="submit" class="button button--blue button--primary">Save</button>
+          <button type="submit" id="js-submit" class="button button--primary transparent">Update</button>
         </form>
       </div>
 
+
+
+        <!-- <form class="hidden">
+          {{ avatar_form.avatar|attr:"id:js-avatar-field" }}
+        </form> -->
+
+
+          <!-- {% if request.user == profile.user %}
+          <div id="avatar-mask" class="flex flex--center">
+            <span class="fa fa-camera fa-lg" aria-hidden="true"></span>
+          </div>
+          {% endif %} -->
+
+
+
+
+      </div>
     </div>
   </div>
 </div>
 {% endblock body %}
 
-{% block javascript %}
+{% block js %}
+{% include "profile_avatar_modal.html" %}
+{% include "profile_background_modal.html" %}
+<script src='https://cloud.tinymce.com/stable/tinymce.min.js'></script>
 <script src="{% static "js/profile_edit.js" %}"></script>
-{% endblock javascript %}
+{% endblock js %}

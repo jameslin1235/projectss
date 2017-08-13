@@ -3,7 +3,7 @@ import os
 from django.contrib import messages
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, QueryDict
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
@@ -14,7 +14,7 @@ from django.contrib.auth.models import User
 from project1.project1.posts.models import Post
 from .models import Profile, Follow
 from project1.project1.posts.forms import PostForm
-from .forms import ProfileForm
+from .forms import ProfileForm, ProfileAvatarForm
 from project1.project1.config import utility
 # from PIL import Image
 
@@ -25,6 +25,53 @@ def profile_detail(request, pk):
         context = {}
         context['profile'] = profile
         return render(request,"profile_detail.html",context)
+    elif request.method == "PATCH" and request.is_ajax():
+        profile = Profile.objects.get(pk = pk)
+        put = QueryDict(request.body)
+        print(put)
+        # ProfileAvatarForm(request.)
+        # print(request.body)
+        # print(request.FILES)
+        # form = ProfileForm(put, instance=profile)
+        # if form.is_valid():
+        #     form.save()
+        #     messages.success(request, "Profile updated.")
+        #     response = {}
+        #     return JsonResponse(response)
+        # else:
+        #     print('error')
+
+@login_required
+def profile_edit(request, pk):
+    if request.method == "GET":
+        profile = get_object_or_404(Profile, pk=pk)
+        if profile.user == request.user:
+            context = {}
+            context['form'] = ProfileForm(instance = profile)
+            context['profile'] = profile
+            return render(request,"profile_edit.html",context)
+        else:
+            raise PermissionDenied
+
+
+        # context['form'] = ProfileForm(instance = request.user.profile)
+        # context['profile_avatar_form'] = ProfileAvatarForm()
+        # context['profile_background_form'] = ProfileBackgroundForm()
+        # return render(request,"profile_edit.html",context)
+        #
+
+
+    # elif request.method == "POST":
+    #     form = ProfileForm(request.POST,instance=request.user.profile)
+    #     if form.is_valid():
+    #         form.save()
+    #         messages.success(request, "Profile edited.")
+    #         return redirect(request.path)
+    #     else:
+    #         context = {}
+    #         context['form'] = form
+    #         return render(request,"profile_edit.html",context)
+
 
 # def profile_activity(request,id,slug):
 #     if request.method == "GET":
@@ -98,24 +145,7 @@ def profile_drafts(request):
         return render(request,template,context)
 
 
-@login_required
-def profile_edit(request):
-    if request.method == "GET":
-        context = {}
-        context['form'] = ProfileForm(instance = request.user.profile)
-        context['profile_avatar_form'] = ProfileAvatarForm()
-        context['profile_background_form'] = ProfileBackgroundForm()
-        return render(request,"profile_edit.html",context)
-    elif request.method == "POST":
-        form = ProfileForm(request.POST,instance=request.user.profile)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Profile edited.")
-            return redirect(request.path)
-        else:
-            context = {}
-            context['form'] = form
-            return render(request,"profile_edit.html",context)
+
 
 @login_required
 def profile_edit_avatar(request):
