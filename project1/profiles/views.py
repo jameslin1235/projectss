@@ -29,6 +29,28 @@ def profile_detail(request, pk):
         profile = Profile.objects.get(pk = pk)
         put = QueryDict(request.body)
         print(put)
+        print(request.GET)
+        print(request.POST)
+        print(request.FILES)
+        # ProfileAvatarForm(request.)
+        # print(request.body)
+        # print(request.FILES)
+        # form = ProfileForm(put, instance=profile)
+        # if form.is_valid():
+        #     form.save()
+        #     messages.success(request, "Profile updated.")
+        #     response = {}
+        #     return JsonResponse(response)
+        # else:
+        #     print('error')
+    elif request.method == "POST" and request.is_ajax():
+        profile = Profile.objects.get(pk = pk)
+        # put = QueryDict(request.body)
+        # print(put)
+        print(request.GET)
+        print(request.POST)
+        print(request.FILES)
+        print('w')
         # ProfileAvatarForm(request.)
         # print(request.body)
         # print(request.FILES)

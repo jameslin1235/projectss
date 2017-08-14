@@ -1,17 +1,17 @@
 <div id="js-avatar-modal" class="modal-wrapper hidden">
   <div class="modal pd--l">
-    <button type="button" class="button button--modal transparent js-avatar-modal-close"><span class="fa fa-times" aria-hidden="true"></span></button>
+    <button type="button" id="js-avatar-modal-close" class="button button--modal transparent"><span class="fa fa-times" aria-hidden="true"></span></button>
     <div class="modal__header text-center mb--l">
       <h3>Edit Avatar</h3>
     </div>
     <div class="modal__body mb--l flex flex--center">
       <canvas id="js-avatar-canvas" width="200" height="200"></canvas>
     </div>
-    <div class="modal__footer">
-      <div class="flex flex--end">
-        <button type="button" class="button transparent mr--s js-avatar-modal-close">Cancel</button>
+    <div class="modal__footer flex flex--center">
+      <!-- <div class="flex flex--end">
+        <button type="button" class="button transparent mr--s js-avatar-modal-close">Cancel</button> -->
         <button type="button" id="js-edit-avatar" class="button button--primary transparent">Edit</button>
-      </div>
+      <!-- </div> -->
     </div>
   </div>
 </div>

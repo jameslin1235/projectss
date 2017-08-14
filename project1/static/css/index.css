@@ -212,11 +212,11 @@ label{
 }
 
 .modal{
-  margin: 0 10px;
+  margin: 0 15px;
   background: #fff;
   border-radius: 3px;
   position: relative;
-  width: 400px;
+  width: 100%;
 }
 
 /* Alert */
@@ -974,6 +974,11 @@ label{
 
   #profile-username, #profile-credential, #profile-description{
     text-align: left;
+  }
+
+  .modal{
+    margin: initial;
+    width: 500px;
   }
 }
 
