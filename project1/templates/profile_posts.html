@@ -2,22 +2,50 @@
 {% load static %}
 {% load widget_tweaks %}
 
-{% block body %}
+{% block profile-posts %}
+active
+{% endblock profile-posts %}
+
+{% block profile-content %}
+<h3 class="mb--m pb--m bb--light">{{ posts_count }} Posts</h3>
+{% if posts %}
+<div class="mb--m">
+  {% for post in posts %}
+  <div class="post {% if not forloop.last %}mb--m{% endif %} pb--m bb--light" data-url="{{ post.get_absolute_url }}">
+    <h3 class="mb--s"><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+    <ul class="list flex">
+      <li class="mr--s"><span>{{ post.date_updated }}</span></li>
+      {% if profile.user == request.user %}
+      <li class="mr--s"><a href="{{ post.get_edit_url }}" class="transparent">Edit</a></li>
+      <li><button type="button" class="button transparent pd-zero js-delete">Delete</button></li>
+      {% endif %}
+    </ul>
+  </div>
+  {% endfor %}
+</div>
+
+<ul class="pagination list flex flex--center ">
+  {% if posts.has_previous %}
+  <li class="mr--s pd--s"><a href="?page={{ posts.previous_page_number }}" class="transparent"><span class="fa fa-angle-double-left" aria-hidden="true"></span></a></li>
+  {% endif %}
+  {% for i in posts.paginator.page_range %}
+  {% if posts.number == i %}
+  <li class="mr--s pd--s"><span >{{ i }}</span></li>
+  {% else %}
+  <li class="mr--s pd--s"><a href="?page={{ i }}" class="transparent">{{ i }}</a></li>
+  {% endif %}
+  {% endfor %}
+  {% if posts.has_next %}
+  <li class="pd--s"><a href="?page={{ posts.next_page_number }}" class="transparent"><span class="fa fa-angle-double-right" aria-hidden="true"></span></a></li>
+  {% endif %}
+</ul>
+{% else %}
+<h3>You have zero posts.</h3>
+{% endif %}
+{% endblock profile-content %}
+
+{% block js %}
+{% include "post_delete_modal.html" %}
 {{ block.super }}
-{% endblock body %}
-
-{% block profile-posts-active %}
-a--active
-{% endblock profile-posts-active %}
-
-{% block profile-content__content %}
-  <div class="header mb--s pd--m bb">
-    <div class="heading">
-      <h3>Posts</h3>
-    </div>
-  </div>
-  <div class="content">
-    content
-  </div>
-
-{% endblock profile-content__content %}
+<script src="{% static "js/profile_posts.js" %}"></script>
+{% endblock js %}

@@ -17,6 +17,9 @@ var url = $("#profile-edit").attr("data-url");
 var avatar_field = $("#js-avatar-field");
 var avatar_modal = $("#js-avatar-modal");
 var avatar_ctx = document.getElementById('js-avatar-canvas').getContext('2d');
+var bg_field = $("#js-bg-field");
+var bg_modal = $("#js-bg-modal");
+var bg_ctx = document.getElementById('js-bg-canvas').getContext('2d');
 
 $("#js-form").on("submit", function(e){
   e.preventDefault();
@@ -34,6 +37,10 @@ $("#js-avatar-mask").on("click", function(){
   avatar_field.click();
 });
 
+$("#js-bg-mask").on("click", function(){
+  bg_field.click();
+});
+
 avatar_field.on("change", function(){
   var file = this.files[0];
   var img = new Image();
@@ -44,22 +51,32 @@ avatar_field.on("change", function(){
   avatar_modal.toggleClass("hidden");
 });
 
+bg_field.on("change", function(){
+  var file = this.files[0];
+  var img = new Image();
+  img.addEventListener("load", function() {
+    bg_ctx.drawImage(img, 0, 0, 200, 200);
+  }, false);
+  img.src = window.URL.createObjectURL(file);
+  bg_modal.toggleClass("hidden");
+});
+
 $("#js-avatar-modal-close").on("click", function(){
   avatar_modal.toggleClass("hidden");
   avatar_ctx.clearRect(0, 0, 200, 200);
   document.getElementById('js-avatar-form').reset();
 });
 
-// $("#js-edit-avatar").on("click", function(){
-//   var data = new FormData();
-//   data.append("avatar", avatar_field[0].files[0]);
-//   $.ajax({
-//     method: "POST",
-//     url: url,
-//     data: data,
-//     processData: false,
-//     contentType: false
-//   }).done(function( response ) {
-//     // window.location.href = url;
-//   });
-// });
+$("#js-bg-modal-close").on("click", function(){
+  bg_modal.toggleClass("hidden");
+  bg_ctx.clearRect(0, 0, 200, 200);
+  document.getElementById('js-bg-form').reset();
+});
+
+$("#js-edit-avatar").on("click", function(){
+  $("#js-submit-avatar").click();
+});
+
+$("#js-edit-bg").on("click", function(){
+  $("#js-submit-bg").click();
+});

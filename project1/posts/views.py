@@ -26,25 +26,25 @@ from project1.project1.posts.forms import PostForm
 #     else:
 #         raise PermissionDenied
 
-@login_required
-def post_drafts(request):
-    if request.method == "GET":
-        drafts_count = request.user.profile.get_drafts_count()
-        context = {}
-        context['drafts_count'] = drafts_count
-        if drafts_count != 0:
-            paginator = Paginator(request.user.profile.get_drafts(), 25) # Show 25 contacts per page
-            page = request.GET.get('page')
-            try:
-                drafts = paginator.page(page)
-            except PageNotAnInteger:
-                # If page is not an integer, deliver first page.
-                drafts = paginator.page(1)
-            except EmptyPage:
-                # If page is out of range (e.g. 9999), deliver last page of results.
-                drafts = paginator.page(paginator.num_pages)
-            context['drafts'] = drafts
-        return render(request,"post_drafts.html",context)
+# @login_required
+# def post_drafts(request):
+#     if request.method == "GET":
+#         drafts_count = request.user.profile.get_drafts_count()
+#         context = {}
+#         context['drafts_count'] = drafts_count
+#         if drafts_count != 0:
+#             paginator = Paginator(request.user.profile.get_drafts(), 25) # Show 25 contacts per page
+#             page = request.GET.get('page')
+#             try:
+#                 drafts = paginator.page(page)
+#             except PageNotAnInteger:
+#                 # If page is not an integer, deliver first page.
+#                 drafts = paginator.page(1)
+#             except EmptyPage:
+#                 # If page is out of range (e.g. 9999), deliver last page of results.
+#                 drafts = paginator.page(paginator.num_pages)
+#             context['drafts'] = drafts
+#         return render(request,"post_drafts.html",context)
 
 
 def post_list(request):

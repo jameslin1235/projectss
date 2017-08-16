@@ -7,19 +7,30 @@
 {% block nav-tags %}
 {% endblock nav-tags %}
 
-{% block body %}
-<div class="section">
-  <div class="container">
-    <div id="profile-edit" class="card" data-url="{{ profile.get_absolute_url }}">
-      <input id="js-background-field" type="file" name="background" accept=".jpg, .jpeg, .png">
+{% block body-bg %}bg--gray{% endblock body-bg %}
 
-      <form id="js-avatar-form">
-        <input id="js-avatar-field" type="file" name="avatar" accept=".jpg, .jpeg, .png">
+{% block body %}
+<div class="pt--m pb--m">
+  <div class="container">
+    <div class="card pd--m" data-url="{{ profile.get_absolute_url }}">
+
+      <form id="js-bg-form" class="hidden" method="POST" action="{{ profile.get_absolute_url }}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input id="js-bg-field" type="file" name="background" accept=".jpg, .jpeg, .png">
+        <button type="submit" id="js-submit-bg"></button>
       </form>
-      <div id="profile-bg" style="background:url({{ profile.background.url }}) no-repeat center;background-size:cover">
+
+      <form id="js-avatar-form" class="hidden" method="POST" action="{{ profile.get_absolute_url }}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input id="js-avatar-field" type="file" name="avatar" accept=".jpg, .jpeg, .png">
+        <button type="submit" id="js-submit-avatar"></button>
+      </form>
+
+      <div id="profile-bg" style="background:url({{ profile.background.url }}) no-repeat center;background-size:cover" class="rel mt-neg--m ml-neg--m mr-neg--m">
+        <button type="button" id="js-bg-mask" class="button button--primary abs abs-t--s abs-r--s transparent">Edit</button>
       </div>
 
-      <div id="profile-info" class="pl--l pr--l pb--l rel">
+      <div id="profile-info" class="rel">
 
         <div id="avatar-wrapper">
           <img id="avatar" src="{{ profile.avatar.url }}">
@@ -71,23 +82,23 @@
 
 
 
-        <!-- <form class="hidden">
-          {{ avatar_form.avatar|attr:"id:js-avatar-field" }}
-        </form> -->
+      <!-- <form class="hidden">
+      {{ avatar_form.avatar|attr:"id:js-avatar-field" }}
+    </form> -->
 
 
-          <!-- {% if request.user == profile.user %}
-          <div id="avatar-mask" class="flex flex--center">
-            <span class="fa fa-camera fa-lg" aria-hidden="true"></span>
-          </div>
-          {% endif %} -->
-
-
-
-
-      </div>
-    </div>
+    <!-- {% if request.user == profile.user %}
+    <div id="avatar-mask" class="flex flex--center">
+    <span class="fa fa-camera fa-lg" aria-hidden="true"></span>
   </div>
+  {% endif %} -->
+
+
+
+
+</div>
+</div>
+</div>
 </div>
 {% endblock body %}
 

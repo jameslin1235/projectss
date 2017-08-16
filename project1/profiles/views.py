@@ -14,7 +14,7 @@ from django.contrib.auth.models import User
 from project1.project1.posts.models import Post
 from .models import Profile, Follow
 from project1.project1.posts.forms import PostForm
-from .forms import ProfileForm, ProfileAvatarForm
+from .forms import ProfileForm, ProfileAvatarForm, ProfileBackgroundForm
 from project1.project1.config import utility
 # from PIL import Image
 
@@ -27,41 +27,33 @@ def profile_detail(request, pk):
         return render(request,"profile_detail.html",context)
     elif request.method == "PATCH" and request.is_ajax():
         profile = Profile.objects.get(pk = pk)
-        put = QueryDict(request.body)
-        print(put)
-        print(request.GET)
-        print(request.POST)
-        print(request.FILES)
-        # ProfileAvatarForm(request.)
-        # print(request.body)
-        # print(request.FILES)
-        # form = ProfileForm(put, instance=profile)
-        # if form.is_valid():
-        #     form.save()
-        #     messages.success(request, "Profile updated.")
-        #     response = {}
-        #     return JsonResponse(response)
-        # else:
-        #     print('error')
-    elif request.method == "POST" and request.is_ajax():
+        patch = QueryDict(request.body)
+        form = ProfileForm(patch, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated.")
+            response = {}
+            return JsonResponse(response)
+        else:
+            print('error')
+    elif request.method == "POST":
         profile = Profile.objects.get(pk = pk)
-        # put = QueryDict(request.body)
-        # print(put)
-        print(request.GET)
-        print(request.POST)
-        print(request.FILES)
-        print('w')
-        # ProfileAvatarForm(request.)
-        # print(request.body)
-        # print(request.FILES)
-        # form = ProfileForm(put, instance=profile)
-        # if form.is_valid():
-        #     form.save()
-        #     messages.success(request, "Profile updated.")
-        #     response = {}
-        #     return JsonResponse(response)
-        # else:
-        #     print('error')
+        if "avatar" in request.FILES:
+            form = ProfileAvatarForm(request.POST, request.FILES, instance=profile)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Profile avatar updated.")
+                return redirect(profile)
+            else:
+                print('error')
+        else:
+            form = ProfileBackgroundForm(request.POST, request.FILES, instance=profile)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Profile background updated.")
+                return redirect(profile)
+            else:
+                print('error')
 
 @login_required
 def profile_edit(request, pk):
@@ -75,26 +67,25 @@ def profile_edit(request, pk):
         else:
             raise PermissionDenied
 
-
-        # context['form'] = ProfileForm(instance = request.user.profile)
-        # context['profile_avatar_form'] = ProfileAvatarForm()
-        # context['profile_background_form'] = ProfileBackgroundForm()
-        # return render(request,"profile_edit.html",context)
-        #
-
-
-    # elif request.method == "POST":
-    #     form = ProfileForm(request.POST,instance=request.user.profile)
-    #     if form.is_valid():
-    #         form.save()
-    #         messages.success(request, "Profile edited.")
-    #         return redirect(request.path)
-    #     else:
-    #         context = {}
-    #         context['form'] = form
-    #         return render(request,"profile_edit.html",context)
-
-
+@login_required
+def profile_drafts(request):
+    if request.method == "GET":
+        drafts_count = request.user.profile.get_drafts_count()
+        context = {}
+        context['drafts_count'] = drafts_count
+        if drafts_count != 0:
+            paginator = Paginator(request.user.profile.get_drafts(), 25) # Show 25 contacts per page
+            page = request.GET.get('page')
+            try:
+                drafts = paginator.page(page)
+            except PageNotAnInteger:
+                # If page is not an integer, deliver first page.
+                drafts = paginator.page(1)
+            except EmptyPage:
+                # If page is out of range (e.g. 9999), deliver last page of results.
+                drafts = paginator.page(paginator.num_pages)
+            context['drafts'] = drafts
+    return render(request,"profile_drafts.html",context)
 # def profile_activity(request,id,slug):
 #     if request.method == "GET":
 #         user = get_object_or_404(get_user_model(), id = id)
@@ -115,59 +106,51 @@ def profile_edit(request, pk):
         # context['posts_count'] = user.profile.get_posts_count()
         # template = "profile_activity.html"
 
-def profile_posts(request,id,slug):
+
+def profile_posts(request, pk):
     if request.method == "GET":
-        user = get_object_or_404(get_user_model(), id = id)
+        profile = get_object_or_404(Profile, pk = pk)
         context = {}
-        template = "profile_posts.html"
-        return render(request,template,context)
-
-        # context = {}
-        # context['user_profile_status'] = user.profile.get_profile_status()
-        # if not user.profile.get_profile_status():
-        #     context['user_profile_fields'] = user.profile.get_profile_fields()
-        # context['user'] = user
-        # context['posts_count'] = user.profile.get_posts_count()
-        # if user.profile.get_posts_count() != 0:
-        #     context['posts'] = user.profile.get_posts()
-        #     paginator = Paginator(user.profile.get_posts(), 10) # Show 25 contacts per page
-        #     page = request.GET.get('page')
-        #     try:
-        #         current_page = paginator.page(page)
-        #     except PageNotAnInteger:
-        #         # If page is not an integer, deliver first page.
-        #         current_page = paginator.page(1)
-        #     except EmptyPage:
-        #         # If page is out of range (e.g. 9999), deliver last page of results.
-        #         current_page = paginator.page(paginator.num_pages)
-        #     context['current_page'] = current_page
-        # template = "profile_posts.html"
-        # return render(request,template,context)
-
-
-@login_required
-def profile_drafts(request):
-    if request.method == "GET":
-        context = {}
-        context['drafts_count'] = request.user.profile.get_drafts_count()
-        if request.user.profile.get_drafts_count() != 0:
-            context['drafts'] = request.user.profile.get_drafts()
-            paginator = Paginator(request.user.profile.get_drafts(), 10) # Show 25 contacts per page
+        context['profile'] = profile
+        posts_count = profile.get_posts_count()
+        context['posts_count'] = posts_count
+        if posts_count != 0:
+            paginator = Paginator(profile.get_posts(), 10) # Show 25 contacts per page
             page = request.GET.get('page')
             try:
-                current_page = paginator.page(page)
+                posts = paginator.page(page)
             except PageNotAnInteger:
                 # If page is not an integer, deliver first page.
-                current_page = paginator.page(1)
+                posts = paginator.page(1)
             except EmptyPage:
                 # If page is out of range (e.g. 9999), deliver last page of results.
-                current_page = paginator.page(paginator.num_pages)
-            context['current_page'] = current_page
-        template = "profile_drafts.html"
-        return render(request,template,context)
+                posts = paginator.page(paginator.num_pages)
+            context['posts'] = posts
+        return render(request,"profile_posts.html",context)
 
-
-
+# @login_required
+# def profile_drafts(request):
+#     if request.method == "GET":
+#         context = {}
+#         context['drafts_count'] = request.user.profile.get_drafts_count()
+#         if request.user.profile.get_drafts_count() != 0:
+#             context['drafts'] = request.user.profile.get_drafts()
+#             paginator = Paginator(request.user.profile.get_drafts(), 10) # Show 25 contacts per page
+#             page = request.GET.get('page')
+#             try:
+#                 current_page = paginator.page(page)
+#             except PageNotAnInteger:
+#                 # If page is not an integer, deliver first page.
+#                 current_page = paginator.page(1)
+#             except EmptyPage:
+#                 # If page is out of range (e.g. 9999), deliver last page of results.
+#                 current_page = paginator.page(paginator.num_pages)
+#             context['current_page'] = current_page
+#         template = "profile_drafts.html"
+#         return render(request,template,context)
+#
+#
+#
 
 @login_required
 def profile_edit_avatar(request):

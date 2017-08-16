@@ -23,6 +23,13 @@ class ProfileAvatarForm(ModelForm):
         fields = [
             "avatar"
         ]
+
+class ProfileBackgroundForm(ModelForm):
+    class Meta:
+        model = Profile
+        fields = [
+            "background"
+        ]
     # def clean_position(self):
     #     data = self.cleaned_data['position']
     #     if data:

@@ -1,68 +1,58 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}{{ request.user.username }} - Drafts{% endblock title %}
+{% load widget_tweaks %}
+
+{% block nav-v-tags %}
+{% endblock nav-v-tags %}
+{% block nav-tags %}
+{% endblock nav-tags %}
+
 {% block body %}
-<div class="container">
-  <div class="card">
-      <div class="card__header">
-        <div class="card__headerinner card__headerflex">
-          <button type="button" class="button button--plain js-profile-wrapper-get"><span class="fa fa-angle-left icon--left" aria-hidden="true"></span></button>
-          <h2>{{ drafts_count }} Drafts</h2>
-        </div>
-      </div>
-
-      <div class="card__body">
-        <div class="listitem">
-          <a href="{% url 'posts:post_create' %}" class="link--blue"><span class="fa fa-pencil-square-o icon--left" aria-hidden="true"></span>Create</a>
-        </div>
-
-        {% if drafts_count == 0 %}
-        <div class="listitem">
-          <h3>There are 0 drafts.</h3>
-        </div>
-        {% else %}
-        {% for post in current_page %}
-        <div class="listitem">
-          <div class="contentitem" data-url="{{ post.get_absolute_url }}">
-            <div class="contentitem-item">
-              <a href="{{ post.get_absolute_url }}edit">{{ post.title }}</a>
-            </div>
-            <div class="contentitem-item">
-              {{ post.content }}
-            </div>
-            <div class="contentitem-item contentitem-item-flex last">
-              <button type="button" class="button button--plain spaceright--small js-draft-publish">Publish</button>
-              <button type="button" class="button button--plain spaceright--small js-draft-delete">Delete</button>
-              <a href="{{ post.get_absolute_url }}edit" class="spaceright--small">Edit</a>
-              <span>{{ post.date_edited }}</span>
-            </div>
-          </div>
+<div class="section">
+  <div class="container">
+    <div class="pd--m">
+      {% include "alert.html" %}
+      <h3 class="mb--m pb--m bb--light">{{ drafts_count }} Drafts</h3>
+      {% if drafts %}
+      <div class="mb--m">
+        {% for post in drafts %}
+        <div class="post {% if not forloop.last %}mb--m{% endif %} pb--m bb--light" data-url="{{ post.get_absolute_url }}">
+          <h3 class="mb--s"><a href="{{ post.get_edit_url }}">{{ post.title }}</a></h3>
+          <ul class="list flex">
+            <li class="mr--s"><span>{{ post.date_updated }}</span></li>
+            <li class="mr--s"><a href="{{ post.get_edit_url }}" class="transparent">Edit</a></li>
+            <li class="mr--s"><button type="button" class="button transparent pd-zero js-delete">Delete</button></li>
+            <li><button type="button" class="button transparent pd-zero js-publish">Publish</button></li>
+          </ul>
         </div>
         {% endfor %}
-
-        <div class="pagination">
-          {% if current_page.has_previous %}
-          <a href="?page={{ current_page.previous_page_number }}" class="pagination__link" ><span class="fa fa-angle-double-left" aria-hidden="true"></span></a>
-          {% endif %}
-          {% for i in current_page.paginator.page_range %}
-          {% if current_page.number == i %}
-          <span class="pagination__link pagination__link--active">{{ i }}</span>
-          {% else %}
-          <a href="?page={{ i }}" class="pagination__link">{{ i }}</a>
-          {% endif %}
-          {% endfor %}
-          {% if current_page.has_next %}
-          <a class="pagination__link" href="?page={{ current_page.next_page_number }}"><span class="fa fa-angle-double-right" aria-hidden="true"></span></a>
-          {% endif %}
-        </div>
-
-      {% endif %}
       </div>
+
+      <ul class="pagination list flex flex--center">
+        {% if drafts.has_previous %}
+        <li class="mr--s pd--s"><a href="?page={{ drafts.previous_page_number }}" class="transparent"><span class="fa fa-angle-double-left" aria-hidden="true"></span></a></li>
+        {% endif %}
+        {% for i in drafts.paginator.page_range %}
+        {% if drafts.number == i %}
+        <li class="mr--s pd--s"><span >{{ i }}</span></li>
+        {% else %}
+        <li class="mr--s pd--s"><a href="?page={{ i }}" class="transparent">{{ i }}</a></li>
+        {% endif %}
+        {% endfor %}
+        {% if drafts.has_next %}
+        <li class="pd--s"><a href="?page={{ drafts.next_page_number }}" class="transparent"><span class="fa fa-angle-double-right" aria-hidden="true"></span></a></li>
+        {% endif %}
+      </ul>
+      {% else %}
+      <h3>You have zero drafts.</h3>
+      {% endif %}
     </div>
   </div>
 </div>
 {% endblock body %}
 
-{% block javascript %}
-<script src="{% static "js/profile_draft.js" %}"></script>
-{% endblock javascript %}
+{% block js %}
+{% include "draft_delete_modal.html" %}
+{% include "draft_publish_modal.html" %}
+<script src="{% static "js/profile_drafts.js" %}"></script>
+{% endblock js %}

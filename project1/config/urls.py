@@ -20,6 +20,7 @@ from django.conf.urls.static import static
 from project1.project1.config import utility
 from project1.project1.posts import views as posts
 from project1.project1.accounts import views as accounts
+from project1.project1.profiles import views as profiles
 
 urlpatterns = [
     url(r'^$', posts.home, name="home"),
@@ -27,6 +28,7 @@ urlpatterns = [
     url(r'^login/', accounts.login_view, name="login"),
     url(r'^logout/', accounts.logout_view, name="logout"),
     url(r'^admin/', admin.site.urls),
+    url(r'^drafts/$', profiles.profile_drafts, name='profile_drafts'),
     url(r'^posts/', include("project1.project1.posts.urls", namespace="posts")),
     url(r'^tags/', include("project1.project1.tags.urls", namespace="tags")),
     url(r'^profiles/', include("project1.project1.profiles.urls", namespace="profiles")),

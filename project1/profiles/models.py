@@ -105,10 +105,10 @@ class Profile(models.Model):
         return reverse("profiles:profile_edit", kwargs={"pk": self.pk})
 
     def get_posts(self):
-        return self.user.posts.filter(is_draft = False).order_by("-date_published")
+        return self.user.posts.filter(date_published__isnull = False)
 
     def get_posts_count(self):
-        return self.user.posts.filter(is_draft = False).count()
+        return self.user.posts.filter(date_published__isnull = False).count()
 
     def get_drafts(self):
         return self.user.posts.filter(date_published__isnull = True).order_by("-date_updated")

@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from project1.project1.profiles.models import Profile
 # Create your models here.
 class Post(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name="posts")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="posts")
     likers = models.ManyToManyField(settings.AUTH_USER_MODEL,through='PostUser',related_name="liked_posts")
     title = models.CharField(max_length=100)
     content = models.TextField()
@@ -23,7 +23,7 @@ class Post(models.Model):
 
     def get_absolute_url(self):
         return reverse("posts:post_detail", kwargs={"pk": self.pk})
-        
+
     def get_edit_url(self):
         return reverse("posts:post_edit", kwargs={"pk": self.pk})
 

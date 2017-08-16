@@ -1,16 +1,16 @@
-<div class="modal">
-  <div class="modal__wrapper">
-    <button type="button" class="button button--modalclose js-modal-close"><span class="fa fa-times" aria-hidden="true"></span></button>
-    <div class="modal__header">
-      <h3>Publish Draft</h3>
+<div id="js-publish-modal" class="modal-wrapper hidden">
+  <div class="modal pd--l">
+    <button type="button" class="button button--modal transparent js-publish-modal-close"><span class="fa fa-times" aria-hidden="true"></span></button>
+    <div class="modal__header mb--m">
+      <h3>Publish Draft?</h3>
     </div>
-    <div class="modal__body">
+    <div class="modal__body mb--m">
       <p>Are you sure you want to publish this draft?</p>
     </div>
     <div class="modal__footer">
-      <div class="modal__buttongroup">
-        <button type="button" class="button button--plain js-modal-close spaceright--small">Cancel</button>
-        <a href="#" class="link--blue link--primary" id="js-draft-publish-link">Publish</a>
+      <div class="flex flex--end">
+        <button type="button" class="button transparent mr--s js-publish-modal-close">Cancel</button>
+        <button type="button" id="js-publish-draft" class="button button--primary transparent">Publish Draft</button>
       </div>
     </div>
   </div>

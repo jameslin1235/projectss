@@ -21,7 +21,7 @@
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
 </head>
-<body class="{% block body-background %}{% endblock body-background %}">
+<body class="{% block body-bg %}{% endblock body-bg %}">
 
   <div id="nav-v__content" class="hidden">
     <div class="flex flex--end pt--m pb--m">
@@ -84,7 +84,7 @@
                     </div>
                     <ul class="list pt--s pb--s">
                       <li><a href="{% url 'posts:post_create' %}" class="a--block transparent text-left pt--s pb--s pl--m pr--m">New post</a></li>
-                      <li><a href="{% url 'posts:post_drafts' %}" class="a--block transparent text-left pt--s pb--s pl--m pr--m">Drafts</a></li>
+                      <li><a href="{% url 'profile_drafts' %}" class="a--block transparent text-left pt--s pb--s pl--m pr--m">Drafts</a></li>
                       <li><a href="{% url 'profiles:profile_detail' pk=request.user.pk %}" class="a--block transparent text-left pt--s pb--s pl--m pr--m">Profile</a></li>
                       <li><a href="#" class="a--block transparent text-left pt--s pb--s pl--m pr--m">Settings</a></li>
                       <li><a href="#" class="a--block transparent text-left pt--s pb--s pl--m pr--m">Sign out</a></li>

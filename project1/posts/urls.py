@@ -5,9 +5,9 @@ urlpatterns = [
     url(r'^$', views.post_list, name='post_list'),
     url(r'^(?P<pk>\d+)/$', views.post_detail, name='post_detail'),
     url(r'^new/$', views.post_create, name='post_create'),
-    url(r'^drafts/$', views.post_drafts,name='post_drafts'),
+
     url(r'^(?P<pk>\d+)/edit/$', views.post_edit,name='post_edit'),
-    
+
     # # url(r'^(?P<id>\d+)/delete/$', views.post_delete, name='post_delete'),
     # url(r'^(?P<id>\d+)/$', views.post_detail, name='post_detail'),
     # # url(r'^(?P<id>\d+)/(?P<slug>[-\w]+)/publish/$', views.post_publish, name='post_publish'),

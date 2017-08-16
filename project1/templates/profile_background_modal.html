@@ -1,17 +1,17 @@
-<div class="modal">
-  <div class="modal__wrapper">
-    <button type="button" class="button button--modalclose js-modal-close"><span class="fa fa-times" aria-hidden="true"></span></button>
-    <div class="modal__header">
+<div id="js-bg-modal" class="modal-wrapper hidden">
+  <div class="modal pd--l">
+    <button type="button" id="js-bg-modal-close" class="button button--modal transparent"><span class="fa fa-times" aria-hidden="true"></span></button>
+    <div class="modal__header text-center mb--l">
       <h3>Edit Background</h3>
     </div>
-    <div class="modal__body">
-      <canvas class="modal__canvas" id="modal__canvas" width="150" height="150"></canvas>
+    <div class="modal__body mb--l flex flex--center">
+      <canvas id="js-bg-canvas" width="200" height="200"></canvas>
     </div>
-    <div class="modal__footer">
-      <div class="modal__buttongroup">
-      <button type="button" class="button button--plain js-modal-close spaceright--small">Cancel</button>
-      <button type="button" id="js-profile-background-submit" class="button button--blue button--primary">Save</button>
-    </div>
+    <div class="modal__footer flex flex--center">
+      <!-- <div class="flex flex--end">
+        <button type="button" class="button transparent mr--s js-bg-modal-close">Cancel</button> -->
+        <button type="button" id="js-edit-bg" class="button button--primary transparent">Edit</button>
+      <!-- </div> -->
     </div>
   </div>
 </div>
