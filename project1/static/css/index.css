@@ -93,7 +93,7 @@ img{
 
 /* Section */
 .section{
-  padding: 40px 0;
+  padding: 30px 0;
 }
 
 /* Transparency */
@@ -221,6 +221,7 @@ label{
   border-radius: 3px;
   position: relative;
   width: 100%;
+  padding: 15px;
 }
 
 /* Alert */
@@ -232,10 +233,7 @@ label{
   z-index: 1000;
 }
 
-/* state */
-.hidden{
-  display: none;
-}
+
 
 
 .no-scrollbar{
@@ -263,7 +261,6 @@ label{
 .button--primary{
   color: #00ab6b;
   border: 1px solid #02b875;
-  border-radius: 20px;
   padding: 10px 15px;
 }
 
@@ -519,7 +516,7 @@ label{
   border: none;
 }
 
-.border-radius--3{
+.bd-radius--3{
   border-radius: 3px;
 }
 
@@ -761,7 +758,10 @@ label{
 }
 
 
-
+/* state */
+.hidden{
+  display: none;
+}
 
 /* Pagination */
 /*.pagination{
@@ -798,7 +798,7 @@ label{
 
 
 /* Navigation */
-#nav-wrapper{
+#nav{
   position: fixed;
   top: 0;
   left: 0;
@@ -944,7 +944,18 @@ label{
   }*/
 
   /* Navigation */
-  .nav-v{
+  #nav-toggle{
+    display: none;
+  }
+
+  #nav-header{
+    display: block;
+  }
+
+  #nav-body{
+    display: flex;
+  }
+  /*.nav-v{
     display: none;
   }
 
@@ -954,15 +965,34 @@ label{
 
   .nav{
     display: block;
-  }
+  }*/
 
   /* Footer */
-  .footer-v{
+  /*.footer-v{
     display: none;
   }
 
   .footer{
     display: block;
+  }*/
+
+  #footer{
+    display: flex;
+    align-items: center;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    padding-top: 15px;
+  }
+
+  .footer-li{
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: 0;
+    margin-right: 10px;
+  }
+
+  #footer-li--last{
+    padding-bottom: 0;
+    border-bottom: 0;
   }
 
   .modal__wrapper{
@@ -1009,6 +1039,11 @@ label{
   .alert-wrapper{
     margin: 0 auto;
     width: 250px;
+  }
+
+  #user-create-form{
+    width: 300px;
+    margin: 0 auto;
   }
 }
 

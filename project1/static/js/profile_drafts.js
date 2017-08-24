@@ -1,43 +1,47 @@
-$(".js-delete").on("click", function(){
-  var url = $(this).parents(".post").attr("data-url");
-  $("#js-delete-draft").attr("data-url", url);
-  $("#js-delete-modal").toggleClass("hidden");
-});
+var target = $("#js-target");
 
-$(".js-delete-modal-close").on("click", function(){
-  $("#js-delete-draft").removeAttr("data-url");
+$(".js-delete").on("click", function(){
+  var url = $(this).attr("data-url");
+  target.attr("data-url", url);
   $("#js-delete-modal").toggleClass("hidden");
 });
 
 $("#js-delete-draft").on("click", function(){
-  var url = $(this).attr("data-url");
-  $.ajax({
-    method: "DELETE",
-    url: url
-  }).done(function( response ) {
-    window.location.href = response["url"];
+  delete_draft().done(function(data){
+    window.location.href = window.location.href;
   });
 });
 
 $(".js-publish").on("click", function(){
-  var url = $(this).parents(".post").attr("data-url");
-  $("#js-publish-draft").attr("data-url", url);
-  $("#js-publish-modal").toggleClass("hidden");
-});
-
-$(".js-publish-modal-close").on("click", function(){
-  $("#js-publish-draft").removeAttr("data-url");
+  target.attr("data-url", $(this).attr("data-url"));
   $("#js-publish-modal").toggleClass("hidden");
 });
 
 $("#js-publish-draft").on("click", function(){
-  var url = $(this).attr("data-url");
+  publish_draft().done(function(data){
+    window.location.href = data["url"];
+  });
+});
+
+function delete_draft(){
+  var url = target.attr("data-url");
+  return $.ajax({
+    method: "DELETE",
+    url: url
+  });
+}
+
+function publish_draft(){
+  var url = target.attr("data-url");
   var data = {publish:""};
-  $.ajax({
+  return $.ajax({
     method: "PATCH",
     url: url,
     data: data
-  }).done(function( response ) {
-    window.location.href = response["url"];
   });
+}
+
+$(".js-modal-close").on("click", function(){
+  target.removeAttr("data-url");
+  $(this).parents(".modal-wrapper").toggleClass("hidden");
 });

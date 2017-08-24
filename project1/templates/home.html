@@ -1,41 +1,73 @@
 {% extends "base.html" %}
-{% load static %}
 {% load widget_tweaks %}
-{% block active %}a--active{% endblock active %}
 
 {% block body %}
-{% for tag in main_tags %}
-<div class="section">
-  <div class="container">
-    <div class="tag">
-      <div class="flex flex--space-between mb--l pb--m bb">
-        <h3><a href="{{ tag.get_absolute_url }}">{{ tag.name|capfirst }}</a></h3>
-        <a href="{{ tag.get_absolute_url }}"><span class="mr--xs">MORE</span><span class="fa fa-angle-right" aria-hidden="true"></span></a>
-      </div>
-      <div class="row">
-        {% for post in tag.get_latest_posts %}
-        <div class="post col-md-6 {% if not forloop.last %}mb--l{% endif %}">
-          <div class="card pd--m">
-            <div class="flex mb--m">
-              <a href="{{ post.user.profile.get_absolute_url }}" class="mr--s"><img src="{{ post.user.profile.avatar.url}}" class="avatar--s"></a>
-              <a href="{{ post.user.profile.get_absolute_url }}">{{ post.user.username }}</a>
-            </div>
-            <div class="mb--m">
-              <h3 class="mb--s"><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
-              <a href="{{ post.get_absolute_url }}">{{ post.content|truncatechars:100 }} More</a>
-            </div>
-            <div>
-              <span>{{ post.date_published }}</span>
-            </div>
-          </div>
+{% if general_tags %}
+{% for tag in general_tags %}
+<div class="container pt--m pb--m">
+  <div class="flex flex--space-between mb--l pb--m bb">
+    <h3><a href="{{ tag.get_absolute_url }}">{{ tag.name|capfirst }}</a></h3>
+    <a href="{{ tag.get_absolute_url }}"><span class="mr--xs">MORE</span><span class="fa fa-angle-right" aria-hidden="true"></span></a>
+  </div>
+  <div class="row">
+    {% for post in tag.get_latest_posts %}
+    <div class="post col-md-6 {% if not forloop.last %}mb--l{% endif %}">
+      <div class="card pd--m">
+        <div class="flex mb--m">
+          <a href="{{ post.user.profile.get_absolute_url }}" class="mr--s"><img src="{{ post.user.profile.avatar.url}}" class="avatar--s"></a>
+          <a href="{{ post.user.profile.get_absolute_url }}">{{ post.user.username }}</a>
         </div>
-        {% endfor %}
+        <div class="mb--m">
+          <h3 class="mb--s"><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+          <a href="{{ post.get_absolute_url }}">{{ post.content|truncatechars:100 }} More</a>
+        </div>
+        <div>
+          <span>{{ post.date_published }}</span>
+        </div>
       </div>
     </div>
+    {% endfor %}
   </div>
 </div>
 {% endfor %}
+
+{% else %}
+{% if followed_tags %}
+{% for tag in followed_tags %}
+<div class="container pt--m pb--m">
+  <div class="flex flex--space-between mb--l pb--m bb">
+    <h3><a href="{{ tag.get_absolute_url }}">{{ tag.name|capfirst }}</a></h3>
+    <a href="{{ tag.get_absolute_url }}"><span class="mr--xs">MORE</span><span class="fa fa-angle-right" aria-hidden="true"></span></a>
+  </div>
+  <div class="row">
+    {% for post in tag.get_latest_posts %}
+    <div class="post col-md-6 {% if not forloop.last %}mb--l{% endif %}">
+      <div class="card pd--m">
+        <div class="flex mb--m">
+          <a href="{{ post.user.profile.get_absolute_url }}" class="mr--s"><img src="{{ post.user.profile.avatar.url}}" class="avatar--s"></a>
+          <a href="{{ post.user.profile.get_absolute_url }}">{{ post.user.username }}</a>
+        </div>
+        <div class="mb--m">
+          <h3 class="mb--s"><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+          <a href="{{ post.get_absolute_url }}">{{ post.content|truncatechars:100 }} More</a>
+        </div>
+        <div>
+          <span>{{ post.date_published }}</span>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endfor %}
+{% else %}
+<div class="container pt--m pb--m">
+  <h3>You have not followed any tags. Browse <a href="{% url 'tags:tag_list' %}">tags</a> and follow them.</h3>
+</div>
+{% endif %}
+{% endif %}
 {% endblock body %}
 
 {% block js %}
+
 {% endblock js %}

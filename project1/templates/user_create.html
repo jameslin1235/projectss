@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block body %}
+  <div class="container pt--m pb--m">
+    <div id="user-create-form">
+    <h3 class="mb--m text-center">Join Viz today.</h3>
+      <form method="POST" action="/users/">
+        {% csrf_token %}
+          <div class="input-wrapper mb--m">
+            {{ form.username|attr:"placeholder:Username"|add_class:"pd--s w--100p" }}
+          </div>
+          <div class="input-wrapper mb--m">
+            {{ form.email|attr:"placeholder:Email"|add_class:"pd--s w--100p" }}
+          </div>
+          <div class="input-wrapper mb--m">
+            {{ form.password|attr:"placeholder:Password"|attr:"type:password"|add_class:"pd--s w--100p" }}
+          </div>
+          <button type="submit" class="button button--primary w--100p transparent mb--m js-submit">Sign up</button>
+          <p>By signing up, you agree to our <a href="#">Terms of Service.</a></p>
+      </form>
+    </div>
+  </div>
+{% endblock body %}

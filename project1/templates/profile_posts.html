@@ -7,17 +7,17 @@ active
 {% endblock profile-posts %}
 
 {% block profile-content %}
-<h3 class="mb--m pb--m bb--light">{{ posts_count }} Posts</h3>
+<h3 id="js-target" class="mb--m pb--m bb--light">{{ posts_count }} Posts</h3>
 {% if posts %}
 <div class="mb--m">
   {% for post in posts %}
-  <div class="post {% if not forloop.last %}mb--m{% endif %} pb--m bb--light" data-url="{{ post.get_absolute_url }}">
+  <div class="post {% if not forloop.last %}mb--m{% endif %} pb--m bb--light">
     <h3 class="mb--s"><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
     <ul class="list flex">
       <li class="mr--s"><span>{{ post.date_updated }}</span></li>
       {% if profile.user == request.user %}
       <li class="mr--s"><a href="{{ post.get_edit_url }}" class="transparent">Edit</a></li>
-      <li><button type="button" class="button transparent pd-zero js-delete">Delete</button></li>
+      <li><button type="button" class="button transparent pd-zero js-delete" data-url="{{ post.get_absolute_url }}">Delete</button></li>
       {% endif %}
     </ul>
   </div>

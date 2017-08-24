@@ -17,26 +17,21 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
-from project1.project1.config import utility
-from project1.project1.posts import views as posts
-from project1.project1.accounts import views as accounts
+from project1.project1.users import views as users
 from project1.project1.profiles import views as profiles
+from project1.project1.tags import views as tags
 
 urlpatterns = [
-    url(r'^$', posts.home, name="home"),
-    url(r'^signup/', accounts.signup_view, name="signup"),
-    url(r'^login/', accounts.login_view, name="login"),
-    url(r'^logout/', accounts.logout_view, name="logout"),
+    url(r'^$', tags.home, name="home"),
+    url(r'^login/', users.login_view, name="login"),
+    url(r'^logout/', users.logout_view, name="logout"),
     url(r'^admin/', admin.site.urls),
     url(r'^drafts/$', profiles.profile_drafts, name='profile_drafts'),
     url(r'^posts/', include("project1.project1.posts.urls", namespace="posts")),
     url(r'^tags/', include("project1.project1.tags.urls", namespace="tags")),
     url(r'^profiles/', include("project1.project1.profiles.urls", namespace="profiles")),
-    # url(r'^getloginmodal/$', utility.get_login_modal, name='get_login_modal'),
+    url(r'^users/', include("project1.project1.users.urls", namespace="users")),
     url(r'^tinymce/', include('tinymce.urls')),
-    # url(r'^getalert/$', utility.get_alert, name='get_alert'),
-    # url(r'^geterror/$', utility.get_error, name='get_error'),
-    # url(r'^getloader/$', utility.get_loader, name='get_loader'),
 ]
 
 if settings.DEBUG:

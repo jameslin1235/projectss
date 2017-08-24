@@ -1,10 +1,11 @@
-from .models import Tag, TagUser
+from .models import Tag
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils import timezone
+from project1.project1.users.forms import UserForm
 
 # Create your views here.
-def tag_detail(request,id,slug):
+def tag_detail(request,pk):
     if request.method == "GET":
         tag = get_object_or_404(Tag, id=id)
         context = {}
@@ -23,16 +24,22 @@ def tag_detail(request,id,slug):
         context['latest_posts'] = latest_posts
         return render(request,"tag_detail.html",context)
 
-def tag_follow(request):
+
+def tag_list(request):
     if request.method == "GET":
+        return render(request,"tag_detail.html")
+
+def tag_demo(request):
+    if request.method == "GET":
+        context = {}
+        context['form'] = UserForm()
+        return render(request,"tag_demo.html",context)
+def home(request):
+    if request.method == "GET":
+        context = {}
         if request.user.is_authenticated:
-            if request.user.profile.first_login:
-                if request.GET.get("id") is not None:
-                    id_list = request.GET.get("id").split(",")
-                    for id in id_list:
-                        TagUser.objects.create(tag=Tag.objects.get(id=int(id)), user=request.user, date_followed=timezone.now())
-                request.user.profile.first_login = False
-                request.user.profile.save()
-                return redirect("home")
+            if request.user.profile.get_followed_tags_count() != 0:
+                context['followed_tags'] = request.user.profile.get_followed_tags()
         else:
-            raise PermissionDenied
+            context['general_tags'] = Tag.objects.filter(general = True)
+        return render(request,"home.html",context)

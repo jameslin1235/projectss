@@ -38,18 +38,18 @@ $(".js-alert-close").on("click", function(){
 
 
 
-// Sign in / Sign up modal //
-$("#js-get-login-modal").on("click", function(){
-  get_login_modal().done(function(modal){
-    $("body").append(modal);
-    });
-});
-
-function get_login_modal(){
-  return $.ajax({
-    url: "/getloginmodal/"
-  });
-}
+// // Sign in / Sign up modal //
+// $("#js-get-login-modal").on("click", function(){
+//   get_login_modal().done(function(modal){
+//     $("body").append(modal);
+//     });
+// });
+//
+// function get_login_modal(){
+//   return $.ajax({
+//     url: "/getloginmodal/"
+//   });
+// }
 
 // Sign in / Sign up modal tab toggle //
 $(document).on("click", "#js-login-tab-toggle", function(){
@@ -98,10 +98,10 @@ $("#js-nav-popover-toggle").on("click", function(){
 //   element.next().toggleClass("hidden");
 // });
 //
-$("#js-nav-search-toggle").on("click", function(){
-  $("#js-nav-search").toggleClass("hidden");
-  $("#js-nav-search-input").focus();
-})
+// $("#js-nav-search-toggle").on("click", function(){
+//   $("#js-nav-search").toggleClass("hidden");
+//   $("#js-nav-search-input").focus();
+// })
 
 // // FORM //
 // // Formfield on focus effect//

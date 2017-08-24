@@ -23,134 +23,72 @@
 </head>
 <body class="{% block body-bg %}{% endblock body-bg %}">
 
-  <div id="nav-v__content" class="hidden">
-    <div class="flex flex--end pt--m pb--m">
-      <button type="button" class="button transparent--hover-disabled js-nav-v-body-toggle"><span class="fa fa-times fa-2x" aria-hidden="true"></span></button>
-    </div>
-      <ul class="list pb--l">
-        <li><a href="{% url 'home' %}" class="a--block transparent pt--m pb--m bb">Home</a></li>
-        <li><button class="button button--block flex flex--space-between transparent pt--m pb--m plr-zero bb js-nav-links-group-toggle"><span>Account</span><span class="fa fa-angle-right fa-lg" aria-hidden="true"></span></button></li>
-        <li class="hidden">
-          <ul class="list">
-            <li><a href="#" class="a--block transparent pt--m pb--m bb">Profile</a></li>
-            <li><a href="#" class="a--block transparent pt--m pb--m bb">Settings</a></li>
-            <li><a href="#" class="a--block transparent pt--m pb--m bb">Log out</a></li>
-          </ul>
-
-        <li><button class="button button--block flex flex--space-between transparent pt--m pb--m plr-zero bb js-nav-links-group-toggle"><span>Tags</span><span class="fa fa-angle-right fa-lg" aria-hidden="true"></span></button></li>
-        {% block nav-v-tags %}
-        <li class="hidden">
-          <ul class="list">
-            {% for tag in main_tags %}
-            <li><a href="{{ tag.get_absolute_url }}" class="a--block transparent pt--m pb--m bb">{{ tag.name|capfirst }}</a></li>
-            {% endfor %}
-          </ul>
-        </li>
-        {% endblock nav-v-tags %}
-        <li><button type="button" class="button button--block transparent pt--m pb--m plr-zero bb text-left">Sign in / Sign up</button></li>
-        <li><button type="button" class="button button--block transparent pt--m pb--m plr-zero bb text-left"><span class="fa fa-search" aria-hidden="true"></span></button></li>
-      </ul>
-  </div>
-
-<div id="nav-wrapper">
-    <div class="container">
-      <div class="nav-v flex flex--space-between pt--m pb--m">
+  <div id="nav">
+    <div class="container pt--m pb--m">
+      <div class="flex flex--space-between">
         <a href="{% url 'home' %}"><img src="{% static "png/png/badoo.png" %}" class="img--logo" alt="Logo"></a>
-        <button type="button" class="button transparent--hover-disabled js-nav-v-body-toggle"><span class="fa fa-bars fa-2x" aria-hidden="true"></span></button>
-      </div>
 
-      <div class="nav hidden">
-        <div class="flex flex--space-between pt--m pb--m">
-
-            <a href="{% url 'home' %}" class="mr--s"><img src="{% static "png/png/badoo.png" %}" class="img--logo" alt="Logo"></a>
-
-
-              <ul class="list flex">
-                <li class="mr--s"><button id="js-nav-search-toggle" type="button" class="button transparent"><span class="fa fa-search" aria-hidden="true"></span></button></li>
-                <li id="js-nav-search" class="mr--s hidden">
-                  <div class="input-wrapper">
-                    <input id="js-nav-search-input" class="input" type="text" placeholder="Search Viz">
+        <div>
+          <ul class="list flex">
+            <li class="mr--s"><a href="{% url 'tags:tag_list' %}" class="transparent pd--s">Tags</a></li>
+            <li class="mr--s">
+              <div class="input-wrapper">
+                <input class="w--100p pd--xs bd" type="text" placeholder="Search">
+              </div>
+            </li>
+            {% if request.user.is_authenticated %}
+            <li class="rel">
+              <button id="js-nav-popover-toggle" class="button" >
+                <img src="{{ request.user.profile.avatar.url }}" class="avatar--s">
+              </button>
+              <div id="js-nav-popover" class="popover nav__popover-user abs hidden">
+                <div class="w--zero h--zero rel">
+                  <div class="nav__popover-user-arrow abs">
                   </div>
-                </li>
-                <li class="rel">
-                  {% if request.user.is_authenticated %}
-                  <button id="js-nav-popover-toggle" class="button" >
-                    <img src="{{ request.user.profile.avatar.url }}" class="avatar--s">
-                  </button>
-                  <div id="js-nav-popover" class="popover nav__popover-user abs hidden">
-                    <div class="w--zero h--zero rel">
-                      <div class="nav__popover-user-arrow abs">
-                      </div>
-                    </div>
-                    <ul class="list pt--s pb--s">
-                      <li><a href="{% url 'posts:post_create' %}" class="a--block transparent text-left pt--s pb--s pl--m pr--m">New post</a></li>
-                      <li><a href="{% url 'profile_drafts' %}" class="a--block transparent text-left pt--s pb--s pl--m pr--m">Drafts</a></li>
-                      <li><a href="{% url 'profiles:profile_detail' pk=request.user.pk %}" class="a--block transparent text-left pt--s pb--s pl--m pr--m">Profile</a></li>
-                      <li><a href="#" class="a--block transparent text-left pt--s pb--s pl--m pr--m">Settings</a></li>
-                      <li><a href="#" class="a--block transparent text-left pt--s pb--s pl--m pr--m">Sign out</a></li>
-                    </ul>
-                  </div>
-                  {% else %}
-                  <button id="js-get-login-modal" class="button button--primary borderless">Sign in / Sign up</button>
-                  {% endif %}
-                </li>
-              </ul>
-          </div>
-
-        {% block nav-tags %}
-          <ul class="list flex bt--light">
-            <li class="pt--m pb--m mr--s"><a href="{% url 'home' %}" class="transparent {% block active %}{% endblock active %}">Home</a></li>
-            <li class="pt--m pb--m mr--s"><a href="#" class="transparent">Trending</a></li>
-            {% for tag in main_tags %}
-            <li class="pt--m pb--m mr--s"><a href="{{ tag.get_absolute_url }}" class="transparent">{{ tag.name|capfirst }}</a></li>
-            {% endfor %}
+                </div>
+                <ul class="list pt--s pb--s">
+                  <li><a href="{% url 'posts:post_create' %}" class="a--block transparent text-left pt--s pb--s pl--m pr--m">New post</a></li>
+                  <li><a href="{% url 'profile_drafts' %}" class="a--block transparent text-left pt--s pb--s pl--m pr--m">Drafts</a></li>
+                  <li><a href="{% url 'profiles:profile_detail' pk=request.user.pk %}" class="a--block transparent text-left pt--s pb--s pl--m pr--m">Profile</a></li>
+                  <li><a href="#" class="a--block transparent text-left pt--s pb--s pl--m pr--m">Settings</a></li>
+                  <li><a href="#" class="a--block transparent text-left pt--s pb--s pl--m pr--m">Sign out</a></li>
+                </ul>
+              </div>
+            </li>
+              {% else %}
+              <li class="mr--s"><a href="#" class="transparent pd--s">Sign in</a></li>
+              <li><a href="{% url 'users:user_create' %}" class="transparent pd--s">Sign up</a></li>
+              {% endif %}
           </ul>
-        {% endblock nav-tags %}
-
+        </div>
       </div>
     </div>
-</div>
+  </div>
 
   {% block body %}
   {% endblock body %}
-
-<div class="section">
-  <div class="container">
-    <div class="footer-v">
-        <ul class="list">
-          <li><a href="#" class="a--block transparent pt--m pb--m bb">Getting started</a></li>
-          <li><a href="#" class="a--block transparent pt--m pb--m bb">Help</a></li>
-          <li><a href="#" class="a--block transparent pt--m pb--m bb">Status</a></li>
-          <li><a href="#" class="a--block transparent pt--m pb--m bb">Blog</a></li>
-          <li><a href="#" class="a--block transparent pt--m pb--m bb">Careers</a></li>
-          <li><a href="#" class="a--block transparent pt--m pb--m bb">Privacy</a></li>
-          <li><a href="#" class="a--block transparent pt--m pb--m bb">Terms</a></li>
-          <li><a href="#" class="a--block transparent pt--m pb--m bb">About</a></li>
-        </ul>
-      </div>
-      <div class="footer bt--light hidden">
-        <ul class="list flex">
-          <li class="pt--m mr--s"><a href="#" class="transparent">Getting started</a></li>
-          <li class="pt--m mr--s"><a href="#" class="transparent">Help</a></li>
-          <li class="pt--m mr--s"><a href="#" class="transparent">Status</a></li>
-          <li class="pt--m mr--s"><a href="#" class="transparent">Blog</a></li>
-          <li class="pt--m mr--s"><a href="#" class="transparent">Careers</a></li>
-          <li class="pt--m mr--s"><a href="#" class="transparent">Privacy</a></li>
-          <li class="pt--m mr--s"><a href="#" class="transparent">Terms</a></li>
-          <li class="pt--m mr--s"><a href="#" class="transparent">About</a></li>
-        </ul>
-      </div>
-    </div>
+  <div class="container pt--m pb--m">
+    <ul id="footer" class="list">
+      <li class="footer-li mb--m pb--m bb--light"><a href="#" class="transparent">Getting started</a></li>
+      <li class="footer-li mb--m pb--m bb--light"><a href="#" class="transparent">Help</a></li>
+      <li class="footer-li mb--m pb--m bb--light"><a href="#" class="transparent">Status</a></li>
+      <li class="footer-li mb--m pb--m bb--light"><a href="#" class="transparent">Blog</a></li>
+      <li class="footer-li mb--m pb--m bb--light"><a href="#" class="transparent">Careers</a></li>
+      <li class="footer-li mb--m pb--m bb--light"><a href="#" class="transparent">Privacy</a></li>
+      <li class="footer-li mb--m pb--m bb--light"><a href="#" class="transparent">Terms</a></li>
+      <li id="footer-li--last" class="pb--m bb--light"><a href="#" class="transparent">About</a></li>
+    </ul>
   </div>
-</div>
 
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="{% static "bootstrap-3.3.7-dist/bootstrap-3.3.7-dist/js/bootstrap.min.js" %}"></script>
-<!-- <script src="{% static "js/autosize.min.js" %}"></script> -->
-<script src="{% static "js/base.js" %}"></script>
-{% block js %}
-{% endblock js %}
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="{% static "bootstrap-3.3.7-dist/bootstrap-3.3.7-dist/js/bootstrap.min.js" %}"></script>
+  <!-- <script src="{% static "js/autosize.min.js" %}"></script> -->
+  <script src="{% static "js/base.js" %}"></script>
+
+  {% block js %}
+  {% endblock js %}
 </body>
 </html>

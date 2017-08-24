@@ -10,19 +10,19 @@
 {% block body %}
 <div class="section">
   <div class="container">
-    <div class="pd--m">
+    <div id="js-target" class="pd--m">
       {% include "alert.html" %}
       <h3 class="mb--m pb--m bb--light">{{ drafts_count }} Drafts</h3>
       {% if drafts %}
       <div class="mb--m">
         {% for post in drafts %}
-        <div class="post {% if not forloop.last %}mb--m{% endif %} pb--m bb--light" data-url="{{ post.get_absolute_url }}">
+        <div class="post {% if not forloop.last %}mb--m{% endif %} pb--m bb--light">
           <h3 class="mb--s"><a href="{{ post.get_edit_url }}">{{ post.title }}</a></h3>
           <ul class="list flex">
             <li class="mr--s"><span>{{ post.date_updated }}</span></li>
             <li class="mr--s"><a href="{{ post.get_edit_url }}" class="transparent">Edit</a></li>
-            <li class="mr--s"><button type="button" class="button transparent pd-zero js-delete">Delete</button></li>
-            <li><button type="button" class="button transparent pd-zero js-publish">Publish</button></li>
+            <li class="mr--s"><button type="button" class="button transparent pd-zero js-delete" data-url="{{ post.get_absolute_url }}">Delete</button></li>
+            <li><button type="button" class="button transparent pd-zero js-publish" data-url="{{ post.get_absolute_url }}">Publish</button></li>
           </ul>
         </div>
         {% endfor %}
