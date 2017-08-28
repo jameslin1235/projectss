@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block body %}
+  <div class="container pt--m pb--m">
+    <div id="session-create-form">
+    <h3 class="mb--m text-center">Sign in to Viz.</h3>
+      <form method="POST" action="/sessions/">
+        {% csrf_token %}
+
+
+          <div class="input-wrapper mb--m">
+            {{ form.username|attr:"placeholder:Username"|add_class:"pd--s w--100p" }}
+          </div>
+          <div class="input-wrapper mb--m">
+            {{ form.password|attr:"placeholder:Password"|attr:"type:password"|add_class:"pd--s w--100p" }}
+          </div>
+          {% if form.non_field_errors %}
+          <ul class="list mb--m">
+          {% for error in form.non_field_errors %}
+          <li class="text-center cr--red">{{ error }}</li>
+          {% endfor %}
+          </ul>
+          {% endif %}
+          <button type="submit" class="button button--primary w--100p transparent js-submit">Sign in</button>
+      </form>
+    </div>
+  </div>
+{% endblock body %}

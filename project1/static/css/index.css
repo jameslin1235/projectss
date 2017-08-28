@@ -524,6 +524,10 @@ label{
   border-radius: 50%;
 }
 
+.cr--red{
+  color: red;
+}
+
 /* alert */
 /*.alert{
   border-radius: 3px;
@@ -1042,6 +1046,11 @@ label{
   }
 
   #user-create-form{
+    width: 300px;
+    margin: 0 auto;
+  }
+
+  #session-create-form{
     width: 300px;
     margin: 0 auto;
   }

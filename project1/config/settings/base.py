@@ -35,9 +35,9 @@ INSTALLED_APPS = [
     'tinymce',
     'widget_tweaks',
     'project1.project1.users.apps.UsersConfig',
-    'project1.project1.posts.apps.PostsConfig',
-    'project1.project1.profiles.apps.ProfilesConfig',
-    'project1.project1.tags.apps.TagsConfig',
+    'posts.apps.PostsConfig',
+    'tags.apps.TagsConfig',
+    'session.apps.SessionConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -132,3 +132,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'project1/media')
 MEDIA_URL = '/media/'
 
 LOGIN_URL = '/login/'
+
+AUTH_USER_MODEL = 'project1.project1.users.User'

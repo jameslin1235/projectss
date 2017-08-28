@@ -18,19 +18,15 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from project1.project1.users import views as users
-from project1.project1.profiles import views as profiles
-from project1.project1.tags import views as tags
 
 urlpatterns = [
-    url(r'^$', tags.home, name="home"),
-    url(r'^login/', users.login_view, name="login"),
-    url(r'^logout/', users.logout_view, name="logout"),
+    url(r'^$', users.home, name="home"),
     url(r'^admin/', admin.site.urls),
-    url(r'^drafts/$', profiles.profile_drafts, name='profile_drafts'),
+    # url(r'^drafts/$', profiles.profile_drafts, name='profile_drafts'),
     url(r'^posts/', include("project1.project1.posts.urls", namespace="posts")),
     url(r'^tags/', include("project1.project1.tags.urls", namespace="tags")),
-    url(r'^profiles/', include("project1.project1.profiles.urls", namespace="profiles")),
     url(r'^users/', include("project1.project1.users.urls", namespace="users")),
+    url(r'^sessions/', include("project1.project1.session.urls", namespace="sessions")),
     url(r'^tinymce/', include('tinymce.urls')),
 ]
 

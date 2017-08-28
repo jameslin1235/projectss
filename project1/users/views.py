@@ -1,11 +1,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout
-from .forms import UserForm, LoginForm
+from .forms import UserForm
 # Create your views here.
 def user_list(request):
-    if request.method == "GET":
-        posts = Post.objects.all()
-    elif request.method == "POST":
+    if request.method == "POST":
         form = UserForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
@@ -17,7 +15,9 @@ def user_list(request):
             login(request, user)
             return redirect("home")
         else:
-            print('error')
+            context = {}
+            context['form'] = form
+            return render(request,"user_create.html",context)
 
 def user_create(request):
     if request.method == "GET":
@@ -25,35 +25,13 @@ def user_create(request):
         context['form'] = UserForm()
         return render(request,"user_create.html",context)
 
-
-def login_view(request):
+def home(request):
     if request.method == "GET":
-        if request.user.is_authenticated():
-            return redirect("home")
-        else:
-            context = {}
-            form = LoginForm()
-            context['form'] = form
-            context['title'] = "Log in To Viz"
-            return render(request,"accounts/login.html",context)
-    elif request.method == "POST":
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(username=username,password=password)
-            if user is not None:
-                login(request, user)
-                if request.GET.get('next'):
-                    return redirect(request.GET.get('next'))
-                else:
-                    return redirect("home")
-
-
-def logout_view(request):
-    if request.method == "GET":
-        if request.user.is_authenticated():
-            logout(request)
-            return redirect("login")
-        else:
-            return redirect("home")
+        context = {}
+        # if request.user.is_authenticated:
+        #
+        #     if request.user.profile.get_followed_tags_count() != 0:
+        #         context['followed_tags'] = request.user.profile.get_followed_tags()
+        # else:
+        context['general_tags'] = Tag.objects.filter(general = True)
+        return render(request,"home.html",context)

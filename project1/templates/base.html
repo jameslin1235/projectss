@@ -28,7 +28,7 @@
       <div class="flex flex--space-between">
         <a href="{% url 'home' %}"><img src="{% static "png/png/badoo.png" %}" class="img--logo" alt="Logo"></a>
 
-        <div>
+
           <ul class="list flex">
             <li class="mr--s"><a href="{% url 'tags:tag_list' %}" class="transparent pd--s">Tags</a></li>
             <li class="mr--s">
@@ -38,29 +38,26 @@
             </li>
             {% if request.user.is_authenticated %}
             <li class="rel">
-              <button id="js-nav-popover-toggle" class="button" >
+              <button id="js-dropdown-toggle" class="button" >
                 <img src="{{ request.user.profile.avatar.url }}" class="avatar--s">
               </button>
-              <div id="js-nav-popover" class="popover nav__popover-user abs hidden">
-                <div class="w--zero h--zero rel">
-                  <div class="nav__popover-user-arrow abs">
-                  </div>
-                </div>
-                <ul class="list pt--s pb--s">
-                  <li><a href="{% url 'posts:post_create' %}" class="a--block transparent text-left pt--s pb--s pl--m pr--m">New post</a></li>
-                  <li><a href="{% url 'profile_drafts' %}" class="a--block transparent text-left pt--s pb--s pl--m pr--m">Drafts</a></li>
-                  <li><a href="{% url 'profiles:profile_detail' pk=request.user.pk %}" class="a--block transparent text-left pt--s pb--s pl--m pr--m">Profile</a></li>
-                  <li><a href="#" class="a--block transparent text-left pt--s pb--s pl--m pr--m">Settings</a></li>
-                  <li><a href="#" class="a--block transparent text-left pt--s pb--s pl--m pr--m">Sign out</a></li>
+                <div id="js-dropdown" class="abs abs-r--zero card pt--s pb--s w--100 hidden">
+                <ul class="list">
+                  <li><a href="{% url 'posts:post_create' %}" class="block transparent  pd--s">New post</a></li>
+                  <li><a href="{% url 'profile_drafts' %}" class="block transparent pd--s">Drafts</a></li>
+                  <li><a href="{% url 'profiles:profile_detail' pk=request.user.pk %}" class="block transparent pd--s">Profile</a></li>
+                  <li><a href="#" class="block transparent pd--s">Settings</a></li>
+                  <li><button type="button" class="button w--100 transparent text-left" id="js-delete-session">Sign out</button></li>
                 </ul>
-              </div>
+                </div>
+              <!-- </div> -->
             </li>
               {% else %}
-              <li class="mr--s"><a href="#" class="transparent pd--s">Sign in</a></li>
+              <li class="mr--s"><a href="{% url 'sessions:session_create' %}" class="transparent pd--s">Sign in</a></li>
               <li><a href="{% url 'users:user_create' %}" class="transparent pd--s">Sign up</a></li>
               {% endif %}
           </ul>
-        </div>
+
       </div>
     </div>
   </div>

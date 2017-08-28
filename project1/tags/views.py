@@ -34,12 +34,3 @@ def tag_demo(request):
         context = {}
         context['form'] = UserForm()
         return render(request,"tag_demo.html",context)
-def home(request):
-    if request.method == "GET":
-        context = {}
-        if request.user.is_authenticated:
-            if request.user.profile.get_followed_tags_count() != 0:
-                context['followed_tags'] = request.user.profile.get_followed_tags()
-        else:
-            context['general_tags'] = Tag.objects.filter(general = True)
-        return render(request,"home.html",context)
